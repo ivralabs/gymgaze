@@ -6,6 +6,8 @@ export async function middleware(request: NextRequest) {
     request,
   });
 
+  const pathname = request.nextUrl.pathname;
+
   // Skip auth checks if Supabase env vars not configured yet
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return supabaseResponse;
@@ -36,9 +38,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
-
-  // Not authenticated — redirect to login
+  // Not authenticated — redirect to login (only for protected routes)
   if (!user && (pathname.startsWith("/admin") || pathname.startsWith("/portal"))) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
@@ -58,22 +58,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/portal/dashboard", request.url));
     }
 
-    // Protect portal routes
-    if (pathname.startsWith("/portal")) {
-      if (!role || role === "admin") {
-        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-      }
-    }
-
-    // Redirect logged-in users away from login page
-    if (pathname === "/auth/login") {
-      if (role === "admin") {
-        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-      } else if (role === "owner") {
-        return NextResponse.redirect(new URL("/portal/dashboard", request.url));
-      } else if (role === "manager") {
-        return NextResponse.redirect(new URL("/portal/manager", request.url));
-      }
+    // Protect portal routes — admins go to admin dashboard
+    if (pathname.startsWith("/portal") && role === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
   }
 
@@ -81,7 +68,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Only run middleware on protected routes — NOT on /auth/* to avoid redirect loops
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/admin/:path*",
+    "/portal/:path*",
   ],
 };

@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
   const { reason } = await request.json();
 
@@ -14,7 +15,7 @@ export async function POST(
       status: "rejected",
       rejection_reason: reason,
     })
-    .eq("id", params.id)
+    .eq("id", id)
     .select()
     .single();
 

@@ -42,7 +42,8 @@ const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "revenue", label: "Revenue", icon: DollarSign },
 ];
 
-export default function VenueDetailPage({ params }: { params: { id: string } }) {
+export default async function VenueDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: venueId } = await params;
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   return (

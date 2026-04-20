@@ -24,7 +24,8 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
   coming_soon: { label: "Coming Soon", color: "#F59E0B", bg: "rgba(245,158,11,0.15)" },
 };
 
-export default function NetworkDetailPage({ params }: { params: { id: string } }) {
+export default async function NetworkDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: networkId } = await params;
   const network = mockNetwork;
 
   return (
@@ -45,7 +46,7 @@ export default function NetworkDetailPage({ params }: { params: { id: string } }
             {network.name}
           </h1>
           <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
-            Network ID: {params.id}
+            Network ID: {networkId}
           </p>
         </div>
       </div>

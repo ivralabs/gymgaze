@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -21,7 +22,7 @@ export async function POST(
       approved_by: user.id,
       approved_at: new Date().toISOString(),
     })
-    .eq("id", params.id)
+    .eq("id", id)
     .select()
     .single();
 

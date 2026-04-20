@@ -1,32 +1,55 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, MapPin, Image, DollarSign, LogOut, Zap } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { LayoutDashboard, MapPin, ImageIcon, DollarSign, LogOut, Zap } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import PortalNav from "./portal-nav";
 
 const navItems = [
-  { href: "/portal/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/portal/venues", label: "Venues", icon: MapPin },
-  { href: "/portal/photos", label: "Photos", icon: Image },
-  { href: "/portal/revenue", label: "Revenue", icon: DollarSign },
+  { href: "/portal/dashboard", label: "Dashboard", icon: "LayoutDashboard" },
+  { href: "/portal/venues", label: "Venues", icon: "MapPin" },
+  { href: "/portal/photos", label: "Photos", icon: "Image" },
+  { href: "/portal/revenue", label: "Revenue", icon: "DollarSign" },
 ];
 
-export default function PortalLayout({
+export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const supabase = createClient();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    window.location.href = "/auth/login";
+  let brandName = "GymGaze";
+  let brandLogoUrl: string | null = null;
+  let primaryColor = "#FF6B35";
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("gym_brand_id")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.gym_brand_id) {
+      const { data: brand } = await supabase
+        .from("gym_brands")
+        .select("name, logo_url, primary_color")
+        .eq("id", profile.gym_brand_id)
+        .single();
+
+      if (brand) {
+        brandName = brand.name ?? "GymGaze";
+        brandLogoUrl = brand.logo_url ?? null;
+        primaryColor = brand.primary_color ?? "#FF6B35";
+      }
+    }
   }
 
   return (
-    <div style={{ backgroundColor: "#F9FAFB", minHeight: "100vh" }}>
+    <div
+      style={
+        { backgroundColor: "#F9FAFB", minHeight: "100vh", "--brand-primary": primaryColor } as React.CSSProperties
+      }
+    >
       {/* Top nav */}
       <header
         className="sticky top-0 z-10"
@@ -39,12 +62,20 @@ export default function PortalLayout({
         <div className="flex items-center justify-between h-full px-6 max-w-7xl mx-auto">
           {/* Brand logo */}
           <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: "var(--brand-primary, #FF6B35)" }}
-            >
-              <Zap size={18} color="#FFFFFF" strokeWidth={2.5} />
-            </div>
+            {brandLogoUrl ? (
+              <img
+                src={brandLogoUrl}
+                alt={brandName}
+                className="h-9 w-auto object-contain"
+              />
+            ) : (
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <Zap size={18} color="#FFFFFF" strokeWidth={2.5} />
+              </div>
+            )}
             <span
               className="text-base font-bold"
               style={{
@@ -52,46 +83,12 @@ export default function PortalLayout({
                 color: "#111827",
               }}
             >
-              GymGaze
+              {brandName}
             </span>
           </div>
 
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href || pathname.startsWith(href + "/");
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
-                  style={{
-                    color: isActive ? "#FF6B35" : "#6B7280",
-                    backgroundColor: isActive ? "rgba(255,107,53,0.08)" : "transparent",
-                  }}
-                >
-                  <Icon size={16} strokeWidth={2} />
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
-            style={{ color: "#9CA3AF" }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = "#111827";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = "#9CA3AF";
-            }}
-          >
-            <LogOut size={16} strokeWidth={2} />
-            Sign out
-          </button>
+          {/* Nav + logout (client component for active state + logout) */}
+          <PortalNav primaryColor={primaryColor} />
         </div>
       </header>
 

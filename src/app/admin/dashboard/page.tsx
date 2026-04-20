@@ -1,44 +1,84 @@
 import { Building2, MapPin, Megaphone, DollarSign, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import PhotoApprovalButtons from "./photo-approval-buttons";
 
-const statTiles = [
-  {
-    label: "Total Networks",
-    value: "12",
-    sub: "+2 this month",
-    icon: Building2,
-    color: "#FF6B35",
-  },
-  {
-    label: "Total Venues",
-    value: "48",
-    sub: "Across 8 cities",
-    icon: MapPin,
-    color: "#3B82F6",
-  },
-  {
-    label: "Active Campaigns",
-    value: "7",
-    sub: "3 ending soon",
-    icon: Megaphone,
-    color: "#10B981",
-  },
-  {
-    label: "Revenue MTD",
-    value: "R 124,500",
-    sub: "+18% vs last month",
-    icon: DollarSign,
-    color: "#F59E0B",
-  },
-];
+function formatCurrency(val: number) {
+  return `R ${val.toLocaleString("en-ZA")}`;
+}
 
-const pendingPhotos = [
-  { id: "1", venue: "FitZone Sandton", uploadedBy: "John M.", month: "Apr 2026", date: "2026-04-18" },
-  { id: "2", venue: "PowerGym Rosebank", uploadedBy: "Sarah K.", month: "Apr 2026", date: "2026-04-17" },
-  { id: "3", venue: "IronHouse Cape Town", uploadedBy: "Mike T.", month: "Apr 2026", date: "2026-04-16" },
-  { id: "4", venue: "Peak Performance Durban", uploadedBy: "Lisa R.", month: "Apr 2026", date: "2026-04-15" },
-];
+export default async function AdminDashboard() {
+  const supabase = await createClient();
 
-export default function AdminDashboard() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  // Total networks
+  const { count: networksCount } = await supabase
+    .from("gym_brands")
+    .select("id", { count: "exact", head: true });
+
+  // Total active venues
+  const { count: venuesCount } = await supabase
+    .from("venues")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active");
+
+  // Active campaigns
+  const today = new Date().toISOString().slice(0, 10);
+  const { count: campaignsCount } = await supabase
+    .from("campaigns")
+    .select("id", { count: "exact", head: true })
+    .gte("end_date", today);
+
+  // Revenue MTD
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const { data: revenueRows } = await supabase
+    .from("revenue_entries")
+    .select("amount")
+    .gte("month", `${currentMonth}-01`);
+  const revenueMTD = (revenueRows ?? []).reduce((s, r) => s + (r.amount ?? 0), 0);
+
+  // Pending photos — last 5
+  const { data: pendingPhotos } = await supabase
+    .from("venue_photos")
+    .select("id, venue_id, month, created_at, uploaded_by, venues(name), profiles(full_name)")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const statTiles = [
+    {
+      label: "Total Networks",
+      value: String(networksCount ?? 0),
+      sub: "Registered brands",
+      icon: Building2,
+      color: "#FF6B35",
+    },
+    {
+      label: "Total Venues",
+      value: String(venuesCount ?? 0),
+      sub: "Active venues",
+      icon: MapPin,
+      color: "#3B82F6",
+    },
+    {
+      label: "Active Campaigns",
+      value: String(campaignsCount ?? 0),
+      sub: "Running now",
+      icon: Megaphone,
+      color: "#10B981",
+    },
+    {
+      label: "Revenue MTD",
+      value: formatCurrency(revenueMTD),
+      sub: now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" }),
+      icon: DollarSign,
+      color: "#F59E0B",
+    },
+  ];
+
   return (
     <div className="p-8">
       {/* Header */}
@@ -120,46 +160,42 @@ export default function AdminDashboard() {
         </div>
 
         <div style={{ backgroundColor: "#1E1E1E" }}>
-          {pendingPhotos.map((photo, idx) => (
-            <div
-              key={photo.id}
-              className="flex items-center justify-between px-6 py-4"
-              style={{
-                borderBottom: idx < pendingPhotos.length - 1 ? "1px solid #2A2A2A" : "none",
-              }}
-            >
-              <div>
-                <p className="text-sm font-medium text-white">{photo.venue}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
-                  Uploaded by {photo.uploadedBy} &middot; {photo.month}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="text-xs"
-                  style={{ color: "#666666" }}
-                >
-                  {photo.date}
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    className="p-1.5 rounded-lg transition-colors duration-150"
-                    style={{ backgroundColor: "rgba(16, 185, 129, 0.1)" }}
-                    title="Approve"
-                  >
-                    <CheckCircle2 size={14} color="#10B981" strokeWidth={2} />
-                  </button>
-                  <button
-                    className="p-1.5 rounded-lg transition-colors duration-150"
-                    style={{ backgroundColor: "rgba(239, 68, 68, 0.1)" }}
-                    title="Reject"
-                  >
-                    <XCircle size={14} color="#EF4444" strokeWidth={2} />
-                  </button>
-                </div>
-              </div>
+          {!pendingPhotos || pendingPhotos.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <CheckCircle2 size={32} color="#10B981" strokeWidth={1.5} className="mb-2" />
+              <p className="text-sm text-white">All caught up!</p>
+              <p className="text-xs mt-1" style={{ color: "#666666" }}>No photos pending approval</p>
             </div>
-          ))}
+          ) : (
+            pendingPhotos.map((photo, idx) => {
+              const venue = photo.venues as { name?: string } | null;
+              const uploader = photo.profiles as { full_name?: string } | null;
+              const monthLabel = photo.month
+                ? new Date(photo.month.slice(0, 7) + "-01").toLocaleDateString("en-ZA", {
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "—";
+
+              return (
+                <div
+                  key={photo.id}
+                  className="flex items-center justify-between px-6 py-4"
+                  style={{
+                    borderBottom: idx < pendingPhotos.length - 1 ? "1px solid #2A2A2A" : "none",
+                  }}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-white">{venue?.name ?? "Unknown Venue"}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
+                      {uploader?.full_name ?? "Unknown"} &middot; {monthLabel}
+                    </p>
+                  </div>
+                  <PhotoApprovalButtons photoId={photo.id} />
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

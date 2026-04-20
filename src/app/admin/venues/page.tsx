@@ -1,14 +1,8 @@
 import Link from "next/link";
-import { Plus, Monitor, Image } from "lucide-react";
-
-const mockVenues = [
-  { id: "1", name: "FitZone Sandton", brand: "FitZone Group", city: "Sandton", status: "active", screensCount: 4, lastPhoto: "2026-04-18" },
-  { id: "2", name: "PowerGym Rosebank", brand: "PowerGym SA", city: "Rosebank", status: "active", screensCount: 3, lastPhoto: "2026-04-17" },
-  { id: "3", name: "IronHouse Cape Town", brand: "IronHouse Fitness", city: "Cape Town", status: "active", screensCount: 2, lastPhoto: "2026-04-16" },
-  { id: "4", name: "Peak Durban North", brand: "Peak Performance", city: "Durban", status: "inactive", screensCount: 1, lastPhoto: "2026-03-31" },
-  { id: "5", name: "SweatBox Pretoria", brand: "SweatBox Studios", city: "Pretoria", status: "active", screensCount: 3, lastPhoto: "2026-04-15" },
-  { id: "6", name: "FitZone Fourways", brand: "FitZone Group", city: "Fourways", status: "coming_soon", screensCount: 0, lastPhoto: null },
-];
+import { Monitor, ImageIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import AddVenueForm from "./add-venue-form";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   active: { label: "Active", color: "#10B981", bg: "rgba(16,185,129,0.15)" },
@@ -16,7 +10,38 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
   coming_soon: { label: "Coming Soon", color: "#F59E0B", bg: "rgba(245,158,11,0.15)" },
 };
 
-export default function VenuesPage() {
+export default async function VenuesPage() {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: venues } = await supabase
+    .from("venues")
+    .select("id, name, city, status, screens(id), gym_brands(name)")
+    .order("name");
+
+  // Get last photo date per venue
+  const { data: lastPhotos } = await supabase
+    .from("venue_photos")
+    .select("venue_id, created_at")
+    .order("created_at", { ascending: false });
+
+  const lastPhotoMap: Record<string, string> = {};
+  for (const p of lastPhotos ?? []) {
+    if (!lastPhotoMap[p.venue_id]) {
+      lastPhotoMap[p.venue_id] = p.created_at?.slice(0, 10) ?? "";
+    }
+  }
+
+  // Fetch brands for the add form
+  const { data: brands } = await supabase
+    .from("gym_brands")
+    .select("id, name")
+    .order("name");
+
+  const rows = venues ?? [];
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
@@ -28,17 +53,10 @@ export default function VenuesPage() {
             Venues
           </h1>
           <p className="text-sm mt-1" style={{ color: "#666666" }}>
-            {mockVenues.length} venues registered
+            {rows.length} venue{rows.length !== 1 ? "s" : ""} registered
           </p>
         </div>
-        <Link
-          href="/admin/venues/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white"
-          style={{ backgroundColor: "#FF6B35" }}
-        >
-          <Plus size={16} strokeWidth={2.5} />
-          Add Venue
-        </Link>
+        <AddVenueForm brands={brands ?? []} />
       </div>
 
       <div
@@ -60,8 +78,11 @@ export default function VenuesPage() {
             </tr>
           </thead>
           <tbody>
-            {mockVenues.map((venue, idx) => {
-              const status = statusConfig[venue.status] || statusConfig.inactive;
+            {rows.map((venue, idx) => {
+              const status = statusConfig[venue.status] ?? statusConfig.inactive;
+              const brand = venue.gym_brands as { name?: string } | null;
+              const screenCount = Array.isArray(venue.screens) ? venue.screens.length : 0;
+              const lastPhoto = lastPhotoMap[venue.id] ?? null;
               return (
                 <tr
                   key={venue.id}
@@ -79,7 +100,7 @@ export default function VenuesPage() {
                     </Link>
                   </td>
                   <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>
-                    {venue.brand}
+                    {brand?.name ?? "—"}
                   </td>
                   <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>
                     {venue.city}
@@ -96,15 +117,15 @@ export default function VenuesPage() {
                     <div className="flex items-center gap-1.5">
                       <Monitor size={14} color="#666666" strokeWidth={2} />
                       <span className="text-sm" style={{ color: "#B3B3B3" }}>
-                        {venue.screensCount}
+                        {screenCount}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1.5">
-                      <Image size={14} color="#666666" strokeWidth={2} />
-                      <span className="text-sm" style={{ color: venue.lastPhoto ? "#B3B3B3" : "#444444" }}>
-                        {venue.lastPhoto || "Never"}
+                      <ImageIcon size={14} color="#666666" strokeWidth={2} />
+                      <span className="text-sm" style={{ color: lastPhoto ? "#B3B3B3" : "#444444" }}>
+                        {lastPhoto ?? "Never"}
                       </span>
                     </div>
                   </td>

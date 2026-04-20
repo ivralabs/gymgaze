@@ -1,13 +1,65 @@
 import Link from "next/link";
 import { Camera, BarChart2, Clock, CheckCircle2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-const pendingTasks = [
-  { id: "1", type: "photo", label: "Upload April 2026 photos", dueDate: "2026-04-30", done: false },
-  { id: "2", type: "stats", label: "Update member count for April", dueDate: "2026-04-30", done: false },
-  { id: "3", type: "photo", label: "Upload March 2026 photos", dueDate: null, done: true },
-];
+export default async function ManagerPage() {
+  const supabase = await createClient();
 
-export default function ManagerPage() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("venue_id")
+    .eq("id", user.id)
+    .single();
+
+  const venueId = profile?.venue_id;
+  let venueName = "Your Venue";
+
+  if (venueId) {
+    const { data: venue } = await supabase
+      .from("venues")
+      .select("name")
+      .eq("id", venueId)
+      .single();
+    venueName = venue?.name ?? "Your Venue";
+  }
+
+  // Check if photos uploaded this month
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  let photosUploadedThisMonth = false;
+
+  if (venueId) {
+    const { count } = await supabase
+      .from("venue_photos")
+      .select("id", { count: "exact", head: true })
+      .eq("venue_id", venueId)
+      .gte("created_at", currentMonthStart);
+    photosUploadedThisMonth = (count ?? 0) > 0;
+  }
+
+  const monthLabel = now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
+
+  const tasks = [
+    {
+      id: "photos",
+      type: "photo",
+      label: `Upload ${monthLabel} photos`,
+      dueDate: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-30`,
+      done: photosUploadedThisMonth,
+    },
+    {
+      id: "stats",
+      type: "stats",
+      label: `Update member count for ${monthLabel}`,
+      dueDate: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-30`,
+      done: false,
+    },
+  ];
+
   return (
     <div>
       <div className="mb-8">
@@ -18,7 +70,7 @@ export default function ManagerPage() {
           Manager Dashboard
         </h1>
         <p className="text-sm mt-1" style={{ color: "#6B7280" }}>
-          FitZone Sandton
+          {venueName}
         </p>
       </div>
 
@@ -97,7 +149,7 @@ export default function ManagerPage() {
             </h2>
           </div>
           <div>
-            {pendingTasks.map((task, idx) => (
+            {tasks.map((task, idx) => (
               <div
                 key={task.id}
                 className="flex items-center justify-between px-6 py-4"

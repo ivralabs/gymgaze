@@ -1,18 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Save, CheckCircle2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function UpdateVenuePage() {
+  const [venueId, setVenueId] = useState<string | null>(null);
+  const [venueName, setVenueName] = useState("Your Venue");
   const [form, setForm] = useState({
-    activeMembers: "3420",
-    dailyEntries: "285",
-    weeklyEntries: "1890",
-    monthlyEntries: "7340",
+    activeMembers: "",
+    dailyEntries: "",
+    weeklyEntries: "",
+    monthlyEntries: "",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadVenue() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "/auth/login";
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("venue_id")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile?.venue_id) {
+        setLoading(false);
+        return;
+      }
+
+      setVenueId(profile.venue_id);
+
+      const { data: venue } = await supabase
+        .from("venues")
+        .select("name, active_members, daily_entries, weekly_entries, monthly_entries")
+        .eq("id", profile.venue_id)
+        .single();
+
+      if (venue) {
+        setVenueName(venue.name ?? "Your Venue");
+        setForm({
+          activeMembers: String(venue.active_members ?? ""),
+          dailyEntries: String(venue.daily_entries ?? ""),
+          weeklyEntries: String(venue.weekly_entries ?? ""),
+          monthlyEntries: String(venue.monthly_entries ?? ""),
+        });
+      }
+      setLoading(false);
+    }
+    loadVenue();
+  }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,13 +67,38 @@ export default function UpdateVenuePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!venueId) return;
     setSaving(true);
-    // TODO: PATCH /api/venues/[id]
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/venues/${venueId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          active_members: form.activeMembers ? parseInt(form.activeMembers) : null,
+          daily_entries: form.dailyEntries ? parseInt(form.dailyEntries) : null,
+          weekly_entries: form.weeklyEntries ? parseInt(form.weeklyEntries) : null,
+          monthly_entries: form.monthlyEntries ? parseInt(form.monthlyEntries) : null,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error ?? "Failed to save stats");
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
   }
+
+  const now = new Date();
+  const monthLabel = now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
 
   const inputStyle = {
     backgroundColor: "#FFFFFF",
@@ -34,6 +106,24 @@ export default function UpdateVenuePage() {
     color: "#111827",
     outline: "none",
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-sm" style={{ color: "#9CA3AF" }}>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!venueId) {
+    return (
+      <div className="py-20 text-center">
+        <p className="text-sm" style={{ color: "#9CA3AF" }}>
+          No venue assigned to your account. Please contact your administrator.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl">
@@ -53,7 +143,7 @@ export default function UpdateVenuePage() {
             Update Venue Stats
           </h1>
           <p className="text-sm mt-0.5" style={{ color: "#6B7280" }}>
-            FitZone Sandton &middot; April 2026
+            {venueName} &middot; {monthLabel}
           </p>
         </div>
       </div>
@@ -72,6 +162,19 @@ export default function UpdateVenuePage() {
         </div>
       )}
 
+      {error && (
+        <div
+          className="px-4 py-3 rounded-lg mb-5 text-sm"
+          style={{
+            backgroundColor: "rgba(220,38,38,0.05)",
+            border: "1px solid rgba(220,38,38,0.2)",
+            color: "#DC2626",
+          }}
+        >
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         <div
           className="rounded-xl p-6 space-y-5"
@@ -81,7 +184,7 @@ export default function UpdateVenuePage() {
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: "#9CA3AF", fontFamily: "Inter Tight, sans-serif" }}
           >
-            Membership & Footfall
+            Membership &amp; Footfall
           </h2>
 
           <div>

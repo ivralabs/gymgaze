@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Outer large circle -->
+  <circle cx="100" cy="100" r="88" stroke="#F07820" stroke-width="4"/>
+
+  <!-- Eye / lens shape — wide horizontal ellipse -->
+  <path d="M12 100 Q100 30 188 100 Q100 170 12 100Z" stroke="#F07820" stroke-width="3" fill="none"/>
+
+  <!-- Inner ring 1 (large iris ring) -->
+  <circle cx="100" cy="100" r="46" stroke="#F07820" stroke-width="3.5"/>
+
+  <!-- Inner ring 2 (mid iris ring) with subtle orange fill for glow -->
+  <circle cx="100" cy="100" r="30" stroke="#F07820" stroke-width="2.5" fill="rgba(240,120,32,0.08)"/>
+
+  <!-- Inner ring 3 (tight ring) -->
+  <circle cx="100" cy="100" r="18" stroke="#F07820" stroke-width="2" fill="rgba(240,120,32,0.12)"/>
+
+  <!-- Crescent pupil (filled circle with white arc cutout) -->
+  <circle cx="100" cy="100" r="10" fill="#F07820"/>
+  <!-- White crescent cut into pupil -->
+  <circle cx="105" cy="96" r="7" fill="white"/>
+  <!-- Small orange dot remaining as pupil highlight -->
+  <circle cx="100" cy="100" r="4" fill="#F07820"/>
+</svg>

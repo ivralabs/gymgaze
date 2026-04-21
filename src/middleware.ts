@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
@@ -45,10 +44,21 @@ export async function middleware(request: NextRequest) {
   }
 
   // Authenticated — check role using service role to bypass RLS
+  // NOTE: Must use @supabase/ssr createServerClient (edge-compatible), NOT @supabase/supabase-js createClient
   if (user) {
-    const serviceClient = createClient(
+    const serviceClient = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll() {
+            // Service role client — no cookie writes needed
+          },
+        },
+      }
     );
     const { data: profile } = await serviceClient
       .from("profiles")

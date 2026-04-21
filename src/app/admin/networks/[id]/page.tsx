@@ -30,8 +30,10 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
   const venueRows = venues ?? [];
 
   const cardStyle = {
-    backgroundColor: "#141414",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.04)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.08)",
   };
 
   return (
@@ -40,7 +42,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
         <Link
           href="/admin/networks"
           className="p-2 rounded-xl"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -91,7 +93,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: "#1E1E1E" }}
+                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
                   <User size={14} color="#909090" strokeWidth={2} />
                 </div>
@@ -106,7 +108,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: "#1E1E1E" }}
+                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
                   <Mail size={14} color="#909090" strokeWidth={2} />
                 </div>
@@ -121,7 +123,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: "#1E1E1E" }}
+                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
                   <Phone size={14} color="#909090" strokeWidth={2} />
                 </div>
@@ -139,7 +141,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
           <div className="rounded-2xl overflow-hidden" style={cardStyle}>
             <div
               className="flex items-center justify-between px-6 py-4"
-              style={{ borderBottom: "1px solid #2A2A2A" }}
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
             >
               <div className="flex items-center gap-2">
                 <MapPin size={16} color="#D4FF4F" strokeWidth={2} />
@@ -166,7 +168,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr style={{ backgroundColor: "#1E1E1E" }}>
+                  <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
                     {["Venue", "City", "Screens", "Status"].map((h) => (
                       <th
                         key={h}
@@ -186,7 +188,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                       <tr
                         key={venue.id}
                         style={{
-                          borderTop: idx >= 0 ? "1px solid #2A2A2A" : "none",
+                          borderTop: idx >= 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
                         }}
                       >
                         <td className="px-6 py-4">

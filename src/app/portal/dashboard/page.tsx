@@ -109,11 +109,8 @@ export default async function PortalDashboard() {
     <div>
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-8"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-8">
@@ -259,7 +256,7 @@ export default async function PortalDashboard() {
                   <p className="text-xs mb-4" style={{ color: "#909090" }}>
                     {venue.city}
                   </p>
-                  <div className="pt-3" style={{ borderTop: "1px solid #2A2A2A" }}>
+                  <div className="pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                     <p className="text-xs" style={{ color: "#909090" }}>Revenue this month</p>
                     <p
                       className="text-base font-bold mt-0.5 tabular-nums"

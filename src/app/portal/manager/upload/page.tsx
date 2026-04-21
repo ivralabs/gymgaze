@@ -81,8 +81,10 @@ export default function UploadPhotoPage() {
   }
 
   const inputStyle = {
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.10)",
     color: "#FFFFFF",
     outline: "none",
   };
@@ -120,11 +122,8 @@ export default function UploadPhotoPage() {
     <div className="max-w-xl">
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-6"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-6"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-6 flex items-center gap-4">
@@ -227,7 +226,7 @@ export default function UploadPhotoPage() {
                 <div
                   key={idx}
                   className="flex items-center justify-between px-3 py-2 rounded-xl"
-                  style={{ backgroundColor: "#0A0A0A", border: "1px solid #2A2A2A" }}
+                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   <span className="text-sm text-white truncate max-w-xs">
                     {file.name}

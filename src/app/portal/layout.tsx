@@ -57,9 +57,9 @@ export default async function PortalLayout({
       <header
         className="sticky top-0 z-10"
         style={{
-          background: "rgba(14, 14, 14, 0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: "rgba(255, 255, 255, 0.04)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
           borderBottom: "1px solid rgba(255,255,255,0.08)",
           height: "72px",
         }}

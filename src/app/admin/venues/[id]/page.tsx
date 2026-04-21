@@ -46,8 +46,10 @@ export default function VenueDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const cardStyle = {
-    backgroundColor: "#141414",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.04)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.08)",
   };
 
   return (
@@ -56,7 +58,7 @@ export default function VenueDetailPage() {
         <Link
           href="/admin/venues"
           className="p-2 rounded-xl"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -74,7 +76,7 @@ export default function VenueDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid #2A2A2A" }}>
+      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -153,12 +155,12 @@ export default function VenueDetailPage() {
               Add Screen
             </button>
           </div>
-          <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
+          <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
             <table className="w-full">
               <thead>
-                <tr style={{ backgroundColor: "#141414", borderBottom: "1px solid #2A2A2A" }}>
+                <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                   {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
-                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid #2A2A2A" }}>
+                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                       {h}
                     </th>
                   ))}
@@ -168,7 +170,7 @@ export default function VenueDetailPage() {
                 {mockScreens.map((screen, idx) => (
                   <tr
                     key={screen.id}
-                    style={{ backgroundColor: "#141414", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
+                    style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
                   >
                     <td className="px-6 py-4 text-sm text-white">{screen.label}</td>
                     <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{screen.size}&quot;</td>
@@ -228,7 +230,7 @@ export default function VenueDetailPage() {
             </label>
             <div
               className="flex items-center justify-center rounded-xl p-6"
-              style={{ border: "2px dashed #2A2A2A" }}
+              style={{ border: "2px dashed rgba(255,255,255,0.12)" }}
             >
               <div className="text-center">
                 <FileText size={28} color="#444444" strokeWidth={1.5} className="mx-auto mb-2" />
@@ -239,7 +241,7 @@ export default function VenueDetailPage() {
                 <label
                   htmlFor="contract-upload"
                   className="mt-3 inline-flex items-center px-4 py-2 rounded-xl text-xs font-medium cursor-pointer"
-                  style={{ backgroundColor: "#1E1E1E", color: "#A3A3A3" }}
+                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", color: "#A3A3A3" }}
                 >
                   Choose file
                 </label>
@@ -256,7 +258,7 @@ export default function VenueDetailPage() {
               <div
                 key={i}
                 className="aspect-video rounded-2xl flex items-center justify-center"
-                style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+                style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 <Image size={24} color="#444444" strokeWidth={1.5} />
               </div>
@@ -266,12 +268,12 @@ export default function VenueDetailPage() {
       )}
 
       {activeTab === "revenue" && (
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#141414" }}>
+              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
                 {["Month", "Rental (ZAR)", "Revenue Share (ZAR)", "Total"].map((h) => (
-                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid #2A2A2A" }}>
+                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                     {h}
                   </th>
                 ))}
@@ -281,7 +283,7 @@ export default function VenueDetailPage() {
               {mockRevenue.map((row, idx) => (
                 <tr
                   key={row.month}
-                  style={{ backgroundColor: "#141414", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
+                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
                 >
                   <td className="px-6 py-4 text-sm text-white">{row.month}</td>
                   <td className="px-6 py-4 text-sm font-mono tabular-nums" style={{ color: "#A3A3A3" }}>

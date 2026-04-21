@@ -54,12 +54,12 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex"
-      style={{ backgroundColor: "#0A0A0A" }}
+      style={{ backgroundColor: "transparent" }}
     >
       {/* Left panel — login form */}
       <div
         className="flex flex-col justify-center items-center w-full md:w-1/2 px-6 py-12 relative"
-        style={{ backgroundColor: "#0A0A0A" }}
+        style={{ backgroundColor: "transparent" }}
       >
         {/* Radial lime glow behind the form */}
         <div
@@ -101,8 +101,14 @@ export default function LoginPage() {
 
           {/* Card */}
           <div
-            className="glass-card-elevated w-full rounded-2xl p-8"
-            style={{ borderRadius: 16 }}
+            className="w-full rounded-2xl p-8"
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              backdropFilter: "blur(40px)",
+              WebkitBackdropFilter: "blur(40px)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 16,
+            }}
           >
             <h2
               className="text-xl font-semibold mb-6"
@@ -129,16 +135,18 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   className="w-full rounded-xl px-4 py-3 text-sm transition-colors duration-150"
                   style={{
-                    backgroundColor: "rgba(10,10,10,0.8)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "rgba(255,255,255,0.06)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255,255,255,0.10)",
                     color: "#FFFFFF",
                     outline: "none",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = "#D4FF4F";
+                    e.target.style.borderColor = "rgba(212,255,79,0.5)";
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = "rgba(255,255,255,0.08)";
+                    e.target.style.borderColor = "rgba(255,255,255,0.10)";
                   }}
                 />
               </div>
@@ -160,16 +168,18 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   className="w-full rounded-xl px-4 py-3 text-sm transition-colors duration-150"
                   style={{
-                    backgroundColor: "rgba(10,10,10,0.8)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "rgba(255,255,255,0.06)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255,255,255,0.10)",
                     color: "#FFFFFF",
                     outline: "none",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = "#D4FF4F";
+                    e.target.style.borderColor = "rgba(212,255,79,0.5)";
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = "rgba(255,255,255,0.08)";
+                    e.target.style.borderColor = "rgba(255,255,255,0.10)";
                   }}
                 />
               </div>
@@ -221,8 +231,10 @@ export default function LoginPage() {
       <div
         className="hidden md:flex w-1/2 relative overflow-hidden items-center justify-center"
         style={{
-          background: "linear-gradient(135deg, #0D0D0D 0%, #0A0A0A 100%)",
-          borderLeft: "1px solid rgba(255,255,255,0.05)",
+          background: "rgba(255,255,255,0.03)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderLeft: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         {/* Lime glow in the right panel */}

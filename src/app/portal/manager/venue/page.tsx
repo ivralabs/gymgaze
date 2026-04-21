@@ -101,8 +101,10 @@ export default function UpdateVenuePage() {
   const monthLabel = now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
 
   const inputStyle = {
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.10)",
     color: "#FFFFFF",
     outline: "none",
   };
@@ -129,11 +131,8 @@ export default function UpdateVenuePage() {
     <div className="max-w-xl">
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-6"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-6"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-6 flex items-center gap-4">

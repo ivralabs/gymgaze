@@ -35,8 +35,10 @@ export default function AddNetworkForm() {
   }
 
   const inputStyle = {
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.10)",
     color: "#FFFFFF",
     outline: "none",
   };
@@ -59,7 +61,7 @@ export default function AddNetworkForm() {
         >
           <div
             className="w-full max-w-md rounded-2xl p-6"
-            style={{ backgroundColor: "#1E1E1E", border: "1px solid #3A3A3A" }}
+            style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(255,255,255,0.12)" }}
           >
             <div className="flex items-center justify-between mb-5">
               <h3

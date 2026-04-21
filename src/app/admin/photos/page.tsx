@@ -44,11 +44,8 @@ export default async function PhotosPage() {
     <div className="p-8">
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-8"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-8 flex items-center gap-8">

@@ -68,8 +68,10 @@ export default function NewCampaignPage() {
   }
 
   const inputStyle = {
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.10)",
     color: "#FFFFFF",
     outline: "none",
     width: "100%",
@@ -92,7 +94,7 @@ export default function NewCampaignPage() {
         <Link
           href="/admin/campaigns"
           className="p-2 rounded-xl"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -125,7 +127,7 @@ export default function NewCampaignPage() {
       <form onSubmit={handleSubmit}>
         <div
           className="rounded-2xl p-6 mb-5 space-y-5"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold text-white"
@@ -214,7 +216,7 @@ export default function NewCampaignPage() {
         {/* Venue selection */}
         <div
           className="rounded-2xl p-6 mb-6"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold text-white mb-4"
@@ -234,15 +236,17 @@ export default function NewCampaignPage() {
                     key={venue.id}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-colors"
                     style={{
-                      backgroundColor: checked ? "rgba(212,255,79,0.06)" : "#0A0A0A",
-                      border: `1px solid ${checked ? "rgba(212,255,79,0.2)" : "#2A2A2A"}`,
+                      background: checked ? "rgba(212,255,79,0.06)" : "rgba(255,255,255,0.03)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: `1px solid ${checked ? "rgba(212,255,79,0.2)" : "rgba(255,255,255,0.08)"}`,
                     }}
                   >
                     <div
                       className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0"
                       style={{
                         backgroundColor: checked ? "#D4FF4F" : "transparent",
-                        border: `1.5px solid ${checked ? "#D4FF4F" : "#3A3A3A"}`,
+                        border: `1.5px solid ${checked ? "#D4FF4F" : "rgba(255,255,255,0.15)"}`,
                       }}
                     >
                       {checked && (

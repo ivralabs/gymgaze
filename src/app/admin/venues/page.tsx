@@ -46,11 +46,8 @@ export default async function VenuesPage() {
     <div className="p-8">
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-8"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-8">
@@ -78,7 +75,7 @@ export default async function VenuesPage() {
       >
         <table className="w-full">
           <thead>
-            <tr style={{ background: "rgba(20,20,20,0.6)" }}>
+            <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
               {["Venue", "Network", "City", "Status", "Screens", "Last Photo", ""].map((h) => (
                 <th
                   key={h}

@@ -59,11 +59,8 @@ export default async function RevenuePage({
     <div className="p-8">
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-8"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-8">
@@ -102,9 +99,11 @@ export default async function RevenuePage({
               href={`/admin/revenue?month=${m.key}`}
               className="px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150"
               style={{
-                backgroundColor: isSelected ? "#D4FF4F" : "#141414",
+                background: isSelected ? "#D4FF4F" : "rgba(255,255,255,0.04)",
+                backdropFilter: isSelected ? undefined : "blur(12px)",
+                WebkitBackdropFilter: isSelected ? undefined : "blur(12px)",
                 color: isSelected ? "#0A0A0A" : "#A3A3A3",
-                border: `1px solid ${isSelected ? "#D4FF4F" : "#2A2A2A"}`,
+                border: `1px solid ${isSelected ? "#D4FF4F" : "rgba(255,255,255,0.08)"}`,
               }}
             >
               {m.label}
@@ -174,7 +173,7 @@ export default async function RevenuePage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(20,20,20,0.6)" }}>
+              <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
                 {["Venue", "Month", "Rental (ZAR)", "Rev Share (ZAR)", "Total", "Entered By"].map((h) => (
                   <th
                     key={h}

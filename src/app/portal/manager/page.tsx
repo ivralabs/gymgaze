@@ -64,11 +64,8 @@ export default async function ManagerPage() {
     <div>
       {/* Hero Panel */}
       <div
-        className="relative overflow-hidden rounded-2xl mb-8"
-        style={{
-          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        style={{ borderRadius: 16 }}
       >
 
         <div className="relative z-10 p-8">
@@ -146,7 +143,7 @@ export default async function ManagerPage() {
         >
           <div
             className="px-6 py-4"
-            style={{ borderBottom: "1px solid #2A2A2A" }}
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
           >
             <h2
               className="text-sm font-semibold text-white"
@@ -161,7 +158,7 @@ export default async function ManagerPage() {
                 key={task.id}
                 className="flex items-center justify-between px-6 py-4"
                 style={{
-                  borderTop: idx > 0 ? "1px solid #2A2A2A" : "none",
+                  borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
                   opacity: task.done ? 0.5 : 1,
                 }}
               >

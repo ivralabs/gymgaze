@@ -49,7 +49,7 @@ export default function PortalNav() {
         style={{ color: "#909090" }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1E1E1E";
+          (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
         }}
         onMouseLeave={(e) => {
           (e.currentTarget as HTMLButtonElement).style.color = "#909090";

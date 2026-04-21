@@ -67,12 +67,12 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
             <div
               key={photo.id}
               className="rounded-2xl overflow-hidden"
-              style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+              style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
             >
               {/* Photo preview */}
               <div
                 className="aspect-video flex items-center justify-center overflow-hidden"
-                style={{ backgroundColor: "#1E1E1E" }}
+                style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
               >
                 {photo.signedUrl ? (
                   <img
@@ -171,8 +171,10 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
               placeholder="e.g. Photo is blurry, screen not fully visible..."
               className="w-full rounded-xl px-4 py-3 text-sm mb-4 resize-none"
               style={{
-                backgroundColor: "#0A0A0A",
-                border: "1px solid #2A2A2A",
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
                 color: "#FFFFFF",
                 outline: "none",
               }}

@@ -32,7 +32,7 @@ export default function NewNetworkPage() {
         <Link
           href="/admin/networks"
           className="p-2 rounded-lg transition-colors duration-150"
-          style={{ backgroundColor: "#1E1E1E", color: "#B3B3B3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#B3B3B3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -52,7 +52,7 @@ export default function NewNetworkPage() {
       <form onSubmit={handleSubmit}>
         <div
           className="rounded-xl p-6 space-y-5"
-          style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
@@ -73,8 +73,10 @@ export default function NewNetworkPage() {
               placeholder="e.g. FitZone Group"
               className="w-full rounded-lg px-4 py-3 text-sm"
               style={{
-                backgroundColor: "#0F0F0F",
-                border: "1px solid #333333",
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
                 color: "#FFFFFF",
                 outline: "none",
               }}
@@ -92,7 +94,7 @@ export default function NewNetworkPage() {
                 value={form.primaryColor}
                 onChange={handleChange}
                 className="w-12 h-12 rounded-lg cursor-pointer"
-                style={{ border: "1px solid #333333", padding: "2px" }}
+                style={{ border: "1px solid rgba(255,255,255,0.10)", padding: "2px", background: "transparent" }}
               />
               <input
                 name="primaryColor"
@@ -101,8 +103,10 @@ export default function NewNetworkPage() {
                 placeholder="#FF6B35"
                 className="w-36 rounded-lg px-4 py-3 text-sm font-mono"
                 style={{
-                  backgroundColor: "#0F0F0F",
-                  border: "1px solid #333333",
+                  background: "rgba(255,255,255,0.05)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255,255,255,0.10)",
                   color: "#FFFFFF",
                   outline: "none",
                 }}
@@ -113,7 +117,7 @@ export default function NewNetworkPage() {
 
         <div
           className="rounded-xl p-6 space-y-5 mt-5"
-          style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
@@ -133,8 +137,10 @@ export default function NewNetworkPage() {
               placeholder="Full name"
               className="w-full rounded-lg px-4 py-3 text-sm"
               style={{
-                backgroundColor: "#0F0F0F",
-                border: "1px solid #333333",
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
                 color: "#FFFFFF",
                 outline: "none",
               }}
@@ -153,8 +159,10 @@ export default function NewNetworkPage() {
               placeholder="contact@gymgroup.co.za"
               className="w-full rounded-lg px-4 py-3 text-sm"
               style={{
-                backgroundColor: "#0F0F0F",
-                border: "1px solid #333333",
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
                 color: "#FFFFFF",
                 outline: "none",
               }}
@@ -173,8 +181,10 @@ export default function NewNetworkPage() {
               placeholder="+27 11 000 0000"
               className="w-full rounded-lg px-4 py-3 text-sm"
               style={{
-                backgroundColor: "#0F0F0F",
-                border: "1px solid #333333",
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
                 color: "#FFFFFF",
                 outline: "none",
               }}
@@ -188,7 +198,7 @@ export default function NewNetworkPage() {
             className="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150"
             style={{
               backgroundColor: "transparent",
-              border: "1px solid #333333",
+              border: "1px solid rgba(255,255,255,0.10)",
               color: "#B3B3B3",
             }}
           >

@@ -72,8 +72,10 @@ export default function NewRevenuePage() {
   }
 
   const inputStyle = {
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.10)",
     color: "#FFFFFF",
     outline: "none",
     width: "100%",
@@ -96,7 +98,7 @@ export default function NewRevenuePage() {
         <Link
           href="/admin/revenue"
           className="p-2 rounded-xl"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -129,7 +131,7 @@ export default function NewRevenuePage() {
       <form onSubmit={handleSubmit}>
         <div
           className="rounded-2xl p-6 mb-5 space-y-5"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <div>
             <label style={labelStyle}>Venue *</label>

@@ -82,8 +82,10 @@ export default async function VenuePage({
     : "Not set";
 
   const cardStyle = {
-    backgroundColor: "#141414",
-    border: "1px solid #2A2A2A",
+    background: "rgba(255,255,255,0.04)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.08)",
   };
 
   return (
@@ -93,7 +95,7 @@ export default async function VenuePage({
         <Link
           href="/portal/dashboard"
           className="p-2 rounded-xl flex-shrink-0"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -221,7 +223,7 @@ export default async function VenuePage({
       >
         <div
           className="flex items-center justify-between px-6 py-4"
-          style={{ borderBottom: "1px solid #2A2A2A" }}
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold text-white"
@@ -240,7 +242,7 @@ export default async function VenuePage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#141414" }}>
+              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
                 <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090" }}>
                   Month
                 </th>
@@ -259,7 +261,7 @@ export default async function VenuePage({
                 return (
                   <tr
                     key={idx}
-                    style={{ borderTop: "1px solid #2A2A2A" }}
+                    style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
                   >
                     <td className="px-6 py-3 text-sm text-white">{label}</td>
                     <td className="px-6 py-3 text-sm font-semibold text-right tabular-nums font-mono" style={{ color: "#D4FF4F" }}>
@@ -308,7 +310,7 @@ export default async function VenuePage({
                 ) : (
                   <div
                     className="aspect-video flex items-center justify-center"
-                    style={{ backgroundColor: "#1E1E1E" }}
+                    style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                   >
                     <Image size={24} color="#444444" strokeWidth={1.5} />
                   </div>

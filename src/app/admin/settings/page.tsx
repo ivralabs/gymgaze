@@ -96,8 +96,8 @@ export default function SettingsPage() {
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded-xl" style={{ backgroundColor: "#141414" }} />
-          <div className="h-32 rounded-2xl" style={{ backgroundColor: "#141414" }} />
+          <div className="h-8 w-48 rounded-xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.10)" }} />
+          <div className="h-32 rounded-2xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.10)" }} />
         </div>
       </div>
     );
@@ -113,11 +113,7 @@ export default function SettingsPage() {
           border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <img
-          src="/hero-object.png"
-          alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
-        />
+
         <div className="relative z-10 p-8">
           <h1
             style={{

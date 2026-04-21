@@ -233,12 +233,7 @@ export default function LoginPage() {
               "radial-gradient(ellipse at 60% 40%, rgba(212,255,79,0.06) 0%, transparent 60%)",
           }}
         />
-        <img
-          src="/hero-object.png"
-          alt=""
-          className="relative z-10 w-3/4 max-w-md object-contain"
-          style={{ filter: "drop-shadow(0 0 60px rgba(212,255,79,0.15))" }}
-        />
+
       </div>
     </div>
   );

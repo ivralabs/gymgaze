@@ -126,11 +126,7 @@ export default function UploadPhotoPage() {
           border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <img
-          src="/hero-object.png"
-          alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
-        />
+
         <div className="relative z-10 p-6 flex items-center gap-4">
           <Link
             href="/portal/manager"

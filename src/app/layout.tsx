@@ -42,7 +42,7 @@ export default function RootLayout({
             position: 'fixed',
             inset: 0,
             zIndex: 1,
-            background: 'rgba(10,10,10,0.80)',
+            background: 'rgba(10,10,10,0.55)',
           }}
         />
         <div style={{ position: 'relative', zIndex: 2 }}>

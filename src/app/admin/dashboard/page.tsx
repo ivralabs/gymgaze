@@ -96,10 +96,10 @@ export default async function AdminDashboard() {
           <p style={{ color: "#666", marginTop: "0.5rem" }}>
             Your GymGaze command centre
           </p>
-          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <Link
               href="/admin/campaigns/new"
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-150"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
               style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
             >
               <Plus size={14} strokeWidth={2.5} />
@@ -107,7 +107,7 @@ export default async function AdminDashboard() {
             </Link>
             <Link
               href="/admin/venues/new"
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid rgba(255,255,255,0.12)",
@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
             </Link>
             <Link
               href="/admin/revenue/new"
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid rgba(255,255,255,0.12)",

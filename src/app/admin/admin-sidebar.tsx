@@ -8,6 +8,7 @@ import {
   MapPin,
   Megaphone,
   DollarSign,
+  BarChart3,
   Image,
   Settings,
   Zap,
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/admin/venues", icon: MapPin, label: "Venues" },
   { href: "/admin/campaigns", icon: Megaphone, label: "Campaigns" },
   { href: "/admin/revenue", icon: DollarSign, label: "Revenue" },
+  { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/photos", icon: Image, label: "Photos" },
   { href: "/admin/settings", icon: Settings, label: "Settings" },
 ];

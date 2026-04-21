@@ -5,7 +5,7 @@
 - **Tablet (768px)**: 2-column grid, sidebar navigation
 - **Desktop (1024px+)**: Multi-column layouts, data-dense views
 - **Admin**: Dark theme, sidebar navigation, compact spacing
-- **Partner**: Light theme, top navigation, generous spacing
+- **Partner**: Dark theme, top navigation, generous spacing
 
 ---
 
@@ -292,7 +292,7 @@
 
 ## 10. Owner Dashboard (Partner Portal)
 
-### Desktop Layout (White-label example: Edge Gyms)
+### Desktop Layout (Partner Portal example: Edge Gyms)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ [Edge Gyms Logo] Partner Portal              [Profile]     │
@@ -486,41 +486,39 @@
 
 ---
 
-## 16. White-Label Engine
+## 16. Partner Logo System
 
-### Brand Injection System
+### Logo-Only Branding
 ```
 
-CSS Custom Properties (Runtime):
+Partner Portal branding is logo-only. No color customization.
+The platform is always dark + lime (#D4FF4F) regardless of partner.
+
+Partner Configuration (Runtime):
 ┌─────────────────────┬───────────────────────────┐
 │ Variable            │ Example Value             │
 ├─────────────────────┼───────────────────────────┤
-│ --brand-primary     │ #FF6B35 (Edge Gyms)       │
-│ --brand-primary-dark│ #E55A2B                   │
-│ --brand-primary-light│ #FFE4D6                  │
-│ --brand-logo-url    │ url('/edge-gyms-logo.svg')│
-│ --brand-font        │ 'Inter', sans-serif       │
+│ --partner-logo-url  │ url('/edge-gyms-logo.svg')│
+│ --partner-font      │ 'Inter', sans-serif       │
 └─────────────────────┴───────────────────────────┘
 
-Component Override Rules:
-- Header background: Uses --brand-primary
-- Primary buttons: Background --brand-primary
-- Links and accents: --brand-primary
-- Logo: --brand-logo-url injection
-- Gradient overlays: --brand-primary with opacity
+Component Rules:
+- Header: Always dark (#0A0A0A), partner logo displayed
+- Primary buttons: Always lime (#D4FF4F), black text
+- Accents: Always #D4FF4F — no partner color override
+- Logo: --partner-logo-url injection (logo only)
 
-Brand Detection Logic:
-1. Check subdomain/URL for brand identifier
-2. Fetch brand config from API
-3. Apply CSS custom properties
-4. Update logo and colors
-5. Cache for offline use
+Logo Detection Logic:
+1. Check subdomain/URL for partner identifier
+2. Fetch partner logo URL from API
+3. Inject logo into header
+4. Platform theme remains dark + lime
+5. Cache logo URL for offline use
 
 Fallback Strategy:
-- Invalid brand: Revert to GymGaze default
-- Missing logo: Show GymGaze logo
-- API failure: Use cached brand or default
-- Offline mode: Use cached configuration
+- Missing logo: Show GymGaze default logo
+- API failure: Use cached logo or default
+- Offline mode: Use cached logo
 ```
 
 ---
@@ -543,8 +541,8 @@ Fallback Strategy:
 - **Mobile**: Bottom tab bar (5 items max), hamburger menu
 
 ### Form Patterns
-- **Admin**: Dark inputs, orange focus states, compact spacing
-- **Partner**: Light inputs, brand-color focus, generous spacing
+- **Admin**: Dark inputs, lime (#D4FF4F) focus states, compact spacing
+- **Partner**: Dark inputs, lime (#D4FF4F) focus states, generous spacing
 - **Mobile**: Full-width inputs, large touch targets, stacked layout
 
 ### Interactive States
@@ -552,15 +550,14 @@ Fallback Strategy:
 - **Active**: Color darken (10%), scale (0.98)
 - **Focus**: 2px solid brand color outline
 - **Loading**: Skeleton screens, pulsing animation
-- **Error**: Red border, error icon, error text
+- **Error**: Red border (destructive confirmations only), error icon, error text
 - **Success**: Green checkmark, brief animation
 
-### White-Label Implementation
-- CSS custom properties for all brand colors
-- Dynamic logo URL injection
-- Font override support
-- Component-level brand awareness
-- Fallback to GymGaze defaults
+### Partner Branding Implementation
+- Logo URL injection only (no color customization)
+- Font: Inter/Inter Tight — fixed, not overridable
+- Platform always dark + lime (#D4FF4F)
+- Fallback to GymGaze default logo
 
 ### Responsive Strategy
 - Mobile-first development
@@ -569,4 +566,4 @@ Fallback Strategy:
 - Performance-first loading
 - Offline-capable caching
 
-This specification provides the complete blueprint for implementing GymGaze's 16 screens with consistent design patterns, responsive behavior, and white-label flexibility.
+This specification provides the complete blueprint for implementing GymGaze's 16 screens with consistent design patterns, responsive behavior, and a unified dark + lime visual identity.

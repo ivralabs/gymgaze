@@ -24,7 +24,7 @@ export default async function CampaignsPage() {
 
   const { data: campaigns } = await supabase
     .from("campaigns")
-    .select("id, name, advertiser, start_date, end_date, amount_charged_zar, campaign_venues(id)")
+    .select("id, name, advertiser, deal_type, start_date, end_date, amount_charged_zar, campaign_venues(id)")
     .order("start_date", { ascending: false });
 
   const rows = campaigns ?? [];
@@ -91,7 +91,7 @@ export default async function CampaignsPage() {
           <table className="w-full">
             <thead>
               <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
-                {["Name", "Advertiser", "Start Date", "End Date", "Amount (ZAR)", "Venues", ""].map((h) => (
+                {["Name", "Advertiser", "Deal Type", "Start Date", "End Date", "Amount (ZAR)", "Venues", ""].map((h) => (
                   <th
                     key={h}
                     className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
@@ -140,6 +140,27 @@ export default async function CampaignsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>
                       {campaign.advertiser ?? "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      {campaign.deal_type ? (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-full font-medium uppercase tracking-wider"
+                          style={{
+                            backgroundColor:
+                              campaign.deal_type === "fixed" ? "rgba(212,255,79,0.10)" :
+                              campaign.deal_type === "cpm" ? "rgba(99,179,237,0.10)" :
+                              "rgba(167,139,250,0.10)",
+                            color:
+                              campaign.deal_type === "fixed" ? "#D4FF4F" :
+                              campaign.deal_type === "cpm" ? "#63B3ED" :
+                              "#A78BFA",
+                          }}
+                        >
+                          {campaign.deal_type === "fixed" ? "Fixed Fee" : campaign.deal_type === "cpm" ? "CPM" : "Rev Share"}
+                        </span>
+                      ) : (
+                        <span style={{ color: "#444" }}>—</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#A3A3A3" }}>
                       {formatDate(campaign.start_date)}

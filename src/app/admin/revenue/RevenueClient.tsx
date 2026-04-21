@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { FileText, FileSpreadsheet, ChevronDown, ChevronUp } from 'lucide-react'
+import RevenuePageClient from './RevenuePageClient'
 
 // Lazy-load charts (Recharts is heavy)
 const RevenueWaterfallChart = dynamic(
@@ -97,6 +98,7 @@ export interface RevenueClientProps {
   venues: Venue[]
   campaigns: Campaign[]
   contracts: Contract[]
+  venuesForForm?: { id: string; name: string; city: string | null }[]
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -128,6 +130,7 @@ export default function RevenueClient({
   venues,
   campaigns,
   contracts,
+  venuesForForm = [],
 }: RevenueClientProps) {
   const [selectedRange, setSelectedRange] = useState<DateRange>('12M')
   const [monthlyExpanded, setMonthlyExpanded] = useState(false)
@@ -453,6 +456,9 @@ export default function RevenueClient({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* Add Entry */}
+            <RevenuePageClient venues={venuesForForm} />
+
             {/* Date range pills */}
             <div className="flex gap-1 p-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
               {RANGES.map((r) => (

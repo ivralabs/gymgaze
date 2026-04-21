@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import RevenueClient from './RevenueClient'
+import RevenuePageClient from './RevenuePageClient'
 import type { RevenueEntry, Venue, Campaign, Contract } from './RevenueClient'
 
 export default async function RevenuePage() {
@@ -17,12 +18,20 @@ export default async function RevenuePage() {
     .select(
       'id, venue_id, month, rental_zar, revenue_share_zar, venues(id, name, city, region, gym_brand_id, gym_brands(name))'
     )
-    .order('month', { ascending: true })
+    .order('month', { ascending: false })
+    .limit(50)
 
-  // All venues
+  // All venues (for form dropdown)
   const { data: venues } = await supabase
     .from('venues')
     .select('id, name, city, region, status, active_members, gym_brand_id, gym_brands(name)')
+    .order('name')
+
+  // Venues for the entry form (simple list)
+  const { data: venuesForForm } = await supabase
+    .from('venues')
+    .select('id, name, city')
+    .order('name')
 
   // Campaigns with deal data
   const { data: campaigns } = await supabase
@@ -38,11 +47,15 @@ export default async function RevenuePage() {
     .select('id, venue_id, monthly_rental_zar, revenue_share_percent, start_date, end_date')
 
   return (
-    <RevenueClient
-      revenueEntries={(revenueEntries ?? []) as unknown as RevenueEntry[]}
-      venues={(venues ?? []) as unknown as Venue[]}
-      campaigns={(campaigns ?? []) as unknown as Campaign[]}
-      contracts={(contracts ?? []) as unknown as Contract[]}
-    />
+    <div>
+      {/* Add Entry form lives in the hero area — injected into RevenueClient via prop */}
+      <RevenueClient
+        revenueEntries={(revenueEntries ?? []) as unknown as RevenueEntry[]}
+        venues={(venues ?? []) as unknown as Venue[]}
+        campaigns={(campaigns ?? []) as unknown as Campaign[]}
+        contracts={(contracts ?? []) as unknown as Contract[]}
+        venuesForForm={venuesForForm ?? []}
+      />
+    </div>
   )
 }

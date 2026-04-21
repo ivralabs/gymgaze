@@ -83,6 +83,23 @@ export default async function CampaignDetailPage({
                 Live
               </span>
             )}
+            {campaign.deal_type && (
+              <span
+                className="text-xs px-2 py-1 rounded-full font-medium uppercase"
+                style={{
+                  backgroundColor:
+                    campaign.deal_type === "fixed" ? "rgba(212,255,79,0.10)" :
+                    campaign.deal_type === "cpm" ? "rgba(99,179,237,0.10)" :
+                    "rgba(167,139,250,0.10)",
+                  color:
+                    campaign.deal_type === "fixed" ? "#D4FF4F" :
+                    campaign.deal_type === "cpm" ? "#63B3ED" :
+                    "#A78BFA",
+                }}
+              >
+                {campaign.deal_type === "fixed" ? "Fixed Fee" : campaign.deal_type === "cpm" ? "CPM" : "Rev Share"}
+              </span>
+            )}
           </div>
           {campaign.advertiser && (
             <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
@@ -144,6 +161,39 @@ export default async function CampaignDetailPage({
                 </p>
               </div>
             </div>
+
+            {campaign.deal_type === "cpm" && campaign.cpm_rate != null && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>CPM Rate</p>
+                <p className="text-sm font-mono text-white">R{campaign.cpm_rate}/CPM</p>
+              </div>
+            )}
+
+            {campaign.deal_type === "share" && campaign.revenue_share_percent != null && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Revenue Share</p>
+                <p className="text-sm font-mono text-white">{campaign.revenue_share_percent}%</p>
+              </div>
+            )}
+
+            {campaign.gym_revenue_share_percent != null && campaign.gym_revenue_share_percent > 0 && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Gym Split</p>
+                <p className="text-sm font-mono text-white">{campaign.gym_revenue_share_percent}%</p>
+              </div>
+            )}
+
+            {(campaign.contact_person || campaign.contact_email) && (
+              <div>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Contact</p>
+                {campaign.contact_person && (
+                  <p className="text-sm text-white">{campaign.contact_person}</p>
+                )}
+                {campaign.contact_email && (
+                  <p className="text-sm" style={{ color: "#A3A3A3" }}>{campaign.contact_email}</p>
+                )}
+              </div>
+            )}
 
             {campaign.notes && (
               <div>

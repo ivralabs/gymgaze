@@ -218,20 +218,18 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
         Add Venue
       </button>
 
-      {/* Overlay */}
+      {/* Overlay + Drawer — only mounted when open */}
       {open && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.7)",
-            zIndex: 50,
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) handleClose();
-          }}
-        />
-      )}
+        <>
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(0,0,0,0.7)",
+              zIndex: 50,
+            }}
+            onClick={handleClose}
+          />
 
       {/* Drawer */}
       <div
@@ -245,12 +243,10 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
           zIndex: 51,
           display: "flex",
           flexDirection: "column",
-          background: "rgba(15,15,15,0.95)",
+          background: "rgba(15,15,15,0.97)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
           borderLeft: "1px solid rgba(255,255,255,0.10)",
-          transform: open ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
         {/* Drawer Header */}
@@ -687,6 +683,8 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
           </button>
         </div>
       </div>
+        </>
+      )}
     </>
   );
 }

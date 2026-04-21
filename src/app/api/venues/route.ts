@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("venues")
-    .select("*, gym_brands(name, primary_color)")
+    .select("id, name, city, region, status, active_members, gym_brand_id, gym_brands(name, primary_color)")
     .order("name");
 
   if (error) {

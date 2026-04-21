@@ -31,33 +31,49 @@ export default async function CampaignsPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
           <h1
-            className="text-3xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
           >
             Campaigns
           </h1>
-          <p className="text-sm mt-1" style={{ color: "#666666" }}>
-            {rows.length} campaign{rows.length !== 1 ? "s" : ""} total
-          </p>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Track ad campaigns across venues</p>
+          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
+            <Link
+              href="/admin/campaigns/new"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+            >
+              <Plus size={14} strokeWidth={2.5} />
+              New Campaign
+            </Link>
+          </div>
         </div>
-        <Link
-          href="/admin/campaigns/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150"
-          style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
-        >
-          <Plus size={16} strokeWidth={2.5} />
-          New Campaign
-        </Link>
       </div>
 
-      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
+      <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
         {rows.length === 0 ? (
           <div
             className="flex flex-col items-center justify-center py-20"
-            style={{ backgroundColor: "#141414" }}
           >
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
@@ -81,12 +97,12 @@ export default async function CampaignsPage() {
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#141414" }}>
+              <tr style={{ background: "rgba(20,20,20,0.6)" }}>
                 {["Name", "Advertiser", "Start Date", "End Date", "Amount (ZAR)", "Venues", ""].map((h) => (
                   <th
                     key={h}
                     className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}
+                    style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     {h}
                   </th>
@@ -108,8 +124,7 @@ export default async function CampaignsPage() {
                   <tr
                     key={campaign.id}
                     style={{
-                      backgroundColor: "#141414",
-                      borderTop: "1px solid #2A2A2A",
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
                     <td className="px-6 py-4">

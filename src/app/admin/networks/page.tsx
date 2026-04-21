@@ -19,19 +19,38 @@ export default async function NetworksPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
           <h1
-            className="text-3xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
           >
-            Gym Networks
+            Networks
           </h1>
-          <p className="text-sm mt-1" style={{ color: "#666666" }}>
-            {rows.length} network{rows.length !== 1 ? "s" : ""} registered
-          </p>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Manage gym brands and partners</p>
+          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
+            <div className="relative">
+              <AddNetworkForm />
+            </div>
+          </div>
         </div>
-        <AddNetworkForm />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -42,11 +61,8 @@ export default async function NetworksPage() {
             <Link
               key={network.id}
               href={`/admin/networks/${network.id}`}
-              className="block rounded-2xl p-6 transition-colors duration-150 group"
-              style={{
-                backgroundColor: "#141414",
-                border: "1px solid #2A2A2A",
-              }}
+              className="glass-card block rounded-2xl p-6 transition-colors duration-150 group"
+              style={{ borderRadius: 16 }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div

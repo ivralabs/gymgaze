@@ -127,24 +127,37 @@ export default function UpdateVenuePage() {
 
   return (
     <div className="max-w-xl">
-      <div className="flex items-center gap-4 mb-8">
-        <Link
-          href="/portal/manager"
-          className="p-2 rounded-xl"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
-        >
-          <ArrowLeft size={18} strokeWidth={2} />
-        </Link>
-        <div>
-          <h1
-            className="text-2xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-6"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-6 flex items-center gap-4">
+          <Link
+            href="/portal/manager"
+            className="p-2 rounded-xl flex-shrink-0"
+            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#A3A3A3" }}
           >
-            Update Venue Stats
-          </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
-            {venueName} &middot; {monthLabel}
-          </p>
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <div>
+            <h1
+              style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#fff", letterSpacing: "-0.02em" }}
+            >
+              Update Venue Stats
+            </h1>
+            <p style={{ color: "#666", marginTop: "0.25rem", fontSize: "0.875rem" }}>
+              {venueName} &middot; {monthLabel}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -177,8 +190,8 @@ export default function UpdateVenuePage() {
 
       <form onSubmit={handleSubmit}>
         <div
-          className="rounded-2xl p-6 space-y-5"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+          className="glass-card rounded-2xl p-6 space-y-5"
+          style={{ borderRadius: 16 }}
         >
           <h2
             className="text-xs font-semibold uppercase tracking-wider"

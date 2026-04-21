@@ -44,33 +44,50 @@ export default async function VenuesPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
           <h1
-            className="text-3xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
           >
             Venues
           </h1>
-          <p className="text-sm mt-1" style={{ color: "#666666" }}>
-            {rows.length} venue{rows.length !== 1 ? "s" : ""} registered
-          </p>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>All gym locations across your network</p>
+          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
+            <AddVenueForm brands={brands ?? []} />
+          </div>
         </div>
-        <AddVenueForm brands={brands ?? []} />
       </div>
 
       <div
-        className="rounded-2xl overflow-hidden"
-        style={{ border: "1px solid #2A2A2A" }}
+        className="glass-card rounded-2xl overflow-hidden"
+        style={{ borderRadius: 16 }}
       >
         <table className="w-full">
           <thead>
-            <tr style={{ backgroundColor: "#141414" }}>
+            <tr style={{ background: "rgba(20,20,20,0.6)" }}>
               {["Venue", "Network", "City", "Status", "Screens", "Last Photo", ""].map((h) => (
                 <th
                   key={h}
                   className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}
+                  style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                 >
                   {h}
                 </th>
@@ -83,7 +100,7 @@ export default async function VenuesPage() {
                 <td
                   colSpan={7}
                   className="px-6 py-12 text-center text-sm"
-                  style={{ color: "#666666", backgroundColor: "#141414" }}
+                  style={{ color: "#666666" }}
                 >
                   No venues yet. Add your first venue to get started.
                 </td>
@@ -98,8 +115,7 @@ export default async function VenuesPage() {
                   <tr
                     key={venue.id}
                     style={{
-                      backgroundColor: "#141414",
-                      borderTop: "1px solid #2A2A2A",
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
                     <td className="px-6 py-4">

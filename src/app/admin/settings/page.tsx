@@ -104,23 +104,41 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl">
-      <div className="mb-8">
-        <h1
-          className="text-3xl font-bold text-white"
-          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
-        >
-          Settings
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "#666666" }}>
-          Manage your account and team
-        </p>
+    <div className="p-8">
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
+          <h1
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Settings
+          </h1>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Platform configuration and your profile</p>
+        </div>
       </div>
+      <div className="max-w-2xl">
 
       {/* Profile section */}
       <div
-        className="rounded-2xl p-6 mb-5"
-        style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+        className="glass-card rounded-2xl p-6 mb-5"
+        style={{ borderRadius: 16 }}
       >
         <div className="flex items-center gap-2 mb-5">
           <div
@@ -179,8 +197,8 @@ export default function SettingsPage() {
 
       {/* Change password */}
       <div
-        className="rounded-2xl p-6 mb-5"
-        style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+        className="glass-card rounded-2xl p-6 mb-5"
+        style={{ borderRadius: 16 }}
       >
         <div className="flex items-center gap-2 mb-5">
           <div
@@ -262,8 +280,8 @@ export default function SettingsPage() {
 
       {/* Team management */}
       <div
-        className="rounded-2xl p-6"
-        style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+        className="glass-card rounded-2xl p-6"
+        style={{ borderRadius: 16 }}
       >
         <div className="flex items-center gap-2 mb-5">
           <div
@@ -306,6 +324,7 @@ export default function SettingsPage() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

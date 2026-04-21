@@ -75,6 +75,22 @@ export default function AdminSidebar() {
               style={{
                 color: isActive ? "#D4FF4F" : "#A3A3A3",
                 backgroundColor: isActive ? "rgba(212,255,79,0.08)" : "transparent",
+                boxShadow: isActive ? "inset 3px 0 0 rgba(212,255,79,0.15)" : "none",
+                background: isActive
+                  ? "linear-gradient(90deg, rgba(212,255,79,0.12) 0%, rgba(212,255,79,0.04) 100%)"
+                  : "transparent",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(212,255,79,0.04)";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+                  (e.currentTarget as HTMLAnchorElement).style.color = "#A3A3A3";
+                }
               }}
             >
               <Icon

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, TrendingUp } from "lucide-react";
+import RadialProgress from "@/components/gymgaze/RadialProgress";
 
 function formatCurrency(val: number) {
   return `R ${val.toLocaleString("en-ZA")}`;
@@ -45,6 +46,9 @@ export default async function RevenuePage({
   const totalRevShare = rows.reduce((s, r) => s + (r.revenue_share_zar ?? 0), 0);
   const totalCombined = totalRental + totalRevShare;
 
+  const MONTHLY_TARGET = 100000;
+  const collectionRate = rows.length > 0 ? Math.min(100, Math.round((totalCombined / MONTHLY_TARGET) * 100)) : 0;
+
   const kpis = [
     { label: "TOTAL RENTAL", value: formatCurrency(totalRental), sub: "This month" },
     { label: "TOTAL REVENUE SHARE", value: formatCurrency(totalRevShare), sub: "This month" },
@@ -53,26 +57,43 @@ export default async function RevenuePage({
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
           <h1
-            className="text-3xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
           >
             Revenue
           </h1>
-          <p className="text-sm mt-1" style={{ color: "#666666" }}>
-            Track rental and revenue share by venue and month
-          </p>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Monthly rental and revenue share</p>
+          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
+            <Link
+              href="/admin/revenue/new"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+            >
+              <Plus size={14} strokeWidth={2.5} />
+              Log Revenue
+            </Link>
+          </div>
         </div>
-        <Link
-          href="/admin/revenue/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150"
-          style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
-        >
-          <Plus size={16} strokeWidth={2.5} />
-          Log Revenue
-        </Link>
       </div>
 
       {/* Month pill selector */}
@@ -97,14 +118,14 @@ export default async function RevenuePage({
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-5 mb-8">
         {kpis.map((kpi) => (
           <div
             key={kpi.label}
-            className="rounded-2xl p-6"
+            className="glass-card rounded-2xl p-6"
             style={{
-              backgroundColor: kpi.highlight ? "rgba(212,255,79,0.06)" : "#141414",
-              border: `1px solid ${kpi.highlight ? "rgba(212,255,79,0.2)" : "#2A2A2A"}`,
+              borderRadius: 16,
+              border: kpi.highlight ? "1px solid rgba(212,255,79,0.2)" : undefined,
             }}
           >
             <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#666666" }}>
@@ -123,14 +144,25 @@ export default async function RevenuePage({
             <p className="text-xs" style={{ color: "#666666" }}>{kpi.sub}</p>
           </div>
         ))}
+        {/* Radial: Collection Rate */}
+        <div
+          className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center gap-2"
+          style={{ borderRadius: 16 }}
+        >
+          <RadialProgress
+            value={collectionRate}
+            size={72}
+            label="collected"
+          />
+          <p className="text-xs uppercase tracking-widest" style={{ color: "#666666" }}>Collection Rate</p>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
+      <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
         {rows.length === 0 ? (
           <div
             className="flex flex-col items-center justify-center py-16"
-            style={{ backgroundColor: "#141414" }}
           >
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3"
@@ -146,12 +178,12 @@ export default async function RevenuePage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#141414" }}>
+              <tr style={{ background: "rgba(20,20,20,0.6)" }}>
                 {["Venue", "Month", "Rental (ZAR)", "Rev Share (ZAR)", "Total", "Entered By"].map((h) => (
                   <th
                     key={h}
                     className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}
+                    style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     {h}
                   </th>
@@ -172,7 +204,7 @@ export default async function RevenuePage({
                 return (
                   <tr
                     key={row.id}
-                    style={{ backgroundColor: "#141414", borderTop: "1px solid #2A2A2A" }}
+                    style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     <td className="px-6 py-4">
                       <p className="text-sm font-medium text-white">{venue?.name ?? "—"}</p>

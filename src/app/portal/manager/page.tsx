@@ -62,16 +62,33 @@ export default async function ManagerPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1
-          className="text-2xl font-bold text-white"
-          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
-        >
-          Manager Dashboard
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "#666666" }}>
-          {venueName}
-        </p>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
+          <h1
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {venueName}
+          </h1>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Venue Operations</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -79,11 +96,8 @@ export default async function ManagerPage() {
         <div className="lg:col-span-1 space-y-4">
           <Link
             href="/portal/manager/upload"
-            className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-150 group"
-            style={{
-              backgroundColor: "#141414",
-              border: "1px solid #2A2A2A",
-            }}
+            className="glass-card flex items-center gap-4 p-5 rounded-2xl transition-all duration-150 group"
+            style={{ borderRadius: 16 }}
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -106,11 +120,8 @@ export default async function ManagerPage() {
 
           <Link
             href="/portal/manager/venue"
-            className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-150"
-            style={{
-              backgroundColor: "#141414",
-              border: "1px solid #2A2A2A",
-            }}
+            className="glass-card flex items-center gap-4 p-5 rounded-2xl transition-all duration-150"
+            style={{ borderRadius: 16 }}
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -134,8 +145,8 @@ export default async function ManagerPage() {
 
         {/* Tasks */}
         <div
-          className="lg:col-span-2 rounded-2xl overflow-hidden"
-          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+          className="glass-card lg:col-span-2 rounded-2xl overflow-hidden"
+          style={{ borderRadius: 16 }}
         >
           <div
             className="px-6 py-4"

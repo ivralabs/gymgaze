@@ -107,17 +107,33 @@ export default async function PortalDashboard() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-8">
-        <h1
-          className="text-2xl font-bold text-white"
-          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
-        >
-          Owner Dashboard
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "#666666" }}>
-          {brand?.name ?? "Your Brand"} &middot; {monthLabel}
-        </p>
+      {/* Hero Panel */}
+      <div
+        className="relative overflow-hidden rounded-2xl mb-8"
+        style={{
+          background: "linear-gradient(135deg, #141414 0%, #0F0F0F 100%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <img
+          src="/hero-object.png"
+          alt=""
+          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-8">
+          <h1
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              fontWeight: 800,
+              fontSize: "2.5rem",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {brand?.name ?? "Welcome"}
+          </h1>
+          <p style={{ color: "#666", marginTop: "0.5rem" }}>Owner Dashboard &middot; {monthLabel}</p>
+        </div>
       </div>
 
       {/* Stat tiles */}
@@ -125,8 +141,8 @@ export default async function PortalDashboard() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl p-6"
-            style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+            className="glass-card rounded-2xl p-6"
+            style={{ borderRadius: 16 }}
           >
             <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#666666" }}>
               {stat.label}
@@ -144,8 +160,8 @@ export default async function PortalDashboard() {
 
       {/* Revenue trend chart */}
       <div
-        className="rounded-2xl p-6 mb-8"
-        style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
+        className="glass-card rounded-2xl p-6 mb-8"
+        style={{ borderRadius: 16 }}
       >
         <div className="flex items-center gap-2 mb-6">
           <TrendingUp size={18} color="#D4FF4F" strokeWidth={2} />
@@ -221,11 +237,8 @@ export default async function PortalDashboard() {
                 <Link
                   key={venue.id}
                   href={`/portal/venues/${venue.id}`}
-                  className="block rounded-2xl p-5 transition-colors duration-150"
-                  style={{
-                    backgroundColor: "#141414",
-                    border: "1px solid #2A2A2A",
-                  }}
+                  className="glass-card block rounded-2xl p-5 transition-colors duration-150"
+                  style={{ borderRadius: 16 }}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div

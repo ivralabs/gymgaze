@@ -152,8 +152,8 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
           style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
         >
           <div
-            className="w-full max-w-md rounded-2xl p-6"
-            style={{ backgroundColor: "#1E1E1E", border: "1px solid #3A3A3A" }}
+            className="glass-card-elevated w-full max-w-md rounded-2xl p-6"
+            style={{ borderRadius: 16 }}
           >
             <h3
               className="text-base font-semibold text-white mb-2"

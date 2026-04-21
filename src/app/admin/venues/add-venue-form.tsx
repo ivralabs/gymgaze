@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Plus, X, Upload } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -15,6 +16,9 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Section 1 — Venue Identity
   const [name, setName] = useState("");
@@ -218,8 +222,8 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
         Add Venue
       </button>
 
-      {/* Overlay + Drawer — only mounted when open */}
-      {open && (
+      {/* Overlay + Drawer — portalled to document.body to escape stacking context */}
+      {mounted && open && createPortal(
         <>
           <div
             style={{
@@ -683,7 +687,8 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
           </button>
         </div>
       </div>
-        </>
+        </>,
+        document.body
       )}
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Plus, X } from "lucide-react";
 
 export default function AddNetworkForm() {
@@ -8,6 +9,9 @@ export default function AddNetworkForm() {
   const [form, setForm] = useState({ name: "", primary_color: "#D4FF4F" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -54,7 +58,7 @@ export default function AddNetworkForm() {
         Add Network
       </button>
 
-      {open && (
+      {mounted && open && createPortal(
         <div
           className="fixed inset-0 flex items-center justify-center z-50 px-4"
           style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
@@ -150,7 +154,8 @@ export default function AddNetworkForm() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

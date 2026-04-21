@@ -73,7 +73,7 @@ export default async function ManagerPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -112,7 +112,7 @@ export default async function ManagerPage() {
               >
                 Upload Photos
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
                 Submit screen photos for this month
               </p>
             </div>
@@ -136,7 +136,7 @@ export default async function ManagerPage() {
               >
                 Update Stats
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
                 Update member counts and entries
               </p>
             </div>
@@ -188,14 +188,14 @@ export default async function ManagerPage() {
                     <p
                       className="text-sm font-medium"
                       style={{
-                        color: task.done ? "#666666" : "#FFFFFF",
+                        color: task.done ? "#909090" : "#FFFFFF",
                         textDecoration: task.done ? "line-through" : "none",
                       }}
                     >
                       {task.label}
                     </p>
                     {task.dueDate && (
-                      <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
+                      <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
                         Due {task.dueDate}
                       </p>
                     )}

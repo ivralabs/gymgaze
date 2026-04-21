@@ -102,7 +102,7 @@ export default function UploadPhotoPage() {
         >
           Photos submitted!
         </h2>
-        <p className="text-sm mb-6" style={{ color: "#666666" }}>
+        <p className="text-sm mb-6" style={{ color: "#909090" }}>
           Your photos are pending approval by the GymGaze team.
         </p>
         <Link
@@ -129,7 +129,7 @@ export default function UploadPhotoPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-6 flex items-center gap-4">
           <Link
@@ -210,7 +210,7 @@ export default function UploadPhotoPage() {
             >
               Drop photos here or tap to browse
             </p>
-            <p className="text-sm mt-1 text-center" style={{ color: "#666666" }}>
+            <p className="text-sm mt-1 text-center" style={{ color: "#909090" }}>
               JPG, PNG &mdash; all screens from this month
             </p>
             <input
@@ -241,7 +241,7 @@ export default function UploadPhotoPage() {
                     onClick={() => removeFile(idx)}
                     className="ml-2 flex-shrink-0"
                   >
-                    <X size={14} color="#666666" strokeWidth={2} />
+                    <X size={14} color="#909090" strokeWidth={2} />
                   </button>
                 </div>
               ))}
@@ -273,7 +273,7 @@ export default function UploadPhotoPage() {
                 : "#D4FF4F",
             color:
               uploading || files.length === 0 || !selectedMonth
-                ? "#666666"
+                ? "#909090"
                 : "#0A0A0A",
             cursor: uploading ? "wait" : "pointer",
             height: "44px",

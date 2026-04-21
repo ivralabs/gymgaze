@@ -67,7 +67,7 @@ export default function VenueDetailPage() {
           >
             {mockVenue.name}
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             {mockVenue.brand} &middot; {mockVenue.city}
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function VenueDetailPage() {
             onClick={() => setActiveTab(id)}
             className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-150"
             style={{
-              color: activeTab === id ? "#D4FF4F" : "#666666",
+              color: activeTab === id ? "#D4FF4F" : "#909090",
               borderBottom: activeTab === id ? "2px solid #D4FF4F" : "2px solid transparent",
               marginBottom: "-1px",
             }}
@@ -106,7 +106,7 @@ export default function VenueDetailPage() {
               className="rounded-2xl p-6"
               style={cardStyle}
             >
-              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#666666" }}>
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#909090" }}>
                 {stat.label}
               </p>
               <p
@@ -130,11 +130,11 @@ export default function VenueDetailPage() {
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p style={{ color: "#666666" }}>Address</p>
+                <p style={{ color: "#909090" }}>Address</p>
                 <p className="text-white mt-0.5">{mockVenue.address}</p>
               </div>
               <div>
-                <p style={{ color: "#666666" }}>Region</p>
+                <p style={{ color: "#909090" }}>Region</p>
                 <p className="text-white mt-0.5">{mockVenue.region}</p>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function VenueDetailPage() {
               <thead>
                 <tr style={{ backgroundColor: "#141414", borderBottom: "1px solid #2A2A2A" }}>
                   {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
-                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}>
+                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid #2A2A2A" }}>
                       {h}
                     </th>
                   ))}
@@ -179,7 +179,7 @@ export default function VenueDetailPage() {
                         className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
                         style={{
                           backgroundColor: screen.isActive ? "rgba(212,255,79,0.1)" : "rgba(102,102,102,0.15)",
-                          color: screen.isActive ? "#D4FF4F" : "#666666",
+                          color: screen.isActive ? "#D4FF4F" : "#909090",
                         }}
                       >
                         {screen.isActive ? "Active" : "Inactive"}
@@ -206,19 +206,19 @@ export default function VenueDetailPage() {
           </h3>
           <div className="space-y-4 text-sm">
             <div className="flex justify-between">
-              <span style={{ color: "#666666" }}>Start Date</span>
+              <span style={{ color: "#909090" }}>Start Date</span>
               <span className="text-white">2025-01-01</span>
             </div>
             <div className="flex justify-between">
-              <span style={{ color: "#666666" }}>End Date</span>
+              <span style={{ color: "#909090" }}>End Date</span>
               <span className="text-white">2026-12-31</span>
             </div>
             <div className="flex justify-between">
-              <span style={{ color: "#666666" }}>Monthly Rental</span>
+              <span style={{ color: "#909090" }}>Monthly Rental</span>
               <span className="text-white font-mono">R 4,500</span>
             </div>
             <div className="flex justify-between">
-              <span style={{ color: "#666666" }}>Revenue Share</span>
+              <span style={{ color: "#909090" }}>Revenue Share</span>
               <span className="text-white font-mono">15%</span>
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function VenueDetailPage() {
             >
               <div className="text-center">
                 <FileText size={28} color="#444444" strokeWidth={1.5} className="mx-auto mb-2" />
-                <p className="text-sm" style={{ color: "#666666" }}>
+                <p className="text-sm" style={{ color: "#909090" }}>
                   Upload contract PDF
                 </p>
                 <input type="file" accept=".pdf" className="hidden" id="contract-upload" />
@@ -271,7 +271,7 @@ export default function VenueDetailPage() {
             <thead>
               <tr style={{ backgroundColor: "#141414" }}>
                 {["Month", "Rental (ZAR)", "Revenue Share (ZAR)", "Total"].map((h) => (
-                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}>
+                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid #2A2A2A" }}>
                     {h}
                   </th>
                 ))}

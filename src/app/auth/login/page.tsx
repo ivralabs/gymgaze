@@ -94,7 +94,7 @@ export default function LoginPage() {
             >
               GymGaze
             </h1>
-            <p className="text-sm mt-1" style={{ color: "#666666" }}>
+            <p className="text-sm mt-1" style={{ color: "#909090" }}>
               Gym advertising platform
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full py-3 rounded-xl text-sm font-semibold transition-colors duration-150"
                 style={{
-                  backgroundColor: loading ? "#666666" : "#D4FF4F",
+                  backgroundColor: loading ? "#909090" : "#D4FF4F",
                   color: "#0A0A0A",
                   cursor: loading ? "not-allowed" : "pointer",
                   height: "44px",

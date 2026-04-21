@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   active: { label: "Active", color: "#D4FF4F", bg: "rgba(212,255,79,0.1)" },
-  inactive: { label: "Inactive", color: "#666666", bg: "rgba(102,102,102,0.15)" },
+  inactive: { label: "Inactive", color: "#909090", bg: "rgba(102,102,102,0.15)" },
   coming_soon: { label: "Coming Soon", color: "#A3A3A3", bg: "rgba(163,163,163,0.15)" },
 };
 
@@ -51,7 +51,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
           >
             {network.name}
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             Network ID: {networkId}
           </p>
         </div>
@@ -78,7 +78,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                 className="text-xs font-medium px-2 py-0.5 rounded-full"
                 style={{
                   backgroundColor: network.is_active !== false ? "rgba(212,255,79,0.1)" : "rgba(102,102,102,0.15)",
-                  color: network.is_active !== false ? "#D4FF4F" : "#666666",
+                  color: network.is_active !== false ? "#D4FF4F" : "#909090",
                 }}
               >
                 {network.is_active !== false ? "Active" : "Inactive"}
@@ -93,10 +93,10 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: "#1E1E1E" }}
                 >
-                  <User size={14} color="#666666" strokeWidth={2} />
+                  <User size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#666666" }}>Contact</p>
+                  <p className="text-xs" style={{ color: "#909090" }}>Contact</p>
                   <p className="text-sm text-white">{network.contact_name}</p>
                 </div>
               </div>
@@ -108,10 +108,10 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: "#1E1E1E" }}
                 >
-                  <Mail size={14} color="#666666" strokeWidth={2} />
+                  <Mail size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#666666" }}>Email</p>
+                  <p className="text-xs" style={{ color: "#909090" }}>Email</p>
                   <p className="text-sm text-white">{network.contact_email}</p>
                 </div>
               </div>
@@ -123,10 +123,10 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: "#1E1E1E" }}
                 >
-                  <Phone size={14} color="#666666" strokeWidth={2} />
+                  <Phone size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#666666" }}>Phone</p>
+                  <p className="text-xs" style={{ color: "#909090" }}>Phone</p>
                   <p className="text-sm text-white">{network.contact_phone}</p>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
             </div>
 
             {venueRows.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm" style={{ color: "#666666" }}>
+              <div className="px-6 py-10 text-center text-sm" style={{ color: "#909090" }}>
                 No venues linked to this network yet.
               </div>
             ) : (
@@ -171,7 +171,7 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                       <th
                         key={h}
                         className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "#666666" }}
+                        style={{ color: "#909090" }}
                       >
                         {h}
                       </th>

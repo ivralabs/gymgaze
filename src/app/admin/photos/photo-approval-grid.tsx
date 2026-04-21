@@ -96,14 +96,14 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
 
                 <div className="space-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
-                    <Calendar size={13} color="#666666" strokeWidth={2} />
-                    <span className="text-xs" style={{ color: "#666666" }}>
+                    <Calendar size={13} color="#909090" strokeWidth={2} />
+                    <span className="text-xs" style={{ color: "#909090" }}>
                       {monthLabel}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <User size={13} color="#666666" strokeWidth={2} />
-                    <span className="text-xs" style={{ color: "#666666" }}>
+                    <User size={13} color="#909090" strokeWidth={2} />
+                    <span className="text-xs" style={{ color: "#909090" }}>
                       {uploaderName} &middot; {dateLabel}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
             >
               Reject Photo
             </h3>
-            <p className="text-sm mb-4" style={{ color: "#666666" }}>
+            <p className="text-sm mb-4" style={{ color: "#909090" }}>
               Please provide a reason for rejection so the manager can resubmit.
             </p>
             <textarea

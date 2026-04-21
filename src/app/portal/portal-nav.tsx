@@ -36,7 +36,7 @@ export default function PortalNav() {
                 backgroundColor: isActive ? "rgba(212,255,79,0.08)" : "transparent",
               }}
             >
-              <Icon size={16} strokeWidth={2} color={isActive ? "#D4FF4F" : "#666666"} />
+              <Icon size={16} strokeWidth={2} color={isActive ? "#D4FF4F" : "#909090"} />
               {label}
             </Link>
           );
@@ -46,13 +46,13 @@ export default function PortalNav() {
       <button
         onClick={handleLogout}
         className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
-        style={{ color: "#666666" }}
+        style={{ color: "#909090" }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
           (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1E1E1E";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "#666666";
+          (e.currentTarget as HTMLButtonElement).style.color = "#909090";
           (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
         }}
       >

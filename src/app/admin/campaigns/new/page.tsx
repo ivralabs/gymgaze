@@ -103,7 +103,7 @@ export default function NewCampaignPage() {
           >
             New Campaign
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             Set up a new advertising campaign
           </p>
         </div>
@@ -224,7 +224,7 @@ export default function NewCampaignPage() {
           </h2>
 
           {venues.length === 0 ? (
-            <p className="text-sm" style={{ color: "#666666" }}>Loading venues...</p>
+            <p className="text-sm" style={{ color: "#909090" }}>Loading venues...</p>
           ) : (
             <div className="space-y-2 max-h-60 overflow-y-auto dark-scroll">
               {venues.map((venue) => {
@@ -259,7 +259,7 @@ export default function NewCampaignPage() {
                     />
                     <div>
                       <p className="text-sm font-medium text-white">{venue.name}</p>
-                      <p className="text-xs" style={{ color: "#666666" }}>{venue.city}</p>
+                      <p className="text-xs" style={{ color: "#909090" }}>{venue.city}</p>
                     </div>
                   </label>
                 );

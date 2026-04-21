@@ -69,7 +69,7 @@ export default function AddNetworkForm() {
                 Add Network
               </h3>
               <button onClick={() => setOpen(false)}>
-                <X size={18} color="#666666" strokeWidth={2} />
+                <X size={18} color="#909090" strokeWidth={2} />
               </button>
             </div>
 

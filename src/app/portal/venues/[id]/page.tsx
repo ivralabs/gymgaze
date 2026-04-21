@@ -104,7 +104,7 @@ export default async function VenuePage({
           >
             {venue.name}
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             {venue.gym_brands?.name} &middot; {venue.city}
           </p>
         </div>
@@ -115,31 +115,31 @@ export default async function VenuePage({
         <div className="lg:col-span-2 rounded-2xl p-6" style={cardStyle}>
           <h2
             className="text-xs font-semibold uppercase tracking-wider mb-5"
-            style={{ color: "#666666" }}
+            style={{ color: "#909090" }}
           >
             Venue Details
           </h2>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <dt className="text-xs" style={{ color: "#666666" }}>Address</dt>
+              <dt className="text-xs" style={{ color: "#909090" }}>Address</dt>
               <dd className="text-sm font-medium mt-0.5 text-white">
                 {venue.address ?? "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#666666" }}>City</dt>
+              <dt className="text-xs" style={{ color: "#909090" }}>City</dt>
               <dd className="text-sm font-medium mt-0.5 text-white">
                 {venue.city ?? "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#666666" }}>Operating Hours</dt>
+              <dt className="text-xs" style={{ color: "#909090" }}>Operating Hours</dt>
               <dd className="text-sm font-medium mt-0.5 text-white">
                 {operatingHours}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#666666" }}>Status</dt>
+              <dt className="text-xs" style={{ color: "#909090" }}>Status</dt>
               <dd className="text-sm font-medium mt-0.5 capitalize text-white">
                 {venue.status ?? "—"}
               </dd>
@@ -160,7 +160,7 @@ export default async function VenuePage({
               <Users size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#666666" }}>Active Members</p>
+              <p className="text-xs" style={{ color: "#909090" }}>Active Members</p>
               <p
                 className="text-xl font-bold text-white tabular-nums"
                 style={{ fontFamily: "Inter Tight, sans-serif" }}
@@ -181,7 +181,7 @@ export default async function VenuePage({
               <Activity size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#666666" }}>Monthly Entries</p>
+              <p className="text-xs" style={{ color: "#909090" }}>Monthly Entries</p>
               <p
                 className="text-xl font-bold text-white tabular-nums"
                 style={{ fontFamily: "Inter Tight, sans-serif" }}
@@ -202,7 +202,7 @@ export default async function VenuePage({
               <Monitor size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#666666" }}>Screens</p>
+              <p className="text-xs" style={{ color: "#909090" }}>Screens</p>
               <p
                 className="text-xl font-bold text-white tabular-nums"
                 style={{ fontFamily: "Inter Tight, sans-serif" }}
@@ -234,17 +234,17 @@ export default async function VenuePage({
           </span>
         </div>
         {revenue.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm" style={{ color: "#666666" }}>
+          <div className="px-6 py-8 text-center text-sm" style={{ color: "#909090" }}>
             No revenue entries recorded yet.
           </div>
         ) : (
           <table className="w-full">
             <thead>
               <tr style={{ backgroundColor: "#141414" }}>
-                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
+                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090" }}>
                   Month
                 </th>
-                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
+                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090" }}>
                   Revenue
                 </th>
               </tr>
@@ -289,7 +289,7 @@ export default async function VenuePage({
             className="rounded-2xl py-12 flex items-center justify-center text-sm"
             style={cardStyle}
           >
-            <p style={{ color: "#666666" }}>No approved photos yet.</p>
+            <p style={{ color: "#909090" }}>No approved photos yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -314,7 +314,7 @@ export default async function VenuePage({
                   </div>
                 )}
                 <div className="px-3 py-2">
-                  <p className="text-xs" style={{ color: "#666666" }}>
+                  <p className="text-xs" style={{ color: "#909090" }}>
                     {photo.month
                       ? new Date(photo.month.slice(0, 7) + "-01").toLocaleDateString("en-ZA", {
                           month: "short",

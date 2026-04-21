@@ -107,7 +107,7 @@ export default function NewRevenuePage() {
           >
             Log Revenue
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             Record rental and revenue share for a venue
           </p>
         </div>

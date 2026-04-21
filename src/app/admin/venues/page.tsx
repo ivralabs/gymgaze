@@ -6,7 +6,7 @@ import AddVenueForm from "./add-venue-form";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   active: { label: "Active", color: "#D4FF4F", bg: "rgba(212,255,79,0.1)" },
-  inactive: { label: "Inactive", color: "#666666", bg: "rgba(102,102,102,0.15)" },
+  inactive: { label: "Inactive", color: "#909090", bg: "rgba(102,102,102,0.15)" },
   coming_soon: { label: "Coming Soon", color: "#A3A3A3", bg: "rgba(163,163,163,0.15)" },
 };
 
@@ -55,7 +55,7 @@ export default async function VenuesPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -87,7 +87,7 @@ export default async function VenuesPage() {
                 <th
                   key={h}
                   className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                 >
                   {h}
                 </th>
@@ -100,7 +100,7 @@ export default async function VenuesPage() {
                 <td
                   colSpan={7}
                   className="px-6 py-12 text-center text-sm"
-                  style={{ color: "#666666" }}
+                  style={{ color: "#909090" }}
                 >
                   No venues yet. Add your first venue to get started.
                 </td>
@@ -142,7 +142,7 @@ export default async function VenuesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <Monitor size={14} color="#666666" strokeWidth={2} />
+                        <Monitor size={14} color="#909090" strokeWidth={2} />
                         <span className="text-sm" style={{ color: "#A3A3A3" }}>
                           {screenCount}
                         </span>
@@ -150,7 +150,7 @@ export default async function VenuesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        <ImageIcon size={14} color="#666666" strokeWidth={2} />
+                        <ImageIcon size={14} color="#909090" strokeWidth={2} />
                         <span className="text-sm" style={{ color: lastPhoto ? "#A3A3A3" : "#444444" }}>
                           {lastPhoto ?? "Never"}
                         </span>

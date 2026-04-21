@@ -83,7 +83,7 @@ export default async function CampaignDetailPage({
             )}
           </div>
           {campaign.advertiser && (
-            <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+            <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
               {campaign.advertiser}
             </p>
           )}
@@ -110,20 +110,20 @@ export default async function CampaignDetailPage({
 
           <div className="space-y-4">
             <div>
-              <p className="text-xs mb-0.5" style={{ color: "#666666" }}>Advertiser</p>
+              <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Advertiser</p>
               <p className="text-sm text-white">{campaign.advertiser ?? "—"}</p>
             </div>
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <p className="text-xs mb-0.5" style={{ color: "#666666" }}>Start Date</p>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Start Date</p>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={13} color="#A3A3A3" strokeWidth={2} />
                   <p className="text-sm text-white tabular-nums">{formatDate(campaign.start_date)}</p>
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-xs mb-0.5" style={{ color: "#666666" }}>End Date</p>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>End Date</p>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={13} color="#A3A3A3" strokeWidth={2} />
                   <p className="text-sm text-white tabular-nums">{formatDate(campaign.end_date)}</p>
@@ -132,7 +132,7 @@ export default async function CampaignDetailPage({
             </div>
 
             <div>
-              <p className="text-xs mb-0.5" style={{ color: "#666666" }}>Amount Charged</p>
+              <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Amount Charged</p>
               <div className="flex items-center gap-1.5">
                 <DollarSign size={13} color="#D4FF4F" strokeWidth={2} />
                 <p className="text-sm font-semibold text-white tabular-nums font-mono">
@@ -145,7 +145,7 @@ export default async function CampaignDetailPage({
 
             {campaign.notes && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#666666" }}>Notes</p>
+                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Notes</p>
                 <p className="text-sm" style={{ color: "#A3A3A3" }}>{campaign.notes}</p>
               </div>
             )}
@@ -170,7 +170,7 @@ export default async function CampaignDetailPage({
           </div>
 
           {venues.length === 0 ? (
-            <div className="px-6 py-10 text-center text-sm" style={{ color: "#666666" }}>
+            <div className="px-6 py-10 text-center text-sm" style={{ color: "#909090" }}>
               No venues attached to this campaign.
             </div>
           ) : (
@@ -181,7 +181,7 @@ export default async function CampaignDetailPage({
                     <th
                       key={h}
                       className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: "#666666" }}
+                      style={{ color: "#909090" }}
                     >
                       {h}
                     </th>
@@ -213,7 +213,7 @@ export default async function CampaignDetailPage({
                             venue.status === "active"
                               ? "rgba(212,255,79,0.1)"
                               : "rgba(102,102,102,0.15)",
-                          color: venue.status === "active" ? "#D4FF4F" : "#666666",
+                          color: venue.status === "active" ? "#D4FF4F" : "#909090",
                         }}
                       >
                         {venue.status}

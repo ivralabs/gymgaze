@@ -110,7 +110,7 @@ export default function UpdateVenuePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-sm" style={{ color: "#666666" }}>Loading...</p>
+        <p className="text-sm" style={{ color: "#909090" }}>Loading...</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function UpdateVenuePage() {
   if (!venueId) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm" style={{ color: "#666666" }}>
+        <p className="text-sm" style={{ color: "#909090" }}>
           No venue assigned to your account. Please contact your administrator.
         </p>
       </div>
@@ -138,7 +138,7 @@ export default function UpdateVenuePage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-6 flex items-center gap-4">
           <Link
@@ -195,7 +195,7 @@ export default function UpdateVenuePage() {
         >
           <h2
             className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: "#666666", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
           >
             Membership &amp; Footfall
           </h2>
@@ -213,7 +213,7 @@ export default function UpdateVenuePage() {
               className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
-            <p className="text-xs mt-1" style={{ color: "#666666" }}>
+            <p className="text-xs mt-1" style={{ color: "#909090" }}>
               Current total active membership count
             </p>
           </div>

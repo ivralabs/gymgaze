@@ -52,13 +52,15 @@ export default async function PortalLayout({
   }
 
   return (
-    <div style={{ backgroundColor: "#0A0A0A", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "transparent", minHeight: "100vh" }}>
       {/* Top nav */}
       <header
         className="sticky top-0 z-10"
         style={{
-          backgroundColor: "#141414",
-          borderBottom: "1px solid #2A2A2A",
+          background: "rgba(14, 14, 14, 0.92)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
           height: "72px",
         }}
       >

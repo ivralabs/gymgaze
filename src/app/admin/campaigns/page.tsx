@@ -42,7 +42,7 @@ export default async function CampaignsPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -82,7 +82,7 @@ export default async function CampaignsPage() {
               <Megaphone size={26} color="#D4FF4F" strokeWidth={1.5} />
             </div>
             <p className="text-white font-medium mb-1">No campaigns yet</p>
-            <p className="text-sm mb-5" style={{ color: "#666666" }}>
+            <p className="text-sm mb-5" style={{ color: "#909090" }}>
               Create your first campaign to start tracking advertising.
             </p>
             <Link
@@ -102,7 +102,7 @@ export default async function CampaignsPage() {
                   <th
                     key={h}
                     className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     {h}
                   </th>

@@ -86,7 +86,7 @@ export default async function AdminDashboard() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -149,7 +149,7 @@ export default async function AdminDashboard() {
         >
           <p
             className="text-xs font-medium uppercase tracking-widest mb-3"
-            style={{ color: "#666666" }}
+            style={{ color: "#909090" }}
           >
             Total Networks
           </p>
@@ -180,7 +180,7 @@ export default async function AdminDashboard() {
         >
           <p
             className="text-xs font-medium uppercase tracking-widest mb-3"
-            style={{ color: "#666666" }}
+            style={{ color: "#909090" }}
           >
             Active Venues
           </p>
@@ -218,7 +218,7 @@ export default async function AdminDashboard() {
           <div>
             <p
               className="text-xs font-medium uppercase tracking-widest mb-2"
-              style={{ color: "#666666" }}
+              style={{ color: "#909090" }}
             >
               Active Campaigns
             </p>
@@ -234,7 +234,7 @@ export default async function AdminDashboard() {
             >
               {activeCampaignsCount ?? 0}
             </div>
-            <p className="text-xs mt-1" style={{ color: "#666666" }}>
+            <p className="text-xs mt-1" style={{ color: "#909090" }}>
               of {totalCampaignsCount ?? 0} total
             </p>
           </div>
@@ -254,7 +254,7 @@ export default async function AdminDashboard() {
           <div>
             <p
               className="text-xs font-medium uppercase tracking-widest mb-2"
-              style={{ color: "#666666" }}
+              style={{ color: "#909090" }}
             >
               Revenue MTD
             </p>
@@ -270,7 +270,7 @@ export default async function AdminDashboard() {
             >
               {formatCurrency(revenueMTD)}
             </div>
-            <p className="text-xs mt-1" style={{ color: "#666666" }}>
+            <p className="text-xs mt-1" style={{ color: "#909090" }}>
               {now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" })}
             </p>
           </div>
@@ -317,7 +317,7 @@ export default async function AdminDashboard() {
             <div className="flex flex-col items-center justify-center py-10">
               <CheckCircle2 size={32} color="#D4FF4F" strokeWidth={1.5} className="mb-2" />
               <p className="text-sm text-white">All caught up!</p>
-              <p className="text-xs mt-1" style={{ color: "#666666" }}>No photos pending approval</p>
+              <p className="text-xs mt-1" style={{ color: "#909090" }}>No photos pending approval</p>
             </div>
           ) : (
             pendingPhotos.map((photo, idx) => {
@@ -342,7 +342,7 @@ export default async function AdminDashboard() {
                 >
                   <div>
                     <p className="text-sm font-medium text-white">{venue?.name ?? "Unknown Venue"}</p>
-                    <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
                       {uploader?.full_name ?? "Unknown"} &middot; {monthLabel}
                     </p>
                   </div>

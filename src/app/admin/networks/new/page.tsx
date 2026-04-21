@@ -43,7 +43,7 @@ export default function NewNetworkPage() {
           >
             Add Gym Network
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
             Register a new gym brand or network
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function NewNetworkPage() {
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "#666666", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
           >
             Brand Details
           </h2>
@@ -117,7 +117,7 @@ export default function NewNetworkPage() {
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "#666666", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
           >
             Contact Information
           </h2>
@@ -198,7 +198,7 @@ export default function NewNetworkPage() {
             type="submit"
             disabled={saving}
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-colors duration-150"
-            style={{ backgroundColor: saving ? "#666666" : "#FF6B35" }}
+            style={{ backgroundColor: saving ? "#909090" : "#FF6B35" }}
           >
             <Save size={16} strokeWidth={2} />
             {saving ? "Saving..." : "Save Network"}

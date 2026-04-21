@@ -68,7 +68,7 @@ export default async function RevenuePage({
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -128,7 +128,7 @@ export default async function RevenuePage({
               border: kpi.highlight ? "1px solid rgba(212,255,79,0.2)" : undefined,
             }}
           >
-            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#666666" }}>
+            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#909090" }}>
               {kpi.label}
             </p>
             <p
@@ -141,7 +141,7 @@ export default async function RevenuePage({
             >
               {kpi.value}
             </p>
-            <p className="text-xs" style={{ color: "#666666" }}>{kpi.sub}</p>
+            <p className="text-xs" style={{ color: "#909090" }}>{kpi.sub}</p>
           </div>
         ))}
         {/* Radial: Collection Rate */}
@@ -154,7 +154,7 @@ export default async function RevenuePage({
             size={72}
             label="collected"
           />
-          <p className="text-xs uppercase tracking-widest" style={{ color: "#666666" }}>Collection Rate</p>
+          <p className="text-xs uppercase tracking-widest" style={{ color: "#909090" }}>Collection Rate</p>
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default async function RevenuePage({
               <TrendingUp size={22} color="#D4FF4F" strokeWidth={1.5} />
             </div>
             <p className="text-white font-medium mb-1">No revenue entries</p>
-            <p className="text-sm" style={{ color: "#666666" }}>
+            <p className="text-sm" style={{ color: "#909090" }}>
               No entries recorded for this month yet.
             </p>
           </div>
@@ -183,7 +183,7 @@ export default async function RevenuePage({
                   <th
                     key={h}
                     className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#666666", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     {h}
                   </th>
@@ -209,7 +209,7 @@ export default async function RevenuePage({
                     <td className="px-6 py-4">
                       <p className="text-sm font-medium text-white">{venue?.name ?? "—"}</p>
                       {venue?.city && (
-                        <p className="text-xs" style={{ color: "#666666" }}>{venue.city}</p>
+                        <p className="text-xs" style={{ color: "#909090" }}>{venue.city}</p>
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#A3A3A3" }}>

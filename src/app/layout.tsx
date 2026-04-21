@@ -25,7 +25,30 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 0,
+            backgroundImage: 'url(/hero-object.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center right',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1,
+            background: 'rgba(10,10,10,0.80)',
+          }}
+        />
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

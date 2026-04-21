@@ -13,7 +13,7 @@
   --border-strong: #3A3A3A;
   --text-primary: #FFFFFF;
   --text-secondary: #A3A3A3;
-  --text-muted: #666666;
+  --text-muted: #909090;
 }
 
 * {
@@ -24,18 +24,21 @@ body {
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: radial-gradient(ellipse at 20% 50%, rgba(212,255,79,0.03) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(212,255,79,0.02) 0%, transparent 50%),
-              #0A0A0A;
+  background-color: #1a1a1a;
+  background-image: url('/hero-object.png');
+  background-size: cover;
+  background-position: center right;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   min-height: 100vh;
   color: #FFFFFF;
 }
 
 .glass-card {
-  background: rgba(20, 20, 20, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
 }
 

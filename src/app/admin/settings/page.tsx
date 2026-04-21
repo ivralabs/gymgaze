@@ -116,7 +116,7 @@ export default function SettingsPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -189,7 +189,7 @@ export default function SettingsPage() {
                   {profile?.role ?? "admin"}
                 </span>
               </div>
-              <span className="text-xs" style={{ color: "#666666" }}>Read-only</span>
+              <span className="text-xs" style={{ color: "#909090" }}>Read-only</span>
             </div>
           </div>
         </div>
@@ -296,7 +296,7 @@ export default function SettingsPage() {
         </div>
 
         {teamMembers.length === 0 ? (
-          <p className="text-sm" style={{ color: "#666666" }}>No admin users found.</p>
+          <p className="text-sm" style={{ color: "#909090" }}>No admin users found.</p>
         ) : (
           <div className="space-y-3">
             {teamMembers.map((member) => (
@@ -312,7 +312,7 @@ export default function SettingsPage() {
                       <span className="ml-2 text-xs" style={{ color: "#D4FF4F" }}>(you)</span>
                     )}
                   </p>
-                  <p className="text-xs" style={{ color: "#666666" }}>{member.email}</p>
+                  <p className="text-xs" style={{ color: "#909090" }}>{member.email}</p>
                 </div>
                 <span
                   className="text-xs font-medium px-2 py-1 rounded-full"

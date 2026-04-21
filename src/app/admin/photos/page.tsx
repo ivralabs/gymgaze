@@ -53,7 +53,7 @@ export default async function PhotosPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8 flex items-center gap-8">
           <div className="flex-1">
@@ -91,7 +91,7 @@ export default async function PhotosPage() {
         >
           <CheckCircle2 size={40} color="#D4FF4F" strokeWidth={1.5} className="mb-4" />
           <p className="text-white font-medium">All caught up!</p>
-          <p className="text-sm mt-1" style={{ color: "#666666" }}>
+          <p className="text-sm mt-1" style={{ color: "#909090" }}>
             No photos pending approval
           </p>
         </div>

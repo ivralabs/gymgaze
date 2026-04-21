@@ -30,7 +30,7 @@ export default async function NetworksPage() {
         <img
           src="/hero-object.png"
           alt=""
-          className="absolute right-0 top-0 h-full w-auto opacity-30 object-cover pointer-events-none select-none"
+          className="absolute right-0 top-0 h-full w-auto opacity-50 object-cover pointer-events-none select-none"
         />
         <div className="relative z-10 p-8">
           <h1
@@ -77,7 +77,7 @@ export default async function NetworksPage() {
                     backgroundColor: isActive
                       ? "rgba(212,255,79,0.1)"
                       : "rgba(102, 102, 102, 0.15)",
-                    color: isActive ? "#D4FF4F" : "#666666",
+                    color: isActive ? "#D4FF4F" : "#909090",
                   }}
                 >
                   {isActive ? "Active" : "Inactive"}
@@ -89,7 +89,7 @@ export default async function NetworksPage() {
               >
                 {network.name}
               </h3>
-              <p className="text-sm" style={{ color: "#666666" }}>
+              <p className="text-sm" style={{ color: "#909090" }}>
                 {venueCount} venue{venueCount !== 1 ? "s" : ""}
               </p>
             </Link>

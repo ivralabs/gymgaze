@@ -40,8 +40,10 @@ export default function AdminSidebar() {
       style={{
         width: "240px",
         minWidth: "240px",
-        backgroundColor: "#141414",
-        borderRight: "1px solid #2A2A2A",
+        background: "rgba(14, 14, 14, 0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRight: "1px solid rgba(255,255,255,0.08)",
       }}
     >
       {/* Logo area */}
@@ -95,7 +97,7 @@ export default function AdminSidebar() {
             >
               <Icon
                 size={18}
-                color={isActive ? "#D4FF4F" : "#666666"}
+                color={isActive ? "#D4FF4F" : "#909090"}
                 strokeWidth={2}
               />
               {label}
@@ -109,13 +111,13 @@ export default function AdminSidebar() {
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-4"
-          style={{ color: "#666666" }}
+          style={{ color: "#909090" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1E1E1E";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#666666";
+            (e.currentTarget as HTMLButtonElement).style.color = "#909090";
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
           }}
         >

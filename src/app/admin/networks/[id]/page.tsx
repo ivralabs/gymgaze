@@ -1,47 +1,53 @@
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Phone, Mail, User } from "lucide-react";
-
-const mockNetwork = {
-  id: "1",
-  name: "FitZone Group",
-  primaryColor: "#FF6B35",
-  contactName: "James Dube",
-  contactEmail: "james@fitzone.co.za",
-  contactPhone: "+27 11 555 1234",
-  isActive: true,
-};
-
-const mockVenues = [
-  { id: "1", name: "FitZone Sandton", city: "Sandton", status: "active", screensCount: 4 },
-  { id: "2", name: "FitZone Rosebank", city: "Rosebank", status: "active", screensCount: 3 },
-  { id: "3", name: "FitZone Midrand", city: "Midrand", status: "inactive", screensCount: 2 },
-  { id: "4", name: "FitZone Fourways", city: "Fourways", status: "coming_soon", screensCount: 0 },
-];
+import { createClient } from "@/lib/supabase/server";
+import { notFound } from "next/navigation";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
-  active: { label: "Active", color: "#10B981", bg: "rgba(16,185,129,0.15)" },
-  inactive: { label: "Inactive", color: "#6B7280", bg: "rgba(107,114,128,0.15)" },
-  coming_soon: { label: "Coming Soon", color: "#F59E0B", bg: "rgba(245,158,11,0.15)" },
+  active: { label: "Active", color: "#D4FF4F", bg: "rgba(212,255,79,0.1)" },
+  inactive: { label: "Inactive", color: "#666666", bg: "rgba(102,102,102,0.15)" },
+  coming_soon: { label: "Coming Soon", color: "#A3A3A3", bg: "rgba(163,163,163,0.15)" },
 };
 
 export default async function NetworkDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: networkId } = await params;
-  const network = mockNetwork;
+  const supabase = await createClient();
+
+  const { data: network } = await supabase
+    .from("gym_brands")
+    .select("id, name, primary_color, is_active, contact_name, contact_email, contact_phone")
+    .eq("id", networkId)
+    .maybeSingle();
+
+  if (!network) notFound();
+
+  const { data: venues } = await supabase
+    .from("venues")
+    .select("id, name, city, status, screens(id)")
+    .eq("gym_brand_id", networkId)
+    .order("name");
+
+  const venueRows = venues ?? [];
+
+  const cardStyle = {
+    backgroundColor: "#141414",
+    border: "1px solid #2A2A2A",
+  };
 
   return (
     <div className="p-8">
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/admin/networks"
-          className="p-2 rounded-lg"
-          style={{ backgroundColor: "#1E1E1E", color: "#B3B3B3" }}
+          className="p-2 rounded-xl"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div>
           <h1
             className="text-2xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif" }}
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             {network.name}
           </h1>
@@ -53,16 +59,13 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Brand info card */}
-        <div
-          className="rounded-xl p-6"
-          style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
-        >
+        <div className="rounded-2xl p-6" style={cardStyle}>
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: `${network.primaryColor}20` }}
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <Building2 size={22} color={network.primaryColor} strokeWidth={2} />
+              <Building2 size={22} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
               <h2
@@ -72,154 +75,148 @@ export default async function NetworkDetailPage({ params }: { params: Promise<{ 
                 {network.name}
               </h2>
               <span
-                className="text-xs font-medium px-2 py-0.5 rounded"
+                className="text-xs font-medium px-2 py-0.5 rounded-full"
                 style={{
-                  backgroundColor: network.isActive ? "rgba(16,185,129,0.15)" : "rgba(107,114,128,0.15)",
-                  color: network.isActive ? "#10B981" : "#6B7280",
+                  backgroundColor: network.is_active !== false ? "rgba(212,255,79,0.1)" : "rgba(102,102,102,0.15)",
+                  color: network.is_active !== false ? "#D4FF4F" : "#666666",
                 }}
               >
-                {network.isActive ? "Active" : "Inactive"}
+                {network.is_active !== false ? "Active" : "Inactive"}
               </span>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: "#2A2A2A" }}
-              >
-                <User size={14} color="#666666" strokeWidth={2} />
-              </div>
-              <div>
-                <p className="text-xs" style={{ color: "#666666" }}>Contact</p>
-                <p className="text-sm text-white">{network.contactName}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: "#2A2A2A" }}
-              >
-                <Mail size={14} color="#666666" strokeWidth={2} />
-              </div>
-              <div>
-                <p className="text-xs" style={{ color: "#666666" }}>Email</p>
-                <p className="text-sm text-white">{network.contactEmail}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: "#2A2A2A" }}
-              >
-                <Phone size={14} color="#666666" strokeWidth={2} />
-              </div>
-              <div>
-                <p className="text-xs" style={{ color: "#666666" }}>Phone</p>
-                <p className="text-sm text-white">{network.contactPhone}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: `${network.primaryColor}30` }}
-              >
+            {network.contact_name && (
+              <div className="flex items-center gap-3">
                 <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: network.primaryColor }}
-                />
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: "#1E1E1E" }}
+                >
+                  <User size={14} color="#666666" strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="text-xs" style={{ color: "#666666" }}>Contact</p>
+                  <p className="text-sm text-white">{network.contact_name}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs" style={{ color: "#666666" }}>Brand Color</p>
-                <p className="text-sm font-mono text-white">{network.primaryColor}</p>
+            )}
+
+            {network.contact_email && (
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: "#1E1E1E" }}
+                >
+                  <Mail size={14} color="#666666" strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="text-xs" style={{ color: "#666666" }}>Email</p>
+                  <p className="text-sm text-white">{network.contact_email}</p>
+                </div>
               </div>
-            </div>
+            )}
+
+            {network.contact_phone && (
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: "#1E1E1E" }}
+                >
+                  <Phone size={14} color="#666666" strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="text-xs" style={{ color: "#666666" }}>Phone</p>
+                  <p className="text-sm text-white">{network.contact_phone}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Venues list */}
         <div className="lg:col-span-2">
-          <div
-            className="rounded-xl overflow-hidden"
-            style={{ border: "1px solid #333333" }}
-          >
+          <div className="rounded-2xl overflow-hidden" style={cardStyle}>
             <div
               className="flex items-center justify-between px-6 py-4"
-              style={{ backgroundColor: "#2A2A2A", borderBottom: "1px solid #333333" }}
+              style={{ borderBottom: "1px solid #2A2A2A" }}
             >
               <div className="flex items-center gap-2">
-                <MapPin size={16} color="#FF6B35" strokeWidth={2} />
+                <MapPin size={16} color="#D4FF4F" strokeWidth={2} />
                 <h3
                   className="text-sm font-semibold text-white"
                   style={{ fontFamily: "Inter Tight, sans-serif" }}
                 >
-                  Venues ({mockVenues.length})
+                  Venues ({venueRows.length})
                 </h3>
               </div>
               <Link
                 href="/admin/venues/new"
                 className="text-xs font-medium"
-                style={{ color: "#FF6B35" }}
+                style={{ color: "#D4FF4F" }}
               >
                 Add venue
               </Link>
             </div>
 
-            <table className="w-full" style={{ backgroundColor: "#1E1E1E" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#2A2A2A" }}>
-                  {["Venue", "City", "Screens", "Status"].map((h) => (
-                    <th
-                      key={h}
-                      className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: "#666666" }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {mockVenues.map((venue, idx) => {
-                  const status = statusConfig[venue.status] || statusConfig.inactive;
-                  return (
-                    <tr
-                      key={venue.id}
-                      style={{
-                        borderTop: idx > 0 ? "1px solid #2A2A2A" : "none",
-                      }}
-                    >
-                      <td className="px-6 py-4">
-                        <Link
-                          href={`/admin/venues/${venue.id}`}
-                          className="text-sm font-medium text-white hover:text-orange-400 transition-colors"
-                        >
-                          {venue.name}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>
-                        {venue.city}
-                      </td>
-                      <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>
-                        {venue.screensCount}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded"
-                          style={{ backgroundColor: status.bg, color: status.color }}
-                        >
-                          {status.label}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            {venueRows.length === 0 ? (
+              <div className="px-6 py-10 text-center text-sm" style={{ color: "#666666" }}>
+                No venues linked to this network yet.
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr style={{ backgroundColor: "#1E1E1E" }}>
+                    {["Venue", "City", "Screens", "Status"].map((h) => (
+                      <th
+                        key={h}
+                        className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: "#666666" }}
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {venueRows.map((venue, idx) => {
+                    const status = statusConfig[venue.status] ?? statusConfig.inactive;
+                    const screenCount = Array.isArray(venue.screens) ? venue.screens.length : 0;
+                    return (
+                      <tr
+                        key={venue.id}
+                        style={{
+                          borderTop: idx >= 0 ? "1px solid #2A2A2A" : "none",
+                        }}
+                      >
+                        <td className="px-6 py-4">
+                          <Link
+                            href={`/admin/venues/${venue.id}`}
+                            className="text-sm font-medium text-white hover:text-[#D4FF4F] transition-colors"
+                          >
+                            {venue.name}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>
+                          {venue.city}
+                        </td>
+                        <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>
+                          {screenCount}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
+                            style={{ backgroundColor: status.bg, color: status.color }}
+                          >
+                            {status.label}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>

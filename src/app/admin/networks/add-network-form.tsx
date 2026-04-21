@@ -5,7 +5,7 @@ import { Plus, X } from "lucide-react";
 
 export default function AddNetworkForm() {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", primary_color: "#FF6B35" });
+  const [form, setForm] = useState({ name: "", primary_color: "#D4FF4F" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,12 +34,19 @@ export default function AddNetworkForm() {
     }
   }
 
+  const inputStyle = {
+    backgroundColor: "#0A0A0A",
+    border: "1px solid #2A2A2A",
+    color: "#FFFFFF",
+    outline: "none",
+  };
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors duration-150"
-        style={{ backgroundColor: "#FF6B35" }}
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150"
+        style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
       >
         <Plus size={16} strokeWidth={2.5} />
         Add Network
@@ -48,11 +55,11 @@ export default function AddNetworkForm() {
       {open && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 px-4"
-          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+          style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
         >
           <div
-            className="w-full max-w-md rounded-xl p-6"
-            style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+            className="w-full max-w-md rounded-2xl p-6"
+            style={{ backgroundColor: "#1E1E1E", border: "1px solid #3A3A3A" }}
           >
             <div className="flex items-center justify-between mb-5">
               <h3
@@ -68,10 +75,10 @@ export default function AddNetworkForm() {
 
             {error && (
               <div
-                className="px-4 py-3 rounded-lg mb-4 text-sm"
+                className="px-4 py-3 rounded-xl mb-4 text-sm"
                 style={{
-                  backgroundColor: "rgba(220,38,38,0.1)",
-                  border: "1px solid rgba(220,38,38,0.2)",
+                  backgroundColor: "rgba(239,68,68,0.1)",
+                  border: "1px solid rgba(239,68,68,0.2)",
                   color: "#EF4444",
                 }}
               >
@@ -81,7 +88,7 @@ export default function AddNetworkForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#B3B3B3" }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
                   Brand Name *
                 </label>
                 <input
@@ -90,17 +97,12 @@ export default function AddNetworkForm() {
                   onChange={handleChange}
                   required
                   placeholder="e.g. FitZone Group"
-                  className="w-full rounded-lg px-4 py-3 text-sm"
-                  style={{
-                    backgroundColor: "#0F0F0F",
-                    border: "1px solid #333333",
-                    color: "#FFFFFF",
-                    outline: "none",
-                  }}
+                  className="w-full rounded-xl px-4 py-3 text-sm"
+                  style={inputStyle}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#B3B3B3" }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
                   Brand Color
                 </label>
                 <div className="flex items-center gap-3">
@@ -110,21 +112,16 @@ export default function AddNetworkForm() {
                     value={form.primary_color}
                     onChange={handleChange}
                     className="w-12 h-10 rounded cursor-pointer"
-                    style={{ border: "1px solid #333333", backgroundColor: "transparent" }}
+                    style={{ border: "1px solid #2A2A2A", backgroundColor: "transparent" }}
                   />
                   <input
                     name="primary_color"
                     type="text"
                     value={form.primary_color}
                     onChange={handleChange}
-                    placeholder="#FF6B35"
-                    className="flex-1 rounded-lg px-4 py-3 text-sm"
-                    style={{
-                      backgroundColor: "#0F0F0F",
-                      border: "1px solid #333333",
-                      color: "#FFFFFF",
-                      outline: "none",
-                    }}
+                    placeholder="#D4FF4F"
+                    className="flex-1 rounded-xl px-4 py-3 text-sm"
+                    style={inputStyle}
                   />
                 </div>
               </div>
@@ -132,16 +129,19 @@ export default function AddNetworkForm() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2 rounded-lg text-sm"
-                  style={{ border: "1px solid #333333", color: "#B3B3B3" }}
+                  className="px-4 py-2 rounded-xl text-sm"
+                  style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-                  style={{ backgroundColor: saving ? "#555" : "#FF6B35" }}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold"
+                  style={{
+                    backgroundColor: saving ? "#555" : "#D4FF4F",
+                    color: "#0A0A0A",
+                  }}
                 >
                   {saving ? "Creating..." : "Create Network"}
                 </button>

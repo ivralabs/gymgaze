@@ -101,16 +101,16 @@ export default function UpdateVenuePage() {
   const monthLabel = now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
 
   const inputStyle = {
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #D1D5DB",
-    color: "#111827",
+    backgroundColor: "#0A0A0A",
+    border: "1px solid #2A2A2A",
+    color: "#FFFFFF",
     outline: "none",
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-sm" style={{ color: "#9CA3AF" }}>Loading...</p>
+        <p className="text-sm" style={{ color: "#666666" }}>Loading...</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function UpdateVenuePage() {
   if (!venueId) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm" style={{ color: "#9CA3AF" }}>
+        <p className="text-sm" style={{ color: "#666666" }}>
           No venue assigned to your account. Please contact your administrator.
         </p>
       </div>
@@ -130,19 +130,19 @@ export default function UpdateVenuePage() {
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/portal/manager"
-          className="p-2 rounded-lg"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", color: "#6B7280" }}
+          className="p-2 rounded-xl"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div>
           <h1
-            className="text-2xl font-bold"
-            style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+            className="text-2xl font-bold text-white"
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             Update Venue Stats
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#6B7280" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
             {venueName} &middot; {monthLabel}
           </p>
         </div>
@@ -150,11 +150,11 @@ export default function UpdateVenuePage() {
 
       {saved && (
         <div
-          className="flex items-center gap-2 px-4 py-3 rounded-lg mb-5 text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-3 rounded-xl mb-5 text-sm font-medium"
           style={{
-            backgroundColor: "rgba(5,150,105,0.1)",
-            border: "1px solid rgba(5,150,105,0.2)",
-            color: "#059669",
+            backgroundColor: "rgba(212,255,79,0.08)",
+            border: "1px solid rgba(212,255,79,0.2)",
+            color: "#D4FF4F",
           }}
         >
           <CheckCircle2 size={16} strokeWidth={2} />
@@ -164,11 +164,11 @@ export default function UpdateVenuePage() {
 
       {error && (
         <div
-          className="px-4 py-3 rounded-lg mb-5 text-sm"
+          className="px-4 py-3 rounded-xl mb-5 text-sm"
           style={{
-            backgroundColor: "rgba(220,38,38,0.05)",
-            border: "1px solid rgba(220,38,38,0.2)",
-            color: "#DC2626",
+            backgroundColor: "rgba(239,68,68,0.1)",
+            border: "1px solid rgba(239,68,68,0.2)",
+            color: "#EF4444",
           }}
         >
           {error}
@@ -177,18 +177,18 @@ export default function UpdateVenuePage() {
 
       <form onSubmit={handleSubmit}>
         <div
-          className="rounded-xl p-6 space-y-5"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+          className="rounded-2xl p-6 space-y-5"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
         >
           <h2
             className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: "#9CA3AF", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#666666", fontFamily: "Inter Tight, sans-serif" }}
           >
             Membership &amp; Footfall
           </h2>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#374151" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
               Active Members
             </label>
             <input
@@ -197,16 +197,16 @@ export default function UpdateVenuePage() {
               value={form.activeMembers}
               onChange={handleChange}
               min={0}
-              className="w-full rounded-lg px-4 py-3 text-sm"
+              className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
-            <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>
+            <p className="text-xs mt-1" style={{ color: "#666666" }}>
               Current total active membership count
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#374151" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
               Daily Entries (avg)
             </label>
             <input
@@ -215,13 +215,13 @@ export default function UpdateVenuePage() {
               value={form.dailyEntries}
               onChange={handleChange}
               min={0}
-              className="w-full rounded-lg px-4 py-3 text-sm"
+              className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#374151" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
               Weekly Entries
             </label>
             <input
@@ -230,13 +230,13 @@ export default function UpdateVenuePage() {
               value={form.weeklyEntries}
               onChange={handleChange}
               min={0}
-              className="w-full rounded-lg px-4 py-3 text-sm"
+              className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#374151" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
               Monthly Entries
             </label>
             <input
@@ -245,7 +245,7 @@ export default function UpdateVenuePage() {
               value={form.monthlyEntries}
               onChange={handleChange}
               min={0}
-              className="w-full rounded-lg px-4 py-3 text-sm"
+              className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
           </div>
@@ -254,16 +254,20 @@ export default function UpdateVenuePage() {
         <div className="flex items-center justify-end gap-3 mt-5">
           <Link
             href="/portal/manager"
-            className="px-5 py-2.5 rounded-lg text-sm font-medium"
-            style={{ border: "1px solid #E5E7EB", color: "#6B7280" }}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium"
+            style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white"
-            style={{ backgroundColor: saving ? "#9CA3AF" : "#FF6B35" }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold"
+            style={{
+              backgroundColor: saving ? "#555" : "#D4FF4F",
+              color: "#0A0A0A",
+              height: "44px",
+            }}
           >
             <Save size={16} strokeWidth={2} />
             {saving ? "Saving..." : "Save Stats"}

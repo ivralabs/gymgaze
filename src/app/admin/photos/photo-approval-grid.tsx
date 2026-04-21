@@ -66,13 +66,13 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
           return (
             <div
               key={photo.id}
-              className="rounded-xl overflow-hidden"
-              style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+              className="rounded-2xl overflow-hidden"
+              style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
             >
               {/* Photo preview */}
               <div
                 className="aspect-video flex items-center justify-center overflow-hidden"
-                style={{ backgroundColor: "#2A2A2A" }}
+                style={{ backgroundColor: "#1E1E1E" }}
               >
                 {photo.signedUrl ? (
                   <img
@@ -113,11 +113,11 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
                   <button
                     onClick={() => handleApprove(photo.id)}
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-colors duration-150"
                     style={{
-                      backgroundColor: "rgba(16,185,129,0.15)",
-                      color: "#10B981",
-                      border: "1px solid rgba(16,185,129,0.2)",
+                      backgroundColor: "rgba(212,255,79,0.1)",
+                      color: "#D4FF4F",
+                      border: "1px solid rgba(212,255,79,0.2)",
                       opacity: isLoading ? 0.6 : 1,
                     }}
                   >
@@ -127,7 +127,7 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
                   <button
                     onClick={() => setRejectTarget(photo.id)}
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-colors duration-150"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-colors duration-150"
                     style={{
                       backgroundColor: "rgba(239,68,68,0.1)",
                       color: "#EF4444",
@@ -149,11 +149,11 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
       {rejectTarget && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 px-4"
-          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+          style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
         >
           <div
-            className="w-full max-w-md rounded-xl p-6"
-            style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+            className="w-full max-w-md rounded-2xl p-6"
+            style={{ backgroundColor: "#1E1E1E", border: "1px solid #3A3A3A" }}
           >
             <h3
               className="text-base font-semibold text-white mb-2"
@@ -169,10 +169,10 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
               onChange={(e) => setRejectReason(e.target.value)}
               rows={3}
               placeholder="e.g. Photo is blurry, screen not fully visible..."
-              className="w-full rounded-lg px-4 py-3 text-sm mb-4 resize-none"
+              className="w-full rounded-xl px-4 py-3 text-sm mb-4 resize-none"
               style={{
-                backgroundColor: "#0F0F0F",
-                border: "1px solid #333333",
+                backgroundColor: "#0A0A0A",
+                border: "1px solid #2A2A2A",
                 color: "#FFFFFF",
                 outline: "none",
               }}
@@ -183,14 +183,14 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
                   setRejectTarget(null);
                   setRejectReason("");
                 }}
-                className="px-4 py-2 rounded-lg text-sm"
-                style={{ border: "1px solid #333333", color: "#B3B3B3" }}
+                className="px-4 py-2 rounded-xl text-sm"
+                style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleRejectSubmit}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
+                className="px-4 py-2 rounded-xl text-sm font-medium"
                 style={{ backgroundColor: "#EF4444", color: "#FFFFFF" }}
               >
                 Confirm Reject

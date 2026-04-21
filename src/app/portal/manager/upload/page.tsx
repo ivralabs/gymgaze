@@ -80,23 +80,35 @@ export default function UploadPhotoPage() {
     }
   }
 
+  const inputStyle = {
+    backgroundColor: "#0A0A0A",
+    border: "1px solid #2A2A2A",
+    color: "#FFFFFF",
+    outline: "none",
+  };
+
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <CheckCircle2 size={56} color="#059669" strokeWidth={1.5} className="mb-4" />
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+          style={{ backgroundColor: "rgba(212,255,79,0.1)" }}
+        >
+          <CheckCircle2 size={32} color="#D4FF4F" strokeWidth={1.5} />
+        </div>
         <h2
-          className="text-xl font-bold mb-2"
-          style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+          className="text-xl font-bold text-white mb-2"
+          style={{ fontFamily: "Inter Tight, sans-serif" }}
         >
           Photos submitted!
         </h2>
-        <p className="text-sm mb-6" style={{ color: "#6B7280" }}>
+        <p className="text-sm mb-6" style={{ color: "#666666" }}>
           Your photos are pending approval by the GymGaze team.
         </p>
         <Link
           href="/portal/manager"
-          className="px-5 py-2.5 rounded-lg text-sm font-medium text-white"
-          style={{ backgroundColor: "#FF6B35" }}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold"
+          style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
         >
           Back to dashboard
         </Link>
@@ -109,19 +121,19 @@ export default function UploadPhotoPage() {
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/portal/manager"
-          className="p-2 rounded-lg"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", color: "#6B7280" }}
+          className="p-2 rounded-xl"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div>
           <h1
-            className="text-2xl font-bold"
-            style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+            className="text-2xl font-bold text-white"
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             Upload Screen Photos
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#6B7280" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
             Submit monthly proof-of-display photos
           </p>
         </div>
@@ -129,12 +141,12 @@ export default function UploadPhotoPage() {
 
       <form onSubmit={handleUpload}>
         <div
-          className="rounded-xl p-6 mb-5"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+          className="rounded-2xl p-6 mb-5"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
         >
           <label
             className="block text-sm font-medium mb-2"
-            style={{ color: "#374151" }}
+            style={{ color: "#A3A3A3" }}
           >
             Select Month *
           </label>
@@ -142,13 +154,8 @@ export default function UploadPhotoPage() {
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             required
-            className="w-full rounded-lg px-4 py-3 text-sm"
-            style={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #D1D5DB",
-              color: "#111827",
-              outline: "none",
-            }}
+            className="w-full rounded-xl px-4 py-3 text-sm"
+            style={inputStyle}
           >
             <option value="">Choose month...</option>
             {monthOptions.map((m) => (
@@ -160,15 +167,15 @@ export default function UploadPhotoPage() {
         </div>
 
         <div
-          className="rounded-xl p-6 mb-5"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+          className="rounded-2xl p-6 mb-5"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
         >
           {/* Drop zone */}
           <div
             className="rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors duration-150"
             style={{
-              border: `2px dashed ${dragOver ? "#E55A2B" : "#FF6B35"}`,
-              backgroundColor: dragOver ? "rgba(255,107,53,0.1)" : "rgba(255,107,53,0.05)",
+              border: `2px dashed ${dragOver ? "#C8F438" : "#D4FF4F"}`,
+              backgroundColor: dragOver ? "rgba(212,255,79,0.08)" : "rgba(212,255,79,0.04)",
               padding: "48px 24px",
               minHeight: "200px",
             }}
@@ -184,14 +191,13 @@ export default function UploadPhotoPage() {
               handleFiles(e.dataTransfer.files);
             }}
           >
-            <CloudUpload size={48} color="#FF6B35" strokeWidth={1.5} className="mb-3" />
+            <CloudUpload size={48} color="#D4FF4F" strokeWidth={1.5} className="mb-3" />
             <p
-              className="text-base font-medium text-center"
-              style={{ color: "#374151" }}
+              className="text-base font-medium text-center text-white"
             >
               Drop photos here or tap to browse
             </p>
-            <p className="text-sm mt-1 text-center" style={{ color: "#9CA3AF" }}>
+            <p className="text-sm mt-1 text-center" style={{ color: "#666666" }}>
               JPG, PNG &mdash; all screens from this month
             </p>
             <input
@@ -211,10 +217,10 @@ export default function UploadPhotoPage() {
               {files.map((file, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg"
-                  style={{ backgroundColor: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                  className="flex items-center justify-between px-3 py-2 rounded-xl"
+                  style={{ backgroundColor: "#0A0A0A", border: "1px solid #2A2A2A" }}
                 >
-                  <span className="text-sm text-gray-700 truncate max-w-xs">
+                  <span className="text-sm text-white truncate max-w-xs">
                     {file.name}
                   </span>
                   <button
@@ -222,7 +228,7 @@ export default function UploadPhotoPage() {
                     onClick={() => removeFile(idx)}
                     className="ml-2 flex-shrink-0"
                   >
-                    <X size={14} color="#9CA3AF" strokeWidth={2} />
+                    <X size={14} color="#666666" strokeWidth={2} />
                   </button>
                 </div>
               ))}
@@ -232,11 +238,11 @@ export default function UploadPhotoPage() {
 
         {error && (
           <div
-            className="rounded-lg px-4 py-3 text-sm mb-4"
+            className="rounded-xl px-4 py-3 text-sm mb-4"
             style={{
-              backgroundColor: "rgba(220,38,38,0.05)",
-              border: "1px solid rgba(220,38,38,0.2)",
-              color: "#DC2626",
+              backgroundColor: "rgba(239,68,68,0.1)",
+              border: "1px solid rgba(239,68,68,0.2)",
+              color: "#EF4444",
             }}
           >
             {error}
@@ -246,13 +252,18 @@ export default function UploadPhotoPage() {
         <button
           type="submit"
           disabled={uploading || files.length === 0 || !selectedMonth}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium text-white transition-colors duration-150"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-colors duration-150"
           style={{
             backgroundColor:
               uploading || files.length === 0 || !selectedMonth
-                ? "#9CA3AF"
-                : "#FF6B35",
+                ? "#1E1E1E"
+                : "#D4FF4F",
+            color:
+              uploading || files.length === 0 || !selectedMonth
+                ? "#666666"
+                : "#0A0A0A",
             cursor: uploading ? "wait" : "pointer",
+            height: "44px",
           }}
         >
           <CloudUpload size={16} strokeWidth={2} />

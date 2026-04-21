@@ -42,24 +42,28 @@ const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "revenue", label: "Revenue", icon: DollarSign },
 ];
 
-export default async function VenueDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: venueId } = await params;
+export default function VenueDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+
+  const cardStyle = {
+    backgroundColor: "#141414",
+    border: "1px solid #2A2A2A",
+  };
 
   return (
     <div className="p-8">
       <div className="flex items-center gap-4 mb-6">
         <Link
           href="/admin/venues"
-          className="p-2 rounded-lg"
-          style={{ backgroundColor: "#1E1E1E", color: "#B3B3B3" }}
+          className="p-2 rounded-xl"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div>
           <h1
             className="text-2xl font-bold text-white"
-            style={{ fontFamily: "Inter Tight, sans-serif" }}
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             {mockVenue.name}
           </h1>
@@ -70,15 +74,15 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid #333333" }}>
+      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid #2A2A2A" }}>
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-150"
             style={{
-              color: activeTab === id ? "#FF6B35" : "#666666",
-              borderBottom: activeTab === id ? "2px solid #FF6B35" : "2px solid transparent",
+              color: activeTab === id ? "#D4FF4F" : "#666666",
+              borderBottom: activeTab === id ? "2px solid #D4FF4F" : "2px solid transparent",
               marginBottom: "-1px",
             }}
           >
@@ -92,22 +96,22 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
       {activeTab === "overview" && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { label: "Active Members", value: mockVenue.activeMembers.toLocaleString() },
-            { label: "Daily Entries", value: mockVenue.dailyEntries.toLocaleString() },
-            { label: "Weekly Entries", value: mockVenue.weeklyEntries.toLocaleString() },
-            { label: "Monthly Entries", value: mockVenue.monthlyEntries.toLocaleString() },
+            { label: "ACTIVE MEMBERS", value: mockVenue.activeMembers.toLocaleString() },
+            { label: "DAILY ENTRIES", value: mockVenue.dailyEntries.toLocaleString() },
+            { label: "WEEKLY ENTRIES", value: mockVenue.weeklyEntries.toLocaleString() },
+            { label: "MONTHLY ENTRIES", value: mockVenue.monthlyEntries.toLocaleString() },
           ].map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl p-6"
-              style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+              className="rounded-2xl p-6"
+              style={cardStyle}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#666666" }}>
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#666666" }}>
                 {stat.label}
               </p>
               <p
-                className="text-3xl font-bold text-white"
-                style={{ fontFamily: "Inter Tight, sans-serif" }}
+                className="text-4xl font-bold text-white tabular-nums"
+                style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
               >
                 {stat.value}
               </p>
@@ -115,8 +119,8 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
           ))}
 
           <div
-            className="col-span-2 lg:col-span-4 rounded-xl p-6"
-            style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+            className="col-span-2 lg:col-span-4 rounded-2xl p-6"
+            style={cardStyle}
           >
             <h3
               className="text-sm font-semibold text-white mb-3"
@@ -142,22 +146,19 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
         <div>
           <div className="flex justify-end mb-4">
             <button
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-              style={{ backgroundColor: "#FF6B35" }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
             >
               <Plus size={16} strokeWidth={2.5} />
               Add Screen
             </button>
           </div>
-          <div
-            className="rounded-xl overflow-hidden"
-            style={{ border: "1px solid #333333" }}
-          >
+          <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
             <table className="w-full">
               <thead>
-                <tr style={{ backgroundColor: "#2A2A2A" }}>
+                <tr style={{ backgroundColor: "#141414", borderBottom: "1px solid #2A2A2A" }}>
                   {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
-                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
+                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}>
                       {h}
                     </th>
                   ))}
@@ -167,18 +168,18 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
                 {mockScreens.map((screen, idx) => (
                   <tr
                     key={screen.id}
-                    style={{ backgroundColor: "#1E1E1E", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
+                    style={{ backgroundColor: "#141414", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
                   >
                     <td className="px-6 py-4 text-sm text-white">{screen.label}</td>
-                    <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>{screen.size}&quot;</td>
-                    <td className="px-6 py-4 text-sm font-mono" style={{ color: "#B3B3B3" }}>{screen.resolution}</td>
-                    <td className="px-6 py-4 text-sm" style={{ color: "#B3B3B3" }}>{screen.orientation}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{screen.size}&quot;</td>
+                    <td className="px-6 py-4 text-sm font-mono" style={{ color: "#A3A3A3" }}>{screen.resolution}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{screen.orientation}</td>
                     <td className="px-6 py-4">
                       <span
-                        className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded"
+                        className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
                         style={{
-                          backgroundColor: screen.isActive ? "rgba(16,185,129,0.15)" : "rgba(107,114,128,0.15)",
-                          color: screen.isActive ? "#10B981" : "#6B7280",
+                          backgroundColor: screen.isActive ? "rgba(212,255,79,0.1)" : "rgba(102,102,102,0.15)",
+                          color: screen.isActive ? "#D4FF4F" : "#666666",
                         }}
                       >
                         {screen.isActive ? "Active" : "Inactive"}
@@ -194,8 +195,8 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
 
       {activeTab === "contract" && (
         <div
-          className="rounded-xl p-6 max-w-lg"
-          style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+          className="rounded-2xl p-6 max-w-lg"
+          style={cardStyle}
         >
           <h3
             className="text-sm font-semibold text-white mb-4"
@@ -222,12 +223,12 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
             </div>
           </div>
           <div className="mt-6">
-            <label className="block text-sm font-medium mb-2" style={{ color: "#B3B3B3" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
               Contract Document
             </label>
             <div
-              className="flex items-center justify-center rounded-lg p-6"
-              style={{ border: "2px dashed #333333" }}
+              className="flex items-center justify-center rounded-xl p-6"
+              style={{ border: "2px dashed #2A2A2A" }}
             >
               <div className="text-center">
                 <FileText size={28} color="#444444" strokeWidth={1.5} className="mx-auto mb-2" />
@@ -237,8 +238,8 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
                 <input type="file" accept=".pdf" className="hidden" id="contract-upload" />
                 <label
                   htmlFor="contract-upload"
-                  className="mt-3 inline-flex items-center px-4 py-2 rounded-lg text-xs font-medium cursor-pointer"
-                  style={{ backgroundColor: "#2A2A2A", color: "#B3B3B3" }}
+                  className="mt-3 inline-flex items-center px-4 py-2 rounded-xl text-xs font-medium cursor-pointer"
+                  style={{ backgroundColor: "#1E1E1E", color: "#A3A3A3" }}
                 >
                   Choose file
                 </label>
@@ -254,8 +255,8 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="aspect-video rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: "#2A2A2A", border: "1px solid #333333" }}
+                className="aspect-video rounded-2xl flex items-center justify-center"
+                style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
               >
                 <Image size={24} color="#444444" strokeWidth={1.5} />
               </div>
@@ -265,15 +266,12 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
       )}
 
       {activeTab === "revenue" && (
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ border: "1px solid #333333" }}
-        >
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2A2A2A" }}>
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#2A2A2A" }}>
+              <tr style={{ backgroundColor: "#141414" }}>
                 {["Month", "Rental (ZAR)", "Revenue Share (ZAR)", "Total"].map((h) => (
-                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
+                  <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666", borderBottom: "1px solid #2A2A2A" }}>
                     {h}
                   </th>
                 ))}
@@ -283,16 +281,16 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ id
               {mockRevenue.map((row, idx) => (
                 <tr
                   key={row.month}
-                  style={{ backgroundColor: "#1E1E1E", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
+                  style={{ backgroundColor: "#141414", borderTop: idx > 0 ? "1px solid #2A2A2A" : "none" }}
                 >
                   <td className="px-6 py-4 text-sm text-white">{row.month}</td>
-                  <td className="px-6 py-4 text-sm font-mono" style={{ color: "#B3B3B3" }}>
+                  <td className="px-6 py-4 text-sm font-mono tabular-nums" style={{ color: "#A3A3A3" }}>
                     R {row.rental.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-sm font-mono" style={{ color: "#B3B3B3" }}>
+                  <td className="px-6 py-4 text-sm font-mono tabular-nums" style={{ color: "#A3A3A3" }}>
                     R {row.revenueShare.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-sm font-mono font-medium text-white">
+                  <td className="px-6 py-4 text-sm font-mono font-semibold tabular-nums" style={{ color: "#D4FF4F" }}>
                     R {(row.rental + row.revenueShare).toLocaleString()}
                   </td>
                 </tr>

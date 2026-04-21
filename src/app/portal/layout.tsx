@@ -1,15 +1,7 @@
-import Link from "next/link";
-import { LayoutDashboard, MapPin, ImageIcon, DollarSign, LogOut, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import PortalNav from "./portal-nav";
-
-const navItems = [
-  { href: "/portal/dashboard", label: "Dashboard", icon: "LayoutDashboard" },
-  { href: "/portal/venues", label: "Venues", icon: "MapPin" },
-  { href: "/portal/photos", label: "Photos", icon: "Image" },
-  { href: "/portal/revenue", label: "Revenue", icon: "DollarSign" },
-];
 
 export default async function PortalLayout({
   children,
@@ -37,7 +29,6 @@ export default async function PortalLayout({
 
   let brandName = "GymGaze";
   let brandLogoUrl: string | null = null;
-  let primaryColor = "#FF6B35";
 
   if (user) {
     const { data: profile } = await supabase
@@ -49,30 +40,25 @@ export default async function PortalLayout({
     if (profile?.gym_brand_id) {
       const { data: brand } = await supabase
         .from("gym_brands")
-        .select("name, logo_url, primary_color")
+        .select("name, logo_url")
         .eq("id", profile.gym_brand_id)
         .single();
 
       if (brand) {
         brandName = brand.name ?? "GymGaze";
         brandLogoUrl = brand.logo_url ?? null;
-        primaryColor = brand.primary_color ?? "#FF6B35";
       }
     }
   }
 
   return (
-    <div
-      style={
-        { backgroundColor: "#F9FAFB", minHeight: "100vh", "--brand-primary": primaryColor } as React.CSSProperties
-      }
-    >
+    <div style={{ backgroundColor: "#0A0A0A", minHeight: "100vh" }}>
       {/* Top nav */}
       <header
         className="sticky top-0 z-10"
         style={{
-          backgroundColor: "#FFFFFF",
-          borderBottom: "1px solid #E5E7EB",
+          backgroundColor: "#141414",
+          borderBottom: "1px solid #2A2A2A",
           height: "72px",
         }}
       >
@@ -88,16 +74,16 @@ export default async function PortalLayout({
             ) : (
               <div
                 className="w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: primaryColor }}
+                style={{ backgroundColor: "#D4FF4F" }}
               >
-                <Zap size={18} color="#FFFFFF" strokeWidth={2.5} />
+                <Zap size={18} color="#0A0A0A" strokeWidth={2.5} />
               </div>
             )}
             <span
-              className="text-base font-bold"
+              className="text-base font-bold text-white"
               style={{
                 fontFamily: "Inter Tight, sans-serif",
-                color: "#111827",
+                letterSpacing: "-0.01em",
               }}
             >
               {brandName}
@@ -105,7 +91,7 @@ export default async function PortalLayout({
           </div>
 
           {/* Nav + logout (client component for active state + logout) */}
-          <PortalNav primaryColor={primaryColor} />
+          <PortalNav />
         </div>
       </header>
 

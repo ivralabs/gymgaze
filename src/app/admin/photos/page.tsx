@@ -30,7 +30,7 @@ export default async function PhotosPage() {
       <div className="mb-8">
         <h1
           className="text-3xl font-bold text-white"
-          style={{ fontFamily: "Inter Tight, sans-serif" }}
+          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
         >
           Photo Approvals
         </h1>
@@ -41,10 +41,10 @@ export default async function PhotosPage() {
 
       {photosWithUrls.length === 0 ? (
         <div
-          className="flex flex-col items-center justify-center py-20 rounded-xl"
-          style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+          className="flex flex-col items-center justify-center py-20 rounded-2xl"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
         >
-          <CheckCircle2 size={40} color="#10B981" strokeWidth={1.5} className="mb-4" />
+          <CheckCircle2 size={40} color="#D4FF4F" strokeWidth={1.5} className="mb-4" />
           <p className="text-white font-medium">All caught up!</p>
           <p className="text-sm mt-1" style={{ color: "#666666" }}>
             No photos pending approval

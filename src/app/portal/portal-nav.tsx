@@ -12,7 +12,7 @@ const navItems = [
   { href: "/portal/revenue", label: "Revenue", icon: DollarSign },
 ];
 
-export default function PortalNav({ primaryColor }: { primaryColor: string }) {
+export default function PortalNav() {
   const pathname = usePathname();
   const supabase = createClient();
 
@@ -30,13 +30,13 @@ export default function PortalNav({ primaryColor }: { primaryColor: string }) {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
               style={{
-                color: isActive ? primaryColor : "#6B7280",
-                backgroundColor: isActive ? `${primaryColor}14` : "transparent",
+                color: isActive ? "#D4FF4F" : "#A3A3A3",
+                backgroundColor: isActive ? "rgba(212,255,79,0.08)" : "transparent",
               }}
             >
-              <Icon size={16} strokeWidth={2} />
+              <Icon size={16} strokeWidth={2} color={isActive ? "#D4FF4F" : "#666666"} />
               {label}
             </Link>
           );
@@ -45,13 +45,15 @@ export default function PortalNav({ primaryColor }: { primaryColor: string }) {
 
       <button
         onClick={handleLogout}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
-        style={{ color: "#9CA3AF" }}
+        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
+        style={{ color: "#666666" }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "#111827";
+          (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1E1E1E";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "#9CA3AF";
+          (e.currentTarget as HTMLButtonElement).style.color = "#666666";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
         }}
       >
         <LogOut size={16} strokeWidth={2} />

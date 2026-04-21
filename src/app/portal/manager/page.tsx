@@ -64,12 +64,12 @@ export default async function ManagerPage() {
     <div>
       <div className="mb-8">
         <h1
-          className="text-2xl font-bold"
-          style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+          className="text-2xl font-bold text-white"
+          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
         >
           Manager Dashboard
         </h1>
-        <p className="text-sm mt-1" style={{ color: "#6B7280" }}>
+        <p className="text-sm mt-1" style={{ color: "#666666" }}>
           {venueName}
         </p>
       </div>
@@ -79,26 +79,26 @@ export default async function ManagerPage() {
         <div className="lg:col-span-1 space-y-4">
           <Link
             href="/portal/manager/upload"
-            className="flex items-center gap-4 p-5 rounded-xl transition-all duration-150 group"
+            className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-150 group"
             style={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E5E7EB",
+              backgroundColor: "#141414",
+              border: "1px solid #2A2A2A",
             }}
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "rgba(255,107,53,0.1)" }}
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <Camera size={22} color="#FF6B35" strokeWidth={2} />
+              <Camera size={22} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
               <h3
-                className="text-sm font-semibold"
-                style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+                className="text-sm font-semibold text-white"
+                style={{ fontFamily: "Inter Tight, sans-serif" }}
               >
                 Upload Photos
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
                 Submit screen photos for this month
               </p>
             </div>
@@ -106,26 +106,26 @@ export default async function ManagerPage() {
 
           <Link
             href="/portal/manager/venue"
-            className="flex items-center gap-4 p-5 rounded-xl transition-all duration-150"
+            className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-150"
             style={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E5E7EB",
+              backgroundColor: "#141414",
+              border: "1px solid #2A2A2A",
             }}
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "rgba(59,130,246,0.1)" }}
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <BarChart2 size={22} color="#3B82F6" strokeWidth={2} />
+              <BarChart2 size={22} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
               <h3
-                className="text-sm font-semibold"
-                style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+                className="text-sm font-semibold text-white"
+                style={{ fontFamily: "Inter Tight, sans-serif" }}
               >
                 Update Stats
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
                 Update member counts and entries
               </p>
             </div>
@@ -134,16 +134,16 @@ export default async function ManagerPage() {
 
         {/* Tasks */}
         <div
-          className="lg:col-span-2 rounded-xl overflow-hidden"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+          className="lg:col-span-2 rounded-2xl overflow-hidden"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A" }}
         >
           <div
             className="px-6 py-4"
-            style={{ borderBottom: "1px solid #F3F4F6" }}
+            style={{ borderBottom: "1px solid #2A2A2A" }}
           >
             <h2
-              className="text-sm font-semibold"
-              style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+              className="text-sm font-semibold text-white"
+              style={{ fontFamily: "Inter Tight, sans-serif" }}
             >
               Pending Tasks
             </h2>
@@ -154,37 +154,37 @@ export default async function ManagerPage() {
                 key={task.id}
                 className="flex items-center justify-between px-6 py-4"
                 style={{
-                  borderTop: idx > 0 ? "1px solid #F3F4F6" : "none",
+                  borderTop: idx > 0 ? "1px solid #2A2A2A" : "none",
                   opacity: task.done ? 0.5 : 1,
                 }}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{
                       backgroundColor: task.done
-                        ? "rgba(5,150,105,0.1)"
-                        : "rgba(245,158,11,0.1)",
+                        ? "rgba(212,255,79,0.1)"
+                        : "rgba(163,163,163,0.1)",
                     }}
                   >
                     {task.done ? (
-                      <CheckCircle2 size={16} color="#059669" strokeWidth={2} />
+                      <CheckCircle2 size={16} color="#D4FF4F" strokeWidth={2} />
                     ) : (
-                      <Clock size={16} color="#D97706" strokeWidth={2} />
+                      <Clock size={16} color="#A3A3A3" strokeWidth={2} />
                     )}
                   </div>
                   <div>
                     <p
                       className="text-sm font-medium"
                       style={{
-                        color: task.done ? "#9CA3AF" : "#111827",
+                        color: task.done ? "#666666" : "#FFFFFF",
                         textDecoration: task.done ? "line-through" : "none",
                       }}
                     >
                       {task.label}
                     </p>
                     {task.dueDate && (
-                      <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
+                      <p className="text-xs mt-0.5" style={{ color: "#666666" }}>
                         Due {task.dueDate}
                       </p>
                     )}
@@ -193,8 +193,8 @@ export default async function ManagerPage() {
                 {!task.done && (
                   <Link
                     href={task.type === "photo" ? "/portal/manager/upload" : "/portal/manager/venue"}
-                    className="text-xs font-medium px-3 py-1.5 rounded-lg"
-                    style={{ backgroundColor: "rgba(255,107,53,0.1)", color: "#FF6B35" }}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
                   >
                     Do it
                   </Link>

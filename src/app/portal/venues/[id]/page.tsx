@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, MapPin, Users, Activity, Monitor, Image } from "lucide-react";
+import { ArrowLeft, Users, Activity, Monitor, Image } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 
@@ -39,8 +39,6 @@ export default async function VenuePage({
     redirect("/portal/dashboard");
   }
 
-  const primaryColor = venue.gym_brands?.primary_color ?? "#FF6B35";
-
   // Fetch approved photos
   const { data: photos } = await supabase
     .from("venue_photos")
@@ -67,13 +65,13 @@ export default async function VenuePage({
 
   const { data: revenueRows } = await supabase
     .from("revenue_entries")
-    .select("amount, month")
+    .select("rental_zar, revenue_share_zar, month")
     .eq("venue_id", id)
     .gte("month", startMonth)
     .order("month", { ascending: false });
 
   const revenue = revenueRows ?? [];
-  const totalRevenue = revenue.reduce((s, r) => s + (r.amount ?? 0), 0);
+  const totalRevenue = revenue.reduce((s, r) => s + (r.rental_zar ?? 0) + (r.revenue_share_zar ?? 0), 0);
 
   const screenCount = venue.screens?.length ?? 0;
 
@@ -83,25 +81,30 @@ export default async function VenuePage({
       : JSON.stringify(venue.operating_hours)
     : "Not set";
 
+  const cardStyle = {
+    backgroundColor: "#141414",
+    border: "1px solid #2A2A2A",
+  };
+
   return (
     <div>
       {/* Back + header */}
       <div className="flex items-center gap-4 mb-8">
         <Link
           href="/portal/dashboard"
-          className="p-2 rounded-lg flex-shrink-0"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", color: "#6B7280" }}
+          className="p-2 rounded-xl flex-shrink-0"
+          style={{ backgroundColor: "#141414", border: "1px solid #2A2A2A", color: "#A3A3A3" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div>
           <h1
-            className="text-2xl font-bold"
-            style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+            className="text-2xl font-bold text-white"
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             {venue.name}
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#6B7280" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#666666" }}>
             {venue.gym_brands?.name} &middot; {venue.city}
           </p>
         </div>
@@ -109,38 +112,35 @@ export default async function VenuePage({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Venue details */}
-        <div
-          className="lg:col-span-2 rounded-xl p-6"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
-        >
+        <div className="lg:col-span-2 rounded-2xl p-6" style={cardStyle}>
           <h2
-            className="text-sm font-semibold uppercase tracking-wider mb-5"
-            style={{ color: "#9CA3AF" }}
+            className="text-xs font-semibold uppercase tracking-wider mb-5"
+            style={{ color: "#666666" }}
           >
             Venue Details
           </h2>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <dt className="text-xs" style={{ color: "#9CA3AF" }}>Address</dt>
-              <dd className="text-sm font-medium mt-0.5" style={{ color: "#111827" }}>
+              <dt className="text-xs" style={{ color: "#666666" }}>Address</dt>
+              <dd className="text-sm font-medium mt-0.5 text-white">
                 {venue.address ?? "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#9CA3AF" }}>City</dt>
-              <dd className="text-sm font-medium mt-0.5" style={{ color: "#111827" }}>
+              <dt className="text-xs" style={{ color: "#666666" }}>City</dt>
+              <dd className="text-sm font-medium mt-0.5 text-white">
                 {venue.city ?? "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#9CA3AF" }}>Operating Hours</dt>
-              <dd className="text-sm font-medium mt-0.5" style={{ color: "#111827" }}>
+              <dt className="text-xs" style={{ color: "#666666" }}>Operating Hours</dt>
+              <dd className="text-sm font-medium mt-0.5 text-white">
                 {operatingHours}
               </dd>
             </div>
             <div>
-              <dt className="text-xs" style={{ color: "#9CA3AF" }}>Status</dt>
-              <dd className="text-sm font-medium mt-0.5 capitalize" style={{ color: "#111827" }}>
+              <dt className="text-xs" style={{ color: "#666666" }}>Status</dt>
+              <dd className="text-sm font-medium mt-0.5 capitalize text-white">
                 {venue.status ?? "—"}
               </dd>
             </div>
@@ -150,20 +150,20 @@ export default async function VenuePage({
         {/* Quick stats */}
         <div className="space-y-4">
           <div
-            className="rounded-xl p-5 flex items-center gap-4"
-            style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+            className="rounded-2xl p-5 flex items-center gap-4"
+            style={cardStyle}
           >
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: `${primaryColor}1A` }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <Users size={18} color={primaryColor} strokeWidth={2} />
+              <Users size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#9CA3AF" }}>Active Members</p>
+              <p className="text-xs" style={{ color: "#666666" }}>Active Members</p>
               <p
-                className="text-xl font-bold"
-                style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+                className="text-xl font-bold text-white tabular-nums"
+                style={{ fontFamily: "Inter Tight, sans-serif" }}
               >
                 {(venue.active_members ?? 0).toLocaleString()}
               </p>
@@ -171,20 +171,20 @@ export default async function VenuePage({
           </div>
 
           <div
-            className="rounded-xl p-5 flex items-center gap-4"
-            style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+            className="rounded-2xl p-5 flex items-center gap-4"
+            style={cardStyle}
           >
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "rgba(59,130,246,0.1)" }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <Activity size={18} color="#3B82F6" strokeWidth={2} />
+              <Activity size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#9CA3AF" }}>Monthly Entries</p>
+              <p className="text-xs" style={{ color: "#666666" }}>Monthly Entries</p>
               <p
-                className="text-xl font-bold"
-                style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+                className="text-xl font-bold text-white tabular-nums"
+                style={{ fontFamily: "Inter Tight, sans-serif" }}
               >
                 {(venue.monthly_entries ?? 0).toLocaleString()}
               </p>
@@ -192,20 +192,20 @@ export default async function VenuePage({
           </div>
 
           <div
-            className="rounded-xl p-5 flex items-center gap-4"
-            style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+            className="rounded-2xl p-5 flex items-center gap-4"
+            style={cardStyle}
           >
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "rgba(16,185,129,0.1)" }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: "rgba(212,255,79,0.08)" }}
             >
-              <Monitor size={18} color="#059669" strokeWidth={2} />
+              <Monitor size={18} color="#D4FF4F" strokeWidth={2} />
             </div>
             <div>
-              <p className="text-xs" style={{ color: "#9CA3AF" }}>Screens</p>
+              <p className="text-xs" style={{ color: "#666666" }}>Screens</p>
               <p
-                className="text-xl font-bold"
-                style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+                className="text-xl font-bold text-white tabular-nums"
+                style={{ fontFamily: "Inter Tight, sans-serif" }}
               >
                 {screenCount}
               </p>
@@ -216,35 +216,35 @@ export default async function VenuePage({
 
       {/* Revenue history */}
       <div
-        className="rounded-xl overflow-hidden mb-8"
-        style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB" }}
+        className="rounded-2xl overflow-hidden mb-8"
+        style={cardStyle}
       >
         <div
           className="flex items-center justify-between px-6 py-4"
-          style={{ borderBottom: "1px solid #F3F4F6" }}
+          style={{ borderBottom: "1px solid #2A2A2A" }}
         >
           <h2
-            className="text-sm font-semibold"
-            style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+            className="text-sm font-semibold text-white"
+            style={{ fontFamily: "Inter Tight, sans-serif" }}
           >
             Revenue History (Last 12 Months)
           </h2>
-          <span className="text-sm font-bold" style={{ color: primaryColor }}>
+          <span className="text-sm font-bold tabular-nums" style={{ color: "#D4FF4F" }}>
             {formatCurrency(totalRevenue)} total
           </span>
         </div>
         {revenue.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm" style={{ color: "#9CA3AF" }}>
+          <div className="px-6 py-8 text-center text-sm" style={{ color: "#666666" }}>
             No revenue entries recorded yet.
           </div>
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ backgroundColor: "#F9FAFB" }}>
-                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>
+              <tr style={{ backgroundColor: "#141414" }}>
+                <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
                   Month
                 </th>
-                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>
+                <th className="text-right px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#666666" }}>
                   Revenue
                 </th>
               </tr>
@@ -255,14 +255,15 @@ export default async function VenuePage({
                 const label = isNaN(d.getTime())
                   ? row.month
                   : d.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
+                const total = (row.rental_zar ?? 0) + (row.revenue_share_zar ?? 0);
                 return (
                   <tr
                     key={idx}
-                    style={{ borderTop: "1px solid #F3F4F6" }}
+                    style={{ borderTop: "1px solid #2A2A2A" }}
                   >
-                    <td className="px-6 py-3 text-sm" style={{ color: "#374151" }}>{label}</td>
-                    <td className="px-6 py-3 text-sm font-semibold text-right" style={{ color: "#111827" }}>
-                      {formatCurrency(row.amount ?? 0)}
+                    <td className="px-6 py-3 text-sm text-white">{label}</td>
+                    <td className="px-6 py-3 text-sm font-semibold text-right tabular-nums font-mono" style={{ color: "#D4FF4F" }}>
+                      {formatCurrency(total)}
                     </td>
                   </tr>
                 );
@@ -275,28 +276,28 @@ export default async function VenuePage({
       {/* Approved photos gallery */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <Image size={18} color={primaryColor} strokeWidth={2} />
+          <Image size={18} color="#D4FF4F" strokeWidth={2} />
           <h2
-            className="text-base font-semibold"
-            style={{ fontFamily: "Inter Tight, sans-serif", color: "#111827" }}
+            className="text-base font-semibold text-white"
+            style={{ fontFamily: "Inter Tight, sans-serif" }}
           >
             Approved Photos
           </h2>
         </div>
         {photosWithUrls.length === 0 ? (
           <div
-            className="rounded-xl py-12 flex items-center justify-center text-sm"
-            style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", color: "#9CA3AF" }}
+            className="rounded-2xl py-12 flex items-center justify-center text-sm"
+            style={cardStyle}
           >
-            No approved photos yet.
+            <p style={{ color: "#666666" }}>No approved photos yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {photosWithUrls.map((photo) => (
               <div
                 key={photo.id}
-                className="rounded-xl overflow-hidden"
-                style={{ border: "1px solid #E5E7EB", backgroundColor: "#F9FAFB" }}
+                className="rounded-2xl overflow-hidden"
+                style={cardStyle}
               >
                 {photo.url ? (
                   <img
@@ -307,13 +308,13 @@ export default async function VenuePage({
                 ) : (
                   <div
                     className="aspect-video flex items-center justify-center"
-                    style={{ backgroundColor: "#F3F4F6" }}
+                    style={{ backgroundColor: "#1E1E1E" }}
                   >
-                    <Image size={24} color="#D1D5DB" strokeWidth={1.5} />
+                    <Image size={24} color="#444444" strokeWidth={1.5} />
                   </div>
                 )}
                 <div className="px-3 py-2">
-                  <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                  <p className="text-xs" style={{ color: "#666666" }}>
                     {photo.month
                       ? new Date(photo.month.slice(0, 7) + "-01").toLocaleDateString("en-ZA", {
                           month: "short",

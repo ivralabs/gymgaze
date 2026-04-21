@@ -27,12 +27,12 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "#0F0F0F" }}>
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "#0A0A0A" }}>
       {/* Sidebar (client component for active state + logout) */}
       <AdminSidebar />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto dark-scroll" style={{ backgroundColor: "#0F0F0F" }}>
+      <main className="flex-1 overflow-y-auto dark-scroll" style={{ backgroundColor: "#0A0A0A" }}>
         {children}
       </main>
     </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LayoutDashboard, MapPin, ImageIcon, DollarSign, LogOut, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import PortalNav from "./portal-nav";
 
 const navItems = [
@@ -17,6 +18,22 @@ export default async function PortalLayout({
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  // Not authenticated — send to login
+  if (!user) {
+    redirect("/auth/login");
+  }
+
+  // Role guard: admins should never be in the portal
+  const { data: roleProfile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (roleProfile?.role === "admin") {
+    redirect("/admin/dashboard");
+  }
 
   let brandName = "GymGaze";
   let brandLogoUrl: string | null = null;

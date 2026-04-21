@@ -226,7 +226,7 @@ export default function UploadPhotoPage() {
                 <div
                   key={idx}
                   className="flex items-center justify-between px-3 py-2 rounded-xl"
-                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}
+                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   <span className="text-sm text-white truncate max-w-xs">
                     {file.name}

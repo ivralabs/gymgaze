@@ -76,8 +76,8 @@ const DIM = "#555555";
 
 const glassCard: React.CSSProperties = {
   background: "rgba(255,255,255,0.04)",
-  backdropFilter: "blur(24px)",
-  WebkitBackdropFilter: "blur(24px)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: 16,
   padding: "24px",
@@ -415,7 +415,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: "pointer",
-                backdropFilter: "blur(12px)",
+                backdropFilter: "blur(6px)",
               }}
             >
               {n}M
@@ -435,8 +435,8 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
             color: "#A3A3A3",
             fontSize: 13,
             cursor: "pointer",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
           }}
         >
           <option value="all">All Brands</option>

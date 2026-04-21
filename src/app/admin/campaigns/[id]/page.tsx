@@ -52,8 +52,8 @@ export default async function CampaignDetailPage({
 
   const cardStyle = {
     background: "rgba(255,255,255,0.04)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
     border: "1px solid rgba(255,255,255,0.08)",
   };
 
@@ -178,7 +178,7 @@ export default async function CampaignDetailPage({
           ) : (
             <table className="w-full">
               <thead>
-                <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+                <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                   {["Venue", "City", "Status"].map((h) => (
                     <th
                       key={h}

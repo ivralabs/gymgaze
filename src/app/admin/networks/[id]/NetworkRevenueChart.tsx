@@ -33,7 +33,7 @@ function CustomTooltip({
       <div
         style={{
           background: "rgba(20,20,20,0.95)",
-          backdropFilter: "blur(20px)",
+          backdropFilter: "blur(8px)",
           border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: 10,
           padding: "10px 14px",

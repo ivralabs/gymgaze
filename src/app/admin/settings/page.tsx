@@ -98,8 +98,8 @@ export default function SettingsPage() {
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded-xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.10)" }} />
-          <div className="h-32 rounded-2xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.10)" }} />
+          <div className="h-8 w-48 rounded-xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)" }} />
+          <div className="h-32 rounded-2xl" style={{ backgroundColor: "rgba(15,15,15,0.60)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)" }} />
         </div>
       </div>
     );
@@ -298,7 +298,7 @@ export default function SettingsPage() {
               <div
                 key={member.id}
                 className="flex items-center justify-between px-4 py-3 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 <div>
                   <p className="text-sm font-medium text-white">

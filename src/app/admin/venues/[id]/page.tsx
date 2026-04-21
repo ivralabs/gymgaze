@@ -47,8 +47,8 @@ export default function VenueDetailPage() {
 
   const cardStyle = {
     background: "rgba(255,255,255,0.04)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
     border: "1px solid rgba(255,255,255,0.08)",
   };
 
@@ -158,7 +158,7 @@ export default function VenueDetailPage() {
           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
             <table className="w-full">
               <thead>
-                <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                   {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
                     <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                       {h}
@@ -170,7 +170,7 @@ export default function VenueDetailPage() {
                 {mockScreens.map((screen, idx) => (
                   <tr
                     key={screen.id}
-                    style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
+                    style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
                   >
                     <td className="px-6 py-4 text-sm text-white">{screen.label}</td>
                     <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{screen.size}&quot;</td>
@@ -241,7 +241,7 @@ export default function VenueDetailPage() {
                 <label
                   htmlFor="contract-upload"
                   className="mt-3 inline-flex items-center px-4 py-2 rounded-xl text-xs font-medium cursor-pointer"
-                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", color: "#A3A3A3" }}
+                  style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", color: "#A3A3A3" }}
                 >
                   Choose file
                 </label>
@@ -258,7 +258,7 @@ export default function VenueDetailPage() {
               <div
                 key={i}
                 className="aspect-video rounded-2xl flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 <Image size={24} color="#444444" strokeWidth={1.5} />
               </div>
@@ -271,7 +271,7 @@ export default function VenueDetailPage() {
         <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                 {["Month", "Rental (ZAR)", "Revenue Share (ZAR)", "Total"].map((h) => (
                   <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                     {h}
@@ -283,7 +283,7 @@ export default function VenueDetailPage() {
               {mockRevenue.map((row, idx) => (
                 <tr
                   key={row.month}
-                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
+                  style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.08)" : "none" }}
                 >
                   <td className="px-6 py-4 text-sm text-white">{row.month}</td>
                   <td className="px-6 py-4 text-sm font-mono tabular-nums" style={{ color: "#A3A3A3" }}>

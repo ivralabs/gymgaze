@@ -12,8 +12,8 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
 
 const cardStyle = {
   background: "rgba(255,255,255,0.04)",
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
+  backdropFilter: "blur(8px)",
+  WebkitBackdropFilter: "blur(8px)",
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: 16,
 };

@@ -42,6 +42,7 @@ export default function AdminSidebar() {
       style={{
         width: "240px",
         minWidth: "240px",
+        willChange: 'transform',
       }}
     >
       {/* Logo area */}

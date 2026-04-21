@@ -127,7 +127,7 @@ export default function NewCampaignPage() {
       <form onSubmit={handleSubmit}>
         <div
           className="rounded-2xl p-6 mb-5 space-y-5"
-          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold text-white"
@@ -216,7 +216,7 @@ export default function NewCampaignPage() {
         {/* Venue selection */}
         <div
           className="rounded-2xl p-6 mb-6"
-          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <h2
             className="text-sm font-semibold text-white mb-4"

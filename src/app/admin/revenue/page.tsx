@@ -100,8 +100,8 @@ export default async function RevenuePage({
               className="px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150"
               style={{
                 background: isSelected ? "#D4FF4F" : "rgba(255,255,255,0.04)",
-                backdropFilter: isSelected ? undefined : "blur(12px)",
-                WebkitBackdropFilter: isSelected ? undefined : "blur(12px)",
+                backdropFilter: isSelected ? undefined : "blur(6px)",
+                WebkitBackdropFilter: isSelected ? undefined : "blur(6px)",
                 color: isSelected ? "#0A0A0A" : "#A3A3A3",
                 border: `1px solid ${isSelected ? "#D4FF4F" : "rgba(255,255,255,0.08)"}`,
               }}
@@ -173,7 +173,7 @@ export default async function RevenuePage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+              <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                 {["Venue", "Month", "Rental (ZAR)", "Rev Share (ZAR)", "Total", "Entered By"].map((h) => (
                   <th
                     key={h}

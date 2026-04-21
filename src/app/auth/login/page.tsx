@@ -104,8 +104,8 @@ export default function LoginPage() {
             className="w-full rounded-2xl p-8"
             style={{
               background: "rgba(255,255,255,0.05)",
-              backdropFilter: "blur(40px)",
-              WebkitBackdropFilter: "blur(40px)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 16,
             }}
@@ -232,8 +232,8 @@ export default function LoginPage() {
         className="hidden md:flex w-1/2 relative overflow-hidden items-center justify-center"
         style={{
           background: "rgba(255,255,255,0.03)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
           borderLeft: "1px solid rgba(255,255,255,0.08)",
         }}
       >

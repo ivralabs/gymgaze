@@ -67,12 +67,12 @@ export default function PhotoApprovalGrid({ initialPhotos }: { initialPhotos: Ph
             <div
               key={photo.id}
               className="rounded-2xl overflow-hidden"
-              style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.08)" }}
+              style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)" }}
             >
               {/* Photo preview */}
               <div
                 className="aspect-video flex items-center justify-center overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+                style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
               >
                 {photo.signedUrl ? (
                   <img

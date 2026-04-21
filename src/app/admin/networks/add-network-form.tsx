@@ -61,7 +61,7 @@ export default function AddNetworkForm() {
         >
           <div
             className="w-full max-w-md rounded-2xl p-6"
-            style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.12)" }}
           >
             <div className="flex items-center justify-between mb-5">
               <h3

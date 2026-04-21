@@ -83,8 +83,8 @@ export default async function VenuePage({
 
   const cardStyle = {
     background: "rgba(255,255,255,0.04)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
     border: "1px solid rgba(255,255,255,0.08)",
   };
 
@@ -242,7 +242,7 @@ export default async function VenuePage({
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+              <tr style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                 <th className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090" }}>
                   Month
                 </th>
@@ -310,7 +310,7 @@ export default async function VenuePage({
                 ) : (
                   <div
                     className="aspect-video flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+                    style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
                   >
                     <Image size={24} color="#444444" strokeWidth={1.5} />
                   </div>

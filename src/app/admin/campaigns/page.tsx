@@ -90,7 +90,7 @@ export default async function CampaignsPage() {
         ) : (
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+              <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                 {["Name", "Advertiser", "Start Date", "End Date", "Amount (ZAR)", "Venues", ""].map((h) => (
                   <th
                     key={h}

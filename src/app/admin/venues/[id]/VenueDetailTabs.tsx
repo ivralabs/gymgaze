@@ -13,6 +13,9 @@ import {
   MapPin,
   Building2,
   Clock,
+  Download,
+  Archive,
+  Filter,
 } from "lucide-react";
 
 type Tab = "overview" | "screens" | "contract" | "photos" | "revenue";
@@ -62,12 +65,28 @@ interface RevenueEntry {
   notes: string | null;
 }
 
+type AreaTag = "gym_floor" | "reception" | "changerooms" | "equipment" | "outdoor" | "other";
+
+const AREA_LABELS: Record<string, string> = {
+  gym_floor: "Gym Floor",
+  reception: "Reception",
+  changerooms: "Changerooms",
+  equipment: "Equipment Area",
+  outdoor: "Outdoor",
+  other: "Other",
+};
+
 interface Photo {
   id: string;
   month: string | null;
   status: string | null;
   rejection_reason: string | null;
   created_at: string;
+  storage_path: string;
+  file_name: string | null;
+  file_size_bytes: number | null;
+  area_tag: AreaTag | null;
+  signedUrl: string | null;
 }
 
 interface Props {
@@ -76,6 +95,7 @@ interface Props {
   contract: Contract | null;
   revenue: RevenueEntry[];
   photos: Photo[];
+  venueId: string;
 }
 
 const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
@@ -106,14 +126,62 @@ function formatZAR(val: number | null) {
   return "R " + val.toLocaleString("en-ZA");
 }
 
+function formatBytes(bytes: number | null) {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function VenueDetailTabs({
   venue,
   screens,
   contract,
   revenue,
   photos,
+  venueId,
 }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [photoFilter, setPhotoFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
+  const [areaFilter, setAreaFilter] = useState<string>("all");
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const [exportingZip, setExportingZip] = useState(false);
+  const [lightbox, setLightbox] = useState<Photo | null>(null);
+
+  async function downloadPhoto(photo: Photo) {
+    setDownloading(photo.id);
+    try {
+      const res = await fetch(`/api/photos/${photo.id}/download`);
+      const { url, file_name } = await res.json();
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file_name ?? "photo.jpg";
+      a.target = "_blank";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } finally {
+      setDownloading(null);
+    }
+  }
+
+  async function exportAllZip() {
+    setExportingZip(true);
+    try {
+      const res = await fetch(`/api/photos/export?venue_id=${venueId}&status=all`);
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${venue.name.replace(/ /g, "_")}-photos.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      setExportingZip(false);
+    }
+  }
 
   const cardStyle = {
     background: "rgba(255,255,255,0.04)",
@@ -500,79 +568,200 @@ export default function VenueDetailTabs({
       {activeTab === "photos" && (
         <div>
           {photos.length === 0 ? (
-            <div
-              className="rounded-2xl p-10 flex flex-col items-center justify-center"
-              style={cardStyle}
-            >
+            <div className="rounded-2xl p-10 flex flex-col items-center justify-center" style={cardStyle}>
               <Image size={32} color="#444" strokeWidth={1.5} className="mb-3" />
               <p className="text-sm font-medium text-white mb-1">No photos uploaded</p>
-              <p className="text-xs" style={{ color: "#666" }}>
-                Photos submitted by this venue will appear here.
-              </p>
+              <p className="text-xs" style={{ color: "#666" }}>Photos submitted by this venue will appear here.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {photos.map((photo) => (
-                <div
-                  key={photo.id}
-                  className="rounded-2xl overflow-hidden"
-                  style={cardStyle}
-                >
-                  <div
-                    className="aspect-video flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.02)" }}
-                  >
-                    <Image size={24} color="#444444" strokeWidth={1.5} />
-                  </div>
-                  <div className="px-3 py-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs text-white font-medium truncate">
-                        {photo.month ? formatMonth(photo.month) : "—"}
-                      </p>
-                      <span
-                        className="text-xs font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0"
-                        style={{
-                          backgroundColor:
-                            photo.status === "approved"
-                              ? "rgba(212,255,79,0.12)"
-                              : photo.status === "rejected"
-                              ? "rgba(255,107,107,0.12)"
-                              : "rgba(251,191,36,0.12)",
-                          color:
-                            photo.status === "approved"
-                              ? "#D4FF4F"
-                              : photo.status === "rejected"
-                              ? "#FF6B6B"
-                              : "#FBBF24",
-                        }}
-                      >
-                        {photo.status ?? "pending"}
-                      </span>
-                    </div>
-                    <div
-                      className="flex items-center gap-1 mt-1"
-                      style={{ color: "#666" }}
+            <>
+              {/* Toolbar */}
+              <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Status filter */}
+                  <div className="flex items-center gap-1.5">
+                    <Filter size={13} color="#666" strokeWidth={2} />
+                    <select
+                      value={photoFilter}
+                      onChange={(e) => setPhotoFilter(e.target.value as typeof photoFilter)}
+                      className="rounded-xl px-3 py-2 text-xs"
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", outline: "none" }}
                     >
-                      <Clock size={10} strokeWidth={2} />
-                      <p className="text-xs">
-                        {new Date(photo.created_at).toLocaleDateString("en-ZA", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
+                      <option value="all">All status</option>
+                      <option value="approved">Approved</option>
+                      <option value="pending">Pending</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </div>
+                  {/* Area filter */}
+                  <select
+                    value={areaFilter}
+                    onChange={(e) => setAreaFilter(e.target.value)}
+                    className="rounded-xl px-3 py-2 text-xs"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", outline: "none" }}
+                  >
+                    <option value="all">All areas</option>
+                    {Object.entries(AREA_LABELS).map(([v, l]) => (
+                      <option key={v} value={v}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Export zip */}
+                <button
+                  onClick={exportAllZip}
+                  disabled={exportingZip}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold"
+                  style={{
+                    backgroundColor: exportingZip ? "#1E1E1E" : "rgba(212,255,79,0.12)",
+                    color: exportingZip ? "#666" : "#D4FF4F",
+                    border: "1px solid rgba(212,255,79,0.2)",
+                  }}
+                >
+                  <Archive size={14} strokeWidth={2} />
+                  {exportingZip ? "Preparing zip..." : "Download All"}
+                </button>
+              </div>
+
+              {/* Grid */}
+              {(() => {
+                const filtered = photos.filter((p) => {
+                  if (photoFilter !== "all" && p.status !== photoFilter) return false;
+                  if (areaFilter !== "all" && p.area_tag !== areaFilter) return false;
+                  return true;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="rounded-2xl p-10 flex flex-col items-center" style={cardStyle}>
+                      <p className="text-sm" style={{ color: "#666" }}>No photos match the current filters.</p>
                     </div>
-                    {photo.rejection_reason && (
-                      <p
-                        className="text-xs mt-1 truncate"
-                        style={{ color: "#FF6B6B" }}
-                      >
-                        {photo.rejection_reason}
-                      </p>
-                    )}
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filtered.map((photo) => (
+                      <div key={photo.id} className="rounded-2xl overflow-hidden flex flex-col" style={cardStyle}>
+                        {/* Thumbnail */}
+                        <div
+                          className="aspect-video flex items-center justify-center overflow-hidden cursor-pointer relative group"
+                          style={{ background: "rgba(255,255,255,0.04)" }}
+                          onClick={() => setLightbox(photo)}
+                        >
+                          {photo.signedUrl ? (
+                            <img src={photo.signedUrl} alt={photo.file_name ?? "photo"} className="w-full h-full object-cover" />
+                          ) : (
+                            <Image size={24} color="#444" strokeWidth={1.5} />
+                          )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-xs text-white font-medium">View</span>
+                          </div>
+                        </div>
+
+                        {/* Info */}
+                        <div className="px-3 py-2 flex-1 flex flex-col gap-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <p className="text-xs text-white font-medium truncate">
+                              {photo.month ? formatMonth(photo.month) : "—"}
+                            </p>
+                            <span
+                              className="text-xs font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0"
+                              style={{
+                                backgroundColor: photo.status === "approved" ? "rgba(212,255,79,0.12)" : photo.status === "rejected" ? "rgba(255,107,107,0.12)" : "rgba(251,191,36,0.12)",
+                                color: photo.status === "approved" ? "#D4FF4F" : photo.status === "rejected" ? "#FF6B6B" : "#FBBF24",
+                              }}
+                            >
+                              {photo.status ?? "pending"}
+                            </span>
+                          </div>
+
+                          {photo.area_tag && (
+                            <p className="text-xs" style={{ color: "#666" }}>
+                              {AREA_LABELS[photo.area_tag] ?? photo.area_tag}
+                            </p>
+                          )}
+
+                          <div className="flex items-center gap-1" style={{ color: "#555" }}>
+                            <Clock size={10} strokeWidth={2} />
+                            <p className="text-xs">{new Date(photo.created_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                            {photo.file_size_bytes && (
+                              <span className="text-xs ml-auto" style={{ color: "#444" }}>{formatBytes(photo.file_size_bytes)}</span>
+                            )}
+                          </div>
+
+                          {photo.rejection_reason && (
+                            <p className="text-xs truncate" style={{ color: "#FF6B6B" }}>{photo.rejection_reason}</p>
+                          )}
+                        </div>
+
+                        {/* Download button */}
+                        <div className="px-3 pb-3">
+                          <button
+                            onClick={() => downloadPhoto(photo)}
+                            disabled={downloading === photo.id}
+                            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-medium"
+                            style={{
+                              background: "rgba(255,255,255,0.05)",
+                              border: "1px solid rgba(255,255,255,0.08)",
+                              color: downloading === photo.id ? "#555" : "#A3A3A3",
+                            }}
+                          >
+                            <Download size={12} strokeWidth={2} />
+                            {downloading === photo.id ? "..." : "Download"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </>
+          )}
+
+          {/* Lightbox */}
+          {lightbox && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center"
+              style={{ backgroundColor: "rgba(0,0,0,0.92)" }}
+              onClick={() => setLightbox(null)}
+            >
+              <div className="relative max-w-5xl w-full px-4" onClick={(e) => e.stopPropagation()}>
+                {lightbox.signedUrl && (
+                  <img
+                    src={lightbox.signedUrl}
+                    alt={lightbox.file_name ?? "photo"}
+                    className="w-full max-h-[80vh] object-contain rounded-2xl"
+                  />
+                )}
+                <div className="flex items-center justify-between mt-3">
+                  <div>
+                    <p className="text-sm text-white font-medium">{lightbox.file_name ?? "Photo"}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#666" }}>
+                      {lightbox.area_tag ? AREA_LABELS[lightbox.area_tag] : ""}
+                      {lightbox.month ? ` · ${formatMonth(lightbox.month)}` : ""}
+                      {lightbox.file_size_bytes ? ` · ${formatBytes(lightbox.file_size_bytes)}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => downloadPhoto(lightbox)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                      style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+                    >
+                      <Download size={14} strokeWidth={2} />
+                      Download
+                    </button>
+                    <button
+                      onClick={() => setLightbox(null)}
+                      className="px-4 py-2 rounded-xl text-sm"
+                      style={{ background: "rgba(255,255,255,0.08)", color: "#A3A3A3" }}
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           )}
         </div>

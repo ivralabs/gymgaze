@@ -44,13 +44,24 @@ export default async function VenueDetailPage({
       .order("created_at", { ascending: false }),
   ]);
 
+  // Generate signed preview URLs for photos
+  const photosWithUrls = await Promise.all(
+    (photos ?? []).map(async (photo) => {
+      const { data: signed } = await supabase.storage
+        .from("venue-photos")
+        .createSignedUrl(photo.storage_path, 3600);
+      return { ...photo, signedUrl: signed?.signedUrl ?? null };
+    })
+  );
+
   return (
     <VenueDetailTabs
       venue={venue}
       screens={screens ?? []}
       contract={contract ?? null}
       revenue={revenue ?? []}
-      photos={photos ?? []}
+      photos={photosWithUrls}
+      venueId={id}
     />
   );
 }

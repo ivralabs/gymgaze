@@ -18,12 +18,6 @@ export async function POST(request: Request) {
   const supabase = await createClient();
   const body = await request.json();
 
-  // Only include columns that exist in the venues schema
-  // Columns that exist: id, gym_brand_id, name, address, city, region,
-  //   operating_hours, active_members, daily_entries, weekly_entries,
-  //   monthly_entries, status
-  // NOT in schema yet (skip): province, capacity, manager_name, manager_phone,
-  //   screen_count, cover_photo_url, opening_hours (text)
   const payload: Record<string, unknown> = {};
 
   if (body.name) payload.name = body.name;
@@ -33,16 +27,13 @@ export async function POST(request: Request) {
   if (body.status) payload.status = body.status;
   if (body.region !== undefined) payload.region = body.region;
 
-  // Foot traffic — columns exist
-  if (body.daily_entries !== undefined && body.daily_entries !== null) {
-    payload.daily_entries = body.daily_entries;
-  }
-  if (body.weekly_entries !== undefined && body.weekly_entries !== null) {
-    payload.weekly_entries = body.weekly_entries;
-  }
-  if (body.monthly_entries !== undefined && body.monthly_entries !== null) {
-    payload.monthly_entries = body.monthly_entries;
-  }
+  // Foot traffic
+  if (body.daily_entries != null) payload.daily_entries = body.daily_entries;
+  if (body.weekly_entries != null) payload.weekly_entries = body.weekly_entries;
+  if (body.monthly_entries != null) payload.monthly_entries = body.monthly_entries;
+
+  // Operating hours — stored as JSONB
+  if (body.operating_hours != null) payload.operating_hours = body.operating_hours;
 
   const { data, error } = await supabase
     .from("venues")

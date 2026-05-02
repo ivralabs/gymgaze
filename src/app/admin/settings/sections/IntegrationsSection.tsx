@@ -261,7 +261,7 @@ export default function IntegrationsSection() {
 
         <div style={{ display: "flex", gap: "12px" }}>
           <button
-            onClick={() => showToast("Webhook test sent", "success")}
+            onClick={() => showToast("Webhook testing coming soon", "error")}
             style={{
               padding: "10px 16px",
               borderRadius: "10px",
@@ -398,7 +398,7 @@ export default function IntegrationsSection() {
                 </button>
                 <button
                   onClick={() => {
-                    showToast("API key regenerated (stub)", "success");
+                    showToast("API key regeneration coming soon", "error");
                     setShowRegenConfirm(false);
                   }}
                   style={{

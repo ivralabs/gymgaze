@@ -96,9 +96,7 @@ export default function TeamSection() {
         showToast("Failed to send invite", "error");
       }
     } catch {
-      showToast("Invite sent (stub)", "success");
-      setShowInvite(false);
-      setInviteEmail("");
+      showToast("Failed to send invite — check your connection", "error");
     }
     setInviting(false);
   }
@@ -238,12 +236,14 @@ export default function TeamSection() {
                               fontSize: "12px",
                               padding: "5px 12px",
                               borderRadius: "8px",
-                              background: "rgba(251,191,36,0.1)",
+                              background: "rgba(251,191,36,0.06)",
                               color: "#FBBF24",
-                              border: "1px solid rgba(251,191,36,0.2)",
-                              cursor: "pointer",
+                              border: "1px solid rgba(251,191,36,0.15)",
+                              cursor: "not-allowed",
+                              opacity: 0.4,
                             }}
-                            onClick={() => showToast("Role management coming soon", "success")}
+                            disabled
+                            title="Role management coming soon"
                           >
                             Edit Role
                           </button>

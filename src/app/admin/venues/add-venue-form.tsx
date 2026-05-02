@@ -129,10 +129,13 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
         region: region || null,
       };
 
-      // Foot traffic — columns exist in schema
+      // Foot traffic
       if (dailyEntries) venuePayload.daily_entries = parseInt(dailyEntries);
       if (weeklyEntries) venuePayload.weekly_entries = parseInt(weeklyEntries);
       if (monthlyEntries) venuePayload.monthly_entries = parseInt(monthlyEntries);
+
+      // Operating hours — stored as JSONB
+      venuePayload.operating_hours = operatingHours;
 
       // Step 1 — Create venue
       const res = await fetch("/api/venues", {

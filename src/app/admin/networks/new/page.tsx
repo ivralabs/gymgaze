@@ -13,6 +13,7 @@ export default function NewNetworkPage() {
     contactPhone: "",
   });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -21,9 +22,28 @@ export default function NewNetworkPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    // TODO: POST to /api/networks
-    await new Promise((r) => setTimeout(r, 800));
-    window.location.href = "/admin/networks";
+    setError(null);
+    try {
+      const res = await fetch("/api/networks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          primary_color: form.primaryColor,
+          contact_name: form.contactName || null,
+          contact_email: form.contactEmail || null,
+          contact_phone: form.contactPhone || null,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error ?? "Failed to save network");
+      }
+      window.location.href = "/admin/networks";
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setSaving(false);
+    }
   }
 
   return (
@@ -48,6 +68,15 @@ export default function NewNetworkPage() {
           </p>
         </div>
       </div>
+
+      {error && (
+        <div
+          className="mb-5 rounded-xl px-4 py-3 text-sm"
+          style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#EF4444" }}
+        >
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div

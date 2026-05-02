@@ -16,6 +16,7 @@ import {
   Download,
   Archive,
   Filter,
+  X,
 } from "lucide-react";
 
 type Tab = "overview" | "screens" | "contract" | "photos" | "revenue";
@@ -146,6 +147,38 @@ export default function VenueDetailTabs({
   const [downloading, setDownloading] = useState<string | null>(null);
   const [exportingZip, setExportingZip] = useState(false);
   const [lightbox, setLightbox] = useState<Photo | null>(null);
+
+  // Add Screen modal state
+  const [showAddScreen, setShowAddScreen] = useState(false);
+  const [screenForm, setScreenForm] = useState({ label: "", size_inches: "", resolution: "", orientation: "landscape" });
+  const [screenSaving, setScreenSaving] = useState(false);
+  const [screenError, setScreenError] = useState<string | null>(null);
+  const [localScreens, setLocalScreens] = useState<Screen[]>(screens);
+
+  async function handleAddScreen(e: React.FormEvent) {
+    e.preventDefault();
+    setScreenSaving(true);
+    setScreenError(null);
+    try {
+      const res = await fetch("/api/screens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ venue_id: venueId, ...screenForm }),
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error ?? "Failed to add screen");
+      }
+      const newScreen = await res.json();
+      setLocalScreens((prev) => [...prev, newScreen]);
+      setShowAddScreen(false);
+      setScreenForm({ label: "", size_inches: "", resolution: "", orientation: "landscape" });
+    } catch (err: unknown) {
+      setScreenError(err instanceof Error ? err.message : "Error");
+    } finally {
+      setScreenSaving(false);
+    }
+  }
 
   async function downloadPhoto(photo: Photo) {
     setDownloading(photo.id);
@@ -347,12 +380,9 @@ export default function VenueDetailTabs({
         <div>
           <div className="flex justify-end mb-4">
             <button
+              onClick={() => setShowAddScreen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
-              style={{
-                backgroundColor: "#D4FF4F",
-                color: "#0A0A0A",
-                height: "44px",
-              }}
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
             >
               <Plus size={16} strokeWidth={2.5} />
               Add Screen
@@ -362,11 +392,8 @@ export default function VenueDetailTabs({
             className="rounded-2xl overflow-hidden"
             style={{ border: "1px solid rgba(255,255,255,0.08)" }}
           >
-            {screens.length === 0 ? (
-              <div
-                className="flex flex-col items-center justify-center py-16"
-                style={{ color: "#909090" }}
-              >
+            {localScreens.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16" style={{ color: "#909090" }}>
                 <Monitor size={32} strokeWidth={1.5} color="#444" className="mb-3" />
                 <p className="text-sm">No screens configured for this venue.</p>
               </div>
@@ -381,24 +408,19 @@ export default function VenueDetailTabs({
                       borderBottom: "1px solid rgba(255,255,255,0.08)",
                     }}
                   >
-                    {["Label", "Size", "Resolution", "Orientation", "Status"].map(
-                      (h) => (
-                        <th
-                          key={h}
-                          className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                          style={{
-                            color: "#909090",
-                            borderBottom: "1px solid rgba(255,255,255,0.08)",
-                          }}
-                        >
-                          {h}
-                        </th>
-                      )
-                    )}
+                    {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
+                      <th
+                        key={h}
+                        className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {screens.map((screen, idx) => (
+                  {localScreens.map((screen, idx) => (
                     <tr
                       key={screen.id}
                       style={{
@@ -851,6 +873,85 @@ export default function VenueDetailTabs({
               </tbody>
             </table>
           )}
+        </div>
+      )}
+    {/* Add Screen Modal */}
+      {showAddScreen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
+          onClick={() => setShowAddScreen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl p-6"
+            style={{ background: "rgba(20,20,20,0.98)", border: "1px solid rgba(255,255,255,0.10)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Add Screen</h3>
+              <button onClick={() => setShowAddScreen(false)} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}>
+                <X size={14} color="#909090" strokeWidth={2} />
+              </button>
+            </div>
+
+            {screenError && (
+              <div className="mb-4 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#EF4444" }}>
+                {screenError}
+              </div>
+            )}
+
+            <form onSubmit={handleAddScreen} className="space-y-4">
+              {([
+                { label: "Screen Label *", key: "label", placeholder: "e.g. Main Floor Screen", required: true },
+                { label: "Size (inches)", key: "size_inches", placeholder: "e.g. 55", required: false },
+                { label: "Resolution", key: "resolution", placeholder: "e.g. 1920x1080", required: false },
+              ] as { label: string; key: string; placeholder: string; required: boolean }[]).map(({ label, key, placeholder, required }) => (
+                <div key={key}>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#A3A3A3" }}>{label}</label>
+                  <input
+                    value={screenForm[key as keyof typeof screenForm]}
+                    onChange={(e) => setScreenForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    required={required}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#A3A3A3" }}>Orientation</label>
+                <select
+                  value={screenForm.orientation}
+                  onChange={(e) => setScreenForm((prev) => ({ ...prev, orientation: e.target.value }))}
+                  className="w-full rounded-xl px-4 py-2.5 text-sm"
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
+                >
+                  <option value="landscape">Landscape</option>
+                  <option value="portrait">Portrait</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddScreen(false)}
+                  className="flex-1 py-2.5 rounded-xl text-sm"
+                  style={{ border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", background: "transparent", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={screenSaving}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
+                  style={{ backgroundColor: screenSaving ? "#555" : "#D4FF4F", color: "#0A0A0A", border: "none", cursor: screenSaving ? "wait" : "pointer" }}
+                >
+                  {screenSaving ? "Saving..." : "Add Screen"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

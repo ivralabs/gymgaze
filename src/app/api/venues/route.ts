@@ -35,6 +35,13 @@ export async function POST(request: Request) {
   // Operating hours — stored as JSONB
   if (body.operating_hours != null) payload.operating_hours = body.operating_hours;
 
+  // Operational details (schema-venues-v2.sql migration)
+  if (body.manager_name) payload.manager_name = body.manager_name;
+  if (body.manager_phone) payload.manager_phone = body.manager_phone;
+  if (body.screen_count != null) payload.screen_count = body.screen_count;
+  if (body.capacity != null) payload.capacity = body.capacity;
+  if (body.province) payload.province = body.province;
+
   const { data, error } = await supabase
     .from("venues")
     .insert(payload)

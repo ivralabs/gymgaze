@@ -137,6 +137,13 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
       // Operating hours — stored as JSONB
       venuePayload.operating_hours = operatingHours;
 
+      // Operational details (requires schema-venues-v2.sql migration)
+      if (managerName) venuePayload.manager_name = managerName;
+      if (managerPhone) venuePayload.manager_phone = managerPhone;
+      if (screenCount) venuePayload.screen_count = parseInt(screenCount);
+      if (capacity) venuePayload.capacity = parseInt(capacity);
+      if (province) venuePayload.province = province;
+
       // Step 1 — Create venue
       const res = await fetch("/api/venues", {
         method: "POST",
@@ -618,9 +625,6 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
 
             {/* ── SECTION 5: Operational Details ───────────────────── */}
             <p style={sectionLabelStyle}>Operational Details</p>
-            <p style={{ color: "#666", fontSize: 12, marginBottom: 16, marginTop: -8 }}>
-              These fields will be available once the database migration is applied
-            </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
               <div>

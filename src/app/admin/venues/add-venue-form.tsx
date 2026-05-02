@@ -48,9 +48,42 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
   // Section 5 — Operational Details (UI only — not in DB schema yet)
   const [screenCount, setScreenCount] = useState("");
   const [capacity, setCapacity] = useState("");
-  const [openingHours, setOpeningHours] = useState("");
   const [managerName, setManagerName] = useState("");
   const [managerPhone, setManagerPhone] = useState("");
+
+  // Operating hours — per day
+  type DayHours = { open: string; close: string; closed: boolean };
+  const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const DEFAULT_HOURS: DayHours = { open: "05:00", close: "22:00", closed: false };
+  const WEEKEND_HOURS: DayHours = { open: "07:00", close: "18:00", closed: false };
+  const [operatingHours, setOperatingHours] = useState<Record<string, DayHours>>(() =>
+    Object.fromEntries(DAYS.map((d) => [
+      d,
+      d === "Saturday" || d === "Sunday" ? { ...WEEKEND_HOURS } : { ...DEFAULT_HOURS },
+    ]))
+  );
+
+  // Generate time options in 30-min increments
+  const TIME_OPTIONS: string[] = [];
+  for (let h = 0; h < 24; h++) {
+    for (const m of ["00", "30"]) {
+      TIME_OPTIONS.push(`${String(h).padStart(2, "0")}:${m}`);
+    }
+  }
+
+  function updateDay(day: string, patch: Partial<DayHours>) {
+    setOperatingHours((prev) => ({ ...prev, [day]: { ...prev[day], ...patch } }));
+  }
+
+  function setAllWeekdays(patch: Partial<DayHours>) {
+    setOperatingHours((prev) => {
+      const next = { ...prev };
+      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach((d) => {
+        next[d] = { ...next[d], ...patch };
+      });
+      return next;
+    });
+  }
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -67,7 +100,11 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
     setPhotoFile(null); setPhotoPreview(null);
     setDailyEntries(""); setWeeklyEntries(""); setMonthlyEntries(""); setLastEntryDate("");
     setContractType(null); setMonthlyRental(""); setRevenueSharePercent("");
-    setScreenCount(""); setCapacity(""); setOpeningHours(""); setManagerName(""); setManagerPhone("");
+    setScreenCount(""); setCapacity(""); setManagerName(""); setManagerPhone("");
+    setOperatingHours(Object.fromEntries(DAYS.map((d) => [
+      d,
+      d === "Saturday" || d === "Sunday" ? { ...WEEKEND_HOURS } : { ...DEFAULT_HOURS },
+    ])));
     setError(null);
   }
 
@@ -607,15 +644,80 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
               </div>
             </div>
 
+            {/* Operating Hours picker */}
             <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Opening Hours</label>
-              <input
-                value={openingHours}
-                onChange={(e) => setOpeningHours(e.target.value)}
-                placeholder="Mon-Fri 05:00-22:00, Sat-Sun 07:00-18:00"
-                style={inputStyle}
-              />
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <label style={labelStyle}>Operating Hours</label>
+                <button
+                  type="button"
+                  onClick={() => setAllWeekdays({ open: "05:00", close: "22:00", closed: false })}
+                  style={{ fontSize: 11, color: "#D4FF4F", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                >
+                  Reset weekdays
+                </button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {DAYS.map((day) => {
+                  const h = operatingHours[day];
+                  return (
+                    <div
+                      key={day}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "90px 1fr 1fr 80px",
+                        gap: 8,
+                        alignItems: "center",
+                        opacity: h.closed ? 0.45 : 1,
+                        transition: "opacity 0.15s",
+                      }}
+                    >
+                      {/* Day label */}
+                      <span style={{ fontSize: 13, color: "#A3A3A3", fontWeight: 500 }}>{day.slice(0, 3)}</span>
+
+                      {/* Open time */}
+                      <select
+                        disabled={h.closed}
+                        value={h.open}
+                        onChange={(e) => updateDay(day, { open: e.target.value })}
+                        style={{ ...inputStyle, padding: "8px 10px", fontSize: 13, opacity: h.closed ? 0.4 : 1 }}
+                      >
+                        {TIME_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+                      </select>
+
+                      {/* Close time */}
+                      <select
+                        disabled={h.closed}
+                        value={h.close}
+                        onChange={(e) => updateDay(day, { close: e.target.value })}
+                        style={{ ...inputStyle, padding: "8px 10px", fontSize: 13, opacity: h.closed ? 0.4 : 1 }}
+                      >
+                        {TIME_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+                      </select>
+
+                      {/* Closed toggle */}
+                      <button
+                        type="button"
+                        onClick={() => updateDay(day, { closed: !h.closed })}
+                        style={{
+                          padding: "8px 10px",
+                          borderRadius: 10,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          border: "none",
+                          transition: "all 0.15s",
+                          backgroundColor: h.closed ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.06)",
+                          color: h.closed ? "#EF4444" : "#666",
+                        }}
+                      >
+                        {h.closed ? "Closed" : "Open"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 0 }}>
               <div>

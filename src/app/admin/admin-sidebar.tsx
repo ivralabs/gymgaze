@@ -20,29 +20,33 @@ import {
   Layers,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
 
-const navItems = [
-  { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/networks", icon: Building2, label: "Networks" },
-  { href: "/admin/venues", icon: MapPin, label: "Venues" },
-  { href: "/admin/campaigns", icon: Megaphone, label: "Campaigns" },
-  { href: "/admin/inventory", icon: Layers, label: "Inventory" },
-  { href: "/admin/revenue", icon: DollarSign, label: "Revenue" },
-  { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
-  { href: "/admin/photos", icon: Image, label: "Proof Of Flight" },
-  { href: "/admin/insights", icon: Lightbulb, label: "Insights" },
-  { href: "/admin/settings", icon: Settings, label: "Settings" },
+const ALL_NAV_ITEMS = [
+  { href: "/admin/dashboard", slug: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/admin/networks",  slug: "networks",  icon: Building2,      label: "Networks" },
+  { href: "/admin/venues",    slug: "venues",    icon: MapPin,          label: "Venues" },
+  { href: "/admin/campaigns", slug: "campaigns", icon: Megaphone,       label: "Campaigns" },
+  { href: "/admin/inventory", slug: "inventory", icon: Layers,          label: "Inventory" },
+  { href: "/admin/revenue",   slug: "revenue",   icon: DollarSign,      label: "Revenue" },
+  { href: "/admin/analytics", slug: "analytics", icon: BarChart3,       label: "Analytics" },
+  { href: "/admin/photos",    slug: "photos",    icon: Image,           label: "Proof Of Flight" },
+  { href: "/admin/insights",  slug: "insights",  icon: Lightbulb,       label: "Insights" },
+  { href: "/admin/settings",  slug: "settings",  icon: Settings,        label: "Settings" },
 ];
 
 function NavContent({
   pathname,
   onNavigate,
   onLogout,
+  allowedSlugs,
 }: {
   pathname: string;
   onNavigate?: () => void;
   onLogout: () => void;
+  allowedSlugs: NavSlug[];
 }) {
+  const navItems = ALL_NAV_ITEMS.filter((item) => allowedSlugs.includes(item.slug as NavSlug));
   return (
     <>
       {/* Navigation */}
@@ -110,6 +114,28 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const supabase = createClient();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [allowedSlugs, setAllowedSlugs] = useState<NavSlug[]>(ALL_NAV_ITEMS.map((i) => i.slug as NavSlug));
+
+  // Load user's permissions on mount
+  useEffect(() => {
+    async function loadPerms() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, permissions")
+        .eq("id", user.id)
+        .single();
+      if (profile) {
+        const slugs = resolvePermissions(
+          (profile.role ?? "admin") as RolePreset,
+          profile.permissions as NavSlug[] | null
+        );
+        setAllowedSlugs(slugs);
+      }
+    }
+    loadPerms();
+  }, []);
 
   // Close drawer on route change
   useEffect(() => {
@@ -159,7 +185,7 @@ export default function AdminSidebar() {
         style={{ width: "240px", minWidth: "240px", willChange: "transform" }}
       >
         {logoArea}
-        <NavContent pathname={pathname} onLogout={handleLogout} />
+        <NavContent pathname={pathname} onLogout={handleLogout} allowedSlugs={allowedSlugs} />
       </aside>
 
       {/* ── Mobile top bar ── */}
@@ -248,6 +274,7 @@ export default function AdminSidebar() {
           pathname={pathname}
           onNavigate={() => setMobileOpen(false)}
           onLogout={handleLogout}
+          allowedSlugs={allowedSlugs}
         />
       </div>
     </>

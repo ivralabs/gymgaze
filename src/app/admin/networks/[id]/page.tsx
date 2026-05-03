@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Phone, Mail, User, Megaphone, Image as ImageIcon } from "lucide-react";
 import EditBrandButton from "./EditBrandButton";
+import NetworkActionsButton from "./NetworkActionsButton";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import NetworkRevenueChartWrapper from "./NetworkRevenueChartWrapper";
@@ -150,10 +151,10 @@ export default async function NetworkDetailPage({
   return (
     <div className="p-4 md:p-8">
       {/* Header row */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-3 mb-8">
         <Link
           href="/admin/networks"
-          className="p-2 rounded-xl"
+          className="p-2 rounded-xl flex-shrink-0"
           style={{
             background: "rgba(255,255,255,0.05)",
             backdropFilter: "blur(8px)",
@@ -164,15 +165,15 @@ export default async function NetworkDetailPage({
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <h1
-            className="text-2xl font-bold text-white"
+            className="text-2xl font-bold text-white truncate"
             style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
           >
             {network.name}
           </h1>
           <span
-            className="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full"
+            className="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full flex-shrink-0"
             style={{
               backgroundColor:
                 network.is_active !== false
@@ -184,6 +185,11 @@ export default async function NetworkDetailPage({
             {network.is_active !== false ? "Active" : "Inactive"}
           </span>
         </div>
+        <NetworkActionsButton
+          networkId={network.id}
+          networkName={network.name}
+          isActive={network.is_active !== false}
+        />
       </div>
 
       {/* Stats tiles */}

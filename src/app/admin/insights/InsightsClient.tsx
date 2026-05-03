@@ -8,6 +8,7 @@ import {
   BarChart3, Percent, Clock, X, Check, Presentation, Calculator, Zap, Trophy
 } from "lucide-react";
 import AgencyDeckPreview from "./AgencyDeckPreview";
+import { FootTrafficHeatmap, CampaignImpactEstimator, NetworkGrowthTimeline } from "./InsightsFeatures";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -812,8 +813,17 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
           {/* CPM Calculator */}
           <CpmCalculator totalMembers={totalMembers} totalMonthly={totalMonthly} totalScreens={totalScreens} />
 
+          {/* Campaign Impact Estimator */}
+          <CampaignImpactEstimator totalMembers={totalMembers} totalMonthly={totalMonthly} totalScreens={totalScreens} />
+
           {/* Campaign Availability */}
           <CampaignAvailability venues={venues} screens={screens} campaignVenues={campaignVenues} />
+
+          {/* Foot Traffic Heatmap */}
+          <FootTrafficHeatmap venues={venues as unknown as Parameters<typeof FootTrafficHeatmap>[0]['venues']} />
+
+          {/* Network Growth Timeline */}
+          <NetworkGrowthTimeline venues={venues as unknown as Parameters<typeof NetworkGrowthTimeline>[0]['venues']} screens={screens} />
 
           {/* Competitive Positioning */}
           <CompetitivePositioning venues={venues} networks={networks} screens={screens} />

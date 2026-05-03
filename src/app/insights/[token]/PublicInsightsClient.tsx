@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Monitor, Users, TrendingUp, MapPin, Lock, Eye, Clock, Building2, ChevronDown } from "lucide-react";
+import { Monitor, Users, TrendingUp, MapPin, Lock, Eye, Clock, Building2, ChevronDown, Download } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -430,7 +430,17 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
       <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)", position: "sticky", top: 0, zIndex: 10, backdropFilter: "blur(12px)" }}>
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
           <GymGazeLogo />
-          <p className="text-sm font-semibold text-white truncate ml-4 hidden sm:block" style={{ fontFamily: "Inter Tight, sans-serif" }}>{title}</p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm font-semibold text-white truncate hidden sm:block" style={{ fontFamily: "Inter Tight, sans-serif" }}>{title}</p>
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all print:hidden"
+              style={{ background: "rgba(212,255,79,0.10)", border: "1px solid rgba(212,255,79,0.25)", color: "#D4FF4F" }}
+            >
+              <Download size={13} strokeWidth={2} />
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
 

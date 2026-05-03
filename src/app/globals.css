@@ -153,3 +153,21 @@ h6 {
     max-width: 100vw;
   }
 }
+
+/* Print / PDF export styles */
+@media print {
+  body { background: #0A0A0A !important; color: #fff !important; }
+  .print\:hidden { display: none !important; }
+  /* Avoid page breaks inside cards */
+  .rounded-2xl { break-inside: avoid; }
+  /* Remove sticky header position for print */
+  [style*="position: sticky"], [style*="position:sticky"] {
+    position: relative !important;
+  }
+  /* Force dark background on all elements */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

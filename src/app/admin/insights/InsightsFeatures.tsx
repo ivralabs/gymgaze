@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Clock, TrendingUp, BarChart3, Users, Monitor, Calendar } from "lucide-react";
+import { Clock, TrendingUp, BarChart3, Users, Monitor, Calendar, Eye } from "lucide-react";
 
 type Venue = {
   id: string; name: string; city: string | null; province: string | null;
@@ -165,26 +165,36 @@ export function CampaignImpactEstimator({ venues, screens }: {
   const [unit, setUnit] = useState<"days" | "weeks" | "months">("weeks");
   const [duration, setDuration] = useState("4");
   const [budget, setBudget] = useState("");
+  const [cpm, setCpm] = useState("85");
+  const [editingCpm, setEditingCpm] = useState(false);
   const [selectedVenues, setSelectedVenues] = useState<string[]>([]);
   const [venuePickerOpen, setVenuePickerOpen] = useState(false);
-  const CPM = 85;
+  const [copied, setCopied] = useState(false);
+
+  const CPM = parseFloat(cpm) || 85;
 
   // Filter to selected venues or all
   const activeVenues = selectedVenues.length > 0
     ? venues.filter((v) => selectedVenues.includes(v.id))
     : venues;
   const activeScreens = screens.filter((s) => activeVenues.some((v) => v.id === s.venue_id));
-
   const totalMembers = activeVenues.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = activeVenues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
-  // Fall back to 1 screen per venue if no screens in DB yet
   const totalScreens = activeScreens.length > 0 ? activeScreens.length : activeVenues.length;
 
   function toggleVenue(id: string) {
     setSelectedVenues((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
   }
 
-  // Group venues by province for the picker
+  function resetAll() {
+    setUnit("weeks");
+    setDuration("4");
+    setBudget("");
+    setCpm("85");
+    setSelectedVenues([]);
+    setVenuePickerOpen(false);
+  }
+
   const byProvince = venues.reduce((acc, v) => {
     const prov = v.province ?? "Other";
     if (!acc[prov]) acc[prov] = [];
@@ -198,7 +208,6 @@ export function CampaignImpactEstimator({ venues, screens }: {
     months: { values: ["1", "2", "3", "6", "9", "12", "24"], label: (v) => `${v}mo` },
   };
 
-  // Normalise duration to weeks for calculations
   const durationNum = parseInt(duration) || 1;
   const durationInWeeks = unit === "days" ? durationNum / 7 : unit === "months" ? durationNum * 4.33 : durationNum;
   const durationLabel = unit === "days"
@@ -211,13 +220,14 @@ export function CampaignImpactEstimator({ venues, screens }: {
   const monthlyOts = totalMonthly * totalScreens;
   const weeklyOts = Math.round(monthlyOts / 4.33);
 
-  // Duration-based results
+  // Duration-based
   const durationImpressions = Math.round(weeklyOts * durationInWeeks);
   const durationReach = Math.min(totalMembers, Math.round(durationImpressions / Math.max(durationInWeeks * 1.2, 0.1)));
   const durationFrequency = durationReach > 0 ? (durationImpressions / durationReach).toFixed(1) : "0";
   const suggestedBudget = Math.round((durationImpressions / 1000) * CPM);
+  const durationCpr = durationReach > 0 ? (suggestedBudget / durationReach).toFixed(2) : "0";
 
-  // Budget-based results (overrides when budget entered)
+  // Budget-based
   const budgetImpressions = budgetNum > 0 ? Math.round((budgetNum / CPM) * 1000) : 0;
   const budgetReach = budgetNum > 0 ? Math.min(totalMembers, Math.round(budgetImpressions / Math.max(durationInWeeks * 1.2, 0.1))) : 0;
   const budgetFrequency = budgetReach > 0 ? (budgetImpressions / budgetReach).toFixed(1) : "0";
@@ -225,78 +235,105 @@ export function CampaignImpactEstimator({ venues, screens }: {
   const budgetDurationDisplay = unit === "days"
     ? `${Math.round(budgetDurationWeeks * 7)}d`
     : unit === "months"
-    ? `${Math.round(budgetDurationWeeks / 4.33)}mo`
+    ? `${(budgetDurationWeeks / 4.33).toFixed(1)}mo`
     : `${Math.round(budgetDurationWeeks)}w`;
+  const budgetCpr = budgetReach > 0 ? (budgetNum / budgetReach).toFixed(2) : "0";
 
-  // Use budget values when budget entered, otherwise duration values
+  // Active values
   const campaignImpressions = budgetNum > 0 ? budgetImpressions : durationImpressions;
   const estReach = budgetNum > 0 ? budgetReach : durationReach;
   const frequency = budgetNum > 0 ? budgetFrequency : durationFrequency;
+  const cpr = budgetNum > 0 ? budgetCpr : durationCpr;
   const activeLabel = budgetNum > 0 ? `R${fmt(budgetNum)} budget` : durationLabel;
+  const isBudgetMode = budgetNum > 0;
+
+  function copySummary() {
+    const venueList = selectedVenues.length > 0
+      ? activeVenues.map((v) => v.name).join(", ")
+      : `All ${venues.length} venues`;
+    const text = [
+      `GymGaze Campaign Estimate`,
+      `─────────────────────────`,
+      `Scope: ${venueList}`,
+      `Duration: ${isBudgetMode ? budgetDurationDisplay : durationLabel}`,
+      `${isBudgetMode ? `Budget: R${fmt(budgetNum)}` : `Suggested Budget: R${fmt(suggestedBudget)}`}`,
+      ``,
+      `Total Impressions: ${fmt(campaignImpressions)}`,
+      `Unique Reach: ${fmt(estReach)}`,
+      `Avg Frequency: ${frequency}×`,
+      `Cost Per Reach: R${cpr}`,
+      `CPM: R${CPM}`,
+    ].join("\n");
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
+
+  const inputStyle: React.CSSProperties = {
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,255,255,0.10)",
+    color: "#fff", borderRadius: 12, padding: "10px 14px",
+    fontSize: 13, outline: "none", width: "100%",
+  };
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
-      <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={16} color="#A78BFA" strokeWidth={2} />
-          <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Campaign Impact Estimator</p>
+      {/* Header */}
+      <div className="px-5 pt-5 pb-4 flex items-start justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp size={16} color="#A78BFA" strokeWidth={2} />
+            <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Campaign Impact Estimator</p>
+          </div>
+          <p className="text-xs" style={{ color: "#8A8A8A" }}>Project reach, frequency and impressions for any campaign</p>
         </div>
-        <p className="text-xs" style={{ color: "#8A8A8A" }}>Project reach, frequency and impressions for any campaign duration</p>
+        <button onClick={resetAll} className="text-xs px-3 py-1.5 rounded-lg flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)", color: "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}>
+          Reset
+        </button>
       </div>
 
       <div className="p-5 space-y-5">
 
-        {/* Venue selector */}
+        {/* ── Gyms in Scope ── */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>Gyms in Scope</p>
             {selectedVenues.length > 0 && (
-              <button onClick={() => setSelectedVenues([])} className="text-xs" style={{ color: "#D4FF4F" }}>Clear — show all</button>
+              <button onClick={() => setSelectedVenues([])} className="text-xs" style={{ color: "#D4FF4F" }}>Show all</button>
             )}
           </div>
-
-          {/* Trigger button */}
           <button
             onClick={() => setVenuePickerOpen((p) => !p)}
             className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all"
             style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${selectedVenues.length > 0 ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.10)"}` }}
           >
             <span style={{ color: selectedVenues.length > 0 ? "#D4FF4F" : "#C8C8C8" }}>
-              {selectedVenues.length === 0
-                ? `All ${venues.length} venues`
-                : `${selectedVenues.length} venue${selectedVenues.length !== 1 ? "s" : ""} selected`}
+              {selectedVenues.length === 0 ? `All ${venues.length} venues` : `${selectedVenues.length} venue${selectedVenues.length !== 1 ? "s" : ""} selected`}
             </span>
-            <span className="text-xs" style={{ color: "#777" }}>{venuePickerOpen ? "▲" : "▼"}</span>
+            <span style={{ color: "#777", fontSize: 11 }}>{venuePickerOpen ? "▲" : "▼"}</span>
           </button>
 
-          {/* Picker dropdown */}
           {venuePickerOpen && (
-            <div className="mt-2 rounded-xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "#141414", maxHeight: 280, overflowY: "auto" }}>
-              {/* Select All / Clear */}
-              <div className="flex gap-2 px-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="mt-2 rounded-xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "#141414", maxHeight: 260, overflowY: "auto" }}>
+              <div className="flex gap-2 px-3 py-2 sticky top-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#141414" }}>
                 <button onClick={() => setSelectedVenues(venues.map((v) => v.id))} className="text-xs px-3 py-1 rounded-lg" style={{ background: "rgba(212,255,79,0.08)", color: "#D4FF4F" }}>Select All</button>
                 <button onClick={() => setSelectedVenues([])} className="text-xs px-3 py-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", color: "#C8C8C8" }}>Clear</button>
+                <button onClick={() => setVenuePickerOpen(false)} className="text-xs px-3 py-1 rounded-lg ml-auto" style={{ background: "rgba(255,255,255,0.04)", color: "#8A8A8A" }}>Done</button>
               </div>
-              {/* Grouped by province */}
               {Object.entries(byProvince).sort().map(([prov, provVenues]) => (
                 <div key={prov}>
-                  <div className="px-3 py-1.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <div className="px-3 py-1.5 sticky" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", background: "#141414" }}>
                     <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#777" }}>{prov}</span>
                   </div>
                   {provVenues.map((v) => {
-                    const isSelected = selectedVenues.includes(v.id);
+                    const sel = selectedVenues.includes(v.id);
                     return (
-                      <button
-                        key={v.id}
-                        onClick={() => toggleVenue(v.id)}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all"
-                        style={{ background: isSelected ? "rgba(212,255,79,0.06)" : "transparent" }}
-                      >
-                        <div className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style={{ border: `1.5px solid ${isSelected ? "#D4FF4F" : "#444"}`, background: isSelected ? "#D4FF4F" : "transparent" }}>
-                          {isSelected && <span style={{ fontSize: 9, fontWeight: 900, color: "#0A0A0A" }}>✓</span>}
+                      <button key={v.id} onClick={() => toggleVenue(v.id)} className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all" style={{ background: sel ? "rgba(212,255,79,0.06)" : "transparent" }}>
+                        <div className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style={{ border: `1.5px solid ${sel ? "#D4FF4F" : "#444"}`, background: sel ? "#D4FF4F" : "transparent" }}>
+                          {sel && <span style={{ fontSize: 9, fontWeight: 900, color: "#0A0A0A" }}>✓</span>}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate" style={{ color: isSelected ? "#D4FF4F" : "#C8C8C8" }}>{v.name}</p>
+                          <p className="text-sm font-medium truncate" style={{ color: sel ? "#D4FF4F" : "#C8C8C8" }}>{v.name}</p>
                           <p className="text-xs" style={{ color: "#777" }}>{v.city} · {(v.active_members ?? 0).toLocaleString("en-ZA")} members</p>
                         </div>
                       </button>
@@ -307,23 +344,21 @@ export function CampaignImpactEstimator({ venues, screens }: {
             </div>
           )}
 
-          {/* Selected venue chips */}
           {selectedVenues.length > 0 && !venuePickerOpen && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {activeVenues.map((v) => (
                 <span key={v.id} className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full" style={{ background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)", color: "#D4FF4F" }}>
                   {v.name}
-                  <button onClick={() => toggleVenue(v.id)} style={{ color: "#D4FF4F", lineHeight: 1 }}>×</button>
+                  <button onClick={() => toggleVenue(v.id)} style={{ color: "#D4FF4F99", lineHeight: 1 }}>×</button>
                 </span>
               ))}
             </div>
           )}
         </div>
 
-        {/* Duration selector */}
+        {/* ── Campaign Duration ── */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Duration</p>
-          {/* Unit toggle */}
           <div className="flex gap-1 p-1 rounded-xl mb-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", display: "inline-flex" }}>
             {(["days", "weeks", "months"] as const).map((u) => (
               <button key={u} onClick={() => { setUnit(u); setDuration(UNIT_OPTIONS[u].values[2]); }}
@@ -333,7 +368,6 @@ export function CampaignImpactEstimator({ venues, screens }: {
               </button>
             ))}
           </div>
-          {/* Value pills */}
           <div className="flex gap-2 flex-wrap">
             {UNIT_OPTIONS[unit].values.map((v) => (
               <button key={v} onClick={() => setDuration(v)}
@@ -349,24 +383,82 @@ export function CampaignImpactEstimator({ venues, screens }: {
           </div>
         </div>
 
-        {/* Projected results — updates live from duration OR budget */}
+        {/* ── CPM Rate ── */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>CPM Rate</p>
+            <button onClick={() => setEditingCpm((p) => !p)} className="text-xs" style={{ color: "#D4FF4F" }}>
+              {editingCpm ? "Done" : "Edit"}
+            </button>
+          </div>
+          {editingCpm ? (
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
+              <input value={cpm} onChange={(e) => setCpm(e.target.value.replace(/[^0-9.]/g, ""))} style={{ ...inputStyle, paddingLeft: 28 }} placeholder="85" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <span className="text-sm font-bold text-white">R{cpm || "85"}</span>
+              <span className="text-xs" style={{ color: "#8A8A8A" }}>per 1,000 impressions</span>
+              {cpm !== "85" && <span className="text-xs ml-auto" style={{ color: "#F59E0B" }}>Custom rate</span>}
+            </div>
+          )}
+        </div>
+
+        {/* ── Budget input ── */}
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Budget (optional)</p>
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
+              <input
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="Enter budget to override duration"
+                className="w-full text-sm text-white"
+                style={{ ...inputStyle, paddingLeft: 28, border: `1px solid ${budgetNum > 0 ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.10)"}` }}
+              />
+            </div>
+            {budgetNum > 0 && (
+              <button onClick={() => setBudget("")} className="text-xs px-3 py-2.5 rounded-xl flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)", color: "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}>
+                Clear
+              </button>
+            )}
+          </div>
+          <p className="text-xs mt-1.5" style={{ color: "#666" }}>
+            {budgetNum > 0 ? `Budget mode — results show what R${fmt(budgetNum)} delivers` : `Duration mode — results show projections for ${durationLabel}`}
+          </p>
+        </div>
+
+        {/* ── Results ── */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>Results</p>
-            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: budgetNum > 0 ? "rgba(212,255,79,0.10)" : "rgba(167,139,250,0.10)", color: budgetNum > 0 ? "#D4FF4F" : "#A78BFA" }}>
-              {activeLabel}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: isBudgetMode ? "rgba(212,255,79,0.10)" : "rgba(167,139,250,0.10)", color: isBudgetMode ? "#D4FF4F" : "#A78BFA" }}>
+                {activeLabel}
+              </span>
+              <button
+                onClick={copySummary}
+                className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-lg transition-all"
+                style={{ background: copied ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.05)", color: copied ? "#D4FF4F" : "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                {copied ? "✓ Copied" : "Copy summary"}
+              </button>
+            </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
               { label: "Total Impressions", value: fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
               { label: "Unique Reach",      value: fmt(estReach),            color: "#fff",    icon: Users },
-              { label: "Avg Frequency",     value: `${frequency}×`,         color: "#A78BFA", icon: BarChart3 },
-              { label: budgetNum > 0 ? "Est. Duration" : "Suggested Budget",
-                value: budgetNum > 0 ? budgetDurationDisplay : fmtR(suggestedBudget),
-                color: "#34D399", icon: TrendingUp },
+              { label: "Avg Frequency",     value: `${frequency}×`,          color: "#A78BFA", icon: BarChart3 },
+              { label: "Cost Per Reach",    value: `R${cpr}`,                color: "#34D399", icon: TrendingUp },
+              { label: isBudgetMode ? "Est. Duration" : "Suggested Budget",
+                value: isBudgetMode ? budgetDurationDisplay : fmtR(suggestedBudget),
+                color: "#F59E0B", icon: Calendar },
+              { label: "Weekly OTS",        value: fmt(weeklyOts),           color: "#60A5FA", icon: Eye },
             ].map(({ label, value, color, icon: Icon }) => (
-              <div key={label} className="rounded-xl p-3 transition-all" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${budgetNum > 0 ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.06)"}` }}>
+              <div key={label} className="rounded-xl p-3 transition-all" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${isBudgetMode ? "rgba(212,255,79,0.10)" : "rgba(255,255,255,0.06)"}` }}>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Icon size={11} color="#8A8A8A" strokeWidth={2} />
                   <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
@@ -375,29 +467,6 @@ export function CampaignImpactEstimator({ venues, screens }: {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Budget input */}
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Enter a specific budget to recalculate</p>
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
-              <input
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                placeholder="e.g. 50 000"
-                className="w-full pl-7 pr-4 py-2.5 rounded-xl text-sm text-white"
-                style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${budgetNum > 0 ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.10)"}`, outline: "none", transition: "border 0.2s" }}
-              />
-            </div>
-            {budgetNum > 0 && (
-              <button onClick={() => setBudget("")} className="text-xs px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", color: "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}>
-                Clear
-              </button>
-            )}
-          </div>
-          {!budgetNum && <p className="text-xs mt-1.5" style={{ color: "#666" }}>Results above based on {durationLabel} campaign. Enter a budget to override.</p>}
         </div>
       </div>
     </div>

@@ -16,10 +16,16 @@ type Venue = {
   active_members: number | null;
   daily_entries: number | null;
   monthly_entries: number | null;
-  gym_brands: Brand | null;
+  // Supabase returns 1:1 FK joins as arrays — we normalise in the component
+  gym_brands: Brand | Brand[] | null;
   screens: { id: string; is_active: boolean | null }[] | null;
   venue_photos: { id: string; status: string | null }[] | null;
 };
+
+function getBrand(raw: Brand | Brand[] | null): Brand | null {
+  if (!raw) return null;
+  return Array.isArray(raw) ? (raw[0] ?? null) : raw;
+}
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   active:      { label: "Active",      color: "#D4FF4F", bg: "rgba(212,255,79,0.10)",  dot: "#D4FF4F" },
@@ -46,7 +52,7 @@ function complianceColor(pct: number): string {
 
 function VenueCard({ venue }: { venue: Venue }) {
   const status = STATUS_CONFIG[venue.status ?? "inactive"] ?? STATUS_CONFIG.inactive;
-  const brand = venue.gym_brands;
+  const brand = getBrand(venue.gym_brands);
   const screenCount = Array.isArray(venue.screens) ? venue.screens.length : 0;
   const activeScreens = Array.isArray(venue.screens) ? venue.screens.filter((s) => s.is_active).length : 0;
   const photos = venue.venue_photos ?? [];
@@ -121,7 +127,7 @@ function VenueCard({ venue }: { venue: Venue }) {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 divide-x px-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", divideColor: "rgba(255,255,255,0.06)" }}>
+      <div className="grid grid-cols-3 px-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         {[
           { icon: Users,   label: "Members", value: (venue.active_members ?? 0).toLocaleString("en-ZA") },
           { icon: Monitor, label: "Screens",  value: activeScreens === screenCount ? `${screenCount}` : `${activeScreens}/${screenCount}` },
@@ -211,7 +217,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
     return venues.filter((v) => {
       const q = search.toLowerCase();
       if (q && !v.name.toLowerCase().includes(q) && !(v.city ?? "").toLowerCase().includes(q) && !(v.province ?? "").toLowerCase().includes(q)) return false;
-      if (networkFilter !== "all" && v.gym_brands?.id !== networkFilter) return false;
+      if (networkFilter !== "all" && getBrand(v.gym_brands)?.id !== networkFilter) return false;
       if (statusFilter !== "all" && v.status !== statusFilter) return false;
       return true;
     });
@@ -380,7 +386,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
                         <p className="text-sm font-semibold text-white">{venue.name}</p>
                         {venue.region && <p className="text-xs mt-0.5" style={{ color: "#555" }}>{venue.region}</p>}
                       </td>
-                      <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{venue.gym_brands?.name ?? "—"}</td>
+                      <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{getBrand(venue.gym_brands)?.name ?? "—"}</td>
                       <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{venue.city ?? "—"}</td>
                       <td className="px-5 py-3">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: status.bg, color: status.color }}>

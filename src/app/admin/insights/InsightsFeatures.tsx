@@ -186,13 +186,19 @@ export function CampaignImpactEstimator({ venues, screens }: {
     setSelectedVenues((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
   }
 
+  const [resetFlash, setResetFlash] = useState(false);
+
   function resetAll() {
     setUnit("weeks");
     setDuration("4");
     setBudget("");
     setCpm("85");
+    setEditingCpm(false);
     setSelectedVenues([]);
     setVenuePickerOpen(false);
+    setCopied(false);
+    setResetFlash(true);
+    setTimeout(() => setResetFlash(false), 800);
   }
 
   const byProvince = venues.reduce((acc, v) => {
@@ -287,8 +293,8 @@ export function CampaignImpactEstimator({ venues, screens }: {
           </div>
           <p className="text-xs" style={{ color: "#8A8A8A" }}>Project reach, frequency and impressions for any campaign</p>
         </div>
-        <button onClick={resetAll} className="text-xs px-3 py-1.5 rounded-lg flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)", color: "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}>
-          Reset
+        <button onClick={resetAll} className="text-xs px-3 py-1.5 rounded-lg flex-shrink-0 transition-all" style={{ background: resetFlash ? "rgba(212,255,79,0.10)" : "rgba(255,255,255,0.05)", color: resetFlash ? "#D4FF4F" : "#8A8A8A", border: `1px solid ${resetFlash ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.08)"}` }}>
+          {resetFlash ? "✓ Reset" : "Reset"}
         </button>
       </div>
 

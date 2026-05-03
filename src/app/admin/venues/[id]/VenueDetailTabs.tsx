@@ -18,6 +18,7 @@ import {
   Filter,
   X,
 } from "lucide-react";
+import EditVenueButton from "./EditVenueButton";
 
 type Tab = "overview" | "screens" | "contract" | "photos" | "revenue";
 
@@ -32,11 +33,16 @@ interface Venue {
   address: string | null;
   city: string | null;
   region: string | null;
+  province: string | null;
   status: string | null;
   active_members: number | null;
   daily_entries: number | null;
   weekly_entries: number | null;
   monthly_entries: number | null;
+  capacity: number | null;
+  manager_name: string | null;
+  manager_phone: string | null;
+  operating_hours: Record<string, { open: string; close: string; closed: boolean }> | null;
   gym_brands: GymBrand | null;
 }
 
@@ -228,10 +234,10 @@ export default function VenueDetailTabs({
   return (
     <div className="p-4 md:p-8">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/venues"
-          className="p-2 rounded-xl"
+          className="p-2 rounded-xl flex-shrink-0"
           style={{
             background: "rgba(255,255,255,0.05)",
             backdropFilter: "blur(8px)",
@@ -242,9 +248,9 @@ export default function VenueDetailTabs({
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
-        <div>
+        <div className="flex-1 min-w-0">
           <h1
-            className="text-2xl font-bold text-white"
+            className="text-2xl font-bold text-white truncate"
             style={{
               fontFamily: "Inter Tight, sans-serif",
               letterSpacing: "-0.02em",
@@ -256,6 +262,7 @@ export default function VenueDetailTabs({
             {brandName ? `${brandName} \u00b7 ` : ""}{venue.city ?? ""}
           </p>
         </div>
+        <EditVenueButton venue={venue} />
       </div>
 
       {/* Tabs — scrollable on mobile */}

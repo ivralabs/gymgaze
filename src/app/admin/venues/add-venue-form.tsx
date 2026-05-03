@@ -45,7 +45,8 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
   const [monthlyRental, setMonthlyRental] = useState("");
   const [revenueSharePercent, setRevenueSharePercent] = useState("");
 
-  // Section 5 — Operational Details (UI only — not in DB schema yet)
+  // Section 5 — Operational Details
+  const [activeMembers, setActiveMembers] = useState("");
   const [screenCount, setScreenCount] = useState("");
   const [capacity, setCapacity] = useState("");
   const [managerName, setManagerName] = useState("");
@@ -100,7 +101,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
     setPhotoFile(null); setPhotoPreview(null);
     setDailyEntries(""); setWeeklyEntries(""); setMonthlyEntries(""); setLastEntryDate("");
     setContractType(null); setMonthlyRental(""); setRevenueSharePercent("");
-    setScreenCount(""); setCapacity(""); setManagerName(""); setManagerPhone("");
+    setActiveMembers(""); setScreenCount(""); setCapacity(""); setManagerName(""); setManagerPhone("");
     setOperatingHours(Object.fromEntries(DAYS.map((d) => [
       d,
       d === "Saturday" || d === "Sunday" ? { ...WEEKEND_HOURS } : { ...DEFAULT_HOURS },
@@ -137,7 +138,8 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
       // Operating hours — stored as JSONB
       venuePayload.operating_hours = operatingHours;
 
-      // Operational details (requires schema-venues-v2.sql migration)
+      // Operational details
+      if (activeMembers) venuePayload.active_members = parseInt(activeMembers);
       if (managerName) venuePayload.manager_name = managerName;
       if (managerPhone) venuePayload.manager_phone = managerPhone;
       if (screenCount) venuePayload.screen_count = parseInt(screenCount);
@@ -623,8 +625,21 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
 
             <div style={dividerStyle} />
 
-            {/* ── SECTION 5: Operational Details ───────────────────── */}
+            {/* ── SECTION 5: Operational Details ─────────────────── */}
             <p style={sectionLabelStyle}>Operational Details</p>
+
+            {/* Active Members — full width, top of section */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Active Members</label>
+              <input
+                type="number"
+                value={activeMembers}
+                onChange={(e) => setActiveMembers(e.target.value)}
+                placeholder="e.g. 450"
+                min={0}
+                style={inputStyle}
+              />
+            </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
               <div>
@@ -639,7 +654,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Capacity</label>
+                <label style={labelStyle}>Capacity (Max Members)</label>
                 <input
                   type="number"
                   value={capacity}

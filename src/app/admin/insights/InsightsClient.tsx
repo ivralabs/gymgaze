@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Users, Monitor, TrendingUp, Building2, Share2, Copy, Trash2,
   Plus, Lock, Unlock, Eye, Calendar, ChevronDown, ChevronUp,
-  BarChart3, Percent, Clock, X, Check, Presentation
+  BarChart3, Percent, Clock, X, Check, Presentation, Calculator, Zap, Trophy
 } from "lucide-react";
 import AgencyDeckPreview from "./AgencyDeckPreview";
 
@@ -468,6 +468,265 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
   );
 }
 
+// ─── CPM Calculator ──────────────────────────────────────────────────────────
+
+function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMembers: number; totalMonthly: number; totalScreens: number }) {
+  const [mode, setMode] = useState<"budget" | "impressions">("budget");
+  const [budget, setBudget] = useState("");
+  const [targetImpressions, setTargetImpressions] = useState("");
+  const monthlyOts = totalMonthly * totalScreens;
+  const weeklyOts = Math.round(monthlyOts / 4.33);
+
+  // Assumed CPM: R85 (mid-market SA gym DOOH)
+  const CPM = 85;
+
+  const budgetNum = parseFloat(budget.replace(/[^0-9.]/g, "")) || 0;
+  const impressionsNum = parseFloat(targetImpressions.replace(/[^0-9.]/g, "")) || 0;
+
+  const fromBudget = {
+    impressions: Math.round((budgetNum / CPM) * 1000),
+    reach: Math.min(totalMembers, Math.round((budgetNum / CPM) * 1000 / 4)),
+    weeks: monthlyOts > 0 ? Math.round(((budgetNum / CPM) * 1000) / weeklyOts) : 0,
+    cpm: CPM,
+  };
+
+  const fromImpressions = {
+    budget: Math.round((impressionsNum / 1000) * CPM),
+    reach: Math.min(totalMembers, Math.round(impressionsNum / 4)),
+    weeks: weeklyOts > 0 ? Math.round(impressionsNum / weeklyOts) : 0,
+  };
+
+  return (
+    <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+      <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <Calculator size={16} color="#D4FF4F" strokeWidth={2} />
+          <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>CPM Calculator</p>
+        </div>
+        <p className="text-xs" style={{ color: "#555" }}>Estimate campaign value — based on R{CPM} CPM benchmark</p>
+      </div>
+
+      {/* Mode toggle */}
+      <div className="px-5 pt-4 pb-0">
+        <div className="flex gap-1 p-1 rounded-xl mb-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", display: "inline-flex" }}>
+          {(["budget", "impressions"] as const).map((m) => (
+            <button key={m} onClick={() => setMode(m)} className="px-4 py-1.5 rounded-lg text-xs font-semibold transition-all"
+              style={{ background: mode === m ? "rgba(255,255,255,0.10)" : "transparent", color: mode === m ? "#fff" : "#555" }}>
+              {m === "budget" ? "I have a budget" : "I want X impressions"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="px-5 pb-5">
+        {mode === "budget" ? (
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Campaign Budget (ZAR)</label>
+            <div className="relative mb-4">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#555" }}>R</span>
+              <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="50 000" className="w-full pl-7 pr-4 py-2.5 rounded-xl text-sm text-white"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
+            </div>
+            {budgetNum > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { label: "Impressions", value: fmt(fromBudget.impressions), color: "#D4FF4F" },
+                  { label: "Est. Reach", value: fmt(fromBudget.reach), color: "#fff" },
+                  { label: "Campaign Duration", value: `${fromBudget.weeks} weeks`, color: "#A78BFA" },
+                  { label: "CPM", value: `R${CPM}`, color: "#34D399" },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <p className="text-xs mb-1" style={{ color: "#555" }}>{label}</p>
+                    <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Target Impressions</label>
+            <input value={targetImpressions} onChange={(e) => setTargetImpressions(e.target.value)} placeholder="500 000" className="w-full px-4 py-2.5 rounded-xl text-sm text-white mb-4"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
+            {impressionsNum > 0 && (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: "Budget Required", value: `R${fmt(fromImpressions.budget)}`, color: "#D4FF4F" },
+                  { label: "Est. Reach", value: fmt(fromImpressions.reach), color: "#fff" },
+                  { label: "Duration", value: `${fromImpressions.weeks} weeks`, color: "#A78BFA" },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <p className="text-xs mb-1" style={{ color: "#555" }}>{label}</p>
+                    <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Campaign Availability ────────────────────────────────────────────────────
+
+function CampaignAvailability({ venues, screens, campaignVenues }: {
+  venues: Venue[]; screens: Screen[]; campaignVenues: CampaignVenue[];
+}) {
+  const now = new Date();
+
+  const venueStatus = venues.map((v) => {
+    const vScreens = screens.filter((s) => s.venue_id === v.id);
+    const activeScreenCount = vScreens.filter((s) => s.is_active).length;
+    const activeCampaignIds = new Set(
+      campaignVenues
+        .filter((cv) => cv.venue_id === v.id)
+        .map((cv) => getCampaign(cv.campaigns))
+        .filter((c) => c?.end_date && new Date(c.end_date) >= now)
+        .map((c) => c!.id)
+    );
+    const hasAvailability = activeScreenCount > 0 && activeCampaignIds.size < activeScreenCount;
+    return { venue: v, activeScreenCount, activeCampaigns: activeCampaignIds.size, hasAvailability };
+  });
+
+  const available = venueStatus.filter((v) => v.hasAvailability);
+  const booked = venueStatus.filter((v) => !v.hasAvailability && v.activeScreenCount > 0);
+  const noScreens = venueStatus.filter((v) => v.activeScreenCount === 0);
+
+  return (
+    <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+      <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <Zap size={16} color="#D4FF4F" strokeWidth={2} />
+          <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Campaign Availability</p>
+        </div>
+        <p className="text-xs" style={{ color: "#555" }}>Screen slots open for new campaigns right now</p>
+      </div>
+
+      {/* Summary pills */}
+      <div className="flex gap-3 px-5 pt-4 pb-3 flex-wrap">
+        {[
+          { label: "Available", count: available.length, color: "#D4FF4F", bg: "rgba(212,255,79,0.08)" },
+          { label: "Fully Booked", count: booked.length, color: "#F59E0B", bg: "rgba(245,158,11,0.08)" },
+          { label: "No Screens", count: noScreens.length, color: "#555", bg: "rgba(255,255,255,0.04)" },
+        ].map(({ label, count, color, bg }) => (
+          <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: bg, border: `1px solid ${color}22` }}>
+            <div className="w-2 h-2 rounded-full" style={{ background: color }} />
+            <span className="text-xs font-semibold" style={{ color }}>{count} {label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Available venues list */}
+      {available.length > 0 && (
+        <div className="px-5 pb-5">
+          <div className="space-y-2">
+            {available.map(({ venue, activeScreenCount, activeCampaigns }) => (
+              <div key={venue.id} className="flex items-center gap-3 rounded-xl px-3 py-2.5" style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.10)" }}>
+                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#D4FF4F" }} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">{venue.name}</p>
+                  <p className="text-xs" style={{ color: "#555" }}>{venue.city} · {venue.province}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>{activeScreenCount - activeCampaigns} slot{activeScreenCount - activeCampaigns !== 1 ? "s" : ""} open</p>
+                  <p className="text-xs" style={{ color: "#555" }}>{activeScreenCount} screens</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {available.length === 0 && (
+        <div className="px-5 pb-5 pt-2">
+          <p className="text-sm" style={{ color: "#555" }}>All screens are currently booked. Great news for occupancy!</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Competitive Positioning ──────────────────────────────────────────────────
+
+function CompetitivePositioning({ venues, networks, screens }: {
+  venues: Venue[]; networks: Network[]; screens: Screen[];
+}) {
+  // Province breakdown
+  const provinces = Array.from(new Set(venues.map((v) => v.province).filter(Boolean))) as string[];
+  const totalMembers = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
+  const totalMonthly = venues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
+  const weeklyOts = Math.round((totalMonthly * screens.length) / 4.33);
+
+  // SA gym market estimates (public data approximations)
+  const SA_GYM_MEMBERS = 1_200_000;
+  const marketShare = totalMembers > 0 ? ((totalMembers / SA_GYM_MEMBERS) * 100).toFixed(1) : "—";
+
+  return (
+    <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+      <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <Trophy size={16} color="#D4FF4F" strokeWidth={2} />
+          <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Market Position</p>
+        </div>
+        <p className="text-xs" style={{ color: "#555" }}>How GymGaze stacks up in the SA gym advertising market</p>
+      </div>
+      <div className="p-5 space-y-4">
+        {/* Headline claim */}
+        <div className="rounded-xl p-4" style={{ background: "rgba(212,255,79,0.05)", border: "1px solid rgba(212,255,79,0.12)" }}>
+          <p className="text-base font-bold text-white leading-snug" style={{ fontFamily: "Inter Tight, sans-serif" }}>
+            Reaching <span style={{ color: "#D4FF4F" }}>{marketShare}%</span> of SA&apos;s gym-going population across <span style={{ color: "#D4FF4F" }}>{provinces.length}</span> province{provinces.length !== 1 ? "s" : ""}
+          </p>
+          <p className="text-xs mt-1" style={{ color: "#555" }}>Based on ~1.2M active gym members nationally</p>
+        </div>
+
+        {/* Province presence */}
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Provincial Presence</p>
+          <div className="space-y-2">
+            {provinces.map((prov) => {
+              const provVenues = venues.filter((v) => v.province === prov);
+              const provMembers = provVenues.reduce((s, v) => s + (v.active_members ?? 0), 0);
+              const provScreens = screens.filter((s) => provVenues.some((v) => v.id === s.venue_id)).length;
+              return (
+                <div key={prov} className="flex items-center gap-3">
+                  <p className="text-sm font-medium text-white w-36 flex-shrink-0">{prov}</p>
+                  <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
+                    <div style={{ width: `${(provMembers / totalMembers) * 100}%`, height: 4, background: "#D4FF4F", borderRadius: 99 }} />
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-semibold text-white tabular-nums">{fmt(provMembers)}</p>
+                    <p className="text-xs" style={{ color: "#555" }}>{provVenues.length} venues · {provScreens} screens</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Key differentiators */}
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Key Differentiators</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {[
+              { icon: "🎯", label: "Zero-waste audience", sub: "100% gym-engaged members" },
+              { icon: "⏱️", label: "60+ min dwell", sub: "vs 2 sec for billboards" },
+              { icon: "🔁", label: "5× weekly frequency", sub: "built-in repeat exposure" },
+            ].map(({ icon, label, sub }) => (
+              <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <p className="text-lg mb-1">{icon}</p>
+                <p className="text-sm font-semibold text-white">{label}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#555" }}>{sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Client Component ────────────────────────────────────────────────────
 
 export default function InsightsClient({ networks, venues, screens, revenue, campaignVenues, photos, links }: Props) {
@@ -549,7 +808,17 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
 
       {/* Network Overview tab */}
       {tab === "overview" && (
-        <div>
+        <div className="space-y-4">
+          {/* CPM Calculator */}
+          <CpmCalculator totalMembers={totalMembers} totalMonthly={totalMonthly} totalScreens={totalScreens} />
+
+          {/* Campaign Availability */}
+          <CampaignAvailability venues={venues} screens={screens} campaignVenues={campaignVenues} />
+
+          {/* Competitive Positioning */}
+          <CompetitivePositioning venues={venues} networks={networks} screens={screens} />
+
+          {/* Network rows */}
           {networks.length === 0 ? (
             <div className="glass-card rounded-2xl py-16 text-center" style={{ borderRadius: 16 }}>
               <Building2 size={32} color="#333" strokeWidth={1.5} className="mx-auto mb-3" />

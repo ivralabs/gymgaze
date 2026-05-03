@@ -383,6 +383,7 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
     venues.filter((v) => !activeProvince || v.province === activeProvince).map((v) => v.city)
   ).sort();
   const [activeCity, setActiveCity] = useState<string | null>(null);
+  const [venuesOpen, setVenuesOpen] = useState(false);
 
   // Reset city when province changes
   function selectProvince(p: string | null) {
@@ -558,13 +559,24 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
           </div>
         )}
 
-        {/* Venue grid */}
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>
-            Venue Breakdown
-            <span className="ml-2 normal-case font-normal" style={{ color: "#777" }}>{filtered.length} location{filtered.length !== 1 ? "s" : ""}</span>
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Venue grid — collapsible */}
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
+          <button
+            onClick={() => setVenuesOpen((p) => !p)}
+            className="w-full flex items-center justify-between px-5 py-4 transition-all"
+            style={{ background: venuesOpen ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)" }}
+          >
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Venue Breakdown</p>
+              <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold" style={{ background: "rgba(212,255,79,0.10)", color: "#D4FF4F" }}>
+                {filtered.length} location{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <ChevronDown size={16} color="#777" style={{ transform: venuesOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} />
+          </button>
+          {venuesOpen && (
+          <div className="p-4 pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
             {filtered.map((venue) => {
               const vScreens = screens.filter((s) => s.venue_id === venue.id).length;
               const vNet = networks.find((n) => n.id === venue.gym_brand_id);
@@ -605,6 +617,8 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
               );
             })}
           </div>
+          </div>
+          )}
         </div>
 
         {/* Footer */}

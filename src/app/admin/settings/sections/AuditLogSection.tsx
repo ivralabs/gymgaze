@@ -157,7 +157,7 @@ export default function AuditLogSection() {
             borderRadius: "10px",
             background: "rgba(255,255,255,0.06)",
             border: "1px solid rgba(255,255,255,0.10)",
-            color: "#A3A3A3",
+            color: "#C8C8C8",
             fontSize: "13px",
             cursor: "pointer",
             fontWeight: 500,
@@ -181,7 +181,7 @@ export default function AuditLogSection() {
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: "160px" }}>
-          <label style={{ fontSize: "11px", color: "#666", fontWeight: 600 }}>Action</label>
+          <label style={{ fontSize: "11px", color: "#999", fontWeight: 600 }}>Action</label>
           <select
             value={filterAction}
             onChange={(e) => setFilterAction(e.target.value)}
@@ -195,7 +195,7 @@ export default function AuditLogSection() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
-          <label style={{ fontSize: "11px", color: "#666", fontWeight: 600 }}>From</label>
+          <label style={{ fontSize: "11px", color: "#999", fontWeight: 600 }}>From</label>
           <input
             type="date"
             value={filterFrom}
@@ -205,7 +205,7 @@ export default function AuditLogSection() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "6px", minWidth: "140px" }}>
-          <label style={{ fontSize: "11px", color: "#666", fontWeight: 600 }}>To</label>
+          <label style={{ fontSize: "11px", color: "#999", fontWeight: 600 }}>To</label>
           <input
             type="date"
             value={filterTo}
@@ -235,12 +235,12 @@ export default function AuditLogSection() {
       {/* Table */}
       <div style={GLASS_CARD}>
         {loading ? (
-          <div style={{ padding: "32px", textAlign: "center", color: "#666", fontSize: "14px" }}>Loading...</div>
+          <div style={{ padding: "32px", textAlign: "center", color: "#999", fontSize: "14px" }}>Loading...</div>
         ) : rows.length === 0 ? (
           <div style={{ padding: "48px", textAlign: "center" }}>
             <ClipboardList size={32} color="#444" style={{ marginBottom: "12px" }} />
-            <div style={{ color: "#666", fontSize: "14px" }}>No actions logged yet.</div>
-            <div style={{ color: "#444", fontSize: "12px", marginTop: "4px" }}>
+            <div style={{ color: "#999", fontSize: "14px" }}>No actions logged yet.</div>
+            <div style={{ color: "#777", fontSize: "12px", marginTop: "4px" }}>
               Actions will appear here as the platform is used.
             </div>
           </div>
@@ -260,7 +260,7 @@ export default function AuditLogSection() {
                           fontWeight: 700,
                           textTransform: "uppercase",
                           letterSpacing: "0.06em",
-                          color: "#555",
+                          color: "#8A8A8A",
                           whiteSpace: "nowrap",
                         }}
                       >
@@ -275,14 +275,14 @@ export default function AuditLogSection() {
                       key={row.id}
                       style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                     >
-                      <td style={{ padding: "12px 16px", color: "#666", fontSize: "13px", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "12px 16px", color: "#999", fontSize: "13px", whiteSpace: "nowrap" }}>
                         {formatDate(row.created_at)}
                       </td>
                       <td style={{ padding: "12px 16px" }}>
                         <div style={{ color: "#FFFFFF", fontSize: "13px", fontWeight: 500 }}>
                           {row.profiles?.full_name ?? "—"}
                         </div>
-                        <div style={{ color: "#555", fontSize: "12px" }}>{row.profiles?.email ?? "—"}</div>
+                        <div style={{ color: "#8A8A8A", fontSize: "12px" }}>{row.profiles?.email ?? "—"}</div>
                       </td>
                       <td style={{ padding: "12px 16px" }}>
                         <span
@@ -299,10 +299,10 @@ export default function AuditLogSection() {
                           {row.action}
                         </span>
                       </td>
-                      <td style={{ padding: "12px 16px", color: "#A3A3A3", fontSize: "13px" }}>
+                      <td style={{ padding: "12px 16px", color: "#C8C8C8", fontSize: "13px" }}>
                         {row.record_type ?? "—"}
                       </td>
-                      <td style={{ padding: "12px 16px", color: "#A3A3A3", fontSize: "13px" }}>
+                      <td style={{ padding: "12px 16px", color: "#C8C8C8", fontSize: "13px" }}>
                         {row.record_name ?? row.record_id ?? "—"}
                       </td>
                     </tr>
@@ -322,7 +322,7 @@ export default function AuditLogSection() {
                   borderTop: "1px solid rgba(255,255,255,0.06)",
                 }}
               >
-                <span style={{ color: "#666", fontSize: "13px" }}>
+                <span style={{ color: "#999", fontSize: "13px" }}>
                   Page {page} of {totalPages} ({total} total)
                 </span>
                 <div style={{ display: "flex", gap: "8px" }}>

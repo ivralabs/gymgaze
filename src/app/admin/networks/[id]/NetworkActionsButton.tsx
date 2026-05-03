@@ -96,7 +96,7 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
         style={{
           background: "rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.10)",
-          color: "#A3A3A3",
+          color: "#C8C8C8",
         }}
         aria-label="Network actions"
       >
@@ -176,7 +176,7 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setDialog(null)}
-              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#666" }}
+              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#999" }}
             >
               <X size={18} strokeWidth={2} />
             </button>
@@ -190,10 +190,10 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
               </h2>
             </div>
 
-            <p style={{ color: "#A3A3A3", fontSize: 14, lineHeight: 1.6, marginBottom: 8 }}>
+            <p style={{ color: "#C8C8C8", fontSize: 14, lineHeight: 1.6, marginBottom: 8 }}>
               Are you sure you want to archive <strong style={{ color: "#fff" }}>{networkName}</strong>?
             </p>
-            <p style={{ color: "#666", fontSize: 13, lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ color: "#999", fontSize: 13, lineHeight: 1.6, marginBottom: 24 }}>
               The network will be marked as inactive. All venues and data are preserved and the network can be unarchived at any time.
             </p>
 
@@ -207,7 +207,7 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
               <button
                 onClick={() => setDialog(null)}
                 disabled={loading}
-                style={{ padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 500, border: "1px solid rgba(255,255,255,0.12)", color: "#A3A3A3", background: "transparent", cursor: "pointer" }}
+                style={{ padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 500, border: "1px solid rgba(255,255,255,0.12)", color: "#C8C8C8", background: "transparent", cursor: "pointer" }}
               >
                 Cancel
               </button>
@@ -229,7 +229,7 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setDialog(null)}
-              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#666" }}
+              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: "#999" }}
             >
               <X size={18} strokeWidth={2} />
             </button>
@@ -243,10 +243,10 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
               </h2>
             </div>
 
-            <p style={{ color: "#A3A3A3", fontSize: 14, lineHeight: 1.6, marginBottom: 8 }}>
+            <p style={{ color: "#C8C8C8", fontSize: 14, lineHeight: 1.6, marginBottom: 8 }}>
               Are you sure you want to permanently delete <strong style={{ color: "#fff" }}>{networkName}</strong>?
             </p>
-            <p style={{ color: "#666", fontSize: 13, lineHeight: 1.6, marginBottom: 16 }}>
+            <p style={{ color: "#999", fontSize: 13, lineHeight: 1.6, marginBottom: 16 }}>
               This action <strong style={{ color: "#EF4444" }}>cannot be undone</strong>. The network record will be removed. All linked venues will be unlinked but their data (photos, revenue, contracts) will be preserved.
             </p>
 
@@ -276,7 +276,7 @@ export default function NetworkActionsButton({ networkId, networkName, isActive 
               <button
                 onClick={() => setDialog(null)}
                 disabled={loading}
-                style={{ padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 500, border: "1px solid rgba(255,255,255,0.12)", color: "#A3A3A3", background: "transparent", cursor: "pointer" }}
+                style={{ padding: "10px 18px", borderRadius: 10, fontSize: 14, fontWeight: 500, border: "1px solid rgba(255,255,255,0.12)", color: "#C8C8C8", background: "transparent", cursor: "pointer" }}
               >
                 Cancel
               </button>

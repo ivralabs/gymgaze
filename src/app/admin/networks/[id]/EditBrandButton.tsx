@@ -33,7 +33,7 @@ const LABEL: React.CSSProperties = {
   display: "block",
   fontSize: 12,
   fontWeight: 500,
-  color: "#A3A3A3",
+  color: "#C8C8C8",
   marginBottom: 6,
 };
 
@@ -322,7 +322,7 @@ export default function EditBrandButton({ brand }: Props) {
                       <p style={{ color: "#FFFFFF", fontSize: 14, fontWeight: 500 }}>
                         Active
                       </p>
-                      <p style={{ color: "#666", fontSize: 12, marginTop: 2 }}>
+                      <p style={{ color: "#999", fontSize: 12, marginTop: 2 }}>
                         Inactive brands are hidden from reporting
                       </p>
                     </div>
@@ -379,7 +379,7 @@ export default function EditBrandButton({ brand }: Props) {
                     borderRadius: 12,
                     fontSize: 14,
                     border: "1px solid rgba(255,255,255,0.12)",
-                    color: "#A3A3A3",
+                    color: "#C8C8C8",
                     background: "transparent",
                     cursor: "pointer",
                   }}

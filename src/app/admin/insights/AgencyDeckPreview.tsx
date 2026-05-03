@@ -79,7 +79,7 @@ function VenueTypeBar({ venues }: { venues: Venue[] }) {
         {entries.map(([type, count]) => (
           <div key={type} className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-sm" style={{ background: VENUE_TYPE_COLORS[type] ?? "#9CA3AF" }} />
-            <span className="text-xs" style={{ color: "#A3A3A3" }}>{type}</span>
+            <span className="text-xs" style={{ color: "#C8C8C8" }}>{type}</span>
             <span className="text-xs font-bold text-white">{count}</span>
           </div>
         ))}
@@ -98,7 +98,7 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Tailor this deck for</p>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Tailor this deck for</p>
         <div className="relative">
           <button onClick={() => setOpen((p) => !p)} className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)" }}>
             <span>{industry.emoji} {industry.label}</span>
@@ -121,7 +121,7 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
           {industry.bullets.map((b) => (
             <li key={b} className="flex items-start gap-2.5">
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5" style={{ background: "#D4FF4F" }} />
-              <span className="text-sm" style={{ color: "#A3A3A3" }}>{b}</span>
+              <span className="text-sm" style={{ color: "#C8C8C8" }}>{b}</span>
             </li>
           ))}
         </ul>
@@ -129,7 +129,7 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
           {[{ label: "Reach", value: fmt(totalMembers) }, { label: "Monthly OTS", value: fmt(ots) }, { label: "Avg Dwell", value: "60+ min" }].map(({ label, value }) => (
             <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
               <p className="text-base font-bold text-white tabular-nums" style={{ fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
-              <p className="text-xs mt-0.5" style={{ color: "#555" }}>{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{label}</p>
             </div>
           ))}
         </div>
@@ -149,15 +149,15 @@ function MediaComparison() {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
       <div className="px-5 pt-5 pb-3">
-        <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "#666" }}>Why Gym Media</p>
-        <p className="text-sm" style={{ color: "#555" }}>Compare the formats your budget could run on</p>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "#999" }}>Why Gym Media</p>
+        <p className="text-sm" style={{ color: "#8A8A8A" }}>Compare the formats your budget could run on</p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[400px]">
           <thead>
             <tr style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)" }}>
               {["Format", "Dwell Time", "Skippable?", "Captive?"].map((h) => (
-                <th key={h} className="text-left px-5 py-2.5 text-xs font-semibold uppercase tracking-wider" style={{ color: "#555" }}>{h}</th>
+                <th key={h} className="text-left px-5 py-2.5 text-xs font-semibold uppercase tracking-wider" style={{ color: "#8A8A8A" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -223,7 +223,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
       {/* Preview banner */}
       <div className="rounded-xl px-4 py-3 flex items-center gap-3" style={{ background: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.15)" }}>
         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#D4FF4F" }} />
-        <p className="text-sm" style={{ color: "#A3A3A3" }}>
+        <p className="text-sm" style={{ color: "#C8C8C8" }}>
           This is exactly what your agency clients see when you share a link.
         </p>
       </div>
@@ -234,7 +234,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
           <span style={{ color: "#D4FF4F" }}>{fmt(totalMembers)}</span> active gym members
           <br />across <span style={{ color: "#D4FF4F" }}>{filtered.length}</span> venue{filtered.length !== 1 ? "s" : ""} in {geoLabel}
         </h2>
-        <p className="mt-3 text-base" style={{ color: "#555" }}>
+        <p className="mt-3 text-base" style={{ color: "#8A8A8A" }}>
           {fmt(weeklyOts)} weekly opportunities to see · {Math.round(avgDwell)} min avg dwell · {filteredScreens.length} screens
         </p>
       </div>
@@ -242,7 +242,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
       {/* Province filter */}
       {provinces.length > 1 && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#555" }}>Province</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#8A8A8A" }}>Province</p>
           <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
             <button style={pillStyle(!activeProvince)} onClick={() => selectProvince(null)}>All Provinces</button>
             {provinces.map((p) => <button key={p} style={pillStyle(activeProvince === p)} onClick={() => selectProvince(p)}>{p}</button>)}
@@ -253,7 +253,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
       {/* City filter */}
       {cities.length > 1 && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#555" }}>City</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#8A8A8A" }}>City</p>
           <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
             <button style={pillStyle(!activeCity)} onClick={() => setActiveCity(null)}>All Cities</button>
             {cities.map((c) => <button key={c} style={pillStyle(activeCity === c)} onClick={() => setActiveCity(c)}>{c}</button>)}
@@ -272,7 +272,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
           <div key={label} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
             <div className="flex items-center gap-1.5 mb-2">
               <Icon size={13} color="#555" strokeWidth={2} />
-              <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: "#555" }}>{label}</p>
+              <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: "#8A8A8A" }}>{label}</p>
             </div>
             <p className="text-2xl font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}>{value}</p>
           </div>
@@ -281,7 +281,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
 
       {/* Venue type breakdown */}
       <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
-        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#666" }}>Venue Types</p>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Venue Types</p>
         <VenueTypeBar venues={filtered} />
       </div>
 
@@ -294,14 +294,14 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
       {/* Audience demographics */}
       {networks.some((n) => n.audience_male_pct !== null) && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#666" }}>Audience Profile</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Audience Profile</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {networks.filter((n) => n.audience_male_pct !== null || n.audience_age_18_24 !== null).map((n) => (
               <div key={n.id} className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
                 <p className="text-sm font-semibold text-white mb-4">{n.name}</p>
                 {(n.audience_male_pct !== null || n.audience_female_pct !== null) && (
                   <div className="mb-4">
-                    <p className="text-xs mb-2" style={{ color: "#555" }}>Gender Split</p>
+                    <p className="text-xs mb-2" style={{ color: "#8A8A8A" }}>Gender Split</p>
                     <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
                       <div style={{ width: `${n.audience_male_pct ?? 50}%`, background: "#60A5FA", borderRadius: "99px 0 0 99px" }} />
                       <div style={{ width: `${n.audience_female_pct ?? 50}%`, background: "#F472B6", borderRadius: "0 99px 99px 0" }} />
@@ -315,11 +315,11 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
                 {[{ label: "18–24", val: n.audience_age_18_24 }, { label: "25–34", val: n.audience_age_25_34 }, { label: "35–44", val: n.audience_age_35_44 }, { label: "45+", val: n.audience_age_45_plus }]
                   .filter((a) => a.val !== null).map(({ label, val }) => (
                     <div key={label} className="flex items-center gap-3 mb-1.5">
-                      <span className="text-xs w-10 flex-shrink-0" style={{ color: "#555" }}>{label}</span>
+                      <span className="text-xs w-10 flex-shrink-0" style={{ color: "#8A8A8A" }}>{label}</span>
                       <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
                         <div style={{ width: `${val}%`, height: 4, background: "#D4FF4F", borderRadius: 99 }} />
                       </div>
-                      <span className="text-xs w-8 text-right tabular-nums" style={{ color: "#A3A3A3" }}>{val}%</span>
+                      <span className="text-xs w-8 text-right tabular-nums" style={{ color: "#C8C8C8" }}>{val}%</span>
                     </div>
                   ))}
               </div>
@@ -330,8 +330,8 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
 
       {/* Venue grid */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#666" }}>
-          Venue Breakdown <span className="ml-2 normal-case font-normal" style={{ color: "#444" }}>{filtered.length} locations</span>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>
+          Venue Breakdown <span className="ml-2 normal-case font-normal" style={{ color: "#777" }}>{filtered.length} locations</span>
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {filtered.map((venue) => {
@@ -349,15 +349,15 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
                     <p className="text-sm font-semibold text-white truncate">{venue.name}</p>
                     <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                       <MapPin size={10} color="#555" strokeWidth={2} />
-                      <p className="text-xs" style={{ color: "#555" }}>{[venue.city, venue.province].filter(Boolean).join(", ")}</p>
+                      <p className="text-xs" style={{ color: "#8A8A8A" }}>{[venue.city, venue.province].filter(Boolean).join(", ")}</p>
                       {venue.region && <span className="text-xs px-1.5 py-0.5 rounded-full ml-1" style={{ background: `${typeColor}18`, color: typeColor }}>{venue.region}</span>}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="flex items-center gap-1"><Users size={12} color="#555" strokeWidth={2} /><span className="text-xs tabular-nums font-semibold text-white">{fmt(venue.active_members ?? 0)}</span></div>
-                  <div className="flex items-center gap-1"><Monitor size={12} color="#555" strokeWidth={2} /><span className="text-xs" style={{ color: "#A3A3A3" }}>{vScreens} screens</span></div>
-                  <div className="flex items-center gap-1"><TrendingUp size={12} color="#555" strokeWidth={2} /><span className="text-xs" style={{ color: "#A3A3A3" }}>{fmt(venue.monthly_entries ?? 0)}/mo</span></div>
+                  <div className="flex items-center gap-1"><Monitor size={12} color="#555" strokeWidth={2} /><span className="text-xs" style={{ color: "#C8C8C8" }}>{vScreens} screens</span></div>
+                  <div className="flex items-center gap-1"><TrendingUp size={12} color="#555" strokeWidth={2} /><span className="text-xs" style={{ color: "#C8C8C8" }}>{fmt(venue.monthly_entries ?? 0)}/mo</span></div>
                 </div>
               </Link>
             );

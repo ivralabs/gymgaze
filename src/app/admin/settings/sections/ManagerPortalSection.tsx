@@ -138,7 +138,7 @@ export default function ManagerPortalSection() {
 
       <div style={{ ...GLASS_CARD, marginBottom: "24px" }}>
         {!loaded ? (
-          <div style={{ padding: "24px", color: "#666", fontSize: "14px" }}>Loading...</div>
+          <div style={{ padding: "24px", color: "#999", fontSize: "14px" }}>Loading...</div>
         ) : (
           <div>
             {SECTION_LIST.map((section, i) => (
@@ -154,7 +154,7 @@ export default function ManagerPortalSection() {
               >
                 <div style={{ flex: 1, marginRight: "16px" }}>
                   <div style={{ color: "#FFFFFF", fontWeight: 600, fontSize: "14px" }}>{section.label}</div>
-                  <div style={{ color: "#666", fontSize: "13px", marginTop: "2px" }}>{section.description}</div>
+                  <div style={{ color: "#999", fontSize: "13px", marginTop: "2px" }}>{section.description}</div>
                 </div>
                 <Toggle
                   on={sections[section.key]}

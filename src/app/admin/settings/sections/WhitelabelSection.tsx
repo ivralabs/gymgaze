@@ -36,7 +36,7 @@ const FIELD_LABEL: React.CSSProperties = {
   display: "block",
   fontSize: "12px",
   fontWeight: 600,
-  color: "#A3A3A3",
+  color: "#C8C8C8",
   marginBottom: "8px",
 };
 
@@ -223,9 +223,9 @@ export default function WhitelabelSection() {
                 type="text"
                 value={form.portal_domain}
                 readOnly
-                style={{ ...INPUT_STYLE, color: "#666", cursor: "not-allowed" }}
+                style={{ ...INPUT_STYLE, color: "#999", cursor: "not-allowed" }}
               />
-              <div style={{ fontSize: "11px", color: "#555", marginTop: "6px" }}>
+              <div style={{ fontSize: "11px", color: "#8A8A8A", marginTop: "6px" }}>
                 Contact support to change your portal domain
               </div>
             </div>
@@ -248,7 +248,7 @@ export default function WhitelabelSection() {
                 onFocus={(e) => (e.target.style.borderColor = "rgba(212,255,79,0.5)")}
                 onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.10)")}
               />
-              <div style={{ fontSize: "11px", color: "#555", marginTop: "4px", textAlign: "right" }}>
+              <div style={{ fontSize: "11px", color: "#8A8A8A", marginTop: "4px", textAlign: "right" }}>
                 {form.welcome_message.length}/200
               </div>
             </div>
@@ -311,7 +311,7 @@ export default function WhitelabelSection() {
                 )}
                 <div>
                   <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: "15px" }}>Partner Portal</div>
-                  <div style={{ color: "#666", fontSize: "12px" }}>{form.portal_domain || "partners.gymgaze.co.za"}</div>
+                  <div style={{ color: "#999", fontSize: "12px" }}>{form.portal_domain || "partners.gymgaze.co.za"}</div>
                 </div>
               </div>
 
@@ -329,7 +329,7 @@ export default function WhitelabelSection() {
                 >
                   Welcome
                 </div>
-                <p style={{ color: "#A3A3A3", fontSize: "14px", lineHeight: "1.5" }}>
+                <p style={{ color: "#C8C8C8", fontSize: "14px", lineHeight: "1.5" }}>
                   {form.welcome_message || "Welcome to your GymGaze partner portal."}
                 </p>
               </div>
@@ -342,7 +342,7 @@ export default function WhitelabelSection() {
                     style={{
                       padding: "10px 12px",
                       borderRadius: "8px",
-                      color: "#555",
+                      color: "#8A8A8A",
                       fontSize: "13px",
                       marginBottom: "2px",
                     }}

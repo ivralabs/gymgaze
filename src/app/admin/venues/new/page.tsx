@@ -17,7 +17,7 @@ export default async function NewVenuePage() {
         <Link
           href="/admin/venues"
           className="p-2 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>

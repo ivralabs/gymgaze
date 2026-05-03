@@ -29,7 +29,7 @@ function getBrand(raw: Brand | Brand[] | null): Brand | null {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
   active:      { label: "Active",      color: "#D4FF4F", bg: "rgba(212,255,79,0.10)",  dot: "#D4FF4F" },
-  inactive:    { label: "Inactive",    color: "#909090", bg: "rgba(102,102,102,0.15)", dot: "#555" },
+  inactive:    { label: "Inactive",    color: "#B0B0B0", bg: "rgba(102,102,102,0.15)", dot: "#555" },
   coming_soon: { label: "Coming Soon", color: "#F59E0B", bg: "rgba(245,158,11,0.10)",  dot: "#F59E0B" },
 };
 
@@ -105,7 +105,7 @@ function VenueCard({ venue }: { venue: Venue }) {
           </h3>
           <div className="flex items-center gap-1 mt-0.5">
             <MapPin size={11} color="#666" strokeWidth={2} />
-            <p className="text-xs truncate" style={{ color: "#666" }}>
+            <p className="text-xs truncate" style={{ color: "#999" }}>
               {[venue.city, venue.province].filter(Boolean).join(", ") || "—"}
             </p>
           </div>
@@ -141,7 +141,7 @@ function VenueCard({ venue }: { venue: Venue }) {
             >
               {value}
             </p>
-            <p className="text-xs mt-0.5" style={{ color: "#555" }}>{label}</p>
+            <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{label}</p>
           </div>
         ))}
       </div>
@@ -151,15 +151,15 @@ function VenueCard({ venue }: { venue: Venue }) {
         {/* Network */}
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-xs" style={{ color: "#555" }}>Network</span>
-            <span className="text-xs font-medium truncate" style={{ color: "#A3A3A3" }}>
+            <span className="text-xs" style={{ color: "#8A8A8A" }}>Network</span>
+            <span className="text-xs font-medium truncate" style={{ color: "#C8C8C8" }}>
               {brand?.name ?? "Independent"}
             </span>
           </div>
           {venue.region && (
             <span
               className="text-xs px-2 py-0.5 rounded-full flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.05)", color: "#666" }}
+              style={{ background: "rgba(255,255,255,0.05)", color: "#999" }}
             >
               {venue.region}
             </span>
@@ -171,7 +171,7 @@ function VenueCard({ venue }: { venue: Venue }) {
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-1">
               <ImageIcon size={11} color="#555" strokeWidth={2} />
-              <span className="text-xs" style={{ color: "#555" }}>Photo compliance</span>
+              <span className="text-xs" style={{ color: "#8A8A8A" }}>Photo compliance</span>
             </div>
             <span className="text-xs font-semibold" style={{ color: cColor }}>
               {photos.length === 0 ? "No photos" : `${compliance}%`}
@@ -303,7 +303,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
 
       {/* Results header */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm" style={{ color: "#555" }}>
+        <p className="text-sm" style={{ color: "#8A8A8A" }}>
           {filtered.length === venues.length
             ? `${venues.length} venue${venues.length !== 1 ? "s" : ""}`
             : `${filtered.length} of ${venues.length} venues`}
@@ -343,7 +343,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
           <p className="text-white font-medium mb-1">
             {venues.length === 0 ? "No venues yet" : "No venues match your filters"}
           </p>
-          <p className="text-sm" style={{ color: "#555" }}>
+          <p className="text-sm" style={{ color: "#8A8A8A" }}>
             {venues.length === 0
               ? "Use 'Add Venue' to get started"
               : "Try adjusting your search or filters"}
@@ -368,7 +368,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
               <thead>
                 <tr style={{ background: "rgba(255,255,255,0.06)" }}>
                   {["Venue", "Network", "City", "Status", "Members", "Screens", "Compliance", ""].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#B0B0B0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                       {h}
                     </th>
                   ))}
@@ -384,17 +384,17 @@ export default function VenuesGrid({ venues, brands }: Props) {
                     <tr key={venue.id} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                       <td className="px-5 py-3">
                         <p className="text-sm font-semibold text-white">{venue.name}</p>
-                        {venue.region && <p className="text-xs mt-0.5" style={{ color: "#555" }}>{venue.region}</p>}
+                        {venue.region && <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{venue.region}</p>}
                       </td>
-                      <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{getBrand(venue.gym_brands)?.name ?? "—"}</td>
-                      <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{venue.city ?? "—"}</td>
+                      <td className="px-5 py-3 text-sm" style={{ color: "#C8C8C8" }}>{getBrand(venue.gym_brands)?.name ?? "—"}</td>
+                      <td className="px-5 py-3 text-sm" style={{ color: "#C8C8C8" }}>{venue.city ?? "—"}</td>
                       <td className="px-5 py-3">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: status.bg, color: status.color }}>
                           {status.label}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-sm text-white tabular-nums">{(venue.active_members ?? 0).toLocaleString("en-ZA")}</td>
-                      <td className="px-5 py-3 text-sm" style={{ color: "#A3A3A3" }}>{screenCount}</td>
+                      <td className="px-5 py-3 text-sm" style={{ color: "#C8C8C8" }}>{screenCount}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <div style={{ width: 48, height: 3, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>

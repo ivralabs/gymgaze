@@ -63,7 +63,7 @@ export default function NewNetworkPage() {
           >
             Add Gym Network
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#B0B0B0" }}>
             Register a new gym brand or network
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function NewNetworkPage() {
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#B0B0B0", fontFamily: "Inter Tight, sans-serif" }}
           >
             Brand Details
           </h2>
@@ -150,7 +150,7 @@ export default function NewNetworkPage() {
         >
           <h2
             className="text-sm font-semibold uppercase tracking-wider mb-2"
-            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#B0B0B0", fontFamily: "Inter Tight, sans-serif" }}
           >
             Contact Information
           </h2>

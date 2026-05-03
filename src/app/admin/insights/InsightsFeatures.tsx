@@ -96,7 +96,7 @@ export function FootTrafficHeatmap({ venues }: { venues: Venue[] }) {
           <Clock size={16} color="#D4FF4F" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Foot Traffic by Day & Time</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>Peak visit windows based on operating hours and gym attendance patterns</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>Peak visit windows based on operating hours and gym attendance patterns</p>
       </div>
 
       <div className="p-5">
@@ -126,14 +126,14 @@ export function FootTrafficHeatmap({ venues }: { venues: Venue[] }) {
         {/* Hour breakdown */}
         {selectedDay && hourBlocks.length > 0 && (
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>{selectedDay} — Hourly Traffic</p>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>{selectedDay} — Hourly Traffic</p>
             <div className="space-y-1.5">
               {hourBlocks.map((block) => {
                 const pct = (block.weight / maxWeight) * 100;
                 const isPeak = block.weight >= 0.9;
                 return (
                   <div key={block.hour} className="flex items-center gap-3">
-                    <span className="text-xs w-10 flex-shrink-0 text-right" style={{ color: "#555" }}>{block.label}</span>
+                    <span className="text-xs w-10 flex-shrink-0 text-right" style={{ color: "#8A8A8A" }}>{block.label}</span>
                     <div style={{ flex: 1, height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
                       <div style={{ width: `${pct}%`, height: 6, background: isPeak ? "#D4FF4F" : "#D4FF4F66", borderRadius: 99, transition: "width 0.4s" }} />
                     </div>
@@ -145,12 +145,12 @@ export function FootTrafficHeatmap({ venues }: { venues: Venue[] }) {
                 );
               })}
             </div>
-            <p className="text-xs mt-3" style={{ color: "#333" }}>Estimates based on industry attendance patterns. {hourBlocks[0]?.openCount} venue{hourBlocks[0]?.openCount !== 1 ? "s" : ""} open on {selectedDay}.</p>
+            <p className="text-xs mt-3" style={{ color: "#999" }}>Estimates based on industry attendance patterns. {hourBlocks[0]?.openCount} venue{hourBlocks[0]?.openCount !== 1 ? "s" : ""} open on {selectedDay}.</p>
           </div>
         )}
 
         {!selectedDay && (
-          <p className="text-sm text-center py-4" style={{ color: "#555" }}>Tap a day to see the hourly traffic breakdown</p>
+          <p className="text-sm text-center py-4" style={{ color: "#8A8A8A" }}>Tap a day to see the hourly traffic breakdown</p>
         )}
       </div>
     </div>
@@ -186,13 +186,13 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
           <TrendingUp size={16} color="#A78BFA" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Campaign Impact Estimator</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>Project reach, frequency and impressions for any campaign duration</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>Project reach, frequency and impressions for any campaign duration</p>
       </div>
 
       <div className="p-5 space-y-5">
         {/* Duration selector */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#666" }}>Campaign Duration</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Duration</p>
           <div className="flex gap-2 flex-wrap">
             {WEEK_OPTIONS.map((w) => (
               <button key={w} onClick={() => setWeeks(w)}
@@ -210,7 +210,7 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
 
         {/* Projected results */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Projected Results — {weeksNum} weeks</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Projected Results — {weeksNum} weeks</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { label: "Total Impressions", value: fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
@@ -221,7 +221,7 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
               <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Icon size={11} color="#555" strokeWidth={2} />
-                  <p className="text-xs" style={{ color: "#555" }}>{label}</p>
+                  <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
                 </div>
                 <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
               </div>
@@ -231,10 +231,10 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
 
         {/* Optional budget override */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#666" }}>Or enter a specific budget</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Or enter a specific budget</p>
           <div className="flex gap-3 items-center flex-wrap">
             <div className="relative flex-1" style={{ minWidth: 160 }}>
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#555" }}>R</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
               <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="Enter budget"
                 className="w-full pl-7 pr-4 py-2.5 rounded-xl text-sm text-white"
                 style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
@@ -246,7 +246,7 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
                   { label: "Duration", value: `${budgetWeeks} wks`, color: "#A78BFA" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="rounded-xl px-4 py-2.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs" style={{ color: "#555" }}>{label}</p>
+                    <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
                     <p className="text-base font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
                   </div>
                 ))}
@@ -285,7 +285,7 @@ export function NetworkGrowthTimeline({ venues, screens }: { venues: Venue[]; sc
           <Calendar size={16} color="#60A5FA" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Network Growth</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>Current footprint and projected expansion milestones</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>Current footprint and projected expansion milestones</p>
       </div>
 
       <div className="p-5">
@@ -305,7 +305,7 @@ export function NetworkGrowthTimeline({ venues, screens }: { venues: Venue[]; sc
                   }}>
                   {m.actual
                     ? <span style={{ fontSize: 10, fontWeight: 900, color: "#0A0A0A" }}>NOW</span>
-                    : <span style={{ fontSize: 10, color: "#555" }}>{m.months}m</span>
+                    : <span style={{ fontSize: 10, color: "#8A8A8A" }}>{m.months}m</span>
                   }
                 </div>
 
@@ -313,7 +313,7 @@ export function NetworkGrowthTimeline({ venues, screens }: { venues: Venue[]; sc
                 <div className="flex-1 pb-2">
                   <div className="flex items-center gap-2 mb-2">
                     <p className="text-sm font-bold" style={{ color: m.actual ? "#D4FF4F" : "#A3A3A3", fontFamily: "Inter Tight, sans-serif" }}>{m.label}</p>
-                    {!m.actual && <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.04)", color: "#555" }}>Projected</span>}
+                    {!m.actual && <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,255,255,0.04)", color: "#8A8A8A" }}>Projected</span>}
                   </div>
 
                   {/* Mini stat row */}
@@ -324,7 +324,7 @@ export function NetworkGrowthTimeline({ venues, screens }: { venues: Venue[]; sc
                       { label: "Screens", value: m.screens },
                     ].map(({ label, value }) => (
                       <div key={label}>
-                        <p className="text-xs" style={{ color: "#555" }}>{label}</p>
+                        <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
                         <p className="text-sm font-bold text-white tabular-nums" style={{ fontFamily: "Inter Tight, sans-serif" }}>{fmt(value)}</p>
                       </div>
                     ))}
@@ -344,7 +344,7 @@ export function NetworkGrowthTimeline({ venues, screens }: { venues: Venue[]; sc
           </div>
         </div>
 
-        <p className="text-xs mt-4" style={{ color: "#333" }}>Projections based on 25–30% quarterly growth. Actual results depend on expansion pace.</p>
+        <p className="text-xs mt-4" style={{ color: "#999" }}>Projections based on 25–30% quarterly growth. Actual results depend on expansion pace.</p>
       </div>
     </div>
   );

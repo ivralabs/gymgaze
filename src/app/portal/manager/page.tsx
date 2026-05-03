@@ -80,7 +80,7 @@ export default async function ManagerPage() {
           >
             {venueName}
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>Venue Operations</p>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>Venue Operations</p>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ export default async function ManagerPage() {
               >
                 Upload Photos
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#B0B0B0" }}>
                 Submit screen photos for this month
               </p>
             </div>
@@ -129,7 +129,7 @@ export default async function ManagerPage() {
               >
                 Update Stats
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#B0B0B0" }}>
                 Update member counts and entries
               </p>
             </div>
@@ -188,7 +188,7 @@ export default async function ManagerPage() {
                       {task.label}
                     </p>
                     {task.dueDate && (
-                      <p className="text-xs mt-0.5" style={{ color: "#909090" }}>
+                      <p className="text-xs mt-0.5" style={{ color: "#B0B0B0" }}>
                         Due {task.dueDate}
                       </p>
                     )}

@@ -94,7 +94,7 @@ export default function SettingsShell() {
       {/* Page header (mobile only) */}
       <div className="md:hidden mb-4">
         <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "1.6rem", color: "#FFFFFF", letterSpacing: "-0.02em" }}>Settings</h1>
-        <p style={{ color: "#555", fontSize: "12px", marginTop: 2 }}>Platform configuration</p>
+        <p style={{ color: "#8A8A8A", fontSize: "12px", marginTop: 2 }}>Platform configuration</p>
       </div>
 
       {/* Mobile tab selector */}
@@ -143,7 +143,7 @@ export default function SettingsShell() {
         <div style={{ width: "220px", flexShrink: 0, position: "sticky", top: "32px", alignSelf: "flex-start" }}>
           <div style={{ marginBottom: "28px" }}>
             <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "1.6rem", color: "#FFFFFF", letterSpacing: "-0.02em", marginBottom: "4px" }}>Settings</h1>
-            <p style={{ color: "#555", fontSize: "12px" }}>Platform configuration</p>
+            <p style={{ color: "#8A8A8A", fontSize: "12px" }}>Platform configuration</p>
           </div>
           <nav style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {NAV_ITEMS.map(({ key, label, Icon }) => {

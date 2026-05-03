@@ -89,7 +89,7 @@ export default function NewRevenuePage() {
     fontSize: "14px",
     fontWeight: "500",
     marginBottom: "8px",
-    color: "#A3A3A3",
+    color: "#C8C8C8",
   };
 
   return (
@@ -98,7 +98,7 @@ export default function NewRevenuePage() {
         <Link
           href="/admin/revenue"
           className="p-2 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -109,7 +109,7 @@ export default function NewRevenuePage() {
           >
             Log Revenue
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#B0B0B0" }}>
             Record rental and revenue share for a venue
           </p>
         </div>
@@ -204,7 +204,7 @@ export default function NewRevenuePage() {
               className="flex items-center justify-between px-4 py-3 rounded-xl"
               style={{ backgroundColor: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.15)" }}
             >
-              <span className="text-sm" style={{ color: "#A3A3A3" }}>Total</span>
+              <span className="text-sm" style={{ color: "#C8C8C8" }}>Total</span>
               <span className="text-sm font-semibold tabular-nums font-mono" style={{ color: "#D4FF4F" }}>
                 R {((Number(form.rental_zar) || 0) + (Number(form.revenue_share_zar) || 0)).toLocaleString("en-ZA")}
               </span>
@@ -228,7 +228,7 @@ export default function NewRevenuePage() {
           <Link
             href="/admin/revenue"
             className="px-4 py-2.5 rounded-xl text-sm font-medium"
-            style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
+            style={{ border: "1px solid #3A3A3A", color: "#C8C8C8" }}
           >
             Cancel
           </Link>

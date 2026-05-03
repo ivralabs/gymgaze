@@ -46,7 +46,7 @@ export default async function CampaignsPage() {
           >
             Campaigns
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>Track ad campaigns across venues</p>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>Track ad campaigns across venues</p>
           <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
             <Link
               href="/admin/campaigns/new"
@@ -66,7 +66,7 @@ export default async function CampaignsPage() {
             <Megaphone size={26} color="#D4FF4F" strokeWidth={1.5} />
           </div>
           <p className="text-white font-medium mb-1">No campaigns yet</p>
-          <p className="text-sm mb-5" style={{ color: "#909090" }}>Create your first campaign to start tracking advertising.</p>
+          <p className="text-sm mb-5" style={{ color: "#B0B0B0" }}>Create your first campaign to start tracking advertising.</p>
           <Link href="/admin/campaigns/new" className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold" style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}>
             <Plus size={16} strokeWidth={2.5} />
             New Campaign
@@ -80,7 +80,7 @@ export default async function CampaignsPage() {
               <thead>
                 <tr style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
                   {["Name", "Advertiser", "Deal Type", "Start Date", "End Date", "Amount (ZAR)", "Venues", ""].map((h) => (
-                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <th key={h} className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "#B0B0B0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                       {h}
                     </th>
                   ))}
@@ -102,7 +102,7 @@ export default async function CampaignsPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{campaign.advertiser ?? "—"}</td>
+                      <td className="px-6 py-4 text-sm" style={{ color: "#C8C8C8" }}>{campaign.advertiser ?? "—"}</td>
                       <td className="px-6 py-4">
                         {campaign.deal_type ? (
                           <span className="text-xs px-2 py-0.5 rounded-full font-medium uppercase tracking-wider" style={{
@@ -111,14 +111,14 @@ export default async function CampaignsPage() {
                           }}>
                             {campaign.deal_type === "fixed" ? "Fixed Fee" : campaign.deal_type === "cpm" ? "CPM" : "Rev Share"}
                           </span>
-                        ) : <span style={{ color: "#444" }}>—</span>}
+                        ) : <span style={{ color: "#777" }}>—</span>}
                       </td>
-                      <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#A3A3A3" }}>{formatDate(campaign.start_date)}</td>
-                      <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#A3A3A3" }}>{formatDate(campaign.end_date)}</td>
+                      <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#C8C8C8" }}>{formatDate(campaign.start_date)}</td>
+                      <td className="px-6 py-4 text-sm tabular-nums" style={{ color: "#C8C8C8" }}>{formatDate(campaign.end_date)}</td>
                       <td className="px-6 py-4 text-sm font-mono tabular-nums" style={{ color: "#FFFFFF" }}>
                         {campaign.amount_charged_zar != null ? formatCurrency(campaign.amount_charged_zar) : "—"}
                       </td>
-                      <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>{venueCount}</td>
+                      <td className="px-6 py-4 text-sm" style={{ color: "#C8C8C8" }}>{venueCount}</td>
                       <td className="px-6 py-4">
                         <Link href={`/admin/campaigns/${campaign.id}`} className="text-xs font-medium" style={{ color: "#D4FF4F" }}>View →</Link>
                       </td>
@@ -145,7 +145,7 @@ export default async function CampaignsPage() {
                         <p className="text-sm font-semibold text-white">{campaign.name}</p>
                         {isActive && <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: "rgba(212,255,79,0.12)", color: "#D4FF4F" }}>Live</span>}
                       </div>
-                      <p className="text-xs mt-0.5" style={{ color: "#666" }}>{campaign.advertiser ?? "—"}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#999" }}>{campaign.advertiser ?? "—"}</p>
                     </div>
                     {campaign.deal_type && (
                       <span className="text-xs px-2 py-0.5 rounded-full font-medium uppercase tracking-wider flex-shrink-0" style={{ backgroundColor: dealBg, color: dealColor }}>
@@ -153,7 +153,7 @@ export default async function CampaignsPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 flex-wrap pt-3 text-xs" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", color: "#A3A3A3" }}>
+                  <div className="flex items-center gap-4 flex-wrap pt-3 text-xs" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", color: "#C8C8C8" }}>
                     <span>{formatDate(campaign.start_date)} → {formatDate(campaign.end_date)}</span>
                     <span style={{ color: "#fff" }}>{campaign.amount_charged_zar != null ? formatCurrency(campaign.amount_charged_zar) : "—"}</span>
                     <span>{venueCount} venue{venueCount !== 1 ? "s" : ""}</span>

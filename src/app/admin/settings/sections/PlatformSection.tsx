@@ -25,7 +25,7 @@ const INPUT_STYLE: React.CSSProperties = {
 
 const LOCKED_INPUT_STYLE: React.CSSProperties = {
   ...INPUT_STYLE,
-  color: "#666",
+  color: "#999",
   cursor: "not-allowed",
 };
 
@@ -41,7 +41,7 @@ const FIELD_LABEL: React.CSSProperties = {
   display: "block",
   fontSize: "12px",
   fontWeight: 600,
-  color: "#A3A3A3",
+  color: "#C8C8C8",
   marginBottom: "8px",
 };
 
@@ -142,7 +142,7 @@ export default function PlatformSection() {
       <form onSubmit={handleSave}>
         <div style={{ ...GLASS_CARD, padding: "24px", marginBottom: "24px" }}>
           {!loaded ? (
-            <div style={{ color: "#666", fontSize: "14px" }}>Loading...</div>
+            <div style={{ color: "#999", fontSize: "14px" }}>Loading...</div>
           ) : (
             <div
               style={{
@@ -197,7 +197,7 @@ export default function PlatformSection() {
                       top: "50%",
                       transform: "translateY(-50%)",
                       fontSize: "11px",
-                      color: "#555",
+                      color: "#8A8A8A",
                       fontWeight: 600,
                     }}
                   >

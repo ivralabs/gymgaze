@@ -36,7 +36,7 @@ const FIELD_LABEL: React.CSSProperties = {
   display: "block",
   fontSize: "12px",
   fontWeight: 600,
-  color: "#A3A3A3",
+  color: "#C8C8C8",
   marginBottom: "8px",
 };
 
@@ -163,7 +163,7 @@ export default function IntegrationsSection() {
               padding: "12px 16px",
               fontFamily: "monospace",
               fontSize: "14px",
-              color: "#A3A3A3",
+              color: "#C8C8C8",
               letterSpacing: "0.05em",
             }}
           >
@@ -208,7 +208,7 @@ export default function IntegrationsSection() {
             Regenerate
           </button>
         </div>
-        <div style={{ fontSize: "12px", color: "#555", marginTop: "12px" }}>
+        <div style={{ fontSize: "12px", color: "#8A8A8A", marginTop: "12px" }}>
           Use this key to authenticate API requests. Keep it secret.
         </div>
       </div>
@@ -267,7 +267,7 @@ export default function IntegrationsSection() {
               borderRadius: "10px",
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.10)",
-              color: "#A3A3A3",
+              color: "#C8C8C8",
               fontSize: "13px",
               cursor: "pointer",
               fontWeight: 500,
@@ -370,7 +370,7 @@ export default function IntegrationsSection() {
             <div style={{ ...GLASS_CARD, padding: "32px", width: "400px", maxWidth: "90vw", position: "relative" }}>
               <button
                 onClick={() => setShowRegenConfirm(false)}
-                style={{ position: "absolute", top: "16px", right: "16px", background: "none", border: "none", color: "#666", cursor: "pointer" }}
+                style={{ position: "absolute", top: "16px", right: "16px", background: "none", border: "none", color: "#999", cursor: "pointer" }}
               >
                 <X size={20} />
               </button>
@@ -378,7 +378,7 @@ export default function IntegrationsSection() {
               <div style={{ color: "#EF4444", fontWeight: 700, fontSize: "18px", marginBottom: "12px" }}>
                 Regenerate API Key?
               </div>
-              <p style={{ color: "#A3A3A3", fontSize: "14px", lineHeight: "1.6", marginBottom: "24px" }}>
+              <p style={{ color: "#C8C8C8", fontSize: "14px", lineHeight: "1.6", marginBottom: "24px" }}>
                 This will immediately invalidate your current API key. Any integrations using it will stop working until updated.
               </p>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
@@ -389,7 +389,7 @@ export default function IntegrationsSection() {
                     borderRadius: "10px",
                     background: "rgba(255,255,255,0.06)",
                     border: "1px solid rgba(255,255,255,0.10)",
-                    color: "#A3A3A3",
+                    color: "#C8C8C8",
                     fontSize: "14px",
                     cursor: "pointer",
                   }}

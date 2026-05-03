@@ -75,7 +75,7 @@ export default function RevenuePageClient({ venues }: RevenuePageClientProps) {
   const labelStyle = {
     display: "block",
     fontSize: 12,
-    color: "#909090",
+    color: "#B0B0B0",
     marginBottom: 6,
     fontWeight: 500,
   } as React.CSSProperties;
@@ -250,7 +250,7 @@ export default function RevenuePageClient({ venues }: RevenuePageClientProps) {
                 className="px-5 py-2.5 rounded-xl text-sm font-medium"
                 style={{
                   background: "rgba(255,255,255,0.06)",
-                  color: "#A3A3A3",
+                  color: "#C8C8C8",
                   border: "1px solid rgba(255,255,255,0.10)",
                 }}
               >

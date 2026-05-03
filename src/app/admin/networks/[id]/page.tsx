@@ -8,8 +8,8 @@ import NetworkRevenueChartWrapper from "./NetworkRevenueChartWrapper";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   active: { label: "Active", color: "#D4FF4F", bg: "rgba(212,255,79,0.1)" },
-  inactive: { label: "Inactive", color: "#909090", bg: "rgba(102,102,102,0.15)" },
-  coming_soon: { label: "Coming Soon", color: "#A3A3A3", bg: "rgba(163,163,163,0.15)" },
+  inactive: { label: "Inactive", color: "#B0B0B0", bg: "rgba(102,102,102,0.15)" },
+  coming_soon: { label: "Coming Soon", color: "#C8C8C8", bg: "rgba(163,163,163,0.15)" },
 };
 
 const cardStyle = {
@@ -160,7 +160,7 @@ export default async function NetworkDetailPage({
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.10)",
-            color: "#A3A3A3",
+            color: "#C8C8C8",
           }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
@@ -209,7 +209,7 @@ export default async function NetworkDetailPage({
           },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl p-5" style={cardStyle}>
-            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#666" }}>
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999" }}>
               {stat.label}
             </p>
             <p
@@ -218,7 +218,7 @@ export default async function NetworkDetailPage({
             >
               {stat.value}
             </p>
-            <p className="text-xs mt-1" style={{ color: "#555" }}>
+            <p className="text-xs mt-1" style={{ color: "#8A8A8A" }}>
               {stat.sub}
             </p>
           </div>
@@ -278,7 +278,7 @@ export default async function NetworkDetailPage({
                   <User size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#909090" }}>
+                  <p className="text-xs" style={{ color: "#B0B0B0" }}>
                     Contact
                   </p>
                   <p className="text-sm text-white">{network.contact_name}</p>
@@ -294,7 +294,7 @@ export default async function NetworkDetailPage({
                   <Mail size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#909090" }}>
+                  <p className="text-xs" style={{ color: "#B0B0B0" }}>
                     Email
                   </p>
                   <p className="text-sm text-white">{network.contact_email}</p>
@@ -310,7 +310,7 @@ export default async function NetworkDetailPage({
                   <Phone size={14} color="#909090" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: "#909090" }}>
+                  <p className="text-xs" style={{ color: "#B0B0B0" }}>
                     Phone
                   </p>
                   <p className="text-sm text-white">{network.contact_phone}</p>
@@ -343,7 +343,7 @@ export default async function NetworkDetailPage({
             >
               Revenue — Last 6 Months
             </h3>
-            <span className="text-xs" style={{ color: "#666" }}>
+            <span className="text-xs" style={{ color: "#999" }}>
               Rental + Revenue Share
             </span>
           </div>
@@ -376,7 +376,7 @@ export default async function NetworkDetailPage({
         </div>
 
         {venueRows.length === 0 ? (
-          <div className="px-6 py-10 text-center text-sm" style={{ color: "#909090" }}>
+          <div className="px-6 py-10 text-center text-sm" style={{ color: "#B0B0B0" }}>
             No venues linked to this network yet.
           </div>
         ) : (
@@ -393,7 +393,7 @@ export default async function NetworkDetailPage({
                       <th
                         key={h}
                         className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "#909090" }}
+                        style={{ color: "#B0B0B0" }}
                       >
                         {h}
                       </th>
@@ -440,13 +440,13 @@ export default async function NetworkDetailPage({
                           {venue.name}
                         </Link>
                       </td>
-                      <td className="px-5 py-4 text-sm" style={{ color: "#A3A3A3" }}>
+                      <td className="px-5 py-4 text-sm" style={{ color: "#C8C8C8" }}>
                         {venue.city ?? "—"}
                       </td>
                       <td className="px-5 py-4 text-sm text-white">
                         {(venue.active_members ?? 0).toLocaleString("en-ZA")}
                       </td>
-                      <td className="px-5 py-4 text-sm" style={{ color: "#A3A3A3" }}>
+                      <td className="px-5 py-4 text-sm" style={{ color: "#C8C8C8" }}>
                         {screenCount}
                       </td>
                       <td className="px-5 py-4 text-sm text-white">
@@ -519,7 +519,7 @@ export default async function NetworkDetailPage({
         </div>
 
         {allCampaigns.length === 0 ? (
-          <div className="text-center py-8" style={{ color: "#555" }}>
+          <div className="text-center py-8" style={{ color: "#8A8A8A" }}>
             <Megaphone size={32} color="#333" style={{ margin: "0 auto 12px" }} />
             <p className="text-sm">No active campaigns</p>
           </div>
@@ -533,7 +533,7 @@ export default async function NetworkDetailPage({
               >
                 <div>
                   <p className="text-sm font-semibold text-white">{campaign.name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#A3A3A3" }}>
+                  <p className="text-xs mt-0.5" style={{ color: "#C8C8C8" }}>
                     {campaign.advertiser} &middot; {formatDate(campaign.start_date)} – {formatDate(campaign.end_date)}
                   </p>
                 </div>
@@ -544,7 +544,7 @@ export default async function NetworkDetailPage({
                   >
                     {formatRevenue(campaign.amount_charged_zar ?? 0)}
                   </p>
-                  <p className="text-xs" style={{ color: "#555" }}>
+                  <p className="text-xs" style={{ color: "#8A8A8A" }}>
                     charged
                   </p>
                 </div>
@@ -578,7 +578,7 @@ export default async function NetworkDetailPage({
           >
             {overallCompliance}%
           </span>
-          <span className="text-sm mb-2" style={{ color: "#666" }}>
+          <span className="text-sm mb-2" style={{ color: "#999" }}>
             overall compliance
           </span>
         </div>
@@ -621,14 +621,14 @@ export default async function NetworkDetailPage({
               >
                 {item.count}
               </p>
-              <p className="text-xs mt-1" style={{ color: "#666" }}>
+              <p className="text-xs mt-1" style={{ color: "#999" }}>
                 {item.label}
               </p>
             </div>
           ))}
         </div>
 
-        <p className="text-xs mt-4" style={{ color: "#444" }}>
+        <p className="text-xs mt-4" style={{ color: "#777" }}>
           {totalPhotos} total photos across {totalVenues} venue{totalVenues !== 1 ? "s" : ""}
         </p>
       </div>

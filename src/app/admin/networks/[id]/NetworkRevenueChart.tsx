@@ -39,7 +39,7 @@ function CustomTooltip({
           padding: "10px 14px",
         }}
       >
-        <p style={{ color: "#A3A3A3", fontSize: 12, marginBottom: 4 }}>{label}</p>
+        <p style={{ color: "#C8C8C8", fontSize: 12, marginBottom: 4 }}>{label}</p>
         <p style={{ color: "#D4FF4F", fontSize: 14, fontWeight: 700 }}>
           R {(payload[0].value ?? 0).toLocaleString("en-ZA", { maximumFractionDigits: 0 })}
         </p>

@@ -63,7 +63,7 @@ export default async function CampaignDetailPage({
         <Link
           href="/admin/campaigns"
           className="p-2 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -102,7 +102,7 @@ export default async function CampaignDetailPage({
             )}
           </div>
           {campaign.advertiser && (
-            <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
+            <p className="text-sm mt-0.5" style={{ color: "#B0B0B0" }}>
               {campaign.advertiser}
             </p>
           )}
@@ -129,20 +129,20 @@ export default async function CampaignDetailPage({
 
           <div className="space-y-4">
             <div>
-              <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Advertiser</p>
+              <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Advertiser</p>
               <p className="text-sm text-white">{campaign.advertiser ?? "—"}</p>
             </div>
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Start Date</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Start Date</p>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={13} color="#A3A3A3" strokeWidth={2} />
                   <p className="text-sm text-white tabular-nums">{formatDate(campaign.start_date)}</p>
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>End Date</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>End Date</p>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={13} color="#A3A3A3" strokeWidth={2} />
                   <p className="text-sm text-white tabular-nums">{formatDate(campaign.end_date)}</p>
@@ -151,7 +151,7 @@ export default async function CampaignDetailPage({
             </div>
 
             <div>
-              <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Amount Charged</p>
+              <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Amount Charged</p>
               <div className="flex items-center gap-1.5">
                 <DollarSign size={13} color="#D4FF4F" strokeWidth={2} />
                 <p className="text-sm font-semibold text-white tabular-nums font-mono">
@@ -164,41 +164,41 @@ export default async function CampaignDetailPage({
 
             {campaign.deal_type === "cpm" && campaign.cpm_rate != null && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>CPM Rate</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>CPM Rate</p>
                 <p className="text-sm font-mono text-white">R{campaign.cpm_rate}/CPM</p>
               </div>
             )}
 
             {campaign.deal_type === "share" && campaign.revenue_share_percent != null && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Revenue Share</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Revenue Share</p>
                 <p className="text-sm font-mono text-white">{campaign.revenue_share_percent}%</p>
               </div>
             )}
 
             {campaign.gym_revenue_share_percent != null && campaign.gym_revenue_share_percent > 0 && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Gym Split</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Gym Split</p>
                 <p className="text-sm font-mono text-white">{campaign.gym_revenue_share_percent}%</p>
               </div>
             )}
 
             {(campaign.contact_person || campaign.contact_email) && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Contact</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Contact</p>
                 {campaign.contact_person && (
                   <p className="text-sm text-white">{campaign.contact_person}</p>
                 )}
                 {campaign.contact_email && (
-                  <p className="text-sm" style={{ color: "#A3A3A3" }}>{campaign.contact_email}</p>
+                  <p className="text-sm" style={{ color: "#C8C8C8" }}>{campaign.contact_email}</p>
                 )}
               </div>
             )}
 
             {campaign.notes && (
               <div>
-                <p className="text-xs mb-0.5" style={{ color: "#909090" }}>Notes</p>
-                <p className="text-sm" style={{ color: "#A3A3A3" }}>{campaign.notes}</p>
+                <p className="text-xs mb-0.5" style={{ color: "#B0B0B0" }}>Notes</p>
+                <p className="text-sm" style={{ color: "#C8C8C8" }}>{campaign.notes}</p>
               </div>
             )}
           </div>
@@ -222,7 +222,7 @@ export default async function CampaignDetailPage({
           </div>
 
           {venues.length === 0 ? (
-            <div className="px-6 py-10 text-center text-sm" style={{ color: "#909090" }}>
+            <div className="px-6 py-10 text-center text-sm" style={{ color: "#B0B0B0" }}>
               No venues attached to this campaign.
             </div>
           ) : (
@@ -233,7 +233,7 @@ export default async function CampaignDetailPage({
                     <th
                       key={h}
                       className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: "#909090" }}
+                      style={{ color: "#B0B0B0" }}
                     >
                       {h}
                     </th>
@@ -254,7 +254,7 @@ export default async function CampaignDetailPage({
                         {venue.name}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-sm" style={{ color: "#A3A3A3" }}>
+                    <td className="px-6 py-4 text-sm" style={{ color: "#C8C8C8" }}>
                       {venue.city}
                     </td>
                     <td className="px-6 py-4">

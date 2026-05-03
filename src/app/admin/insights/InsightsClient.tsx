@@ -56,9 +56,9 @@ function fmtR(n: number) {
 function statCard(label: string, value: string, sub: string, color = "#D4FF4F") {
   return (
     <div className="glass-card rounded-2xl p-4 md:p-5" style={{ borderRadius: 16 }}>
-      <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#666", fontWeight: 600 }}>{label}</p>
+      <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>{label}</p>
       <p className="text-2xl md:text-3xl font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{value}</p>
-      <p className="text-xs mt-1.5" style={{ color: "#555" }}>{sub}</p>
+      <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>{sub}</p>
     </div>
   );
 }
@@ -121,12 +121,12 @@ function NewLinkModal({ networks, onClose, onCreated }: {
 
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Link Title</label>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>Link Title</label>
             <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm text-white" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
           </div>
 
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Networks (leave blank = all)</label>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>Networks (leave blank = all)</label>
             <div className="space-y-1.5">
               {networks.map((n) => (
                 <button key={n.id} onClick={() => toggle(n.id)} className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm transition-all" style={{ background: selectedNets.includes(n.id) ? "rgba(212,255,79,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${selectedNets.includes(n.id) ? "#D4FF4F44" : "rgba(255,255,255,0.08)"}`, color: selectedNets.includes(n.id) ? "#D4FF4F" : "#A3A3A3" }}>
@@ -141,11 +141,11 @@ function NewLinkModal({ networks, onClose, onCreated }: {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>PIN (optional)</label>
+              <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>PIN (optional)</label>
               <input value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="4 digits" className="w-full px-3 py-2.5 rounded-xl text-sm text-white" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Expires in days</label>
+              <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>Expires in days</label>
               <input value={expiresDays} onChange={(e) => setExpiresDays(e.target.value.replace(/\D/g, ""))} placeholder="Never" className="w-full px-3 py-2.5 rounded-xl text-sm text-white" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
             </div>
           </div>
@@ -195,21 +195,21 @@ function NetworkRow({ network, venues, screens, revenue, photos, campaignVenues 
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{network.name}</p>
-          <p className="text-xs mt-0.5" style={{ color: "#555" }}>{netVenues.length} venue{netVenues.length !== 1 ? "s" : ""} · {fmt(totalMembers)} members · {netScreens.length} screens</p>
+          <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{netVenues.length} venue{netVenues.length !== 1 ? "s" : ""} · {fmt(totalMembers)} members · {netScreens.length} screens</p>
         </div>
         <div className="flex items-center gap-4 flex-shrink-0">
           <div className="hidden sm:flex items-center gap-6 mr-2">
             <div className="text-right">
               <p className="text-xs font-bold text-white tabular-nums">{fmt(ots)}</p>
-              <p className="text-xs" style={{ color: "#555" }}>OTS</p>
+              <p className="text-xs" style={{ color: "#8A8A8A" }}>OTS</p>
             </div>
             <div className="text-right">
               <p className="text-xs font-bold text-white tabular-nums">{activeCampaigns}</p>
-              <p className="text-xs" style={{ color: "#555" }}>Campaigns</p>
+              <p className="text-xs" style={{ color: "#8A8A8A" }}>Campaigns</p>
             </div>
             <div className="w-20">
               <ComplianceBar pct={compliance} />
-              <p className="text-xs mt-0.5" style={{ color: "#555" }}>Compliance</p>
+              <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>Compliance</p>
             </div>
           </div>
           {open ? <ChevronUp size={16} color="#555" /> : <ChevronDown size={16} color="#555" />}
@@ -230,7 +230,7 @@ function NetworkRow({ network, venues, screens, revenue, photos, campaignVenues 
               <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Icon size={12} color="#555" strokeWidth={2} />
-                  <p className="text-xs" style={{ color: "#555" }}>{label}</p>
+                  <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
                 </div>
                 <p className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
               </div>
@@ -244,7 +244,7 @@ function NetworkRow({ network, venues, screens, revenue, photos, campaignVenues 
 
           {/* Venue breakdown */}
           <div className="px-5 pb-5">
-            <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Venue Breakdown</p>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Venue Breakdown</p>
             <div className="space-y-2">
               {netVenues.map((venue) => {
                 const vScreens = screens.filter((s) => s.venue_id === venue.id).length;
@@ -256,9 +256,9 @@ function NetworkRow({ network, venues, screens, revenue, photos, campaignVenues 
                       <Link href={`/admin/venues/${venue.id}`} className="text-sm font-medium text-white hover:text-[#D4FF4F] transition-colors truncate block">
                         {venue.name}
                       </Link>
-                      <p className="text-xs" style={{ color: "#555" }}>{[venue.city, venue.province].filter(Boolean).join(", ")}</p>
+                      <p className="text-xs" style={{ color: "#8A8A8A" }}>{[venue.city, venue.province].filter(Boolean).join(", ")}</p>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0 text-xs" style={{ color: "#A3A3A3" }}>
+                    <div className="flex items-center gap-3 flex-shrink-0 text-xs" style={{ color: "#C8C8C8" }}>
                       <span>{fmt(venue.active_members ?? 0)} mbrs</span>
                       <span>{vScreens} screens</span>
                       <div className="w-16 hidden sm:block">
@@ -313,14 +313,14 @@ function AudienceSection({ network }: { network: Network }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#666" }}>Audience Demographics</p>
+        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>Audience Demographics</p>
         <button onClick={() => setEditing((p) => !p)} className="text-xs font-medium" style={{ color: editing ? "#EF4444" : "#D4FF4F" }}>
           {editing ? "Cancel" : "Edit"}
         </button>
       </div>
 
       {!hasData && !editing && (
-        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(255,255,255,0.03)", color: "#555" }}>
+        <div className="rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(255,255,255,0.03)", color: "#8A8A8A" }}>
           No demographics set — click Edit to add audience data for this network.
         </div>
       )}
@@ -338,7 +338,7 @@ function AudienceSection({ network }: { network: Network }) {
           ].filter((f) => f.value !== null).map(({ label, value, suffix }) => (
             <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
               <p className="text-lg font-bold text-white tabular-nums" style={{ fontFamily: "Inter Tight, sans-serif" }}>{value}{suffix}</p>
-              <p className="text-xs mt-0.5" style={{ color: "#555" }}>{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{label}</p>
             </div>
           ))}
         </div>
@@ -357,13 +357,13 @@ function AudienceSection({ network }: { network: Network }) {
               { key: "audience_age_45_plus", label: "Age 45+ %" },
             ].map(({ key, label }) => (
               <div key={key}>
-                <label className="text-xs mb-1 block" style={{ color: "#666" }}>{label}</label>
+                <label className="text-xs mb-1 block" style={{ color: "#999" }}>{label}</label>
                 <input type="number" value={form[key as keyof typeof form] as string | number} onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))} style={fieldStyle} />
               </div>
             ))}
           </div>
           <div>
-            <label className="text-xs mb-1 block" style={{ color: "#666" }}>Notes</label>
+            <label className="text-xs mb-1 block" style={{ color: "#999" }}>Notes</label>
             <textarea value={form.audience_notes} onChange={(e) => setForm((p) => ({ ...p, audience_notes: e.target.value }))} rows={2} style={{ ...fieldStyle, resize: "none" }} />
           </div>
           <button onClick={save} disabled={saving} className="px-5 py-2 rounded-xl text-sm font-bold transition-all" style={{ background: saving ? "#555" : "#D4FF4F", color: "#0A0A0A" }}>
@@ -400,7 +400,7 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Shareable Links</h2>
-          <p className="text-xs mt-0.5" style={{ color: "#555" }}>Share insights with agencies and clients — no login required</p>
+          <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>Share insights with agencies and clients — no login required</p>
         </div>
         <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all" style={{ background: "#D4FF4F", color: "#0A0A0A" }}>
           <Plus size={14} strokeWidth={2.5} />
@@ -412,7 +412,7 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
         <div className="glass-card rounded-2xl py-10 text-center" style={{ borderRadius: 16 }}>
           <Share2 size={28} color="#333" strokeWidth={1.5} className="mx-auto mb-3" />
           <p className="text-sm text-white font-medium mb-1">No links yet</p>
-          <p className="text-xs" style={{ color: "#555" }}>Create a link to share insights with an agency or client</p>
+          <p className="text-xs" style={{ color: "#8A8A8A" }}>Create a link to share insights with an agency or client</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -430,17 +430,17 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
                     {expired && <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.12)", color: "#EF4444" }}>Expired</span>}
                   </div>
                   <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-                    <span className="text-xs" style={{ color: "#555" }}>{netNames}</span>
-                    <span className="flex items-center gap-1 text-xs" style={{ color: "#555" }}>
+                    <span className="text-xs" style={{ color: "#8A8A8A" }}>{netNames}</span>
+                    <span className="flex items-center gap-1 text-xs" style={{ color: "#8A8A8A" }}>
                       <Eye size={10} /> {link.view_count} view{link.view_count !== 1 ? "s" : ""}
                     </span>
                     {link.expires_at && (
-                      <span className="flex items-center gap-1 text-xs" style={{ color: "#555" }}>
+                      <span className="flex items-center gap-1 text-xs" style={{ color: "#8A8A8A" }}>
                         <Calendar size={10} /> Expires {new Date(link.expires_at).toLocaleDateString("en-ZA")}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs mt-0.5 font-mono truncate" style={{ color: "#444" }}>
+                  <p className="text-xs mt-0.5 font-mono truncate" style={{ color: "#777" }}>
                     {baseUrl}/insights/{link.token}
                   </p>
                 </div>
@@ -448,7 +448,7 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
                   <button onClick={() => copyLink(link.token)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all" style={{ background: copied === link.token ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.05)", color: copied === link.token ? "#D4FF4F" : "#A3A3A3", border: "1px solid rgba(255,255,255,0.08)" }}>
                     {copied === link.token ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
                   </button>
-                  <button onClick={() => deleteLink(link.id)} className="p-1.5 rounded-lg transition-all hover:bg-red-500/10" style={{ color: "#555" }}>
+                  <button onClick={() => deleteLink(link.id)} className="p-1.5 rounded-lg transition-all hover:bg-red-500/10" style={{ color: "#8A8A8A" }}>
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -504,7 +504,7 @@ function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMemb
           <Calculator size={16} color="#D4FF4F" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>CPM Calculator</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>Estimate campaign value — based on R{CPM} CPM benchmark</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>Estimate campaign value — based on R{CPM} CPM benchmark</p>
       </div>
 
       {/* Mode toggle */}
@@ -522,9 +522,9 @@ function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMemb
       <div className="px-5 pb-5">
         {mode === "budget" ? (
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Campaign Budget (ZAR)</label>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>Campaign Budget (ZAR)</label>
             <div className="relative mb-4">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#555" }}>R</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
               <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="50 000" className="w-full pl-7 pr-4 py-2.5 rounded-xl text-sm text-white"
                 style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
             </div>
@@ -537,7 +537,7 @@ function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMemb
                   { label: "CPM", value: `R${CPM}`, color: "#34D399" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs mb-1" style={{ color: "#555" }}>{label}</p>
+                    <p className="text-xs mb-1" style={{ color: "#8A8A8A" }}>{label}</p>
                     <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
                   </div>
                 ))}
@@ -546,7 +546,7 @@ function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMemb
           </div>
         ) : (
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#666" }}>Target Impressions</label>
+            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "#999" }}>Target Impressions</label>
             <input value={targetImpressions} onChange={(e) => setTargetImpressions(e.target.value)} placeholder="500 000" className="w-full px-4 py-2.5 rounded-xl text-sm text-white mb-4"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
             {impressionsNum > 0 && (
@@ -557,7 +557,7 @@ function CpmCalculator({ totalMembers, totalMonthly, totalScreens }: { totalMemb
                   { label: "Duration", value: `${fromImpressions.weeks} weeks`, color: "#A78BFA" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs mb-1" style={{ color: "#555" }}>{label}</p>
+                    <p className="text-xs mb-1" style={{ color: "#8A8A8A" }}>{label}</p>
                     <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
                   </div>
                 ))}
@@ -602,7 +602,7 @@ function CampaignAvailability({ venues, screens, campaignVenues }: {
           <Zap size={16} color="#D4FF4F" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Campaign Availability</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>Screen slots open for new campaigns right now</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>Screen slots open for new campaigns right now</p>
       </div>
 
       {/* Summary pills */}
@@ -610,7 +610,7 @@ function CampaignAvailability({ venues, screens, campaignVenues }: {
         {[
           { label: "Available", count: available.length, color: "#D4FF4F", bg: "rgba(212,255,79,0.08)" },
           { label: "Fully Booked", count: booked.length, color: "#F59E0B", bg: "rgba(245,158,11,0.08)" },
-          { label: "No Screens", count: noScreens.length, color: "#555", bg: "rgba(255,255,255,0.04)" },
+          { label: "No Screens", count: noScreens.length, color: "#8A8A8A", bg: "rgba(255,255,255,0.04)" },
         ].map(({ label, count, color, bg }) => (
           <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: bg, border: `1px solid ${color}22` }}>
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
@@ -628,11 +628,11 @@ function CampaignAvailability({ venues, screens, campaignVenues }: {
                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#D4FF4F" }} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white truncate">{venue.name}</p>
-                  <p className="text-xs" style={{ color: "#555" }}>{venue.city} · {venue.province}</p>
+                  <p className="text-xs" style={{ color: "#8A8A8A" }}>{venue.city} · {venue.province}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>{activeScreenCount - activeCampaigns} slot{activeScreenCount - activeCampaigns !== 1 ? "s" : ""} open</p>
-                  <p className="text-xs" style={{ color: "#555" }}>{activeScreenCount} screens</p>
+                  <p className="text-xs" style={{ color: "#8A8A8A" }}>{activeScreenCount} screens</p>
                 </div>
               </div>
             ))}
@@ -642,7 +642,7 @@ function CampaignAvailability({ venues, screens, campaignVenues }: {
 
       {available.length === 0 && (
         <div className="px-5 pb-5 pt-2">
-          <p className="text-sm" style={{ color: "#555" }}>All screens are currently booked. Great news for occupancy!</p>
+          <p className="text-sm" style={{ color: "#8A8A8A" }}>All screens are currently booked. Great news for occupancy!</p>
         </div>
       )}
     </div>
@@ -671,7 +671,7 @@ function CompetitivePositioning({ venues, networks, screens }: {
           <Trophy size={16} color="#D4FF4F" strokeWidth={2} />
           <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Market Position</p>
         </div>
-        <p className="text-xs" style={{ color: "#555" }}>How GymGaze stacks up in the SA gym advertising market</p>
+        <p className="text-xs" style={{ color: "#8A8A8A" }}>How GymGaze stacks up in the SA gym advertising market</p>
       </div>
       <div className="p-5 space-y-4">
         {/* Headline claim */}
@@ -679,12 +679,12 @@ function CompetitivePositioning({ venues, networks, screens }: {
           <p className="text-base font-bold text-white leading-snug" style={{ fontFamily: "Inter Tight, sans-serif" }}>
             Reaching <span style={{ color: "#D4FF4F" }}>{marketShare}%</span> of SA&apos;s gym-going population across <span style={{ color: "#D4FF4F" }}>{provinces.length}</span> province{provinces.length !== 1 ? "s" : ""}
           </p>
-          <p className="text-xs mt-1" style={{ color: "#555" }}>Based on ~1.2M active gym members nationally</p>
+          <p className="text-xs mt-1" style={{ color: "#8A8A8A" }}>Based on ~1.2M active gym members nationally</p>
         </div>
 
         {/* Province presence */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Provincial Presence</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Provincial Presence</p>
           <div className="space-y-2">
             {provinces.map((prov) => {
               const provVenues = venues.filter((v) => v.province === prov);
@@ -698,7 +698,7 @@ function CompetitivePositioning({ venues, networks, screens }: {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-xs font-semibold text-white tabular-nums">{fmt(provMembers)}</p>
-                    <p className="text-xs" style={{ color: "#555" }}>{provVenues.length} venues · {provScreens} screens</p>
+                    <p className="text-xs" style={{ color: "#8A8A8A" }}>{provVenues.length} venues · {provScreens} screens</p>
                   </div>
                 </div>
               );
@@ -708,7 +708,7 @@ function CompetitivePositioning({ venues, networks, screens }: {
 
         {/* Key differentiators */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#666" }}>Key Differentiators</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Key Differentiators</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             {[
               { icon: "🎯", label: "Zero-waste audience", sub: "100% gym-engaged members" },
@@ -718,7 +718,7 @@ function CompetitivePositioning({ venues, networks, screens }: {
               <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <p className="text-lg mb-1">{icon}</p>
                 <p className="text-sm font-semibold text-white">{label}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#555" }}>{sub}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{sub}</p>
               </div>
             ))}
           </div>
@@ -759,7 +759,7 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
           <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem,5vw,2.5rem)", color: "#fff", letterSpacing: "-0.02em" }}>
             Insights
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>Network-wide performance, audience data, and shareable media decks</p>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>Network-wide performance, audience data, and shareable media decks</p>
         </div>
       </div>
 
@@ -772,7 +772,7 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
 
       {/* Reach & Frequency bar */}
       <div className="glass-card rounded-2xl p-5 mb-6 md:mb-8" style={{ borderRadius: 16 }}>
-        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#666" }}>Reach & Frequency Estimates</p>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Reach & Frequency Estimates</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total Reach", value: fmt(totalMembers), sub: "unique members" },
@@ -781,9 +781,9 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
             { label: "Active Screens", value: `${activeScreens}/${totalScreens}`, sub: "screens online" },
           ].map(({ label, value, sub }) => (
             <div key={label}>
-              <p className="text-xs mb-1" style={{ color: "#555" }}>{label}</p>
+              <p className="text-xs mb-1" style={{ color: "#8A8A8A" }}>{label}</p>
               <p className="text-xl font-bold text-white tabular-nums" style={{ fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
-              <p className="text-xs mt-0.5" style={{ color: "#444" }}>{sub}</p>
+              <p className="text-xs mt-0.5" style={{ color: "#777" }}>{sub}</p>
             </div>
           ))}
         </div>
@@ -833,7 +833,7 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
             <div className="glass-card rounded-2xl py-16 text-center" style={{ borderRadius: 16 }}>
               <Building2 size={32} color="#333" strokeWidth={1.5} className="mx-auto mb-3" />
               <p className="text-white font-medium mb-1">No active networks</p>
-              <p className="text-sm" style={{ color: "#555" }}>Add networks to see insights here</p>
+              <p className="text-sm" style={{ color: "#8A8A8A" }}>Add networks to see insights here</p>
             </div>
           ) : (
             networks.map((network) => (

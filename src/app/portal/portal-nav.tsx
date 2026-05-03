@@ -57,7 +57,7 @@ export default function PortalNav() {
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
-          style={{ color: "#909090" }}
+          style={{ color: "#B0B0B0" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
             (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
@@ -146,7 +146,7 @@ export default function PortalNav() {
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium mt-4 transition-colors duration-150"
-            style={{ color: "#909090" }}
+            style={{ color: "#B0B0B0" }}
           >
             <LogOut size={18} strokeWidth={2} />
             Sign out

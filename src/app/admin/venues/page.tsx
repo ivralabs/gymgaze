@@ -50,7 +50,7 @@ export default async function VenuesPage() {
           >
             Venues
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>All gym locations across your network</p>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>All gym locations across your network</p>
           <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
             <AddVenueForm brands={brands ?? []} />
           </div>
@@ -70,7 +70,7 @@ export default async function VenuesPage() {
             className="glass-card rounded-2xl p-4 md:p-5"
             style={{ borderRadius: 16 }}
           >
-            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#666", fontWeight: 600 }}>
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>
               {stat.label}
             </p>
             <p
@@ -79,7 +79,7 @@ export default async function VenuesPage() {
             >
               {stat.value}
             </p>
-            <p className="text-xs mt-1.5" style={{ color: "#555" }}>{stat.sub}</p>
+            <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>{stat.sub}</p>
           </div>
         ))}
       </div>

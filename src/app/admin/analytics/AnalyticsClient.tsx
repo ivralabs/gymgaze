@@ -94,7 +94,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         padding: "8px 12px",
       }}
     >
-      <p style={{ color: "#909090", fontSize: 11, marginBottom: 4 }}>{label}</p>
+      <p style={{ color: "#B0B0B0", fontSize: 11, marginBottom: 4 }}>{label}</p>
       {payload.map((p: any) => (
         <p key={p.name} style={{ color: p.color ?? LIME, fontSize: 13, fontWeight: 600 }}>
           {p.name}: {typeof p.value === "number" && p.name !== "Campaigns" ? formatZAR(p.value) : p.value}
@@ -115,7 +115,7 @@ const CampaignTooltip = ({ active, payload, label }: any) => {
         padding: "8px 12px",
       }}
     >
-      <p style={{ color: "#909090", fontSize: 11, marginBottom: 4 }}>{label}</p>
+      <p style={{ color: "#B0B0B0", fontSize: 11, marginBottom: 4 }}>{label}</p>
       {payload.map((p: any) => (
         <p key={p.name} style={{ color: p.color ?? LIME, fontSize: 13, fontWeight: 600 }}>
           {p.name === "Revenue" ? `Revenue: ${formatZAR(p.value)}` : `Active Campaigns: ${p.value}`}
@@ -135,7 +135,7 @@ const EmptyState = ({ message }: { message: string }) => (
       minHeight: 200,
     }}
   >
-    <p style={{ color: "#555", fontSize: 14, textAlign: "center" }}>{message}</p>
+    <p style={{ color: "#8A8A8A", fontSize: 14, textAlign: "center" }}>{message}</p>
   </div>
 );
 
@@ -325,7 +325,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
         >
           Analytics
         </h1>
-        <p style={{ color: "#666", marginTop: "0.5rem", margin: "8px 0 0 0" }}>
+        <p style={{ color: "#999", marginTop: "0.5rem", margin: "8px 0 0 0" }}>
           Revenue performance, venue utilisation, and campaign health
         </p>
       </div>
@@ -356,7 +356,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                 fontWeight: 600,
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
-                color: "#909090",
+                color: "#B0B0B0",
                 margin: "0 0 12px 0",
               }}
             >
@@ -378,7 +378,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
             <span
               style={{
                 fontSize: 10,
-                color: "#555",
+                color: "#8A8A8A",
                 background: "rgba(255,255,255,0.06)",
                 borderRadius: 99,
                 padding: "2px 8px",
@@ -432,7 +432,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
             borderRadius: 99,
             border: "1px solid rgba(255,255,255,0.08)",
             background: "rgba(255,255,255,0.04)",
-            color: "#A3A3A3",
+            color: "#C8C8C8",
             fontSize: 13,
             cursor: "pointer",
             backdropFilter: "blur(6px)",
@@ -453,12 +453,12 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
         <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
           Monthly Revenue — Last {dateRange} Months
         </h2>
-        <p style={{ color: "#555", fontSize: 12, margin: "0 0 20px 0" }}>
+        <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 20px 0" }}>
           Rental + Revenue Share stacked
         </p>
         {revenueByMonth.every((d) => d.Total === 0) ? (
           <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ color: "#555", fontSize: 14 }}>
+            <p style={{ color: "#8A8A8A", fontSize: 14 }}>
               No revenue data for this period. Add entries via Revenue Management.
             </p>
           </div>
@@ -479,7 +479,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
               <XAxis dataKey="month" tick={{ fill: "#555", fontSize: 11 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: "#555", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `R${(v / 1000).toFixed(0)}k`} />
               <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ color: "#555", fontSize: 12 }} />
+              <Legend wrapperStyle={{ color: "#8A8A8A", fontSize: 12 }} />
               <Area type="monotone" dataKey="Rental Income" stackId="1" stroke={LIME} fill="url(#gradRental)" strokeWidth={2} />
               <Area type="monotone" dataKey="Revenue Share" stackId="1" stroke={GREY} fill="url(#gradShare)" strokeWidth={2} />
             </AreaChart>
@@ -494,10 +494,10 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             Income Split
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 16px 0" }}>Rental vs Revenue Share</p>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 16px 0" }}>Rental vs Revenue Share</p>
           {totalRentalAll + totalShareAll === 0 ? (
             <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 13, textAlign: "center" }}>No data — enter revenue for this period.</p>
+              <p style={{ color: "#8A8A8A", fontSize: 13, textAlign: "center" }}>No data — enter revenue for this period.</p>
             </div>
           ) : (
             <>
@@ -522,7 +522,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                       const pct = total > 0 ? Math.round((payload[0].value / total) * 100) : 0;
                       return (
                         <div style={{ background: "rgba(15,15,15,0.95)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 12px" }}>
-                          <p style={{ color: "#909090", fontSize: 11 }}>{payload[0].name}</p>
+                          <p style={{ color: "#B0B0B0", fontSize: 11 }}>{payload[0].name}</p>
                           <p style={{ color: LIME, fontSize: 13, fontWeight: 600 }}>{formatZAR(payload[0].value)} ({pct}%)</p>
                         </div>
                       );
@@ -535,7 +535,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ width: 10, height: 10, borderRadius: 2, background: i === 0 ? LIME : GREY }} />
-                      <span style={{ color: "#A3A3A3", fontSize: 12 }}>{d.name}</span>
+                      <span style={{ color: "#C8C8C8", fontSize: 12 }}>{d.name}</span>
                     </div>
                     <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>
                       {formatZAR(d.value)}
@@ -552,10 +552,10 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             Top Venues by Total Revenue
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 16px 0" }}>Top 10 venues</p>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 16px 0" }}>Top 10 venues</p>
           {topVenuesData.length === 0 ? (
             <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 14 }}>No revenue data for the selected period.</p>
+              <p style={{ color: "#8A8A8A", fontSize: 14 }}>No revenue data for the selected period.</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={280}>
@@ -568,10 +568,10 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                     if (!active || !payload?.length) return null;
                     return (
                       <div style={{ background: "rgba(15,15,15,0.95)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 12px" }}>
-                        <p style={{ color: "#909090", fontSize: 11, marginBottom: 4 }}>{label}</p>
+                        <p style={{ color: "#B0B0B0", fontSize: 11, marginBottom: 4 }}>{label}</p>
                         <p style={{ color: LIME, fontSize: 13, fontWeight: 600 }}>Total: {formatZAR(payload[0].payload.Revenue)}</p>
-                        <p style={{ color: "#A3A3A3", fontSize: 12 }}>Rental: {formatZAR(payload[0].payload.Rental)}</p>
-                        <p style={{ color: "#A3A3A3", fontSize: 12 }}>Share: {formatZAR(payload[0].payload.Share)}</p>
+                        <p style={{ color: "#C8C8C8", fontSize: 12 }}>Rental: {formatZAR(payload[0].payload.Rental)}</p>
+                        <p style={{ color: "#C8C8C8", fontSize: 12 }}>Share: {formatZAR(payload[0].payload.Share)}</p>
                       </div>
                     );
                   }}
@@ -590,12 +590,12 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             Campaign Activity & Revenue Overlap
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 16px 0" }}>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 16px 0" }}>
             Active campaigns per month vs. revenue
           </p>
           {campaignActivityData.every((d) => d.Revenue === 0 && d.Campaigns === 0) ? (
             <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 14 }}>No campaign or revenue data.</p>
+              <p style={{ color: "#8A8A8A", fontSize: 14 }}>No campaign or revenue data.</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={240}>
@@ -611,7 +611,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                 <YAxis yAxisId="revenue" tick={{ fill: "#555", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `R${(v / 1000).toFixed(0)}k`} />
                 <YAxis yAxisId="campaigns" orientation="right" tick={{ fill: "#555", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CampaignTooltip />} />
-                <Legend wrapperStyle={{ color: "#555", fontSize: 12 }} />
+                <Legend wrapperStyle={{ color: "#8A8A8A", fontSize: 12 }} />
                 <Area yAxisId="revenue" type="monotone" dataKey="Revenue" stroke={GREY} fill="none" strokeWidth={2} />
                 <Area yAxisId="campaigns" type="monotone" dataKey="Campaigns" stroke={LIME} fill="url(#gradCampaigns)" strokeWidth={2} />
               </AreaChart>
@@ -624,12 +624,12 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             MoM Revenue Growth
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 20px 0" }}>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 20px 0" }}>
             vs. prior month
           </p>
           {momGrowthPct === null ? (
             <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 13, textAlign: "center" }}>
+              <p style={{ color: "#8A8A8A", fontSize: 13, textAlign: "center" }}>
                 Not enough data — at least 2 months of revenue entries required.
               </p>
             </div>
@@ -648,7 +648,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
               >
                 {momGrowthPct >= 0 ? "+" : ""}{momGrowthPct.toFixed(1)}%
               </p>
-              <p style={{ color: "#555", fontSize: 11, margin: "0 0 16px 0" }}>
+              <p style={{ color: "#8A8A8A", fontSize: 11, margin: "0 0 16px 0" }}>
                 {formatZAR(prevMomTotal)} → {formatZAR(currentMomTotal)}
               </p>
               <ResponsiveContainer width="100%" height={70}>
@@ -674,12 +674,12 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             Venue Utilisation — Active Members
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 16px 0" }}>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 16px 0" }}>
             Top 10 active venues by member count
           </p>
           {utilData.length === 0 || utilData.every((d) => d.Members === 0) ? (
             <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 14 }}>No active venues found.</p>
+              <p style={{ color: "#8A8A8A", fontSize: 14 }}>No active venues found.</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
@@ -692,7 +692,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                     if (!active || !payload?.length) return null;
                     return (
                       <div style={{ background: "rgba(15,15,15,0.95)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 12px" }}>
-                        <p style={{ color: "#909090", fontSize: 11, marginBottom: 4 }}>{label}</p>
+                        <p style={{ color: "#B0B0B0", fontSize: 11, marginBottom: 4 }}>{label}</p>
                         <p style={{ color: LIME, fontSize: 13, fontWeight: 600 }}>Active Members: {payload[0].value}</p>
                       </div>
                     );
@@ -703,7 +703,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
             </ResponsiveContainer>
           )}
           {utilData.length > 0 && (
-            <p style={{ color: "#555", fontSize: 12, marginTop: 12 }}>
+            <p style={{ color: "#8A8A8A", fontSize: 12, marginTop: 12 }}>
               Network total: {filteredVenues.filter(v => v.status === "active").reduce((s, v) => s + (v.active_members ?? 0), 0).toLocaleString()} active members across {filteredVenues.filter(v => v.status === "active").length} venues
             </p>
           )}
@@ -714,10 +714,10 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
           <h2 style={{ color: "#fff", fontWeight: 700, fontSize: 16, margin: "0 0 4px 0" }}>
             Photo Compliance Rate
           </h2>
-          <p style={{ color: "#555", fontSize: 12, margin: "0 0 16px 0" }}>All time</p>
+          <p style={{ color: "#8A8A8A", fontSize: 12, margin: "0 0 16px 0" }}>All time</p>
           {approvedCount + pendingCount + rejectedCount === 0 ? (
             <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <p style={{ color: "#555", fontSize: 13, textAlign: "center" }}>No photos submitted for this period.</p>
+              <p style={{ color: "#8A8A8A", fontSize: 13, textAlign: "center" }}>No photos submitted for this period.</p>
             </div>
           ) : (
             <>
@@ -744,7 +744,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                         const pct = total > 0 ? Math.round((payload[0].value / total) * 100) : 0;
                         return (
                           <div style={{ background: "rgba(15,15,15,0.95)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "8px 12px" }}>
-                            <p style={{ color: "#909090", fontSize: 11 }}>{payload[0].name}</p>
+                            <p style={{ color: "#B0B0B0", fontSize: 11 }}>{payload[0].name}</p>
                             <p style={{ color: LIME, fontSize: 13, fontWeight: 600 }}>{payload[0].value} ({pct}%)</p>
                           </div>
                         );
@@ -759,7 +759,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                       ? `${Math.round((approvedCount / (approvedCount + pendingCount + rejectedCount)) * 100)}%`
                       : "—"}
                   </p>
-                  <p style={{ fontSize: 10, color: "#555", margin: 0 }}>approved</p>
+                  <p style={{ fontSize: 10, color: "#8A8A8A", margin: 0 }}>approved</p>
                 </div>
               </div>
               <div style={{ marginTop: 8 }}>
@@ -771,7 +771,7 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
                   <div key={s.label} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ width: 10, height: 10, borderRadius: 2, background: s.color }} />
-                      <span style={{ color: "#A3A3A3", fontSize: 12 }}>{s.label}</span>
+                      <span style={{ color: "#C8C8C8", fontSize: 12 }}>{s.label}</span>
                     </div>
                     <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>{s.count}</span>
                   </div>

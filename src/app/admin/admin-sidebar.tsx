@@ -86,7 +86,7 @@ function NavContent({
         <button
           onClick={onLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-4"
-          style={{ color: "#909090" }}
+          style={{ color: "#B0B0B0" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
             (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";

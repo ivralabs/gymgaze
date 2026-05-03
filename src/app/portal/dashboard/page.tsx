@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   active: { label: "Active", color: "#D4FF4F", bg: "rgba(212,255,79,0.1)" },
-  inactive: { label: "Inactive", color: "#909090", bg: "rgba(102,102,102,0.15)" },
-  coming_soon: { label: "Coming Soon", color: "#A3A3A3", bg: "rgba(163,163,163,0.15)" },
+  inactive: { label: "Inactive", color: "#B0B0B0", bg: "rgba(102,102,102,0.15)" },
+  coming_soon: { label: "Coming Soon", color: "#C8C8C8", bg: "rgba(163,163,163,0.15)" },
 };
 
 function formatCurrency(val: number) {
@@ -28,7 +28,7 @@ export default async function PortalDashboard() {
 
   if (!profile?.gym_brand_id) {
     return (
-      <div className="p-8 text-center" style={{ color: "#909090" }}>
+      <div className="p-8 text-center" style={{ color: "#B0B0B0" }}>
         No gym brand associated with your account. Please contact support.
       </div>
     );
@@ -125,7 +125,7 @@ export default async function PortalDashboard() {
           >
             {brand?.name ?? "Welcome"}
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>Owner Dashboard &middot; {monthLabel}</p>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>Owner Dashboard &middot; {monthLabel}</p>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default async function PortalDashboard() {
             className="glass-card rounded-2xl p-6"
             style={{ borderRadius: 16 }}
           >
-            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#909090" }}>
+            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#B0B0B0" }}>
               {stat.label}
             </p>
             <p
@@ -146,7 +146,7 @@ export default async function PortalDashboard() {
             >
               {stat.value}
             </p>
-            <p className="text-xs" style={{ color: "#909090" }}>{stat.sub}</p>
+            <p className="text-xs" style={{ color: "#B0B0B0" }}>{stat.sub}</p>
           </div>
         ))}
       </div>
@@ -220,7 +220,7 @@ export default async function PortalDashboard() {
           Your Venues
         </h2>
         {!venues || venues.length === 0 ? (
-          <p className="text-sm" style={{ color: "#909090" }}>No venues found for your brand.</p>
+          <p className="text-sm" style={{ color: "#B0B0B0" }}>No venues found for your brand.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {venues.map((venue) => {
@@ -253,11 +253,11 @@ export default async function PortalDashboard() {
                   >
                     {venue.name}
                   </h3>
-                  <p className="text-xs mb-4" style={{ color: "#909090" }}>
+                  <p className="text-xs mb-4" style={{ color: "#B0B0B0" }}>
                     {venue.city}
                   </p>
                   <div className="pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                    <p className="text-xs" style={{ color: "#909090" }}>Revenue this month</p>
+                    <p className="text-xs" style={{ color: "#B0B0B0" }}>Revenue this month</p>
                     <p
                       className="text-base font-bold mt-0.5 tabular-nums"
                       style={{ fontFamily: "Inter Tight, sans-serif", color: "#FFFFFF" }}

@@ -112,7 +112,7 @@ export default function UpdateVenuePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <p className="text-sm" style={{ color: "#909090" }}>Loading...</p>
+        <p className="text-sm" style={{ color: "#B0B0B0" }}>Loading...</p>
       </div>
     );
   }
@@ -120,7 +120,7 @@ export default function UpdateVenuePage() {
   if (!venueId) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm" style={{ color: "#909090" }}>
+        <p className="text-sm" style={{ color: "#B0B0B0" }}>
           No venue assigned to your account. Please contact your administrator.
         </p>
       </div>
@@ -139,7 +139,7 @@ export default function UpdateVenuePage() {
           <Link
             href="/portal/manager"
             className="p-2 rounded-xl flex-shrink-0"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#A3A3A3" }}
+            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#C8C8C8" }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </Link>
@@ -149,7 +149,7 @@ export default function UpdateVenuePage() {
             >
               Update Venue Stats
             </h1>
-            <p style={{ color: "#666", marginTop: "0.25rem", fontSize: "0.875rem" }}>
+            <p style={{ color: "#999", marginTop: "0.25rem", fontSize: "0.875rem" }}>
               {venueName} &middot; {monthLabel}
             </p>
           </div>
@@ -190,13 +190,13 @@ export default function UpdateVenuePage() {
         >
           <h2
             className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: "#909090", fontFamily: "Inter Tight, sans-serif" }}
+            style={{ color: "#B0B0B0", fontFamily: "Inter Tight, sans-serif" }}
           >
             Membership &amp; Footfall
           </h2>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
               Active Members
             </label>
             <input
@@ -208,13 +208,13 @@ export default function UpdateVenuePage() {
               className="w-full rounded-xl px-4 py-3 text-sm"
               style={inputStyle}
             />
-            <p className="text-xs mt-1" style={{ color: "#909090" }}>
+            <p className="text-xs mt-1" style={{ color: "#B0B0B0" }}>
               Current total active membership count
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
               Daily Entries (avg)
             </label>
             <input
@@ -229,7 +229,7 @@ export default function UpdateVenuePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
               Weekly Entries
             </label>
             <input
@@ -244,7 +244,7 @@ export default function UpdateVenuePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
               Monthly Entries
             </label>
             <input
@@ -263,7 +263,7 @@ export default function UpdateVenuePage() {
           <Link
             href="/portal/manager"
             className="px-5 py-2.5 rounded-xl text-sm font-medium"
-            style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
+            style={{ border: "1px solid #3A3A3A", color: "#C8C8C8" }}
           >
             Cancel
           </Link>

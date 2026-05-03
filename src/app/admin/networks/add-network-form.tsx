@@ -94,7 +94,7 @@ export default function AddNetworkForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
                   Brand Name *
                 </label>
                 <input
@@ -108,7 +108,7 @@ export default function AddNetworkForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
                   Brand Color
                 </label>
                 <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function AddNetworkForm() {
                   type="button"
                   onClick={() => setOpen(false)}
                   className="px-4 py-2 rounded-xl text-sm"
-                  style={{ border: "1px solid #3A3A3A", color: "#A3A3A3" }}
+                  style={{ border: "1px solid #3A3A3A", color: "#C8C8C8" }}
                 >
                   Cancel
                 </button>

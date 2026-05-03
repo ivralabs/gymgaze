@@ -35,7 +35,7 @@ const FIELD_LABEL: React.CSSProperties = {
   display: "block",
   fontSize: "12px",
   fontWeight: 600,
-  color: "#A3A3A3",
+  color: "#C8C8C8",
   marginBottom: "8px",
 };
 
@@ -194,7 +194,7 @@ export default function ReportSchedulerSection() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <div style={{ color: "#FFFFFF", fontWeight: 600, fontSize: "14px" }}>Enable Monthly Reports</div>
-              <div style={{ color: "#666", fontSize: "13px", marginTop: "2px" }}>
+              <div style={{ color: "#999", fontSize: "13px", marginTop: "2px" }}>
                 Send automated PDF reports on a schedule
               </div>
             </div>
@@ -288,7 +288,7 @@ export default function ReportSchedulerSection() {
                 }}
               />
             </div>
-            <div style={{ fontSize: "11px", color: "#555", marginTop: "4px" }}>
+            <div style={{ fontSize: "11px", color: "#8A8A8A", marginTop: "4px" }}>
               Press Enter to add each email address
             </div>
           </div>

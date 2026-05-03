@@ -90,7 +90,7 @@ const labelStyle = {
   fontSize: "13px",
   fontWeight: "500" as const,
   marginBottom: "8px",
-  color: "#A3A3A3",
+  color: "#C8C8C8",
 };
 
 const sectionLabel = {
@@ -355,7 +355,7 @@ export default function NewCampaignPage() {
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.10)",
-            color: "#A3A3A3",
+            color: "#C8C8C8",
             display: "flex",
             alignItems: "center",
           }}
@@ -375,7 +375,7 @@ export default function NewCampaignPage() {
           >
             New Campaign
           </h1>
-          <p style={{ color: "#909090", fontSize: "13px", marginTop: "2px" }}>
+          <p style={{ color: "#B0B0B0", fontSize: "13px", marginTop: "2px" }}>
             Build a smart media plan
           </p>
         </div>
@@ -605,7 +605,7 @@ export default function NewCampaignPage() {
                   marginBottom: "12px",
                 }}
               >
-                <span style={{ fontSize: "13px", color: "#909090" }}>
+                <span style={{ fontSize: "13px", color: "#B0B0B0" }}>
                   <span style={{ color: "#FFFFFF", fontWeight: 600 }}>
                     {matchedVenues.length}
                   </span>{" "}
@@ -627,14 +627,14 @@ export default function NewCampaignPage() {
                   >
                     Select All
                   </button>
-                  <span style={{ color: "#444" }}>·</span>
+                  <span style={{ color: "#777" }}>·</span>
                   <button
                     type="button"
                     onClick={clearAll}
                     style={{
                       fontSize: "12px",
                       fontWeight: 600,
-                      color: "#909090",
+                      color: "#B0B0B0",
                       background: "none",
                       border: "none",
                       cursor: "pointer",
@@ -648,11 +648,11 @@ export default function NewCampaignPage() {
 
               {/* Venue list */}
               {venuesLoading ? (
-                <p style={{ fontSize: "13px", color: "#909090" }}>
+                <p style={{ fontSize: "13px", color: "#B0B0B0" }}>
                   Loading venues...
                 </p>
               ) : matchedVenues.length === 0 ? (
-                <p style={{ fontSize: "13px", color: "#909090" }}>
+                <p style={{ fontSize: "13px", color: "#B0B0B0" }}>
                   No venues match the selected filters.
                 </p>
               ) : (
@@ -738,7 +738,7 @@ export default function NewCampaignPage() {
                           <p
                             style={{
                               fontSize: "12px",
-                              color: "#909090",
+                              color: "#B0B0B0",
                               margin: "2px 0 0",
                             }}
                           >
@@ -747,7 +747,7 @@ export default function NewCampaignPage() {
                           <p
                             style={{
                               fontSize: "11px",
-                              color: "#666",
+                              color: "#999",
                               margin: "2px 0 0",
                             }}
                           >
@@ -791,7 +791,7 @@ export default function NewCampaignPage() {
                   <p
                     style={{
                       fontSize: "12px",
-                      color: "#666",
+                      color: "#999",
                       marginTop: "8px",
                     }}
                   >
@@ -824,7 +824,7 @@ export default function NewCampaignPage() {
                       border: "1px solid rgba(255,255,255,0.08)",
                     }}
                   >
-                    <p style={{ fontSize: "12px", color: "#666", margin: "0 0 6px" }}>
+                    <p style={{ fontSize: "12px", color: "#999", margin: "0 0 6px" }}>
                       Estimated Impressions
                     </p>
                     <p
@@ -838,7 +838,7 @@ export default function NewCampaignPage() {
                     >
                       {estimatedImpressions.toLocaleString("en-ZA")}
                     </p>
-                    <p style={{ fontSize: "11px", color: "#555", marginTop: "4px" }}>
+                    <p style={{ fontSize: "11px", color: "#8A8A8A", marginTop: "4px" }}>
                       {totalMembers.toLocaleString()} members × {durationDays ?? 0} days × 0.3
                       daily visibility
                     </p>
@@ -871,7 +871,7 @@ export default function NewCampaignPage() {
                       placeholder="Optional manual override"
                       style={inputStyle}
                     />
-                    <p style={{ fontSize: "12px", color: "#555", marginTop: "6px" }}>
+                    <p style={{ fontSize: "12px", color: "#8A8A8A", marginTop: "6px" }}>
                       If set, this overrides the auto-calculated CPM total.
                     </p>
                   </div>
@@ -892,13 +892,13 @@ export default function NewCampaignPage() {
                     placeholder="e.g. 20"
                     style={{ ...inputStyle, width: "160px" }}
                   />
-                  <p style={{ fontSize: "12px", color: "#666", marginTop: "8px" }}>
+                  <p style={{ fontSize: "12px", color: "#999", marginTop: "8px" }}>
                     Billed monthly based on actual ad revenue generated.
                   </p>
                   <p
                     style={{
                       fontSize: "13px",
-                      color: "#909090",
+                      color: "#B0B0B0",
                       marginTop: "12px",
                       fontStyle: "italic",
                     }}
@@ -932,7 +932,7 @@ export default function NewCampaignPage() {
                   <p
                     style={{
                       fontSize: "12px",
-                      color: "#555",
+                      color: "#8A8A8A",
                       marginBottom: "14px",
                     }}
                   >
@@ -968,16 +968,16 @@ export default function NewCampaignPage() {
                       }}
                     >
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ color: "#666" }}>Advertiser pays:</span>
+                        <span style={{ color: "#999" }}>Advertiser pays:</span>
                         <span style={{ color: "#FFFFFF", fontWeight: 600 }}>
                           {fmtR(estimatedTotal)}
                         </span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ color: "#666" }}>
+                        <span style={{ color: "#999" }}>
                           Gym share ({gymSharePct || 0}%):
                         </span>
-                        <span style={{ color: "#909090" }}>{fmtR(gymCut)}</span>
+                        <span style={{ color: "#B0B0B0" }}>{fmtR(gymCut)}</span>
                       </div>
                       <div
                         style={{
@@ -1056,7 +1056,7 @@ export default function NewCampaignPage() {
                   fontWeight: 600,
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
-                  color: "#555",
+                  color: "#8A8A8A",
                   marginBottom: "12px",
                 }}
               >
@@ -1084,7 +1084,7 @@ export default function NewCampaignPage() {
                   fontWeight: 600,
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
-                  color: "#555",
+                  color: "#8A8A8A",
                   marginBottom: "12px",
                 }}
               >
@@ -1187,7 +1187,7 @@ export default function NewCampaignPage() {
                   textAlign: "center",
                   marginTop: "12px",
                   fontSize: "13px",
-                  color: "#555",
+                  color: "#8A8A8A",
                   textDecoration: "none",
                 }}
               >
@@ -1222,7 +1222,7 @@ function SummaryRow({
         gap: "12px",
       }}
     >
-      <span style={{ fontSize: "12px", color: "#666", flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: "12px", color: "#999", flexShrink: 0 }}>{label}</span>
       <span
         style={{
           fontSize: "13px",

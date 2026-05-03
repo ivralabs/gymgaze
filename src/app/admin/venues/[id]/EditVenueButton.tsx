@@ -135,7 +135,7 @@ export default function EditVenueButton({ venue }: Props) {
     display: "block",
     fontSize: 12,
     fontWeight: 500,
-    color: "#A3A3A3",
+    color: "#C8C8C8",
     marginBottom: 6,
   };
 
@@ -162,7 +162,7 @@ export default function EditVenueButton({ venue }: Props) {
         style={{
           background: "rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.10)",
-          color: "#A3A3A3",
+          color: "#C8C8C8",
         }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
@@ -219,7 +219,7 @@ export default function EditVenueButton({ venue }: Props) {
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", fontFamily: "Inter Tight, sans-serif" }}>
                   Edit Venue
                 </h2>
-                <p style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{venue.name}</p>
+                <p style={{ fontSize: 12, color: "#999", marginTop: 2 }}>{venue.name}</p>
               </div>
               <button
                 onClick={() => setOpen(false)}
@@ -364,7 +364,7 @@ export default function EditVenueButton({ venue }: Props) {
                             transition: "opacity 0.15s",
                           }}
                         >
-                          <span style={{ fontSize: 13, color: "#A3A3A3", fontWeight: 500 }}>{day.slice(0, 3)}</span>
+                          <span style={{ fontSize: 13, color: "#C8C8C8", fontWeight: 500 }}>{day.slice(0, 3)}</span>
                           <select disabled={h.closed} value={h.open} onChange={(e) => updateDay(day, { open: e.target.value })} style={{ ...inputStyle, padding: "8px 10px", fontSize: 13 }}>
                             {TIME_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
                           </select>
@@ -429,7 +429,7 @@ export default function EditVenueButton({ venue }: Props) {
                   fontSize: 14,
                   fontWeight: 500,
                   border: "1px solid rgba(255,255,255,0.12)",
-                  color: "#A3A3A3",
+                  color: "#C8C8C8",
                   background: "transparent",
                   cursor: "pointer",
                 }}

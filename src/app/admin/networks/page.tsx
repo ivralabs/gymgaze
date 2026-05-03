@@ -101,7 +101,7 @@ export default async function NetworksPage() {
           >
             Networks
           </h1>
-          <p style={{ color: "#666", marginTop: "0.5rem" }}>
+          <p style={{ color: "#999", marginTop: "0.5rem" }}>
             Manage gym brand partners — track health, revenue and compliance
           </p>
           <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
@@ -198,7 +198,7 @@ export default async function NetworksPage() {
                     >
                       {stat.value}
                     </div>
-                    <div className="text-xs" style={{ color: "#666", marginTop: 2 }}>
+                    <div className="text-xs" style={{ color: "#999", marginTop: 2 }}>
                       {stat.label}
                     </div>
                   </div>
@@ -208,7 +208,7 @@ export default async function NetworksPage() {
               {/* Photo compliance bar */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs" style={{ color: "#A3A3A3" }}>
+                  <span className="text-xs" style={{ color: "#C8C8C8" }}>
                     Photo compliance
                   </span>
                   <span className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>
@@ -242,12 +242,12 @@ export default async function NetworksPage() {
                 >
                   <div className="min-w-0">
                     {network.contact_name && (
-                      <p className="text-xs truncate" style={{ color: "#666" }}>
+                      <p className="text-xs truncate" style={{ color: "#999" }}>
                         {network.contact_name}
                       </p>
                     )}
                     {network.contact_email && (
-                      <p className="text-xs truncate" style={{ color: "#555" }}>
+                      <p className="text-xs truncate" style={{ color: "#8A8A8A" }}>
                         {network.contact_email}
                       </p>
                     )}

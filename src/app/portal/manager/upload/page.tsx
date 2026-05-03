@@ -165,7 +165,7 @@ export default function UploadPhotoPage() {
         <h2 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "Inter Tight, sans-serif" }}>
           Photos submitted!
         </h2>
-        <p className="text-sm mb-6" style={{ color: "#909090" }}>
+        <p className="text-sm mb-6" style={{ color: "#B0B0B0" }}>
           Your photos are pending approval by the GymGaze team.
         </p>
         <Link
@@ -189,7 +189,7 @@ export default function UploadPhotoPage() {
         <Link
           href="/portal/manager"
           className="p-2 rounded-xl flex-shrink-0"
-          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#A3A3A3" }}
+          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#C8C8C8" }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
@@ -197,7 +197,7 @@ export default function UploadPhotoPage() {
           <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#fff", letterSpacing: "-0.02em" }}>
             Upload Photos
           </h1>
-          <p style={{ color: "#666", marginTop: "0.25rem", fontSize: "0.875rem" }}>
+          <p style={{ color: "#999", marginTop: "0.25rem", fontSize: "0.875rem" }}>
             Submit monthly proof-of-display photos — no size limit
           </p>
         </div>
@@ -206,7 +206,7 @@ export default function UploadPhotoPage() {
       <form onSubmit={handleUpload}>
         {/* Month selector */}
         <div className="rounded-2xl p-6 mb-5" style={cardStyle}>
-          <label className="block text-sm font-medium mb-2" style={{ color: "#A3A3A3" }}>
+          <label className="block text-sm font-medium mb-2" style={{ color: "#C8C8C8" }}>
             Select Month *
           </label>
           <select
@@ -239,7 +239,7 @@ export default function UploadPhotoPage() {
           >
             <CloudUpload size={44} color="#D4FF4F" strokeWidth={1.5} className="mb-3" />
             <p className="text-base font-medium text-center text-white">Drop photos here or tap to browse</p>
-            <p className="text-sm mt-1 text-center" style={{ color: "#909090" }}>
+            <p className="text-sm mt-1 text-center" style={{ color: "#B0B0B0" }}>
               JPG, PNG, HEIC &mdash; no size limit
             </p>
             <input
@@ -265,7 +265,7 @@ export default function UploadPhotoPage() {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-white truncate font-medium">{item.file.name}</p>
-                      <p className="text-xs mt-0.5" style={{ color: "#666" }}>{formatBytes(item.file.size)}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#999" }}>{formatBytes(item.file.size)}</p>
                     </div>
                     {item.status === "idle" && (
                       <button type="button" onClick={() => removeItem(idx)} className="flex-shrink-0 mt-0.5">
@@ -298,7 +298,7 @@ export default function UploadPhotoPage() {
                   )}
 
                   {item.status === "idle" && (
-                    <div className="text-xs mt-1.5" style={{ color: "#555" }}>
+                    <div className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>
                       Area: {AREA_OPTIONS.find((o) => o.value === item.area)?.label}
                     </div>
                   )}
@@ -318,7 +318,7 @@ export default function UploadPhotoPage() {
                           }}
                         />
                       </div>
-                      <p className="text-xs mt-1" style={{ color: "#666" }}>
+                      <p className="text-xs mt-1" style={{ color: "#999" }}>
                         {item.status === "done" ? "Uploaded" : `Uploading... ${item.progress}%`}
                       </p>
                     </div>

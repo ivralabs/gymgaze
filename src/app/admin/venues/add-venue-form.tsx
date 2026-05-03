@@ -241,7 +241,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
     display: "block",
     fontSize: 12,
     fontWeight: 500,
-    color: "#A3A3A3",
+    color: "#C8C8C8",
     marginBottom: 6,
   };
 
@@ -494,10 +494,10 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
                   <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
                     <Upload size={24} color="#D4FF4F" />
                   </div>
-                  <p style={{ color: "#A3A3A3", marginTop: 8, fontSize: 14 }}>
+                  <p style={{ color: "#C8C8C8", marginTop: 8, fontSize: 14 }}>
                     Click to upload venue cover photo
                   </p>
-                  <p style={{ color: "#666", fontSize: 12, marginTop: 4 }}>
+                  <p style={{ color: "#999", fontSize: 12, marginTop: 4 }}>
                     PNG, JPG up to 5MB
                   </p>
                 </>
@@ -515,7 +515,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
 
             {/* ── SECTION 3: Foot Traffic ───────────────────────────── */}
             <p style={sectionLabelStyle}>Foot Traffic</p>
-            <p style={{ color: "#666", fontSize: 12, marginBottom: 16, marginTop: -8 }}>
+            <p style={{ color: "#999", fontSize: 12, marginBottom: 16, marginTop: -8 }}>
               Enter the most recent foot traffic data for this venue
             </p>
 
@@ -589,7 +589,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
                       ? { backgroundColor: "#D4FF4F", color: "#0A0A0A", border: "none" }
                       : {
                           backgroundColor: "rgba(255,255,255,0.05)",
-                          color: "#A3A3A3",
+                          color: "#C8C8C8",
                           border: "1px solid rgba(255,255,255,0.10)",
                         }),
                   }}
@@ -703,7 +703,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
                       }}
                     >
                       {/* Day label */}
-                      <span style={{ fontSize: 13, color: "#A3A3A3", fontWeight: 500 }}>{day.slice(0, 3)}</span>
+                      <span style={{ fontSize: 13, color: "#C8C8C8", fontWeight: 500 }}>{day.slice(0, 3)}</span>
 
                       {/* Open time */}
                       <select
@@ -793,7 +793,7 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
               fontSize: 14,
               fontWeight: 500,
               border: "1px solid rgba(255,255,255,0.12)",
-              color: "#A3A3A3",
+              color: "#C8C8C8",
               background: "transparent",
               cursor: "pointer",
             }}

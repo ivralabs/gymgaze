@@ -243,7 +243,7 @@ export default function VenueDetailTabs({
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.10)",
-            color: "#A3A3A3",
+            color: "#C8C8C8",
           }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
@@ -258,7 +258,7 @@ export default function VenueDetailTabs({
           >
             {venue.name}
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#909090" }}>
+          <p className="text-sm mt-0.5" style={{ color: "#B0B0B0" }}>
             {brandName ? `${brandName} \u00b7 ` : ""}{venue.city ?? ""}
           </p>
         </div>
@@ -312,7 +312,7 @@ export default function VenueDetailTabs({
             <div key={stat.label} className="rounded-2xl p-6" style={cardStyle}>
               <p
                 className="text-xs font-medium uppercase tracking-widest mb-3"
-                style={{ color: "#909090" }}
+                style={{ color: "#B0B0B0" }}
               >
                 {stat.label}
               </p>
@@ -343,28 +343,28 @@ export default function VenueDetailTabs({
               <div className="flex items-start gap-2">
                 <MapPin size={14} color="#909090" strokeWidth={2} className="mt-0.5 shrink-0" />
                 <div>
-                  <p style={{ color: "#909090" }}>Address</p>
+                  <p style={{ color: "#B0B0B0" }}>Address</p>
                   <p className="text-white mt-0.5">{venue.address ?? "—"}</p>
                 </div>
               </div>
               <div>
-                <p style={{ color: "#909090" }}>Area Tag</p>
+                <p style={{ color: "#B0B0B0" }}>Area Tag</p>
                 <p className="text-white mt-0.5">{venue.region ?? "—"}</p>
               </div>
               <div>
-                <p style={{ color: "#909090" }}>City</p>
+                <p style={{ color: "#B0B0B0" }}>City</p>
                 <p className="text-white mt-0.5">{venue.city ?? "—"}</p>
               </div>
               <div className="flex items-start gap-2">
                 <Building2 size={14} color="#909090" strokeWidth={2} className="mt-0.5 shrink-0" />
                 <div>
-                  <p style={{ color: "#909090" }}>Brand</p>
+                  <p style={{ color: "#B0B0B0" }}>Brand</p>
                   <p className="text-white mt-0.5">{brandName ?? "Independent"}</p>
                 </div>
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-xs" style={{ color: "#909090" }}>Status</p>
+              <p className="text-xs" style={{ color: "#B0B0B0" }}>Status</p>
               <span
                 className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wider"
                 style={{
@@ -400,7 +400,7 @@ export default function VenueDetailTabs({
             style={{ border: "1px solid rgba(255,255,255,0.08)" }}
           >
             {localScreens.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16" style={{ color: "#909090" }}>
+              <div className="flex flex-col items-center justify-center py-16" style={{ color: "#B0B0B0" }}>
                 <Monitor size={32} strokeWidth={1.5} color="#444" className="mb-3" />
                 <p className="text-sm">No screens configured for this venue.</p>
               </div>
@@ -420,7 +420,7 @@ export default function VenueDetailTabs({
                       <th
                         key={h}
                         className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "#909090", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+                        style={{ color: "#B0B0B0", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
                       >
                         {h}
                       </th>
@@ -446,7 +446,7 @@ export default function VenueDetailTabs({
                       </td>
                       <td
                         className="px-6 py-4 text-sm"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#C8C8C8" }}
                       >
                         {screen.size_inches != null
                           ? `${screen.size_inches}"`
@@ -454,13 +454,13 @@ export default function VenueDetailTabs({
                       </td>
                       <td
                         className="px-6 py-4 text-sm font-mono"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#C8C8C8" }}
                       >
                         {screen.resolution ?? "—"}
                       </td>
                       <td
                         className="px-6 py-4 text-sm"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#C8C8C8" }}
                       >
                         {screen.orientation ?? "—"}
                       </td>
@@ -502,7 +502,7 @@ export default function VenueDetailTabs({
               >
                 No contract on file
               </p>
-              <p className="text-xs text-center" style={{ color: "#666" }}>
+              <p className="text-xs text-center" style={{ color: "#999" }}>
                 No contract has been recorded for this venue yet.
               </p>
             </div>
@@ -516,26 +516,26 @@ export default function VenueDetailTabs({
               </h3>
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between">
-                  <span style={{ color: "#909090" }}>Start Date</span>
+                  <span style={{ color: "#B0B0B0" }}>Start Date</span>
                   <span className="text-white tabular-nums">
                     {formatDate(contract.start_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span style={{ color: "#909090" }}>End Date</span>
+                  <span style={{ color: "#B0B0B0" }}>End Date</span>
                   <span className="text-white tabular-nums">
                     {formatDate(contract.end_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span style={{ color: "#909090" }}>Monthly Rental</span>
+                  <span style={{ color: "#B0B0B0" }}>Monthly Rental</span>
                   <span className="text-white font-mono">
                     {formatZAR(contract.monthly_rental_zar)}
                   </span>
                 </div>
                 {contract.revenue_share_percent != null && (
                   <div className="flex justify-between">
-                    <span style={{ color: "#909090" }}>Revenue Share</span>
+                    <span style={{ color: "#B0B0B0" }}>Revenue Share</span>
                     <span className="text-white font-mono">
                       {contract.revenue_share_percent}%
                     </span>
@@ -543,15 +543,15 @@ export default function VenueDetailTabs({
                 )}
                 {contract.notes && (
                   <div>
-                    <p style={{ color: "#909090" }} className="mb-1">Notes</p>
-                    <p style={{ color: "#A3A3A3" }}>{contract.notes}</p>
+                    <p style={{ color: "#B0B0B0" }} className="mb-1">Notes</p>
+                    <p style={{ color: "#C8C8C8" }}>{contract.notes}</p>
                   </div>
                 )}
               </div>
               <div className="mt-6">
                 <label
                   className="block text-sm font-medium mb-2"
-                  style={{ color: "#A3A3A3" }}
+                  style={{ color: "#C8C8C8" }}
                 >
                   Contract Document
                 </label>
@@ -566,7 +566,7 @@ export default function VenueDetailTabs({
                       strokeWidth={1.5}
                       className="mx-auto mb-2"
                     />
-                    <p className="text-sm" style={{ color: "#909090" }}>
+                    <p className="text-sm" style={{ color: "#B0B0B0" }}>
                       Upload contract PDF
                     </p>
                     <input
@@ -582,7 +582,7 @@ export default function VenueDetailTabs({
                         background: "rgba(255,255,255,0.06)",
                         backdropFilter: "blur(6px)",
                         WebkitBackdropFilter: "blur(6px)",
-                        color: "#A3A3A3",
+                        color: "#C8C8C8",
                       }}
                     >
                       Choose file
@@ -602,7 +602,7 @@ export default function VenueDetailTabs({
             <div className="rounded-2xl p-10 flex flex-col items-center justify-center" style={cardStyle}>
               <Image size={32} color="#444" strokeWidth={1.5} className="mb-3" />
               <p className="text-sm font-medium text-white mb-1">No photos uploaded</p>
-              <p className="text-xs" style={{ color: "#666" }}>Photos submitted by this venue will appear here.</p>
+              <p className="text-xs" style={{ color: "#999" }}>Photos submitted by this venue will appear here.</p>
             </div>
           ) : (
             <>
@@ -616,7 +616,7 @@ export default function VenueDetailTabs({
                       value={photoFilter}
                       onChange={(e) => setPhotoFilter(e.target.value as typeof photoFilter)}
                       className="rounded-xl px-3 py-2 text-xs"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", outline: "none" }}
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}
                     >
                       <option value="all">All status</option>
                       <option value="approved">Approved</option>
@@ -629,7 +629,7 @@ export default function VenueDetailTabs({
                     value={areaFilter}
                     onChange={(e) => setAreaFilter(e.target.value)}
                     className="rounded-xl px-3 py-2 text-xs"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", outline: "none" }}
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}
                   >
                     <option value="all">All areas</option>
                     {Object.entries(AREA_LABELS).map(([v, l]) => (
@@ -665,7 +665,7 @@ export default function VenueDetailTabs({
                 if (filtered.length === 0) {
                   return (
                     <div className="rounded-2xl p-10 flex flex-col items-center" style={cardStyle}>
-                      <p className="text-sm" style={{ color: "#666" }}>No photos match the current filters.</p>
+                      <p className="text-sm" style={{ color: "#999" }}>No photos match the current filters.</p>
                     </div>
                   );
                 }
@@ -708,16 +708,16 @@ export default function VenueDetailTabs({
                           </div>
 
                           {photo.area_tag && (
-                            <p className="text-xs" style={{ color: "#666" }}>
+                            <p className="text-xs" style={{ color: "#999" }}>
                               {AREA_LABELS[photo.area_tag] ?? photo.area_tag}
                             </p>
                           )}
 
-                          <div className="flex items-center gap-1" style={{ color: "#555" }}>
+                          <div className="flex items-center gap-1" style={{ color: "#8A8A8A" }}>
                             <Clock size={10} strokeWidth={2} />
                             <p className="text-xs">{new Date(photo.created_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })}</p>
                             {photo.file_size_bytes && (
-                              <span className="text-xs ml-auto" style={{ color: "#444" }}>{formatBytes(photo.file_size_bytes)}</span>
+                              <span className="text-xs ml-auto" style={{ color: "#777" }}>{formatBytes(photo.file_size_bytes)}</span>
                             )}
                           </div>
 
@@ -768,7 +768,7 @@ export default function VenueDetailTabs({
                 <div className="flex items-center justify-between mt-3">
                   <div>
                     <p className="text-sm text-white font-medium">{lightbox.file_name ?? "Photo"}</p>
-                    <p className="text-xs mt-0.5" style={{ color: "#666" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "#999" }}>
                       {lightbox.area_tag ? AREA_LABELS[lightbox.area_tag] : ""}
                       {lightbox.month ? ` · ${formatMonth(lightbox.month)}` : ""}
                       {lightbox.file_size_bytes ? ` · ${formatBytes(lightbox.file_size_bytes)}` : ""}
@@ -786,7 +786,7 @@ export default function VenueDetailTabs({
                     <button
                       onClick={() => setLightbox(null)}
                       className="px-4 py-2 rounded-xl text-sm"
-                      style={{ background: "rgba(255,255,255,0.08)", color: "#A3A3A3" }}
+                      style={{ background: "rgba(255,255,255,0.08)", color: "#C8C8C8" }}
                     >
                       Close
                     </button>
@@ -807,7 +807,7 @@ export default function VenueDetailTabs({
           {revenue.length === 0 ? (
             <div
               className="flex flex-col items-center justify-center py-16"
-              style={{ color: "#909090" }}
+              style={{ color: "#B0B0B0" }}
             >
               <DollarSign size={32} strokeWidth={1.5} color="#444" className="mb-3" />
               <p className="text-sm">No revenue entries recorded for this venue.</p>
@@ -829,7 +829,7 @@ export default function VenueDetailTabs({
                         key={h}
                         className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
                         style={{
-                          color: "#909090",
+                          color: "#B0B0B0",
                           borderBottom: "1px solid rgba(255,255,255,0.08)",
                         }}
                       >
@@ -861,13 +861,13 @@ export default function VenueDetailTabs({
                       </td>
                       <td
                         className="px-6 py-4 text-sm font-mono tabular-nums"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#C8C8C8" }}
                       >
                         {formatZAR(row.rental_zar)}
                       </td>
                       <td
                         className="px-6 py-4 text-sm font-mono tabular-nums"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#C8C8C8" }}
                       >
                         {formatZAR(row.revenue_share_zar)}
                       </td>
@@ -918,7 +918,7 @@ export default function VenueDetailTabs({
                 { label: "Resolution", key: "resolution", placeholder: "e.g. 1920x1080", required: false },
               ] as { label: string; key: string; placeholder: string; required: boolean }[]).map(({ label, key, placeholder, required }) => (
                 <div key={key}>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#A3A3A3" }}>{label}</label>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>{label}</label>
                   <input
                     value={screenForm[key as keyof typeof screenForm]}
                     onChange={(e) => setScreenForm((prev) => ({ ...prev, [key]: e.target.value }))}
@@ -931,7 +931,7 @@ export default function VenueDetailTabs({
               ))}
 
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#A3A3A3" }}>Orientation</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Orientation</label>
                 <select
                   value={screenForm.orientation}
                   onChange={(e) => setScreenForm((prev) => ({ ...prev, orientation: e.target.value }))}
@@ -948,7 +948,7 @@ export default function VenueDetailTabs({
                   type="button"
                   onClick={() => setShowAddScreen(false)}
                   className="flex-1 py-2.5 rounded-xl text-sm"
-                  style={{ border: "1px solid rgba(255,255,255,0.10)", color: "#A3A3A3", background: "transparent", cursor: "pointer" }}
+                  style={{ border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", background: "transparent", cursor: "pointer" }}
                 >
                   Cancel
                 </button>

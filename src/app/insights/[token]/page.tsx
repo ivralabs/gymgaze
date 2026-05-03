@@ -32,7 +32,7 @@ export default async function PublicInsightsPage({ params }: Props) {
         <div className="text-center px-6">
           <div className="text-5xl mb-4">⏰</div>
           <h1 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "Inter Tight, sans-serif" }}>Link Expired</h1>
-          <p style={{ color: "#555" }}>This insights link is no longer active. Contact your GymGaze representative for a new link.</p>
+          <p style={{ color: "#8A8A8A" }}>This insights link is no longer active. Contact your GymGaze representative for a new link.</p>
         </div>
       </div>
     );

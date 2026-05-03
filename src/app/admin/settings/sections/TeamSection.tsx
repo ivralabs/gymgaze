@@ -145,9 +145,9 @@ export default function TeamSection() {
 
       <div style={GLASS_CARD}>
         {loading ? (
-          <div style={{ padding: "24px", color: "#666", fontSize: "14px" }}>Loading team...</div>
+          <div style={{ padding: "24px", color: "#999", fontSize: "14px" }}>Loading team...</div>
         ) : members.length === 0 ? (
-          <div style={{ padding: "32px", textAlign: "center", color: "#666", fontSize: "14px" }}>
+          <div style={{ padding: "32px", textAlign: "center", color: "#999", fontSize: "14px" }}>
             You are the only admin. Invite someone to collaborate.
           </div>
         ) : (
@@ -164,7 +164,7 @@ export default function TeamSection() {
                       fontWeight: 700,
                       textTransform: "uppercase",
                       letterSpacing: "0.06em",
-                      color: "#666",
+                      color: "#999",
                     }}
                   >
                     {h}
@@ -190,7 +190,7 @@ export default function TeamSection() {
                         </span>
                       )}
                     </td>
-                    <td style={{ padding: "14px 16px", color: "#A3A3A3", fontSize: "14px" }}>
+                    <td style={{ padding: "14px 16px", color: "#C8C8C8", fontSize: "14px" }}>
                       {member.email}
                     </td>
                     <td style={{ padding: "14px 16px" }}>
@@ -221,14 +221,14 @@ export default function TeamSection() {
                         {member.suspended ? "Suspended" : "Active"}
                       </span>
                     </td>
-                    <td style={{ padding: "14px 16px", color: "#666", fontSize: "13px" }}>
+                    <td style={{ padding: "14px 16px", color: "#999", fontSize: "13px" }}>
                       {member.last_login_at
                         ? new Date(member.last_login_at).toLocaleDateString()
                         : "—"}
                     </td>
                     <td style={{ padding: "14px 16px" }}>
                       {isSelf ? (
-                        <span style={{ fontSize: "12px", color: "#555" }}>—</span>
+                        <span style={{ fontSize: "12px", color: "#8A8A8A" }}>—</span>
                       ) : (
                         <div style={{ display: "flex", gap: "8px" }}>
                           <button
@@ -292,7 +292,7 @@ export default function TeamSection() {
                   right: "16px",
                   background: "none",
                   border: "none",
-                  color: "#666",
+                  color: "#999",
                   cursor: "pointer",
                   padding: "4px",
                 }}
@@ -374,7 +374,7 @@ export default function TeamSection() {
                       borderRadius: "10px",
                       background: "rgba(255,255,255,0.06)",
                       border: "1px solid rgba(255,255,255,0.10)",
-                      color: "#A3A3A3",
+                      color: "#C8C8C8",
                       fontSize: "14px",
                       cursor: "pointer",
                     }}

@@ -185,17 +185,29 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
   const budgetNum = parseFloat(budget.replace(/[^0-9.]/g, "")) || 0;
   const monthlyOts = totalMonthly * totalScreens;
   const weeklyOts = Math.round(monthlyOts / 4.33);
-  const campaignImpressions = Math.round(weeklyOts * durationInWeeks);
-  const estReach = Math.min(totalMembers, Math.round(campaignImpressions / (durationInWeeks * 1.2)));
-  const frequency = estReach > 0 ? (campaignImpressions / estReach).toFixed(1) : "0";
-  const suggestedBudget = Math.round((campaignImpressions / 1000) * CPM);
+
+  // Duration-based results
+  const durationImpressions = Math.round(weeklyOts * durationInWeeks);
+  const durationReach = Math.min(totalMembers, Math.round(durationImpressions / Math.max(durationInWeeks * 1.2, 0.1)));
+  const durationFrequency = durationReach > 0 ? (durationImpressions / durationReach).toFixed(1) : "0";
+  const suggestedBudget = Math.round((durationImpressions / 1000) * CPM);
+
+  // Budget-based results (overrides when budget entered)
   const budgetImpressions = budgetNum > 0 ? Math.round((budgetNum / CPM) * 1000) : 0;
-  const budgetDuration = weeklyOts > 0 && budgetNum > 0
-    ? unit === "days" ? Math.round((budgetImpressions / weeklyOts) * 7)
-    : unit === "months" ? Math.round(budgetImpressions / weeklyOts / 4.33)
-    : Math.round(budgetImpressions / weeklyOts)
-    : 0;
-  const budgetDurationLabel = unit === "days" ? `${budgetDuration}d` : unit === "months" ? `${budgetDuration}mo` : `${budgetDuration}w`;
+  const budgetReach = budgetNum > 0 ? Math.min(totalMembers, Math.round(budgetImpressions / Math.max(durationInWeeks * 1.2, 0.1))) : 0;
+  const budgetFrequency = budgetReach > 0 ? (budgetImpressions / budgetReach).toFixed(1) : "0";
+  const budgetDurationWeeks = weeklyOts > 0 && budgetNum > 0 ? budgetImpressions / weeklyOts : 0;
+  const budgetDurationDisplay = unit === "days"
+    ? `${Math.round(budgetDurationWeeks * 7)}d`
+    : unit === "months"
+    ? `${Math.round(budgetDurationWeeks / 4.33)}mo`
+    : `${Math.round(budgetDurationWeeks)}w`;
+
+  // Use budget values when budget entered, otherwise duration values
+  const campaignImpressions = budgetNum > 0 ? budgetImpressions : durationImpressions;
+  const estReach = budgetNum > 0 ? budgetReach : durationReach;
+  const frequency = budgetNum > 0 ? budgetFrequency : durationFrequency;
+  const activeLabel = budgetNum > 0 ? `R${fmt(budgetNum)} budget` : durationLabel;
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
@@ -237,19 +249,26 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
           </div>
         </div>
 
-        {/* Projected results */}
+        {/* Projected results — updates live from duration OR budget */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Projected Results — {durationLabel}</p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>Results</p>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: budgetNum > 0 ? "rgba(212,255,79,0.10)" : "rgba(167,139,250,0.10)", color: budgetNum > 0 ? "#D4FF4F" : "#A78BFA" }}>
+              {activeLabel}
+            </span>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { label: "Total Impressions", value: fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
-              { label: "Unique Reach", value: fmt(estReach), color: "#fff", icon: Users },
-              { label: "Avg Frequency", value: `${frequency}×`, color: "#A78BFA", icon: BarChart3 },
-              { label: "Suggested Budget", value: fmtR(suggestedBudget), color: "#34D399", icon: TrendingUp },
+              { label: "Unique Reach",      value: fmt(estReach),            color: "#fff",    icon: Users },
+              { label: "Avg Frequency",     value: `${frequency}×`,         color: "#A78BFA", icon: BarChart3 },
+              { label: budgetNum > 0 ? "Est. Duration" : "Suggested Budget",
+                value: budgetNum > 0 ? budgetDurationDisplay : fmtR(suggestedBudget),
+                color: "#34D399", icon: TrendingUp },
             ].map(({ label, value, color, icon: Icon }) => (
-              <div key={label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div key={label} className="rounded-xl p-3 transition-all" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${budgetNum > 0 ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.06)"}` }}>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <Icon size={11} color="#555" strokeWidth={2} />
+                  <Icon size={11} color="#8A8A8A" strokeWidth={2} />
                   <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
                 </div>
                 <p className="text-lg font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
@@ -258,30 +277,27 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
           </div>
         </div>
 
-        {/* Optional budget override */}
+        {/* Budget input */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Or enter a specific budget</p>
-          <div className="flex gap-3 items-center flex-wrap">
-            <div className="relative flex-1" style={{ minWidth: 160 }}>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Enter a specific budget to recalculate</p>
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#8A8A8A" }}>R</span>
-              <input value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="Enter budget"
+              <input
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="e.g. 50 000"
                 className="w-full pl-7 pr-4 py-2.5 rounded-xl text-sm text-white"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", outline: "none" }} />
+                style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${budgetNum > 0 ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.10)"}`, outline: "none", transition: "border 0.2s" }}
+              />
             </div>
             {budgetNum > 0 && (
-              <div className="flex gap-3 flex-wrap">
-                {[
-                  { label: "Impressions", value: fmt(budgetImpressions), color: "#D4FF4F" },
-                  { label: "Duration", value: budgetDurationLabel, color: "#A78BFA" },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className="rounded-xl px-4 py-2.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>
-                    <p className="text-base font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif" }}>{value}</p>
-                  </div>
-                ))}
-              </div>
+              <button onClick={() => setBudget("")} className="text-xs px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", color: "#8A8A8A", border: "1px solid rgba(255,255,255,0.08)" }}>
+                Clear
+              </button>
             )}
           </div>
+          {!budgetNum && <p className="text-xs mt-1.5" style={{ color: "#666" }}>Results above based on {durationLabel} campaign. Enter a budget to override.</p>}
         </div>
       </div>
     </div>

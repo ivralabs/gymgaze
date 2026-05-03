@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Lightbulb,
+  Layers,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/networks", icon: Building2, label: "Networks" },
   { href: "/admin/venues", icon: MapPin, label: "Venues" },
   { href: "/admin/campaigns", icon: Megaphone, label: "Campaigns" },
+  { href: "/admin/inventory", icon: Layers, label: "Inventory" },
   { href: "/admin/revenue", icon: DollarSign, label: "Revenue" },
   { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/photos", icon: Image, label: "Photos" },

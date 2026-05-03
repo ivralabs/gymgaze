@@ -163,7 +163,7 @@ export function CampaignImpactEstimator({ venues, screens }: {
   venues: Venue[]; screens: Screen[];
 }) {
   const [unit, setUnit] = useState<"days" | "weeks" | "months">("weeks");
-  const [duration, setDuration] = useState("4");
+  const [duration, setDuration] = useState("");
   const [budget, setBudget] = useState("");
   const [cpm, setCpm] = useState("85");
   const [editingCpm, setEditingCpm] = useState(false);
@@ -190,7 +190,7 @@ export function CampaignImpactEstimator({ venues, screens }: {
 
   function resetAll() {
     setUnit("weeks");
-    setDuration("4");
+    setDuration("");
     setBudget("");
     setCpm("85");
     setEditingCpm(false);
@@ -214,9 +214,11 @@ export function CampaignImpactEstimator({ venues, screens }: {
     months: { values: ["1", "2", "3", "6", "9", "12", "24"], label: (v) => `${v}mo` },
   };
 
-  const durationNum = parseInt(duration) || 1;
+  const hasDuration = duration !== "";
+  const durationNum = parseInt(duration) || 0;
   const durationInWeeks = unit === "days" ? durationNum / 7 : unit === "months" ? durationNum * 4.33 : durationNum;
-  const durationLabel = unit === "days"
+  const durationLabel = !hasDuration ? "—"
+    : unit === "days"
     ? `${durationNum} day${durationNum !== 1 ? "s" : ""}`
     : unit === "months"
     ? `${durationNum} month${durationNum !== 1 ? "s" : ""}`
@@ -227,10 +229,10 @@ export function CampaignImpactEstimator({ venues, screens }: {
   const weeklyOts = Math.round(monthlyOts / 4.33);
 
   // Duration-based
-  const durationImpressions = Math.round(weeklyOts * durationInWeeks);
-  const durationReach = Math.min(totalMembers, Math.round(durationImpressions / Math.max(durationInWeeks * 1.2, 0.1)));
+  const durationImpressions = hasDuration ? Math.round(weeklyOts * durationInWeeks) : 0;
+  const durationReach = hasDuration ? Math.min(totalMembers, Math.round(durationImpressions / Math.max(durationInWeeks * 1.2, 0.1))) : 0;
   const durationFrequency = durationReach > 0 ? (durationImpressions / durationReach).toFixed(1) : "0";
-  const suggestedBudget = Math.round((durationImpressions / 1000) * CPM);
+  const suggestedBudget = hasDuration ? Math.round((durationImpressions / 1000) * CPM) : 0;
   const durationCpr = durationReach > 0 ? (suggestedBudget / durationReach).toFixed(2) : "0";
 
   // Budget-based
@@ -367,7 +369,7 @@ export function CampaignImpactEstimator({ venues, screens }: {
           <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Duration</p>
           <div className="flex gap-1 p-1 rounded-xl mb-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", display: "inline-flex" }}>
             {(["days", "weeks", "months"] as const).map((u) => (
-              <button key={u} onClick={() => { setUnit(u); setDuration(UNIT_OPTIONS[u].values[2]); }}
+              <button key={u} onClick={() => { setUnit(u); setDuration(""); }}
                 className="px-4 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all"
                 style={{ background: unit === u ? "rgba(255,255,255,0.10)" : "transparent", color: unit === u ? "#fff" : "#777" }}>
                 {u}
@@ -432,7 +434,7 @@ export function CampaignImpactEstimator({ venues, screens }: {
             )}
           </div>
           <p className="text-xs mt-1.5" style={{ color: "#666" }}>
-            {budgetNum > 0 ? `Budget mode — results show what R${fmt(budgetNum)} delivers` : `Duration mode — results show projections for ${durationLabel}`}
+            {budgetNum > 0 ? `Budget mode — results show what R${fmt(budgetNum)} delivers` : hasDuration ? `Duration mode — results show projections for ${durationLabel}` : `Select a duration or enter a budget to see projections`}
           </p>
         </div>
 
@@ -455,12 +457,12 @@ export function CampaignImpactEstimator({ venues, screens }: {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
-              { label: "Total Impressions", value: fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
-              { label: "Unique Reach",      value: fmt(estReach),            color: "#fff",    icon: Users },
-              { label: "Avg Frequency",     value: `${frequency}×`,          color: "#A78BFA", icon: BarChart3 },
-              { label: "Cost Per Reach",    value: `R${cpr}`,                color: "#34D399", icon: TrendingUp },
+              { label: "Total Impressions", value: (!isBudgetMode && !hasDuration) ? "—" : fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
+              { label: "Unique Reach",      value: (!isBudgetMode && !hasDuration) ? "—" : fmt(estReach),            color: "#fff",    icon: Users },
+              { label: "Avg Frequency",     value: (!isBudgetMode && !hasDuration) ? "—" : `${frequency}×`,          color: "#A78BFA", icon: BarChart3 },
+              { label: "Cost Per Reach",    value: (!isBudgetMode && !hasDuration) ? "—" : `R${cpr}`,                color: "#34D399", icon: TrendingUp },
               { label: isBudgetMode ? "Est. Duration" : "Suggested Budget",
-                value: isBudgetMode ? budgetDurationDisplay : fmtR(suggestedBudget),
+                value: (!isBudgetMode && !hasDuration) ? "—" : isBudgetMode ? budgetDurationDisplay : fmtR(suggestedBudget),
                 color: "#F59E0B", icon: Calendar },
               { label: "Weekly OTS",        value: fmt(weeklyOts),           color: "#60A5FA", icon: Eye },
             ].map(({ label, value, color, icon: Icon }) => (

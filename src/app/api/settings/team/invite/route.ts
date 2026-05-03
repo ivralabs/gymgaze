@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 const ALLOWED_ROLES = ["admin", "manager", "sales", "viewer", "custom"];
 
 export async function POST(request: Request) {
+  // Use anon client just to verify the calling user's session
   const supabase = await createClient();
-
-  // Only logged-in admins can invite
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: callerProfile } = await supabase
+  // Use service client for admin operations (inviteUserByEmail + profile upsert)
+  const service = await createServiceClient();
+
+  const { data: callerProfile } = await service
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -31,8 +33,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `Invalid role. Must be one of: ${ALLOWED_ROLES.join(", ")}` }, { status: 400 });
   }
 
-  // Use Supabase Auth admin invite — sends a magic-link email
-  const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
+  // auth.admin.inviteUserByEmail requires service role key
+  const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
     data: { role },
     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://gymgaze.vercel.app"}/admin`,
   });
@@ -41,13 +43,8 @@ export async function POST(request: Request) {
 
   // Create a profile row immediately so the team table reflects the invite
   if (data?.user?.id) {
-    await supabase.from("profiles").upsert(
-      {
-        id: data.user.id,
-        full_name: null,
-        role,
-        suspended: false,
-      },
+    await service.from("profiles").upsert(
+      { id: data.user.id, full_name: null, role, suspended: false },
       { onConflict: "id" }
     );
   }

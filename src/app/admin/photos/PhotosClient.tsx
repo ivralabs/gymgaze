@@ -417,10 +417,10 @@ export default function PhotosClient({ photos: initialPhotos, venues, screens, c
               letterSpacing: '-0.02em',
             }}
           >
-            Photos
+            Proof Of Flight
           </h1>
           <p style={{ color: '#666', marginTop: '0.5rem' }}>
-            Proof of flighting board across all venues
+            Monthly flighting board across all venues
           </p>
         </div>
       </div>

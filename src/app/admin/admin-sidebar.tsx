@@ -29,7 +29,7 @@ const navItems = [
   { href: "/admin/inventory", icon: Layers, label: "Inventory" },
   { href: "/admin/revenue", icon: DollarSign, label: "Revenue" },
   { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
-  { href: "/admin/photos", icon: Image, label: "Photos" },
+  { href: "/admin/photos", icon: Image, label: "Proof Of Flight" },
   { href: "/admin/insights", icon: Lightbulb, label: "Insights" },
   { href: "/admin/settings", icon: Settings, label: "Settings" },
 ];

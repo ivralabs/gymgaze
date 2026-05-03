@@ -159,13 +159,37 @@ export function FootTrafficHeatmap({ venues }: { venues: Venue[] }) {
 
 // ─── 2. Campaign Impact Estimator ─────────────────────────────────────────────
 
-export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScreens }: {
-  totalMembers: number; totalMonthly: number; totalScreens: number;
+export function CampaignImpactEstimator({ venues, screens }: {
+  venues: Venue[]; screens: Screen[];
 }) {
   const [unit, setUnit] = useState<"days" | "weeks" | "months">("weeks");
   const [duration, setDuration] = useState("4");
   const [budget, setBudget] = useState("");
+  const [selectedVenues, setSelectedVenues] = useState<string[]>([]);
+  const [venuePickerOpen, setVenuePickerOpen] = useState(false);
   const CPM = 85;
+
+  // Filter to selected venues or all
+  const activeVenues = selectedVenues.length > 0
+    ? venues.filter((v) => selectedVenues.includes(v.id))
+    : venues;
+  const activeScreens = screens.filter((s) => activeVenues.some((v) => v.id === s.venue_id));
+
+  const totalMembers = activeVenues.reduce((s, v) => s + (v.active_members ?? 0), 0);
+  const totalMonthly = activeVenues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
+  const totalScreens = activeScreens.length;
+
+  function toggleVenue(id: string) {
+    setSelectedVenues((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
+  }
+
+  // Group venues by province for the picker
+  const byProvince = venues.reduce((acc, v) => {
+    const prov = v.province ?? "Other";
+    if (!acc[prov]) acc[prov] = [];
+    acc[prov].push(v);
+    return acc;
+  }, {} as Record<string, Venue[]>);
 
   const UNIT_OPTIONS: Record<"days" | "weeks" | "months", { values: string[]; label: (v: string) => string }> = {
     days:   { values: ["1", "3", "5", "7", "14", "30"], label: (v) => `${v}d` },
@@ -220,6 +244,81 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
       </div>
 
       <div className="p-5 space-y-5">
+
+        {/* Venue selector */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#999" }}>Gyms in Scope</p>
+            {selectedVenues.length > 0 && (
+              <button onClick={() => setSelectedVenues([])} className="text-xs" style={{ color: "#D4FF4F" }}>Clear — show all</button>
+            )}
+          </div>
+
+          {/* Trigger button */}
+          <button
+            onClick={() => setVenuePickerOpen((p) => !p)}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all"
+            style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${selectedVenues.length > 0 ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.10)"}` }}
+          >
+            <span style={{ color: selectedVenues.length > 0 ? "#D4FF4F" : "#C8C8C8" }}>
+              {selectedVenues.length === 0
+                ? `All ${venues.length} venues`
+                : `${selectedVenues.length} venue${selectedVenues.length !== 1 ? "s" : ""} selected`}
+            </span>
+            <span className="text-xs" style={{ color: "#777" }}>{venuePickerOpen ? "▲" : "▼"}</span>
+          </button>
+
+          {/* Picker dropdown */}
+          {venuePickerOpen && (
+            <div className="mt-2 rounded-xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "#141414", maxHeight: 280, overflowY: "auto" }}>
+              {/* Select All / Clear */}
+              <div className="flex gap-2 px-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <button onClick={() => setSelectedVenues(venues.map((v) => v.id))} className="text-xs px-3 py-1 rounded-lg" style={{ background: "rgba(212,255,79,0.08)", color: "#D4FF4F" }}>Select All</button>
+                <button onClick={() => setSelectedVenues([])} className="text-xs px-3 py-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", color: "#C8C8C8" }}>Clear</button>
+              </div>
+              {/* Grouped by province */}
+              {Object.entries(byProvince).sort().map(([prov, provVenues]) => (
+                <div key={prov}>
+                  <div className="px-3 py-1.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#777" }}>{prov}</span>
+                  </div>
+                  {provVenues.map((v) => {
+                    const isSelected = selectedVenues.includes(v.id);
+                    return (
+                      <button
+                        key={v.id}
+                        onClick={() => toggleVenue(v.id)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all"
+                        style={{ background: isSelected ? "rgba(212,255,79,0.06)" : "transparent" }}
+                      >
+                        <div className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style={{ border: `1.5px solid ${isSelected ? "#D4FF4F" : "#444"}`, background: isSelected ? "#D4FF4F" : "transparent" }}>
+                          {isSelected && <span style={{ fontSize: 9, fontWeight: 900, color: "#0A0A0A" }}>✓</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate" style={{ color: isSelected ? "#D4FF4F" : "#C8C8C8" }}>{v.name}</p>
+                          <p className="text-xs" style={{ color: "#777" }}>{v.city} · {(v.active_members ?? 0).toLocaleString("en-ZA")} members</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Selected venue chips */}
+          {selectedVenues.length > 0 && !venuePickerOpen && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {activeVenues.map((v) => (
+                <span key={v.id} className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full" style={{ background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)", color: "#D4FF4F" }}>
+                  {v.name}
+                  <button onClick={() => toggleVenue(v.id)} style={{ color: "#D4FF4F", lineHeight: 1 }}>×</button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Duration selector */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Duration</p>

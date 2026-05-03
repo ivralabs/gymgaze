@@ -814,7 +814,7 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
           <CpmCalculator totalMembers={totalMembers} totalMonthly={totalMonthly} totalScreens={totalScreens} />
 
           {/* Campaign Impact Estimator */}
-          <CampaignImpactEstimator totalMembers={totalMembers} totalMonthly={totalMonthly} totalScreens={totalScreens} />
+          <CampaignImpactEstimator venues={venues as unknown as Parameters<typeof CampaignImpactEstimator>[0]['venues']} screens={screens} />
 
           {/* Campaign Availability */}
           <CampaignAvailability venues={venues} screens={screens} campaignVenues={campaignVenues} />

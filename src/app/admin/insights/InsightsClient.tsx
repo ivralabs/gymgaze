@@ -5,8 +5,9 @@ import Link from "next/link";
 import {
   Users, Monitor, TrendingUp, Building2, Share2, Copy, Trash2,
   Plus, Lock, Unlock, Eye, Calendar, ChevronDown, ChevronUp,
-  BarChart3, Percent, Clock, X, Check
+  BarChart3, Percent, Clock, X, Check, Presentation
 } from "lucide-react";
+import AgencyDeckPreview from "./AgencyDeckPreview";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -470,7 +471,7 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
 // ─── Main Client Component ────────────────────────────────────────────────────
 
 export default function InsightsClient({ networks, venues, screens, revenue, campaignVenues, photos, links }: Props) {
-  const [tab, setTab] = useState<"overview" | "links">("overview");
+  const [tab, setTab] = useState<"overview" | "links" | "preview">("overview");
 
   // Platform-wide stats
   const totalMembers = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
@@ -539,6 +540,12 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
             {links.length > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full ml-0.5" style={{ background: "rgba(212,255,79,0.15)", color: "#D4FF4F" }}>{links.length}</span>}
           </span>
         </button>
+        <button style={tabStyle(tab === "preview")} onClick={() => setTab("preview")}>
+          <span className="flex items-center gap-1.5">
+            <Presentation size={13} strokeWidth={2} />
+            Agency Preview
+          </span>
+        </button>
       </div>
 
       {/* Network Overview tab */}
@@ -569,6 +576,17 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
       {/* Links tab */}
       {tab === "links" && (
         <LinksManager links={links} networks={networks} />
+      )}
+
+      {/* Agency Preview tab */}
+      {tab === "preview" && (
+        <AgencyDeckPreview
+          networks={networks}
+          venues={venues}
+          screens={screens}
+          photos={photos}
+          campaignVenues={campaignVenues}
+        />
       )}
     </div>
   );

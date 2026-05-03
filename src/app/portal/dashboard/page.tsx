@@ -22,9 +22,12 @@ export default async function PortalDashboard() {
   // Get profile + gym_brand_id
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, gym_brand_id")
+    .select("full_name, gym_brand_id, role")
     .eq("id", user.id)
     .single();
+
+  // Managers don't see the owner revenue dashboard
+  if (profile?.role === "manager") redirect("/portal/manager");
 
   if (!profile?.gym_brand_id) {
     return (

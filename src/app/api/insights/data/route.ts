@@ -43,12 +43,15 @@ export async function GET(request: NextRequest) {
     allowedNetworkIds = link.network_ids ?? null;
     linkTitle = link.title ?? linkTitle;
   } else {
-    // Admin access
+    // Admin-side access (admin/sales/viewer/custom with insights permission)
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { data: profile } = await supabase.from("profiles").select("role, permissions").eq("id", user.id).single();
+    const ADMIN_SIDE = ["admin", "sales", "viewer", "custom"];
+    if (!profile?.role || !ADMIN_SIDE.includes(profile.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     isAdmin = true;
   }
 

@@ -17,8 +17,9 @@ export default async function Home() {
     .maybeSingle();
 
   const role = profile?.role;
+  const ADMIN_SIDE_ROLES = ["admin", "sales", "viewer", "custom"];
 
-  if (role === "admin") {
+  if (role && ADMIN_SIDE_ROLES.includes(role)) {
     redirect("/admin/dashboard");
   } else {
     redirect("/portal/dashboard");

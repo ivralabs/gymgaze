@@ -36,15 +36,19 @@ export default function LoginPage() {
         .single();
 
       const role = profile?.role;
+      const ADMIN_SIDE_ROLES = ["admin", "sales", "viewer", "custom"];
 
-      if (role === "admin") {
+      if (role && ADMIN_SIDE_ROLES.includes(role)) {
+        // Admin-side users go to /admin/dashboard; middleware will redirect
+        // them onward if they don't have dashboard access
         window.location.href = "/admin/dashboard";
       } else if (role === "owner") {
         window.location.href = "/portal/dashboard";
       } else if (role === "manager") {
         window.location.href = "/portal/manager";
       } else {
-        window.location.href = "/portal/dashboard";
+        // Default fallback for null/unknown role — admin side
+        window.location.href = "/admin/dashboard";
       }
     }
 

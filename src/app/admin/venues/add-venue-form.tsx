@@ -433,13 +433,22 @@ export default function AddVenueForm({ brands }: { brands: Brand[] }) {
             {/* Region + Status — 2-col */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 0 }}>
               <div>
-                <label style={labelStyle}>Region / Area Tag</label>
-                <input
+                <label style={labelStyle}>Area Tag</label>
+                <select
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
-                  placeholder="e.g. Cape Town CBD"
-                  style={inputStyle}
-                />
+                  style={{ ...inputStyle, appearance: "none" }}
+                >
+                  <option value="">Select area type...</option>
+                  <option value="Shopping Mall">Shopping Mall</option>
+                  <option value="Shopping Centre">Shopping Centre</option>
+                  <option value="Free Standing">Free Standing</option>
+                  <option value="Office Park">Office Park</option>
+                  <option value="Residential Estate">Residential Estate</option>
+                  <option value="Industrial Park">Industrial Park</option>
+                  <option value="CBD">CBD</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
               <div>
                 <label style={labelStyle}>Status</label>

@@ -348,7 +348,7 @@ export default function VenueDetailTabs({
                 </div>
               </div>
               <div>
-                <p style={{ color: "#909090" }}>Region</p>
+                <p style={{ color: "#909090" }}>Area Tag</p>
                 <p className="text-white mt-0.5">{venue.region ?? "—"}</p>
               </div>
               <div>

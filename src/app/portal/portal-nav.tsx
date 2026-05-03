@@ -3,19 +3,44 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { LayoutDashboard, MapPin, Image, DollarSign, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, MapPin, Camera, ImageIcon, BarChart2, LogOut, Menu, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-const navItems = [
-  { href: "/portal/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/portal/venues", label: "Venues", icon: MapPin },
-  { href: "/portal/manager", label: "Manager", icon: Image },
+// Owner-facing nav (gym brand owner — sees all their venues)
+const OWNER_NAV = [
+  { href: "/portal/dashboard", label: "Dashboard",  icon: LayoutDashboard },
+  { href: "/portal/venues",    label: "Venues",     icon: MapPin },
+];
+
+// Manager-facing nav (single venue manager)
+const MANAGER_NAV = [
+  { href: "/portal/manager",         label: "Home",         icon: LayoutDashboard },
+  { href: "/portal/manager/upload",  label: "Upload",       icon: Camera },
+  { href: "/portal/manager/photos",  label: "My Photos",    icon: ImageIcon },
+  { href: "/portal/manager/venue",   label: "Update Stats", icon: BarChart2 },
 ];
 
 export default function PortalNav() {
   const pathname = usePathname();
   const supabase = createClient();
   const [open, setOpen] = useState(false);
+  const [navItems, setNavItems] = useState(OWNER_NAV);
+
+  // Load role → pick nav set
+  useEffect(() => {
+    async function loadRole() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (profile?.role === "manager") setNavItems(MANAGER_NAV);
+      else setNavItems(OWNER_NAV);
+    }
+    loadRole();
+  }, []);
 
   // Close on route change
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -58,14 +83,6 @@ export default function PortalNav() {
           onClick={handleLogout}
           className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
           style={{ color: "#B0B0B0" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
-            (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#909090";
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-          }}
         >
           <LogOut size={16} strokeWidth={2} />
           Sign out
@@ -102,11 +119,7 @@ export default function PortalNav() {
           transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
         }}
       >
-        {/* Drawer header */}
-        <div
-          className="flex items-center justify-between px-5 py-4"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-        >
+        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
           <span className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Menu</span>
           <button
             onClick={() => setOpen(false)}
@@ -118,7 +131,6 @@ export default function PortalNav() {
           </button>
         </div>
 
-        {/* Nav items */}
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + "/");
@@ -141,7 +153,6 @@ export default function PortalNav() {
           })}
         </nav>
 
-        {/* Logout */}
         <div className="px-3 pb-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           <button
             onClick={handleLogout}

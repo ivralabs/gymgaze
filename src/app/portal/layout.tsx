@@ -16,16 +16,7 @@ export default async function PortalLayout({
     redirect("/auth/login");
   }
 
-  // Role guard: admins should never be in the portal
-  const { data: roleProfile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (roleProfile?.role === "admin") {
-    redirect("/admin/dashboard");
-  }
+  // Role gating handled by middleware now (owner/manager only reach here)
 
   let brandName = "GymGaze";
   let brandLogoUrl: string | null = null;

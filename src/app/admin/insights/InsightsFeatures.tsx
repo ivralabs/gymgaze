@@ -177,7 +177,8 @@ export function CampaignImpactEstimator({ venues, screens }: {
 
   const totalMembers = activeVenues.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = activeVenues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
-  const totalScreens = activeScreens.length;
+  // Fall back to 1 screen per venue if no screens in DB yet
+  const totalScreens = activeScreens.length > 0 ? activeScreens.length : activeVenues.length;
 
   function toggleVenue(id: string) {
     setSelectedVenues((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);

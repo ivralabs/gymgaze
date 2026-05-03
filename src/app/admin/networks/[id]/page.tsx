@@ -148,7 +148,7 @@ export default async function NetworkDetailPage({
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header row */}
       <div className="flex items-center gap-4 mb-8">
         <Link

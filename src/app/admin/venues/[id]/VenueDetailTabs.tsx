@@ -226,7 +226,7 @@ export default function VenueDetailTabs({
   const brandName = venue.gym_brands?.name ?? null;
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link
@@ -258,16 +258,16 @@ export default function VenueDetailTabs({
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs — scrollable on mobile */}
       <div
-        className="flex gap-1 mb-6"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        className="flex gap-1 mb-6 overflow-x-auto"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", scrollbarWidth: "none" }}
       >
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors duration-150"
+            className="flex items-center gap-2 px-3 md:px-4 py-3 text-sm font-medium transition-colors duration-150 flex-shrink-0"
             style={{
               color: activeTab === id ? "#D4FF4F" : "#909090",
               borderBottom:
@@ -276,7 +276,7 @@ export default function VenueDetailTabs({
             }}
           >
             <Icon size={16} strokeWidth={2} />
-            {label}
+            <span className="hidden sm:inline">{label}</span>
           </button>
         ))}
       </div>
@@ -398,7 +398,8 @@ export default function VenueDetailTabs({
                 <p className="text-sm">No screens configured for this venue.</p>
               </div>
             ) : (
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[500px]">
                 <thead>
                   <tr
                     style={{
@@ -473,6 +474,7 @@ export default function VenueDetailTabs({
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
         </div>
@@ -804,7 +806,8 @@ export default function VenueDetailTabs({
               <p className="text-sm">No revenue entries recorded for this venue.</p>
             </div>
           ) : (
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[400px]">
               <thead>
                 <tr
                   style={{
@@ -872,6 +875,7 @@ export default function VenueDetailTabs({
                 })}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       )}

@@ -183,7 +183,7 @@ export default function UploadPhotoPage() {
   const hasErrors = items.some((i) => i.status === "error");
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-xl w-full">
       {/* Header */}
       <div className="rounded-2xl mb-6 p-6 flex items-center gap-4" style={cardStyle}>
         <Link

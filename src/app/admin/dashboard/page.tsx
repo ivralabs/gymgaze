@@ -74,19 +74,19 @@ export default async function AdminDashboard() {
   const revenuePct = Math.min(100, Math.round((revenueMTD / MONTHLY_TARGET) * 100));
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Hero Panel */}
       <div
         className="glass-panel relative overflow-hidden rounded-2xl mb-8"
         style={{ borderRadius: 16 }}
       >
 
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-5 md:p-8">
           <h1
             style={{
               fontFamily: "Inter Tight, sans-serif",
               fontWeight: 800,
-              fontSize: "2.5rem",
+              fontSize: "clamp(1.6rem, 5vw, 2.5rem)",
               color: "#fff",
               letterSpacing: "-0.02em",
             }}

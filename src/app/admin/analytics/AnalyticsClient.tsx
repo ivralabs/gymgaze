@@ -310,14 +310,14 @@ export default function AnalyticsClient({ revenueEntries, venues, campaigns, bra
     momGrowthPct === null ? "#555" : momGrowthPct >= 0 ? "#4ADE80" : "#F87171";
 
   return (
-    <div style={{ padding: "32px", minHeight: "100vh" }}>
+    <div style={{ padding: "clamp(16px, 4vw, 32px)", minHeight: "100vh" }}>
       {/* ── Hero Panel */}
-      <div style={{ ...glassCard, marginBottom: 24, padding: "32px" }}>
+      <div style={{ ...glassCard, marginBottom: 24, padding: "clamp(20px, 4vw, 32px)" }}>
         <h1
           style={{
             fontFamily: "Inter Tight, sans-serif",
             fontWeight: 800,
-            fontSize: "2.5rem",
+            fontSize: "clamp(1.6rem, 5vw, 2.5rem)",
             color: "#fff",
             letterSpacing: "-0.02em",
             margin: 0,

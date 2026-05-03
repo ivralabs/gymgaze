@@ -98,7 +98,7 @@ export default async function PortalLayout({
       </header>
 
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">{children}</main>
     </div>
   );
 }

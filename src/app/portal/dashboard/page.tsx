@@ -113,12 +113,12 @@ export default async function PortalDashboard() {
         style={{ borderRadius: 16 }}
       >
 
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-5 md:p-8">
           <h1
             style={{
               fontFamily: "Inter Tight, sans-serif",
               fontWeight: 800,
-              fontSize: "2.5rem",
+              fontSize: "clamp(1.6rem, 5vw, 2.5rem)",
               color: "#fff",
               letterSpacing: "-0.02em",
             }}

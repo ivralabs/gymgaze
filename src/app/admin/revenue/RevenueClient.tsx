@@ -433,16 +433,16 @@ export default function RevenueClient({
   const MEDAL = ['🥇', '🥈', '🥉']
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8">
       {/* ── Hero Panel ────────────────────────────────────────────────────── */}
       <div className="glass-panel rounded-2xl overflow-hidden">
-        <div className="p-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div className="p-5 md:p-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
             <h1
               style={{
                 fontFamily: 'Inter Tight, sans-serif',
                 fontWeight: 800,
-                fontSize: '2.5rem',
+                fontSize: 'clamp(1.6rem, 5vw, 2.5rem)',
                 color: '#fff',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,

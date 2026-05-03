@@ -31,8 +31,11 @@ export default async function AdminLayout({
       {/* Sidebar (client component for active state + logout) */}
       <AdminSidebar />
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto dark-scroll" style={{ backgroundColor: "transparent" }}>
+      {/* Main content — add top padding on mobile for fixed top bar */}
+      <main
+        className="flex-1 overflow-y-auto dark-scroll pt-[60px] md:pt-0"
+        style={{ backgroundColor: "transparent" }}
+      >
         {children}
       </main>
     </div>

@@ -316,7 +316,7 @@ function PhotoModal({ venue, month, photos, onClose, onPhotosChange }: PhotoModa
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function PhotosClient({ photos: initialPhotos, venues, screens, campaigns }: PhotosClientProps) {
-  const [activeTab, setActiveTab] = useState<'flighting' | 'inventory'>('flighting')
+  const [activeTab] = useState<'flighting'>('flighting')
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos)
 
   // Month picker state
@@ -420,25 +420,20 @@ export default function PhotosClient({ photos: initialPhotos, venues, screens, c
             Photos
           </h1>
           <p style={{ color: '#666', marginTop: '0.5rem' }}>
-            Proof of Flighting board &amp; Screen Inventory
+            Proof of flighting board across all venues
           </p>
         </div>
       </div>
 
-      {/* Tab bar */}
-      <div
-        className="flex gap-1 mb-6 p-1 rounded-xl w-fit"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
-      >
+      {/* Tab bar removed — Screen Inventory moved to /admin/inventory */}
+      <div style={{ display: 'none' }}>
         {[
           { key: 'flighting', label: 'Monthly Flighting Board' },
-          { key: 'inventory', label: 'Screen Inventory' },
         ].map((tab) => {
           const isActive = activeTab === tab.key
           return (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key as 'flighting' | 'inventory')}
               className="px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
               style={{
                 color: isActive ? '#D4FF4F' : '#909090',
@@ -738,142 +733,6 @@ export default function PhotosClient({ photos: initialPhotos, venues, screens, c
         </div>
       )}
 
-      {/* ── TAB 2: Screen Inventory ──────────────────────────────────── */}
-      {activeTab === 'inventory' && (
-        <div>
-          {/* Stat tiles */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            {[
-              { label: 'Total Screens', value: totalScreens, color: '#fff' },
-              { label: 'Active', value: activeScreens, color: '#D4FF4F' },
-              { label: 'Offline / Maintenance', value: offlineScreens, color: '#EF4444' },
-            ].map((tile) => (
-              <div
-                key={tile.label}
-                className="glass-card p-5"
-                style={{ borderRadius: 16 }}
-              >
-                <p className="text-xs mb-1" style={{ color: '#909090' }}>
-                  {tile.label}
-                </p>
-                <p
-                  className="text-3xl font-bold"
-                  style={{ fontFamily: 'Inter Tight, sans-serif', color: tile.color }}
-                >
-                  {tile.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Screen table */}
-          <div className="glass-card overflow-hidden" style={{ borderRadius: 16 }}>
-            {screens.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Monitor size={40} strokeWidth={1.5} style={{ color: '#444' }} className="mb-4" />
-                <p className="text-white font-medium">No screens registered yet</p>
-                <p className="text-sm mt-1" style={{ color: '#909090' }}>
-                  Add screens via the Venues page
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto dark-scroll">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                      {['Screen', 'Venue', 'City', 'Network', 'Status', 'Last Photo Received'].map(
-                        (col) => (
-                          <th
-                            key={col}
-                            className="px-5 py-3.5 text-left text-xs font-semibold"
-                            style={{
-                              color: '#909090',
-                              fontFamily: 'Inter Tight, sans-serif',
-                              letterSpacing: '0.04em',
-                              textTransform: 'uppercase',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {col}
-                          </th>
-                        )
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {screens.map((screen, i) => {
-                      const venue = screen.venues
-                      const networkName = venue?.gym_brands?.name ?? '—'
-                      const lastPhoto = photos
-                        .filter((p) => p.venue_id === screen.venue_id)
-                        .map((p) => p.created_at)
-                        .filter(Boolean)
-                        .sort()
-                        .reverse()[0] ?? null
-
-                      return (
-                        <tr
-                          key={screen.id}
-                          className="glass-table-row"
-                          style={{
-                            borderBottom:
-                              i < screens.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                          }}
-                        >
-                          <td className="px-5 py-4">
-                            <p
-                              className="text-white font-medium"
-                              style={{ fontFamily: 'Inter Tight, sans-serif' }}
-                            >
-                              {screen.label || `Screen #${i + 1}`}
-                            </p>
-                          </td>
-                          <td className="px-5 py-4">
-                            {venue ? (
-                              <a
-                                href={`/admin/venues/${venue.id}`}
-                                className="font-medium hover:underline"
-                                style={{ color: '#D4FF4F' }}
-                              >
-                                {venue.name}
-                              </a>
-                            ) : (
-                              <span style={{ color: '#666' }}>—</span>
-                            )}
-                          </td>
-                          <td className="px-5 py-4" style={{ color: '#A3A3A3' }}>
-                            {venue?.city ?? '—'}
-                          </td>
-                          <td className="px-5 py-4" style={{ color: '#A3A3A3' }}>
-                            {networkName}
-                          </td>
-                          <td className="px-5 py-4">
-                            <span
-                              className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                              style={{
-                                backgroundColor: screen.is_active
-                                  ? 'rgba(212,255,79,0.12)'
-                                  : 'rgba(239,68,68,0.12)',
-                                color: screen.is_active ? '#D4FF4F' : '#EF4444',
-                                border: `1px solid ${screen.is_active ? 'rgba(212,255,79,0.2)' : 'rgba(239,68,68,0.2)'}`,
-                              }}
-                            >
-                              {screen.is_active ? 'Active' : 'Offline'}
-                            </span>
-                          </td>
-                          <td className="px-5 py-4" style={{ color: '#A3A3A3' }}>
-                            {lastPhoto ? formatDate(lastPhoto) : <span style={{ color: '#555' }}>Never</span>}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Photo Detail Modal */}
       {selectedVenue && (

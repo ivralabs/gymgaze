@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Phone, Mail, User, Megaphone, Image as ImageIcon } from "lucide-react";
+import EditBrandButton from "./EditBrandButton";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import NetworkRevenueChartWrapper from "./NetworkRevenueChartWrapper";
@@ -313,17 +314,17 @@ export default async function NetworkDetailPage({
           </div>
 
           <div className="mt-6 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-            <button
-              className="text-xs font-semibold px-4 py-2 rounded-lg"
-              style={{
-                background: "rgba(212,255,79,0.08)",
-                border: "1px solid rgba(212,255,79,0.2)",
-                color: "#D4FF4F",
-                cursor: "pointer",
+            <EditBrandButton
+              brand={{
+                id: network.id,
+                name: network.name,
+                contact_name: network.contact_name ?? null,
+                contact_email: network.contact_email ?? null,
+                contact_phone: network.contact_phone ?? null,
+                logo_url: (network as { logo_url?: string }).logo_url ?? null,
+                is_active: network.is_active ?? null,
               }}
-            >
-              Edit Brand
-            </button>
+            />
           </div>
         </div>
 

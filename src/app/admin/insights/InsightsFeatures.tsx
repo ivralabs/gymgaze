@@ -162,22 +162,40 @@ export function FootTrafficHeatmap({ venues }: { venues: Venue[] }) {
 export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScreens }: {
   totalMembers: number; totalMonthly: number; totalScreens: number;
 }) {
-  const [weeks, setWeeks] = useState("4");
+  const [unit, setUnit] = useState<"days" | "weeks" | "months">("weeks");
+  const [duration, setDuration] = useState("4");
   const [budget, setBudget] = useState("");
   const CPM = 85;
 
-  const weeksNum = parseInt(weeks) || 4;
+  const UNIT_OPTIONS: Record<"days" | "weeks" | "months", { values: string[]; label: (v: string) => string }> = {
+    days:   { values: ["1", "3", "5", "7", "14", "30"], label: (v) => `${v}d` },
+    weeks:  { values: ["1", "2", "4", "8", "12", "24", "52"], label: (v) => v === "52" ? "1yr" : `${v}w` },
+    months: { values: ["1", "2", "3", "6", "9", "12", "24"], label: (v) => `${v}mo` },
+  };
+
+  // Normalise duration to weeks for calculations
+  const durationNum = parseInt(duration) || 1;
+  const durationInWeeks = unit === "days" ? durationNum / 7 : unit === "months" ? durationNum * 4.33 : durationNum;
+  const durationLabel = unit === "days"
+    ? `${durationNum} day${durationNum !== 1 ? "s" : ""}`
+    : unit === "months"
+    ? `${durationNum} month${durationNum !== 1 ? "s" : ""}`
+    : durationNum === 52 ? "1 year" : `${durationNum} week${durationNum !== 1 ? "s" : ""}`;
+
   const budgetNum = parseFloat(budget.replace(/[^0-9.]/g, "")) || 0;
   const monthlyOts = totalMonthly * totalScreens;
   const weeklyOts = Math.round(monthlyOts / 4.33);
-  const campaignImpressions = weeklyOts * weeksNum;
-  const estReach = Math.min(totalMembers, Math.round(campaignImpressions / (weeksNum * 1.2)));
+  const campaignImpressions = Math.round(weeklyOts * durationInWeeks);
+  const estReach = Math.min(totalMembers, Math.round(campaignImpressions / (durationInWeeks * 1.2)));
   const frequency = estReach > 0 ? (campaignImpressions / estReach).toFixed(1) : "0";
   const suggestedBudget = Math.round((campaignImpressions / 1000) * CPM);
   const budgetImpressions = budgetNum > 0 ? Math.round((budgetNum / CPM) * 1000) : 0;
-  const budgetWeeks = weeklyOts > 0 && budgetNum > 0 ? Math.round(budgetImpressions / weeklyOts) : 0;
-
-  const WEEK_OPTIONS = ["2", "4", "8", "12", "16", "24", "52"];
+  const budgetDuration = weeklyOts > 0 && budgetNum > 0
+    ? unit === "days" ? Math.round((budgetImpressions / weeklyOts) * 7)
+    : unit === "months" ? Math.round(budgetImpressions / weeklyOts / 4.33)
+    : Math.round(budgetImpressions / weeklyOts)
+    : 0;
+  const budgetDurationLabel = unit === "days" ? `${budgetDuration}d` : unit === "months" ? `${budgetDuration}mo` : `${budgetDuration}w`;
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
@@ -193,16 +211,27 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
         {/* Duration selector */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#999" }}>Campaign Duration</p>
+          {/* Unit toggle */}
+          <div className="flex gap-1 p-1 rounded-xl mb-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", display: "inline-flex" }}>
+            {(["days", "weeks", "months"] as const).map((u) => (
+              <button key={u} onClick={() => { setUnit(u); setDuration(UNIT_OPTIONS[u].values[2]); }}
+                className="px-4 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all"
+                style={{ background: unit === u ? "rgba(255,255,255,0.10)" : "transparent", color: unit === u ? "#fff" : "#777" }}>
+                {u}
+              </button>
+            ))}
+          </div>
+          {/* Value pills */}
           <div className="flex gap-2 flex-wrap">
-            {WEEK_OPTIONS.map((w) => (
-              <button key={w} onClick={() => setWeeks(w)}
+            {UNIT_OPTIONS[unit].values.map((v) => (
+              <button key={v} onClick={() => setDuration(v)}
                 className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={{
-                  background: weeks === w ? "#A78BFA" : "rgba(255,255,255,0.05)",
-                  color: weeks === w ? "#0A0A0A" : "#666",
-                  border: weeks === w ? "none" : "1px solid rgba(255,255,255,0.08)",
+                  background: duration === v ? "#A78BFA" : "rgba(255,255,255,0.05)",
+                  color: duration === v ? "#0A0A0A" : "#999",
+                  border: duration === v ? "none" : "1px solid rgba(255,255,255,0.08)",
                 }}>
-                {w === "52" ? "1 year" : `${w} weeks`}
+                {UNIT_OPTIONS[unit].label(v)}
               </button>
             ))}
           </div>
@@ -210,7 +239,7 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
 
         {/* Projected results */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Projected Results — {weeksNum} weeks</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Projected Results — {durationLabel}</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { label: "Total Impressions", value: fmt(campaignImpressions), color: "#D4FF4F", icon: Monitor },
@@ -243,7 +272,7 @@ export function CampaignImpactEstimator({ totalMembers, totalMonthly, totalScree
               <div className="flex gap-3 flex-wrap">
                 {[
                   { label: "Impressions", value: fmt(budgetImpressions), color: "#D4FF4F" },
-                  { label: "Duration", value: `${budgetWeeks} wks`, color: "#A78BFA" },
+                  { label: "Duration", value: budgetDurationLabel, color: "#A78BFA" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="rounded-xl px-4 py-2.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
                     <p className="text-xs" style={{ color: "#8A8A8A" }}>{label}</p>

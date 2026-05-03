@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   X,
+  Lightbulb,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/admin/revenue", icon: DollarSign, label: "Revenue" },
   { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/photos", icon: Image, label: "Photos" },
+  { href: "/admin/insights", icon: Lightbulb, label: "Insights" },
   { href: "/admin/settings", icon: Settings, label: "Settings" },
 ];
 

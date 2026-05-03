@@ -504,11 +504,10 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
       </div>
 
       {/* Platform summary stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
         {statCard("Total Reach", fmt(totalMembers), "active members")}
         {statCard("Monthly Impressions", fmt(ots), `${totalScreens} screens × entries`, "#A78BFA")}
         {statCard("Photo Compliance", `${overallCompliance}%`, `${approvedPhotos} of ${photos.length} approved`, overallCompliance >= 80 ? "#D4FF4F" : overallCompliance >= 50 ? "#F59E0B" : "#EF4444")}
-        {statCard("Total Revenue", fmtR(totalRevenue), "last 6 months", "#34D399")}
       </div>
 
       {/* Reach & Frequency bar */}

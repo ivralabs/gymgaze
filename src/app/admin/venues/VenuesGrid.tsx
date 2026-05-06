@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search, Monitor, Users, TrendingUp, Image as ImageIcon, MapPin, X } from "lucide-react";
+import { Search, Monitor, Users, TrendingUp, Image as ImageIcon, MapPin, X, Award } from "lucide-react";
 
 type Brand = { id: string; name: string; logo_url?: string | null; primary_color?: string | null };
 
@@ -15,6 +15,7 @@ type Venue = {
   status: string | null;
   active_members: number | null;
   daily_entries: number | null;
+  weekly_entries: number | null;
   monthly_entries: number | null;
   // Supabase returns 1:1 FK joins as arrays — we normalise in the component
   gym_brands: Brand | Brand[] | null;
@@ -211,7 +212,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
   const [search, setSearch] = useState("");
   const [networkFilter, setNetworkFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [view, setView] = useState<"grid" | "list" | "scorecard">("grid");
 
   const filtered = useMemo(() => {
     return venues.filter((v) => {
@@ -224,6 +225,26 @@ export default function VenuesGrid({ venues, brands }: Props) {
   }, [venues, search, networkFilter, statusFilter]);
 
   const hasFilters = search || networkFilter !== "all" || statusFilter !== "all";
+
+  // ── Scorecard helpers ──────────────────────────────────────────
+  const scorecardRows = useMemo(() => {
+    return filtered
+      .filter((v) => (v.active_members ?? 0) > 0)
+      .map((v) => {
+        const members = v.active_members ?? 1;
+        const dailyRate  = Math.min(((v.daily_entries   ?? 0) / members) * 100, 100);
+        const weeklyRate = Math.min(((v.weekly_entries  ?? 0) / members) * 100, 100);
+        const monthlyRate = Math.min(((v.monthly_entries ?? 0) / members) * 100, 100);
+        // Weighted composite: daily 50%, weekly 30%, monthly 20%
+        const score = Math.round(dailyRate * 0.5 + weeklyRate * 0.3 + monthlyRate * 0.2);
+        const tier =
+          score >= 60 ? { label: "High",   color: "#D4FF4F", bg: "rgba(212,255,79,0.10)",  dot: "#D4FF4F" } :
+          score >= 30 ? { label: "Medium", color: "#F59E0B", bg: "rgba(245,158,11,0.10)",  dot: "#F59E0B" } :
+                        { label: "Low",    color: "#EF4444", bg: "rgba(239,68,68,0.10)",   dot: "#EF4444" };
+        return { venue: v, score, dailyRate, weeklyRate, monthlyRate, tier };
+      })
+      .sort((a, b) => b.score - a.score);
+  }, [filtered]);
 
   const pillStyle = (active: boolean): React.CSSProperties => ({
     padding: "6px 14px",
@@ -318,9 +339,9 @@ export default function VenuesGrid({ venues, brands }: Props) {
           )}
         </p>
 
-        {/* Grid / List toggle */}
+        {/* Grid / List / Scorecard toggle */}
         <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-          {(["grid", "list"] as const).map((v) => (
+          {(["grid", "list", "scorecard"] as const).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -330,7 +351,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
                 color: view === v ? "#fff" : "#555",
               }}
             >
-              {v === "grid" ? "⊞ Grid" : "☰ List"}
+              {v === "grid" ? "⊞ Grid" : v === "list" ? "☰ List" : "🏆 Scorecard"}
             </button>
           ))}
         </div>
@@ -348,6 +369,162 @@ export default function VenuesGrid({ venues, brands }: Props) {
               ? "Use 'Add Venue' to get started"
               : "Try adjusting your search or filters"}
           </p>
+        </div>
+      )}
+
+      {/* Scorecard view */}
+      {view === "scorecard" && (
+        <div>
+          {/* Legend */}
+          <div className="flex items-center gap-4 mb-4">
+            <p className="text-xs" style={{ color: "#8A8A8A" }}>Score = daily entries (50%) + weekly (30%) + monthly (20%) as % of active members</p>
+            <div className="flex items-center gap-3 ml-auto">
+              {[
+                { label: "High",   color: "#D4FF4F" },
+                { label: "Medium", color: "#F59E0B" },
+                { label: "Low",    color: "#EF4444" },
+              ].map((t) => (
+                <div key={t.label} className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: t.color }} />
+                  <span className="text-xs" style={{ color: "#999" }}>{t.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {scorecardRows.length === 0 ? (
+            <div className="glass-card rounded-2xl py-16 text-center" style={{ borderRadius: 16 }}>
+              <Award size={32} color="#333" strokeWidth={1.5} className="mx-auto mb-3" />
+              <p className="text-white font-medium mb-1">No attendance data yet</p>
+              <p className="text-sm" style={{ color: "#8A8A8A" }}>Update daily/weekly/monthly entries per venue to see scores</p>
+            </div>
+          ) : (
+            <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+              {/* Header */}
+              <div className="grid px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ gridTemplateColumns: "2rem 1fr 7rem 6rem 6rem 6rem 7rem", color: "#B0B0B0", background: "rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <span>#</span>
+                <span>Venue</span>
+                <span className="text-right">Score</span>
+                <span className="text-right">Daily %</span>
+                <span className="text-right">Weekly %</span>
+                <span className="text-right">Monthly %</span>
+                <span className="text-right">Members</span>
+              </div>
+
+              {/* Rows */}
+              {scorecardRows.map((row, idx) => {
+                const brand = getBrand(row.venue.gym_brands);
+                const brandColor = brand?.primary_color ?? "#D4FF4F";
+                const isTop3 = idx < 3;
+                const rankColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
+
+                return (
+                  <Link
+                    key={row.venue.id}
+                    href={`/admin/venues/${row.venue.id}`}
+                    className="grid items-center px-5 py-4 transition-colors duration-150 group"
+                    style={{
+                      gridTemplateColumns: "2rem 1fr 7rem 6rem 6rem 6rem 7rem",
+                      borderTop: "1px solid rgba(255,255,255,0.06)",
+                      textDecoration: "none",
+                      background: "transparent",
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                  >
+                    {/* Rank */}
+                    <span
+                      className="text-sm font-bold tabular-nums"
+                      style={{ color: isTop3 ? rankColors[idx] : "#555" }}
+                    >
+                      {idx + 1}
+                    </span>
+
+                    {/* Name + brand */}
+                    <div className="flex items-center gap-3 min-w-0 pr-4">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                        style={{ background: `${brandColor}22`, color: brandColor }}
+                      >
+                        {row.venue.name.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{row.venue.name}</p>
+                        <p className="text-xs truncate" style={{ color: "#8A8A8A" }}>
+                          {[row.venue.city, row.venue.province].filter(Boolean).join(", ") || "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Score bar + number */}
+                    <div className="flex items-center gap-2 justify-end">
+                      <div className="flex-1" style={{ maxWidth: 48 }}>
+                        <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
+                          <div
+                            style={{
+                              height: 4,
+                              width: `${row.score}%`,
+                              background: row.tier.color,
+                              borderRadius: 99,
+                              transition: "width 0.4s ease",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <span
+                        className="text-sm font-bold tabular-nums px-2 py-0.5 rounded-full"
+                        style={{ background: row.tier.bg, color: row.tier.color, minWidth: 44, textAlign: "center" }}
+                      >
+                        {row.score}
+                      </span>
+                    </div>
+
+                    {/* Daily % */}
+                    <p className="text-sm font-semibold tabular-nums text-right" style={{ color: row.dailyRate >= 60 ? "#D4FF4F" : row.dailyRate >= 30 ? "#F59E0B" : "#EF4444" }}>
+                      {row.dailyRate.toFixed(1)}%
+                    </p>
+
+                    {/* Weekly % */}
+                    <p className="text-sm font-semibold tabular-nums text-right" style={{ color: row.weeklyRate >= 60 ? "#D4FF4F" : row.weeklyRate >= 30 ? "#F59E0B" : "#EF4444" }}>
+                      {row.weeklyRate.toFixed(1)}%
+                    </p>
+
+                    {/* Monthly % */}
+                    <p className="text-sm font-semibold tabular-nums text-right" style={{ color: row.monthlyRate >= 60 ? "#D4FF4F" : row.monthlyRate >= 30 ? "#F59E0B" : "#EF4444" }}>
+                      {row.monthlyRate.toFixed(1)}%
+                    </p>
+
+                    {/* Members */}
+                    <p className="text-sm tabular-nums text-right" style={{ color: "#C8C8C8" }}>
+                      {(row.venue.active_members ?? 0).toLocaleString("en-ZA")}
+                    </p>
+                  </Link>
+                );
+              })}
+
+              {/* Summary footer */}
+              <div
+                className="px-5 py-3 flex items-center justify-between"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}
+              >
+                <p className="text-xs" style={{ color: "#8A8A8A" }}>
+                  {scorecardRows.length} venue{scorecardRows.length !== 1 ? "s" : ""} ranked
+                  {filtered.length > scorecardRows.length && ` · ${filtered.length - scorecardRows.length} excluded (no member data)`}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs" style={{ color: "#8A8A8A" }}>Network avg score:</span>
+                  <span
+                    className="text-sm font-bold tabular-nums"
+                    style={{ color: "#D4FF4F" }}
+                  >
+                    {scorecardRows.length > 0
+                      ? Math.round(scorecardRows.reduce((s, r) => s + r.score, 0) / scorecardRows.length)
+                      : "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -235,13 +235,14 @@ export default function VenuesGrid({ venues, brands }: Props) {
         const dailyRate  = Math.min(((v.daily_entries   ?? 0) / members) * 100, 100);
         const weeklyRate = Math.min(((v.weekly_entries  ?? 0) / members) * 100, 100);
         const monthlyRate = Math.min(((v.monthly_entries ?? 0) / members) * 100, 100);
-        // Weighted composite: daily 50%, weekly 30%, monthly 20%
-        const score = Math.round(dailyRate * 0.5 + weeklyRate * 0.3 + monthlyRate * 0.2);
+        // Weighted composite for sorting: daily 50%, weekly 30%, monthly 20%
+        const score = dailyRate * 0.5 + weeklyRate * 0.3 + monthlyRate * 0.2;
+        const scoreDisplay = score.toFixed(1);
         const tier =
           score >= 60 ? { label: "High",   color: "#D4FF4F", bg: "rgba(212,255,79,0.10)",  dot: "#D4FF4F" } :
           score >= 30 ? { label: "Medium", color: "#F59E0B", bg: "rgba(245,158,11,0.10)",  dot: "#F59E0B" } :
                         { label: "Low",    color: "#EF4444", bg: "rgba(239,68,68,0.10)",   dot: "#EF4444" };
-        return { venue: v, score, dailyRate, weeklyRate, monthlyRate, tier };
+        return { venue: v, score, scoreDisplay, dailyRate, weeklyRate, monthlyRate, tier };
       })
       .sort((a, b) => b.score - a.score);
   }, [filtered]);
@@ -377,7 +378,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
         <div>
           {/* Legend */}
           <div className="flex items-center gap-4 mb-4">
-            <p className="text-xs" style={{ color: "#8A8A8A" }}>Score = daily entries (50%) + weekly (30%) + monthly (20%) as % of active members</p>
+            <p className="text-xs" style={{ color: "#8A8A8A" }}>Utilisation % = daily entries (50%) + weekly (30%) + monthly (20%) as % of active members</p>
             <div className="flex items-center gap-3 ml-auto">
               {[
                 { label: "High",   color: "#D4FF4F" },
@@ -404,7 +405,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
               <div className="grid px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ gridTemplateColumns: "2rem 1fr 7rem 6rem 6rem 6rem 7rem", color: "#B0B0B0", background: "rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                 <span>#</span>
                 <span>Venue</span>
-                <span className="text-right">Score</span>
+                <span className="text-right">Utilisation</span>
                 <span className="text-right">Daily %</span>
                 <span className="text-right">Weekly %</span>
                 <span className="text-right">Monthly %</span>
@@ -456,14 +457,14 @@ export default function VenuesGrid({ venues, brands }: Props) {
                       </div>
                     </div>
 
-                    {/* Score bar + number */}
+                    {/* Score bar + utilisation % */}
                     <div className="flex items-center gap-2 justify-end">
                       <div className="flex-1" style={{ maxWidth: 48 }}>
                         <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
                           <div
                             style={{
                               height: 4,
-                              width: `${row.score}%`,
+                              width: `${Math.min(row.score, 100)}%`,
                               background: row.tier.color,
                               borderRadius: 99,
                               transition: "width 0.4s ease",
@@ -475,7 +476,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
                         className="text-sm font-bold tabular-nums px-2 py-0.5 rounded-full"
                         style={{ background: row.tier.bg, color: row.tier.color, minWidth: 44, textAlign: "center" }}
                       >
-                        {row.score}
+                        {row.scoreDisplay}%
                       </span>
                     </div>
 
@@ -512,13 +513,13 @@ export default function VenuesGrid({ venues, brands }: Props) {
                   {filtered.length > scorecardRows.length && ` · ${filtered.length - scorecardRows.length} excluded (no member data)`}
                 </p>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs" style={{ color: "#8A8A8A" }}>Network avg score:</span>
+                  <span className="text-xs" style={{ color: "#8A8A8A" }}>Network avg utilisation:</span>
                   <span
                     className="text-sm font-bold tabular-nums"
                     style={{ color: "#D4FF4F" }}
                   >
                     {scorecardRows.length > 0
-                      ? Math.round(scorecardRows.reduce((s, r) => s + r.score, 0) / scorecardRows.length)
+                      ? (scorecardRows.reduce((s, r) => s + r.score, 0) / scorecardRows.length).toFixed(1) + "%"
                       : "—"}
                   </span>
                 </div>

@@ -156,7 +156,7 @@ export default function VenueDetailTabs({
 
   // Add Screen modal state
   const [showAddScreen, setShowAddScreen] = useState(false);
-  const [screenForm, setScreenForm] = useState({ label: "", size_inches: "", resolution: "", orientation: "landscape" });
+  const [screenForm, setScreenForm] = useState({ label: "", location_in_venue: "", size_inches: "", resolution: "", orientation: "landscape", notes: "" });
   const [screenSaving, setScreenSaving] = useState(false);
   const [screenError, setScreenError] = useState<string | null>(null);
   const [localScreens, setLocalScreens] = useState<Screen[]>(screens);
@@ -169,7 +169,15 @@ export default function VenueDetailTabs({
       const res = await fetch("/api/screens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ venue_id: venueId, ...screenForm }),
+        body: JSON.stringify({
+          venue_id: venueId,
+          label: screenForm.label,
+          location_in_venue: screenForm.location_in_venue || null,
+          size_inches: screenForm.size_inches || null,
+          resolution: screenForm.resolution || null,
+          orientation: screenForm.orientation,
+          notes: screenForm.notes || null,
+        }),
       });
       if (!res.ok) {
         const body = await res.json();
@@ -178,7 +186,7 @@ export default function VenueDetailTabs({
       const newScreen = await res.json();
       setLocalScreens((prev) => [...prev, newScreen]);
       setShowAddScreen(false);
-      setScreenForm({ label: "", size_inches: "", resolution: "", orientation: "landscape" });
+      setScreenForm({ label: "", location_in_venue: "", size_inches: "", resolution: "", orientation: "landscape", notes: "" });
     } catch (err: unknown) {
       setScreenError(err instanceof Error ? err.message : "Error");
     } finally {
@@ -912,35 +920,97 @@ export default function VenueDetailTabs({
             )}
 
             <form onSubmit={handleAddScreen} className="space-y-4">
-              {([
-                { label: "Screen Label *", key: "label", placeholder: "e.g. Main Floor Screen", required: true },
-                { label: "Size (inches)", key: "size_inches", placeholder: "e.g. 55", required: false },
-                { label: "Resolution", key: "resolution", placeholder: "e.g. 1920x1080", required: false },
-              ] as { label: string; key: string; placeholder: string; required: boolean }[]).map(({ label, key, placeholder, required }) => (
-                <div key={key}>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>{label}</label>
+              {/* Screen Label */}
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Screen Name *</label>
+                <input
+                  value={screenForm.label}
+                  onChange={(e) => setScreenForm((prev) => ({ ...prev, label: e.target.value }))}
+                  placeholder="e.g. Main Floor Screen"
+                  required
+                  className="w-full rounded-xl px-4 py-2.5 text-sm"
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
+                />
+              </div>
+
+              {/* Location in venue */}
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Location in Venue</label>
+                <select
+                  value={screenForm.location_in_venue}
+                  onChange={(e) => setScreenForm((prev) => ({ ...prev, location_in_venue: e.target.value }))}
+                  className="w-full rounded-xl px-4 py-2.5 text-sm"
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
+                >
+                  <option value="">Select location…</option>
+                  <option value="lobby">Lobby</option>
+                  <option value="gym_floor">Gym Floor</option>
+                  <option value="cardio_area">Cardio Area</option>
+                  <option value="change_rooms">Change Rooms</option>
+                  <option value="reception">Reception</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {/* Size + Orientation row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Size (inches)</label>
                   <input
-                    value={screenForm[key as keyof typeof screenForm]}
-                    onChange={(e) => setScreenForm((prev) => ({ ...prev, [key]: e.target.value }))}
-                    placeholder={placeholder}
-                    required={required}
+                    type="number"
+                    min={1}
+                    value={screenForm.size_inches}
+                    onChange={(e) => setScreenForm((prev) => ({ ...prev, size_inches: e.target.value }))}
+                    placeholder="e.g. 55"
                     className="w-full rounded-xl px-4 py-2.5 text-sm"
                     style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
                   />
                 </div>
-              ))}
+                <div>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Orientation</label>
+                  <div className="flex gap-2 mt-0.5">
+                    {(["landscape", "portrait"] as const).map((o) => (
+                      <button
+                        key={o}
+                        type="button"
+                        onClick={() => setScreenForm((prev) => ({ ...prev, orientation: o }))}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold capitalize"
+                        style={{
+                          background: screenForm.orientation === o ? "rgba(212,255,79,0.15)" : "rgba(255,255,255,0.05)",
+                          border: screenForm.orientation === o ? "1px solid rgba(212,255,79,0.35)" : "1px solid rgba(255,255,255,0.10)",
+                          color: screenForm.orientation === o ? "#D4FF4F" : "#909090",
+                        }}
+                      >
+                        {o}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
+              {/* Resolution */}
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Orientation</label>
-                <select
-                  value={screenForm.orientation}
-                  onChange={(e) => setScreenForm((prev) => ({ ...prev, orientation: e.target.value }))}
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Resolution</label>
+                <input
+                  value={screenForm.resolution}
+                  onChange={(e) => setScreenForm((prev) => ({ ...prev, resolution: e.target.value }))}
+                  placeholder="1920x1080"
                   className="w-full rounded-xl px-4 py-2.5 text-sm"
                   style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
-                >
-                  <option value="landscape">Landscape</option>
-                  <option value="portrait">Portrait</option>
-                </select>
+                />
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Notes (optional)</label>
+                <textarea
+                  value={screenForm.notes}
+                  onChange={(e) => setScreenForm((prev) => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Any additional notes…"
+                  rows={2}
+                  className="w-full rounded-xl px-4 py-2.5 text-sm"
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none", resize: "vertical" }}
+                />
               </div>
 
               <div className="flex gap-3 pt-2">

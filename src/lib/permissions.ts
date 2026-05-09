@@ -5,6 +5,7 @@ export const NAV_PAGES = [
   { slug: "dashboard",  label: "Dashboard" },
   { slug: "networks",   label: "Networks" },
   { slug: "venues",     label: "Venues" },
+  { slug: "screens",    label: "Screens" },
   { slug: "campaigns",  label: "Campaigns" },
   { slug: "inventory",  label: "Inventory" },
   { slug: "revenue",    label: "Revenue" },
@@ -20,8 +21,8 @@ export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "custom";
 
 // Default permissions per role preset
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
-  admin:   ["dashboard", "networks", "venues", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings"],
-  manager: ["dashboard", "venues", "photos"],
+  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings"],
+  manager: ["dashboard", "venues", "screens", "photos"],
   sales:   ["dashboard", "campaigns", "revenue", "insights"],
   viewer:  ["dashboard", "analytics", "insights"],
   custom:  [], // filled by the custom permissions array

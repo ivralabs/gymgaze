@@ -3,43 +3,73 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET() {
   const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("campaigns")
-    .select("*, campaign_venues(venue_id, venues(name, city))")
-    .order("start_date", { ascending: false });
+    .select(
+      `
+      id,
+      client_name,
+      client_type,
+      contact_name,
+      contact_email,
+      contact_phone,
+      format,
+      status,
+      start_date,
+      end_date,
+      total_value,
+      amount_collected,
+      notes,
+      created_at,
+      campaign_venues(id, venue_id, slot_count)
+    `
+    )
+    .order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
   return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
   const supabase = await createClient();
   const body = await request.json();
-  const { venue_ids, ...rest } = body;
+  const { venue_ids, ...rest } = body as {
+    venue_ids?: string[];
+    client_name: string;
+    client_type?: string;
+    contact_name?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
+    format: string;
+    status?: string;
+    start_date: string;
+    end_date: string;
+    total_value?: number;
+    amount_collected?: number;
+    notes?: string | null;
+  };
 
-  // Build campaign payload — only include known columns
-  // Base columns (always exist per schema.sql)
-  const campaign: Record<string, unknown> = {};
-  if (rest.name) campaign.name = rest.name;
-  if (rest.advertiser !== undefined) campaign.advertiser = rest.advertiser;
-  if (rest.start_date) campaign.start_date = rest.start_date;
-  if (rest.end_date) campaign.end_date = rest.end_date;
-  if (rest.amount_charged_zar !== undefined) campaign.amount_charged_zar = rest.amount_charged_zar;
-  if (rest.notes !== undefined) campaign.notes = rest.notes;
+  // Build campaign payload
+  const campaign: Record<string, unknown> = {
+    client_name:      rest.client_name,
+    client_type:      rest.client_type ?? "agency",
+    format:           rest.format,
+    status:           rest.status ?? "draft",
+    start_date:       rest.start_date,
+    end_date:         rest.end_date,
+    total_value:      rest.total_value ?? 0,
+    amount_collected: rest.amount_collected ?? 0,
+  };
 
-  // Extended columns (added via schema-campaigns-v2.sql migration)
-  // Wrapped defensively — if migration hasn't run, Supabase will return error
-  // and the main insert will still fail gracefully
-  if (rest.deal_type !== undefined) campaign.deal_type = rest.deal_type;
-  if (rest.cpm_rate !== undefined) campaign.cpm_rate = rest.cpm_rate;
-  if (rest.revenue_share_percent !== undefined) campaign.revenue_share_percent = rest.revenue_share_percent;
-  if (rest.gym_revenue_share_percent !== undefined) campaign.gym_revenue_share_percent = rest.gym_revenue_share_percent;
-  if (rest.contact_person !== undefined) campaign.contact_person = rest.contact_person;
+  if (rest.contact_name  !== undefined) campaign.contact_name  = rest.contact_name;
   if (rest.contact_email !== undefined) campaign.contact_email = rest.contact_email;
+  if (rest.contact_phone !== undefined) campaign.contact_phone = rest.contact_phone;
+  if (rest.notes         !== undefined) campaign.notes         = rest.notes;
 
-  // Insert campaign
   const { data: campaignData, error: campaignError } = await supabase
     .from("campaigns")
     .insert(campaign)
@@ -50,11 +80,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: campaignError.message }, { status: 400 });
   }
 
-  // Link venues if provided
-  if (venue_ids && Array.isArray(venue_ids) && venue_ids.length > 0) {
-    const junctions = venue_ids.map((vid: string) => ({
+  // Link venues
+  if (venue_ids && venue_ids.length > 0) {
+    const junctions = venue_ids.map((vid) => ({
       campaign_id: campaignData.id,
       venue_id: vid,
+      slot_count: 1,
     }));
 
     const { error: junctionError } = await supabase
@@ -62,10 +93,7 @@ export async function POST(request: Request) {
       .insert(junctions);
 
     if (junctionError) {
-      return NextResponse.json(
-        { error: junctionError.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: junctionError.message }, { status: 400 });
     }
   }
 

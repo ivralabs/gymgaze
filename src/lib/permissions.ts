@@ -2,17 +2,18 @@
 // Nav slugs map 1:1 to sidebar href segments
 
 export const NAV_PAGES = [
-  { slug: "dashboard",  label: "Dashboard" },
-  { slug: "networks",   label: "Networks" },
-  { slug: "venues",     label: "Venues" },
-  { slug: "screens",    label: "Screens" },
-  { slug: "campaigns",  label: "Campaigns" },
-  { slug: "inventory",  label: "Inventory" },
-  { slug: "revenue",    label: "Revenue" },
-  { slug: "analytics",  label: "Analytics" },
-  { slug: "photos",     label: "Proof Of Flight" },
-  { slug: "insights",   label: "Insights" },
-  { slug: "settings",   label: "Settings" },
+  { slug: "dashboard",    label: "Dashboard" },
+  { slug: "networks",     label: "Networks" },
+  { slug: "venues",       label: "Venues" },
+  { slug: "screens",      label: "Screens" },
+  { slug: "campaigns",    label: "Campaigns" },
+  { slug: "sponsorships", label: "Sponsorships" },
+  { slug: "inventory",    label: "Inventory" },
+  { slug: "revenue",      label: "Revenue" },
+  { slug: "analytics",    label: "Analytics" },
+  { slug: "photos",       label: "Proof Of Flight" },
+  { slug: "insights",     label: "Insights" },
+  { slug: "settings",     label: "Settings" },
 ] as const;
 
 export type NavSlug = typeof NAV_PAGES[number]["slug"];
@@ -21,9 +22,9 @@ export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "custom";
 
 // Default permissions per role preset
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
-  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings"],
+  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "sponsorships", "inventory", "revenue", "analytics", "photos", "insights", "settings"],
   manager: ["dashboard", "venues", "screens", "photos"],
-  sales:   ["dashboard", "campaigns", "revenue", "insights"],
+  sales:   ["dashboard", "campaigns", "sponsorships", "revenue", "insights"],
   viewer:  ["dashboard", "analytics", "insights"],
   custom:  [], // filled by the custom permissions array
 };

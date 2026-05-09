@@ -20,6 +20,7 @@ import {
   X,
   Lightbulb,
   Layers,
+  FileText,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
@@ -37,6 +38,7 @@ const ALL_NAV_ITEMS = [
   { href: "/admin/photos",    slug: "photos",    icon: Image,           label: "Proof Of Flight" },
   { href: "/admin/insights",  slug: "insights",  icon: Lightbulb,       label: "Insights" },
   { href: "/admin/settings",  slug: "settings",  icon: Settings,        label: "Settings" },
+  { href: "/admin/media-kit", slug: "media-kit", icon: FileText,        label: "Media Kit" },
 ];
 
 function NavContent({

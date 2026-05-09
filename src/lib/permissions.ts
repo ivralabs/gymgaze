@@ -14,6 +14,7 @@ export const NAV_PAGES = [
   { slug: "photos",       label: "Proof Of Flight" },
   { slug: "insights",     label: "Insights" },
   { slug: "settings",     label: "Settings" },
+  { slug: "media-kit",    label: "Media Kit" },
 ] as const;
 
 export type NavSlug = typeof NAV_PAGES[number]["slug"];
@@ -22,7 +23,7 @@ export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "custom";
 
 // Default permissions per role preset
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
-  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "sponsorships", "inventory", "revenue", "analytics", "photos", "insights", "settings"],
+  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "sponsorships", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit"],
   manager: ["dashboard", "venues", "screens", "photos"],
   sales:   ["dashboard", "campaigns", "sponsorships", "revenue", "insights"],
   viewer:  ["dashboard", "analytics", "insights"],

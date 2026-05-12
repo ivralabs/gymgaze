@@ -93,6 +93,14 @@ export default async function CampaignDetailPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const canEdit = (profileData?.role ?? "viewer") === "admin";
+
   const { data: campaign } = await supabase
     .from("campaigns")
     .select(
@@ -173,14 +181,16 @@ export default async function CampaignDetailPage({
             {campaign.client_type === "agency" ? "Agency" : "Direct Brand"}
           </p>
         </div>
-        <Link
-          href={`/admin/campaigns/${id}/edit`}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold flex-shrink-0"
-          style={{ background: "rgba(255,255,255,0.07)", color: "#C8C8C8", border: "1px solid rgba(255,255,255,0.10)" }}
-        >
-          <Pencil size={14} strokeWidth={2} />
-          Edit
-        </Link>
+        {canEdit && (
+          <Link
+            href={`/admin/campaigns/${id}/edit`}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold flex-shrink-0"
+            style={{ background: "rgba(255,255,255,0.07)", color: "#C8C8C8", border: "1px solid rgba(255,255,255,0.10)" }}
+          >
+            <Pencil size={14} strokeWidth={2} />
+            Edit
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -260,8 +270,8 @@ export default async function CampaignDetailPage({
 
         {/* ── Right column ── */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Financial Card */}
-          <div className="rounded-2xl p-6" style={cardStyle}>
+          {/* Financial Card — hidden for non-admin */}
+          {canEdit && <div className="rounded-2xl p-6" style={cardStyle}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(212,255,79,0.08)" }}>
@@ -338,7 +348,7 @@ export default async function CampaignDetailPage({
                 </div>
               </div>
             )}
-          </div>
+          </div>}
 
           {/* Venues section */}
           <div className="rounded-2xl overflow-hidden" style={cardStyle}>

@@ -22,6 +22,8 @@ import {
   Layers,
   FileText,
   Calculator,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
@@ -47,6 +49,8 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/rate-card",   slug: "rate-card",   icon: Calculator,      label: "Rate Card" },
       { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Insights" },
       { href: "/admin/media-kit",   slug: "media-kit",   icon: FileText,        label: "Media Kit" },
+      { href: "/admin/pipeline",    slug: "pipeline",    icon: TrendingUp,      label: "Pipeline" },
+      { href: "/admin/contacts",    slug: "contacts",    icon: Users,           label: "Contacts" },
     ],
   },
   {

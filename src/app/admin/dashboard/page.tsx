@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
 import PhotoApprovalButtons from "./photo-approval-buttons";
 import RadialProgress from "@/components/gymgaze/RadialProgress";
+import CommissionCard from "./CommissionCard";
 
 function formatCurrency(val: number) {
   return `R ${val.toLocaleString("en-ZA")}`;
@@ -19,11 +20,39 @@ export default async function AdminDashboard() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name")
+    .select("full_name, role")
     .eq("id", user.id)
     .maybeSingle();
 
   const adminName = profile?.full_name ?? "Mlungisi";
+  const userRole = profile?.role ?? "viewer";
+
+  // Sales: fetch their MTD campaigns
+  const SALES_MONTHLY_TARGET = 50000;
+  let salesCampaignCount = 0;
+  let salesRevenueMTD = 0;
+
+  if (userRole === "sales") {
+    const _salesNow = new Date();
+    const _salesYear = _salesNow.getFullYear();
+    const _salesMo = String(_salesNow.getMonth() + 1).padStart(2, "0");
+    const _monthStart = `${_salesYear}-${_salesMo}-01`;
+    const _nextMonth = new Date(_salesYear, _salesNow.getMonth() + 1, 1);
+    const _monthEnd = _nextMonth.toISOString().slice(0, 10);
+
+    const { data: salesCampaigns } = await supabase
+      .from("campaigns")
+      .select("id, total_value")
+      .eq("created_by", user.id)
+      .gte("created_at", _monthStart)
+      .lt("created_at", _monthEnd);
+
+    salesCampaignCount = (salesCampaigns ?? []).length;
+    salesRevenueMTD = (salesCampaigns ?? []).reduce(
+      (s, c) => s + (Number(c.total_value) || 0),
+      0
+    );
+  }
 
   const { count: networksCount } = await supabase
     .from("gym_brands")
@@ -75,6 +104,16 @@ export default async function AdminDashboard() {
 
   return (
     <div className="p-4 md:p-8">
+      {/* Sales Commission Card — only for sales role */}
+      {userRole === "sales" && (
+        <CommissionCard
+          campaignCount={salesCampaignCount}
+          revenueMTD={salesRevenueMTD}
+          target={SALES_MONTHLY_TARGET}
+          month={now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" })}
+        />
+      )}
+
       {/* Hero Panel */}
       <div
         className="glass-panel relative overflow-hidden rounded-2xl mb-8"

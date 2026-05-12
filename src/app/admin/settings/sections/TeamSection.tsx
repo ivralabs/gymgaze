@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import {
   Users, UserPlus, X, ChevronDown, Shield, Check, Lock,
   LayoutDashboard, Building2, MapPin, Megaphone, Layers,
-  DollarSign, BarChart3, Image, Lightbulb, Settings,
+  DollarSign, BarChart3, Image, Lightbulb, Settings, Calculator,
+  Monitor, Sparkles, FileText,
 } from "lucide-react";
 import Toast, { useToast } from "@/components/gymgaze/Toast";
 import {
@@ -42,16 +43,20 @@ const SECTION_LABEL: React.CSSProperties = {
 };
 
 const PAGE_ICONS: Record<string, React.ElementType> = {
-  dashboard: LayoutDashboard,
-  networks:  Building2,
-  venues:    MapPin,
-  campaigns: Megaphone,
-  inventory: Layers,
-  revenue:   DollarSign,
-  analytics: BarChart3,
-  photos:    Image,
-  insights:  Lightbulb,
-  settings:  Settings,
+  dashboard:    LayoutDashboard,
+  networks:     Building2,
+  venues:       MapPin,
+  screens:      Monitor,
+  campaigns:    Megaphone,
+  sponsorships: Sparkles,
+  inventory:    Layers,
+  revenue:      DollarSign,
+  analytics:    BarChart3,
+  photos:       Image,
+  insights:     Lightbulb,
+  settings:     Settings,
+  "media-kit":  FileText,
+  "rate-card":  Calculator,
 };
 
 type Profile = {

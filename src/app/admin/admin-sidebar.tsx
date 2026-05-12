@@ -21,25 +21,78 @@ import {
   Lightbulb,
   Layers,
   FileText,
+  Calculator,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
 
-const ALL_NAV_ITEMS = [
-  { href: "/admin/dashboard", slug: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/networks",  slug: "networks",  icon: Building2,      label: "Networks" },
-  { href: "/admin/venues",    slug: "venues",    icon: MapPin,          label: "Venues" },
-  { href: "/admin/screens",   slug: "screens",   icon: Monitor,         label: "Screens" },
-  { href: "/admin/campaigns",     slug: "campaigns",     icon: Megaphone,  label: "Campaigns" },
-  { href: "/admin/sponsorships",   slug: "sponsorships",  icon: Sparkles,   label: "Sponsorships" },
-  { href: "/admin/inventory",      slug: "inventory",     icon: Layers,     label: "Inventory" },
-  { href: "/admin/revenue",   slug: "revenue",   icon: DollarSign,      label: "Revenue" },
-  { href: "/admin/analytics", slug: "analytics", icon: BarChart3,       label: "Analytics" },
-  { href: "/admin/photos",    slug: "photos",    icon: Image,           label: "Proof Of Flight" },
-  { href: "/admin/insights",  slug: "insights",  icon: Lightbulb,       label: "Insights" },
-  { href: "/admin/settings",  slug: "settings",  icon: Settings,        label: "Settings" },
-  { href: "/admin/media-kit", slug: "media-kit", icon: FileText,        label: "Media Kit" },
+// ── Nav structure with groups ─────────────────────────────────────────────────
+
+type NavItem = {
+  href: string;
+  slug: NavSlug;
+  icon: React.ElementType;
+  label: string;
+};
+
+type NavGroup = {
+  label: string;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "SELL",
+    items: [
+      { href: "/admin/rate-card",   slug: "rate-card",   icon: Calculator,      label: "Rate Card" },
+      { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Insights" },
+      { href: "/admin/media-kit",   slug: "media-kit",   icon: FileText,        label: "Media Kit" },
+    ],
+  },
+  {
+    label: "OVERVIEW",
+    items: [
+      { href: "/admin/dashboard",   slug: "dashboard",   icon: LayoutDashboard, label: "Dashboard" },
+      { href: "/admin/networks",    slug: "networks",    icon: Building2,       label: "Networks" },
+    ],
+  },
+  {
+    label: "VENUES & SCREENS",
+    items: [
+      { href: "/admin/venues",      slug: "venues",      icon: MapPin,          label: "Venues" },
+      { href: "/admin/screens",     slug: "screens",     icon: Monitor,         label: "Screens" },
+      { href: "/admin/inventory",   slug: "inventory",   icon: Layers,          label: "Inventory" },
+    ],
+  },
+  {
+    label: "CAMPAIGNS",
+    items: [
+      { href: "/admin/campaigns",    slug: "campaigns",    icon: Megaphone,  label: "Campaigns" },
+      { href: "/admin/sponsorships", slug: "sponsorships", icon: Sparkles,   label: "Sponsorships" },
+    ],
+  },
+  {
+    label: "FINANCE",
+    items: [
+      { href: "/admin/revenue",     slug: "revenue",     icon: DollarSign,      label: "Revenue" },
+    ],
+  },
+  {
+    label: "REPORTING",
+    items: [
+      { href: "/admin/analytics",   slug: "analytics",   icon: BarChart3,       label: "Analytics" },
+      { href: "/admin/photos",      slug: "photos",      icon: Image,           label: "Proof Of Flight" },
+    ],
+  },
+  {
+    label: "ACCOUNT",
+    items: [
+      { href: "/admin/settings",    slug: "settings",    icon: Settings,        label: "Settings" },
+    ],
+  },
 ];
+
+// ── NavContent ─────────────────────────────────────────────────────────────────
 
 function NavContent({
   pathname,
@@ -52,49 +105,75 @@ function NavContent({
   onLogout: () => void;
   allowedSlugs: NavSlug[];
 }) {
-  const navItems = ALL_NAV_ITEMS.filter((item) => allowedSlugs.includes(item.slug as NavSlug));
+  // Filter groups — only show groups that have at least one allowed item
+  const visibleGroups = NAV_GROUPS
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => allowedSlugs.includes(item.slug)),
+    }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <>
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map(({ href, icon: Icon, label }) => {
-          const isActive = pathname === href || pathname.startsWith(href + "/");
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNavigate}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150"
+      <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+        {visibleGroups.map((group) => (
+          <div key={group.label}>
+            {/* Group label */}
+            <p
+              className="px-3 mb-1"
               style={{
-                color: isActive ? "#D4FF4F" : "#A3A3A3",
-                backgroundColor: isActive ? "rgba(212,255,79,0.08)" : "transparent",
-                boxShadow: isActive ? "inset 3px 0 0 rgba(212,255,79,0.15)" : "none",
-                background: isActive
-                  ? "linear-gradient(90deg, rgba(212,255,79,0.12) 0%, rgba(212,255,79,0.04) 100%)"
-                  : "transparent",
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(212,255,79,0.04)";
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#A3A3A3";
-                }
+                fontSize: "10px",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.25)",
+                textTransform: "uppercase",
               }}
             >
-              <Icon size={18} color={isActive ? "#D4FF4F" : "#909090"} strokeWidth={2} />
-              {label}
-            </Link>
-          );
-        })}
+              {group.label}
+            </p>
+
+            {/* Group items */}
+            <div className="space-y-0.5">
+              {group.items.map(({ href, icon: Icon, label }) => {
+                const isActive = pathname === href || pathname.startsWith(href + "/");
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={onNavigate}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150"
+                    style={{
+                      color: isActive ? "#D4FF4F" : "#A3A3A3",
+                      background: isActive
+                        ? "linear-gradient(90deg, rgba(212,255,79,0.12) 0%, rgba(212,255,79,0.04) 100%)"
+                        : "transparent",
+                      boxShadow: isActive ? "inset 3px 0 0 rgba(212,255,79,0.15)" : "none",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(212,255,79,0.04)";
+                        (e.currentTarget as HTMLAnchorElement).style.color = "#FFFFFF";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+                        (e.currentTarget as HTMLAnchorElement).style.color = "#A3A3A3";
+                      }
+                    }}
+                  >
+                    <Icon size={18} color={isActive ? "#D4FF4F" : "#909090"} strokeWidth={2} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Logout */}
-      <div className="px-3 pb-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="px-3 pb-4 flex-shrink-0" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
         <button
           onClick={onLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-4"
@@ -116,11 +195,13 @@ function NavContent({
   );
 }
 
+// ── AdminSidebar ───────────────────────────────────────────────────────────────
+
 export default function AdminSidebar() {
   const pathname = usePathname();
   const supabase = createClient();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [allowedSlugs, setAllowedSlugs] = useState<NavSlug[]>(ALL_NAV_ITEMS.map((i) => i.slug as NavSlug));
+  const [allowedSlugs, setAllowedSlugs] = useState<NavSlug[]>([]);
 
   // Load user's permissions on mount
   useEffect(() => {
@@ -187,7 +268,7 @@ export default function AdminSidebar() {
     <>
       {/* ── Desktop sidebar (md+) ── */}
       <aside
-        className="hidden md:flex glass-sidebar flex-col h-full dark-scroll overflow-y-auto"
+        className="hidden md:flex glass-sidebar flex-col h-full"
         style={{ width: "240px", minWidth: "240px", willChange: "transform" }}
       >
         {logoArea}
@@ -240,7 +321,7 @@ export default function AdminSidebar() {
 
       {/* ── Mobile drawer panel ── */}
       <div
-        className="md:hidden fixed top-0 left-0 bottom-0 z-50 flex flex-col glass-sidebar dark-scroll overflow-y-auto transition-transform duration-300"
+        className="md:hidden fixed top-0 left-0 bottom-0 z-50 flex flex-col glass-sidebar overflow-y-auto transition-transform duration-300"
         style={{
           width: "280px",
           transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",

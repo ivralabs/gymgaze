@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Plus, Sparkles, Eye, Pencil, PauseCircle, Newspaper, Trophy, Cloud } from "lucide-react";
 import CreateSponsorshipModal from "./CreateSponsorshipModal";
+import { useRole } from "@/lib/useRole";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -271,6 +272,7 @@ export default function SponsorshipsClient({ sponsorships: initial, venues }: Pr
   const [statusFilter, setStatusFilter] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [preselectedWidget, setPreselectedWidget] = useState<WidgetType | undefined>();
+  const { canCreate, canEdit } = useRole();
 
   // Find active sponsors per widget
   const activeSponsorMap = useMemo(() => {
@@ -355,14 +357,16 @@ export default function SponsorshipsClient({ sponsorships: initial, venues }: Pr
             </span>
           )}
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
-        >
-          <Plus size={14} strokeWidth={2.5} />
-          Add Sponsorship
-        </button>
+        {canCreate && (
+          <button
+            onClick={() => handleOpenModal()}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+          >
+            <Plus size={14} strokeWidth={2.5} />
+            Add Sponsorship
+          </button>
+        )}
       </div>
 
       {/* Empty state */}
@@ -381,14 +385,16 @@ export default function SponsorshipsClient({ sponsorships: initial, venues }: Pr
           <p className="text-sm mb-5" style={{ color: "#B0B0B0" }}>
             Monetise News, Sports and Weather widgets with brand sponsorships.
           </p>
-          <button
-            onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
-            style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            Add Sponsorship
-          </button>
+          {canCreate && (
+            <button
+              onClick={() => handleOpenModal()}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+            >
+              <Plus size={16} strokeWidth={2.5} />
+              Add Sponsorship
+            </button>
+          )}
         </div>
       ) : filtered.length === 0 ? (
         <div
@@ -511,15 +517,17 @@ export default function SponsorshipsClient({ sponsorships: initial, venues }: Pr
                             <Eye size={12} strokeWidth={2} />
                             View
                           </Link>
-                          <Link
-                            href={`/admin/sponsorships/${s.id}?edit=1`}
-                            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors hover:opacity-80"
-                            style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}
-                          >
-                            <Pencil size={12} strokeWidth={2} />
-                            Edit
-                          </Link>
-                          {(s.status === "active" || s.status === "paused") && (
+                          {canEdit && (
+                            <Link
+                              href={`/admin/sponsorships/${s.id}?edit=1`}
+                              className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                              style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}
+                            >
+                              <Pencil size={12} strokeWidth={2} />
+                              Edit
+                            </Link>
+                          )}
+                          {canEdit && (s.status === "active" || s.status === "paused") && (
                             <button
                               onClick={() => handlePause(s.id, s.status)}
                               className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors hover:opacity-80"
@@ -570,8 +578,8 @@ export default function SponsorshipsClient({ sponsorships: initial, venues }: Pr
         </>
       )}
 
-      {/* Create Sponsorship Modal */}
-      {showModal && (
+      {/* Create Sponsorship Modal — only reachable if canCreate */}
+      {showModal && canCreate && (
         <CreateSponsorshipModal
           venues={venues}
           sponsorships={sponsorships}

@@ -1,21 +1,21 @@
-export default function RateCardPage() {
-  return (
-    <div className="p-8">
-      <h1
-        style={{
-          fontFamily: "Inter Tight, sans-serif",
-          fontWeight: 800,
-          fontSize: "1.6rem",
-          color: "#FFFFFF",
-          letterSpacing: "-0.02em",
-          marginBottom: "8px",
-        }}
-      >
-        Rate Card
-      </h1>
-      <p style={{ color: "#8A8A8A", fontSize: "14px" }}>
-        CPM calculator, impression estimates, and quick quote builder — coming in Phase 2.
-      </p>
-    </div>
-  );
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import RateCardClient from "./RateCardClient";
+
+export const metadata = {
+  title: "Rate Card | GymGaze Admin",
+};
+
+export default async function RateCardPage() {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: venues } = await supabase
+    .from("venues")
+    .select("id, name, city, province, active_members, monthly_entries, screens(id, is_active)")
+    .order("name");
+
+  return <RateCardClient venues={venues ?? []} />;
 }

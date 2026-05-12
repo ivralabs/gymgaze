@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Plus, Megaphone, Eye, Pencil } from "lucide-react";
 import CreateCampaignModal from "./CreateCampaignModal";
+import { useRole } from "@/lib/useRole";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -39,6 +40,8 @@ export interface VenueBrief {
 interface Props {
   campaigns: Campaign[];
   venues: VenueBrief[];
+  // canCreate/canEdit resolved server-side and passed down for SSR accuracy;
+  // client useRole() is the source of truth once loaded
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -146,6 +149,7 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
   const [statusFilter, setStatusFilter] = useState("all");
   const [clientTypeFilter, setClientTypeFilter] = useState("all");
   const [showModal, setShowModal] = useState(false);
+  const { canCreate, canEdit, loading: roleLoading } = useRole();
 
   const filtered = useMemo(() => {
     return campaigns.filter((c) => {
@@ -192,14 +196,16 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
           )}
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
-        >
-          <Plus size={14} strokeWidth={2.5} />
-          Add Campaign
-        </button>
+        {canCreate && (
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+          >
+            <Plus size={14} strokeWidth={2.5} />
+            Add Campaign
+          </button>
+        )}
       </div>
 
       {/* Empty state */}
@@ -218,14 +224,16 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
           <p className="text-sm mb-5" style={{ color: "#B0B0B0" }}>
             Create your first campaign to start tracking ad revenue.
           </p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
-            style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            Add Campaign
-          </button>
+          {canCreate && (
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+            >
+              <Plus size={16} strokeWidth={2.5} />
+              Add Campaign
+            </button>
+          )}
         </div>
       ) : filtered.length === 0 ? (
         <div
@@ -432,8 +440,8 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
         </>
       )}
 
-      {/* Create Campaign Modal */}
-      {showModal && (
+      {/* Create Campaign Modal — only reachable if canCreate */}
+      {showModal && canCreate && (
         <CreateCampaignModal
           venues={venues}
           onClose={() => setShowModal(false)}

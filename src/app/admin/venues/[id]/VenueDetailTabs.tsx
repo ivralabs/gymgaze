@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import EditVenueButton from "./EditVenueButton";
+import { useRole } from "@/lib/useRole";
 
 type Tab = "overview" | "screens" | "contract" | "photos" | "revenue";
 
@@ -147,6 +148,7 @@ export default function VenueDetailTabs({
   photos,
   venueId,
 }: Props) {
+  const { canEdit } = useRole();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [photoFilter, setPhotoFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
   const [areaFilter, setAreaFilter] = useState<string>("all");
@@ -270,7 +272,7 @@ export default function VenueDetailTabs({
             {brandName ? `${brandName} \u00b7 ` : ""}{venue.city ?? ""}
           </p>
         </div>
-        <EditVenueButton venue={venue} />
+        {canEdit && <EditVenueButton venue={venue} />}
       </div>
 
       {/* Tabs — scrollable on mobile */}

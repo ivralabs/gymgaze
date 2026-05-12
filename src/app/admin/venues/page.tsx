@@ -1,14 +1,23 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AddVenueForm from "./add-venue-form";
 import VenuesGrid from "./VenuesGrid";
+import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
 
 export default async function VenuesPage() {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
+
+  // Resolve role for conditional UI
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, permissions")
+    .eq("id", user.id)
+    .single();
+  const userRole = ((profile?.role ?? "viewer") as RolePreset);
+  const canEdit = userRole === "admin";
 
   // Rich data fetch for cards
   const { data: venues } = await supabase
@@ -51,9 +60,11 @@ export default async function VenuesPage() {
             Venues
           </h1>
           <p style={{ color: "#999", marginTop: "0.5rem" }}>All gym locations across your network</p>
-          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <AddVenueForm brands={brands ?? []} />
-          </div>
+          {canEdit && (
+            <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              <AddVenueForm brands={brands ?? []} />
+            </div>
+          )}
         </div>
       </div>
 

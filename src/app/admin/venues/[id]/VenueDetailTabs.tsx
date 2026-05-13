@@ -48,6 +48,7 @@ interface Venue {
   manager_phone: string | null;
   operating_hours: Record<string, { open: string; close: string; closed: boolean }> | null;
   gym_brands: GymBrand | null;
+  cover_image_url: string | null;
 }
 
 interface Screen {
@@ -154,6 +155,34 @@ export default function VenueDetailTabs({
 }: Props) {
   const { canEdit } = useRole();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [coverUrl, setCoverUrl] = useState<string | null>(venue.cover_image_url ?? null);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  async function handleCoverUpload(file: File | null) {
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`/api/venues/${venueId}/cover`, { method: "POST", body: fd });
+      if (res.ok) {
+        const data = await res.json();
+        setCoverUrl(data.cover_image_url + "?t=" + Date.now());
+      }
+    } finally {
+      setCoverUploading(false);
+    }
+  }
+
+  async function handleCoverRemove() {
+    setCoverUploading(true);
+    try {
+      await fetch(`/api/venues/${venueId}/cover`, { method: "DELETE" });
+      setCoverUrl(null);
+    } finally {
+      setCoverUploading(false);
+    }
+  }
   const [photoFilter, setPhotoFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
   const [areaFilter, setAreaFilter] = useState<string>("all");
   const [downloading, setDownloading] = useState<string | null>(null);
@@ -329,37 +358,60 @@ export default function VenueDetailTabs({
 
   return (
     <div className="p-4 md:p-8">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Link
-          href="/admin/venues"
-          className="p-2 rounded-xl flex-shrink-0"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,255,255,0.10)",
-            color: "#C8C8C8",
-          }}
-        >
-          <ArrowLeft size={18} strokeWidth={2} />
-        </Link>
-        <div className="flex-1 min-w-0">
-          <h1
-            className="text-2xl font-bold text-white truncate"
-            style={{
-              fontFamily: "Inter Tight, sans-serif",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {venue.name}
-          </h1>
-          <p className="text-sm mt-0.5" style={{ color: "#B0B0B0" }}>
-            {brandName ? `${brandName} \u00b7 ` : ""}{venue.city ?? ""}
-          </p>
+      {/* Hero header — cover image or gradient */}
+      <div
+        className="relative rounded-2xl overflow-hidden mb-6"
+        style={{
+          minHeight: coverUrl ? 180 : 100,
+          background: coverUrl
+            ? `url(${coverUrl}) center/cover no-repeat`
+            : "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%)" }} />
+        <div className="relative z-10 flex items-end justify-between p-5 md:p-6" style={{ minHeight: coverUrl ? 180 : 100 }}>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/venues"
+              className="p-2 rounded-xl flex-shrink-0"
+              style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff" }}
+            >
+              <ArrowLeft size={18} strokeWidth={2} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}>
+                {venue.name}
+              </h1>
+              <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>
+                {brandName ? `${brandName} · ` : ""}{venue.city ?? ""}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {canEdit && (
+              <>
+                <label
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
+                  style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: coverUploading ? "#888" : "#fff", border: "1px solid rgba(255,255,255,0.15)", pointerEvents: coverUploading ? "none" : "auto" }}
+                >
+                  <Upload size={13} strokeWidth={2} />
+                  {coverUploading ? "Uploading..." : coverUrl ? "Change Cover" : "Set Cover"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCoverUpload(e.target.files?.[0] ?? null)} />
+                </label>
+                {coverUrl && (
+                  <button onClick={handleCoverRemove} disabled={coverUploading} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold" style={{ background: "rgba(239,68,68,0.15)", backdropFilter: "blur(8px)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" }}>
+                    <Trash2 size={13} strokeWidth={2} />
+                    Remove
+                  </button>
+                )}
+                <EditVenueButton venue={venue} />
+              </>
+            )}
+          </div>
         </div>
-        {canEdit && <EditVenueButton venue={venue} />}
       </div>
+
 
       {/* Tabs — scrollable on mobile */}
       <div

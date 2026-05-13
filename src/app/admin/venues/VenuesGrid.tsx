@@ -21,6 +21,7 @@ type Venue = {
   gym_brands: Brand | Brand[] | null;
   screens: { id: string; is_active: boolean | null }[] | null;
   venue_photos: { id: string; status: string | null }[] | null;
+  cover_image_url: string | null;
 };
 
 function getBrand(raw: Brand | Brand[] | null): Brand | null {
@@ -69,15 +70,21 @@ function VenueCard({ venue }: { venue: Venue }) {
       onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.18)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.border = ""; }}
     >
-      {/* Card header — colour band with initials */}
+      {/* Card header — cover image or colour band */}
       <div
         className="relative flex items-end px-5 pt-5 pb-4"
         style={{
-          background: `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
+          background: venue.cover_image_url
+            ? `url(${venue.cover_image_url}) center/cover no-repeat`
+            : `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           minHeight: 80,
         }}
       >
+        {/* Dark gradient overlay when cover image is set — keeps text readable */}
+        {venue.cover_image_url && (
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)", borderRadius: 0 }} />
+        )}
         {/* Avatar */}
         <div
           className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mr-3"

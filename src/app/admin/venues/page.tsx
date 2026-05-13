@@ -25,6 +25,7 @@ export default async function VenuesPage() {
     .select(`
       id, name, city, province, region, status,
       active_members, daily_entries, weekly_entries, monthly_entries,
+      cover_image_url,
       gym_brands(id, name, logo_url, primary_color),
       screens(id, is_active),
       venue_photos(id, status)

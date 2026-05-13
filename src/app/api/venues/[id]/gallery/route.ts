@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { createClient as createPureServiceClient } from "@supabase/supabase-js";
+
+function serviceClient() {
+  return createPureServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
 
 // GET /api/venues/[id]/gallery — fetch showcase photos for a venue
 export async function GET(
@@ -65,8 +74,8 @@ export async function POST(
   const ext = file.name.split(".").pop() ?? "jpg";
   const storagePath = `${id}/showcase/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-  // Use service client for storage + DB writes (bypasses RLS)
-  const service = await createServiceClient();
+  // Use PURE service client for storage + DB writes (bypasses RLS — no cookies)
+  const service = serviceClient();
 
   const arrayBuffer = await file.arrayBuffer();
   const { error: uploadError } = await service.storage
@@ -127,8 +136,8 @@ export async function DELETE(
   const photoId = searchParams.get("photo_id");
   if (!photoId) return NextResponse.json({ error: "photo_id required" }, { status: 400 });
 
-  // Use service client for deletes (bypasses RLS)
-  const service = await createServiceClient();
+  // Use PURE service client for deletes (bypasses RLS — no cookies)
+  const service = serviceClient();
 
   const { data: photo } = await service
     .from("venue_photos")

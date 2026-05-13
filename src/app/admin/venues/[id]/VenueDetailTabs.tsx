@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -49,6 +49,7 @@ interface Venue {
   operating_hours: Record<string, { open: string; close: string; closed: boolean }> | null;
   gym_brands: GymBrand | null;
   cover_image_url: string | null;
+  cover_position: number | null;
 }
 
 interface Screen {
@@ -156,7 +157,22 @@ export default function VenueDetailTabs({
   const { canEdit } = useRole();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [coverUrl, setCoverUrl] = useState<string | null>(venue.cover_image_url ?? null);
+  const [coverPosition, setCoverPosition] = useState<number>(venue.cover_position ?? 50);
   const [coverUploading, setCoverUploading] = useState(false);
+  const coverSaveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handlePositionChange(val: number) {
+    setCoverPosition(val);
+    // Debounce save — persist 600ms after user stops dragging
+    if (coverSaveTimer.current) clearTimeout(coverSaveTimer.current);
+    coverSaveTimer.current = setTimeout(async () => {
+      await fetch(`/api/venues/${venueId}/cover-position`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cover_position: val }),
+      });
+    }, 600);
+  }
 
   async function handleCoverUpload(file: File | null) {
     if (!file) return;
@@ -362,45 +378,52 @@ export default function VenueDetailTabs({
       <div
         className="relative rounded-2xl overflow-hidden mb-6"
         style={{
-          minHeight: coverUrl ? 180 : 100,
-          background: coverUrl
-            ? `url(${coverUrl}) center/cover no-repeat`
-            : "rgba(255,255,255,0.04)",
+          minHeight: coverUrl ? 200 : 100,
+          backgroundImage: coverUrl ? `url(${coverUrl})` : undefined,
+          backgroundSize: coverUrl ? "cover" : undefined,
+          backgroundPosition: coverUrl ? `center ${coverPosition}%` : undefined,
+          background: coverUrl ? undefined : "rgba(255,255,255,0.04)",
           border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%)" }} />
-        <div className="relative z-10 flex items-end justify-between p-5 md:p-6" style={{ minHeight: coverUrl ? 180 : 100 }}>
+        {/* Strong gradient overlay */}
+        {coverUrl && <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)" }} />}
+
+        <div className="relative z-10 flex items-end justify-between p-5 md:p-6" style={{ minHeight: coverUrl ? 200 : 100 }}>
           <div className="flex items-center gap-3">
             <Link
               href="/admin/venues"
               className="p-2 rounded-xl flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: "#fff" }}
+              style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)", color: "#fff", border: "1px solid rgba(255,255,255,0.12)" }}
             >
               <ArrowLeft size={18} strokeWidth={2} />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}>
+              <h1
+                className="text-2xl font-bold text-white"
+                style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", textShadow: coverUrl ? "0 2px 8px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.8)" : "none" }}
+              >
                 {venue.name}
               </h1>
-              <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>
+              <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.75)", textShadow: coverUrl ? "0 1px 4px rgba(0,0,0,0.9)" : "none" }}>
                 {brandName ? `${brandName} · ` : ""}{venue.city ?? ""}
               </p>
             </div>
           </div>
+
           <div className="flex items-center gap-2 flex-shrink-0">
             {canEdit && (
               <>
                 <label
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
-                  style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", color: coverUploading ? "#888" : "#fff", border: "1px solid rgba(255,255,255,0.15)", pointerEvents: coverUploading ? "none" : "auto" }}
+                  style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)", color: coverUploading ? "#888" : "#fff", border: "1px solid rgba(255,255,255,0.15)", pointerEvents: coverUploading ? "none" : "auto" }}
                 >
                   <Upload size={13} strokeWidth={2} />
-                  {coverUploading ? "Uploading..." : coverUrl ? "Change Cover" : "Set Cover"}
+                  {coverUploading ? "Uploading..." : coverUrl ? "Change" : "Set Cover"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCoverUpload(e.target.files?.[0] ?? null)} />
                 </label>
                 {coverUrl && (
-                  <button onClick={handleCoverRemove} disabled={coverUploading} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold" style={{ background: "rgba(239,68,68,0.15)", backdropFilter: "blur(8px)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" }}>
+                  <button onClick={handleCoverRemove} disabled={coverUploading} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)", color: "#F87171", border: "1px solid rgba(239,68,68,0.25)" }}>
                     <Trash2 size={13} strokeWidth={2} />
                     Remove
                   </button>
@@ -410,6 +433,26 @@ export default function VenueDetailTabs({
             )}
           </div>
         </div>
+
+        {/* Position slider — only visible when cover is set + admin */}
+        {coverUrl && canEdit && (
+          <div className="absolute bottom-0 left-0 right-0 z-20 px-5 pb-3">
+            <div className="flex items-center gap-3">
+              <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>↕</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={coverPosition}
+                onChange={(e) => handlePositionChange(Number(e.target.value))}
+                className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
+                style={{ accentColor: "#D4FF4F", opacity: 0.7 }}
+                title="Drag to reposition cover image"
+              />
+              <span className="text-xs tabular-nums" style={{ color: "rgba(255,255,255,0.4)", minWidth: 28 }}>{coverPosition}%</span>
+            </div>
+          </div>
+        )}
       </div>
 
 

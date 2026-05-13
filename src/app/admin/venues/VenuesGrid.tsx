@@ -22,6 +22,7 @@ type Venue = {
   screens: { id: string; is_active: boolean | null }[] | null;
   venue_photos: { id: string; status: string | null }[] | null;
   cover_image_url: string | null;
+  cover_position: number | null;
 };
 
 function getBrand(raw: Brand | Brand[] | null): Brand | null {
@@ -74,16 +75,17 @@ function VenueCard({ venue }: { venue: Venue }) {
       <div
         className="relative flex items-end px-5 pt-5 pb-4"
         style={{
-          background: venue.cover_image_url
-            ? `url(${venue.cover_image_url}) center/cover no-repeat`
-            : `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
+          backgroundImage: venue.cover_image_url ? `url(${venue.cover_image_url})` : undefined,
+          backgroundSize: venue.cover_image_url ? "cover" : undefined,
+          backgroundPosition: venue.cover_image_url ? `center ${venue.cover_position ?? 50}%` : undefined,
+          background: venue.cover_image_url ? undefined : `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
           borderBottom: "1px solid rgba(255,255,255,0.06)",
-          minHeight: 80,
+          minHeight: 88,
         }}
       >
-        {/* Dark gradient overlay when cover image is set — keeps text readable */}
+        {/* Strong gradient overlay — ensures text is always readable */}
         {venue.cover_image_url && (
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)", borderRadius: 0 }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.82) 100%)", borderRadius: 0 }} />
         )}
         {/* Avatar */}
         <div
@@ -104,16 +106,23 @@ function VenueCard({ venue }: { venue: Venue }) {
         </div>
 
         {/* Name + location */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 relative z-10">
           <h3
-            className="text-sm font-bold text-white truncate leading-tight"
-            style={{ fontFamily: "Inter Tight, sans-serif" }}
+            className="text-sm font-bold truncate leading-tight"
+            style={{
+              fontFamily: "Inter Tight, sans-serif",
+              color: "#fff",
+              textShadow: venue.cover_image_url ? "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.7)" : "none",
+            }}
           >
             {venue.name}
           </h3>
           <div className="flex items-center gap-1 mt-0.5">
-            <MapPin size={11} color="#666" strokeWidth={2} />
-            <p className="text-xs truncate" style={{ color: "#999" }}>
+            <MapPin size={11} color={venue.cover_image_url ? "rgba(255,255,255,0.6)" : "#666"} strokeWidth={2} />
+            <p className="text-xs truncate" style={{
+              color: venue.cover_image_url ? "rgba(255,255,255,0.7)" : "#999",
+              textShadow: venue.cover_image_url ? "0 1px 3px rgba(0,0,0,0.9)" : "none",
+            }}>
               {[venue.city, venue.province].filter(Boolean).join(", ") || "—"}
             </p>
           </div>

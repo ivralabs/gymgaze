@@ -32,7 +32,7 @@ export default async function VenueDetailPage({
     { data: revenue },
     { data: photos },
   ] = await Promise.all([
-    supabase.from("screens").select("*").eq("venue_id", id).order("label"),
+    supabase.from("screens").select("*").eq("venue_id", id).order("created_at", { ascending: false }),
     supabase.from("contracts").select("*").eq("venue_id", id).maybeSingle(),
     supabase
       .from("revenue_entries")

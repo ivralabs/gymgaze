@@ -21,7 +21,10 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data, error } = await supabase
+  // Use service client for DB read + signed URL generation (bypasses RLS)
+  const svc = serviceClient();
+
+  const { data, error } = await svc
     .from("venue_photos")
     .select("id, storage_path, file_name, file_size_bytes, area_tag, created_at")
     .eq("venue_id", id)
@@ -30,10 +33,10 @@ export async function GET(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Generate signed URLs
+  // Generate signed URLs via service client
   const withUrls = await Promise.all(
     (data ?? []).map(async (photo) => {
-      const { data: signed } = await supabase.storage
+      const { data: signed } = await svc.storage
         .from("venue-photos")
         .createSignedUrl(photo.storage_path, 3600);
       return { ...photo, signedUrl: signed?.signedUrl ?? null };

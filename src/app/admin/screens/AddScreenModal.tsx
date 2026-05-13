@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Monitor } from "lucide-react";
+import { X, Monitor, Upload } from "lucide-react";
 
 interface VenueRow {
   id: string;
@@ -59,6 +59,8 @@ export default function AddScreenModal({
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   function set(key: string, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -91,6 +93,12 @@ export default function AddScreenModal({
         throw new Error(body.error ?? "Failed to add screen");
       }
       const newScreen = await res.json() as ScreenRow;
+      // Upload photo if selected
+      if (photo) {
+        const fd = new FormData();
+        fd.append("file", photo);
+        await fetch(`/api/screens/${newScreen.id}/photo`, { method: "POST", body: fd });
+      }
       onAdded(newScreen);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error adding screen");
@@ -277,6 +285,40 @@ export default function AddScreenModal({
               placeholder="1920x1080"
               style={inputStyle}
             />
+          </div>
+
+          {/* Screen Photo */}
+          <div>
+            <label style={labelStyle}>Screen Photo (optional)</label>
+            {photoPreview ? (
+              <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                <img src={photoPreview} alt="preview" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => { setPhoto(null); setPhotoPreview(null); }}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg"
+                  style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
+                >
+                  <X size={13} strokeWidth={2} />
+                </button>
+              </div>
+            ) : (
+              <label
+                className="flex flex-col items-center justify-center gap-2 w-full rounded-xl cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", padding: "20px" }}
+              >
+                <Upload size={18} color="#555" strokeWidth={2} />
+                <span className="text-xs" style={{ color: "#666" }}>Upload a photo showing where the screen is placed</span>
+                <input
+                  type="file" accept="image/*" className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    setPhoto(f);
+                    if (f) setPhotoPreview(URL.createObjectURL(f));
+                  }}
+                />
+              </label>
+            )}
           </div>
 
           {/* Notes */}

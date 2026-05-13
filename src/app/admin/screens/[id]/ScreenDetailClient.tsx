@@ -12,6 +12,8 @@ import {
   Radio,
   Eye,
   EyeOff,
+  Upload,
+  Trash2,
 } from "lucide-react";
 import { timeAgo } from "@/lib/time";
 
@@ -35,6 +37,7 @@ interface ScreenDetail {
   notes: string | null;
   created_at: string;
   venue_id: string | null;
+  photo_url: string | null;
   venues: { id: string; name: string; city: string | null; province: string | null } | null;
 }
 
@@ -214,6 +217,9 @@ export default function ScreenDetailClient({
   });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [editPhoto, setEditPhoto] = useState<File | null>(null);
+  const [editPhotoPreview, setEditPhotoPreview] = useState<string | null>(screen.photo_url ?? null);
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   function setField(key: string, value: string) {
     setEditForm((prev) => ({ ...prev, [key]: value }));
@@ -244,7 +250,19 @@ export default function ScreenDetailClient({
         throw new Error(body.error ?? "Failed to save");
       }
       const updated = await res.json() as ScreenDetail;
-      // merge venue data back
+      // Upload new photo if selected
+      if (editPhoto) {
+        setPhotoUploading(true);
+        const fd = new FormData();
+        fd.append("file", editPhoto);
+        const photoRes = await fetch(`/api/screens/${screen.id}/photo`, { method: "POST", body: fd });
+        if (photoRes.ok) {
+          const pd = await photoRes.json();
+          updated.photo_url = pd.photo_url;
+          setEditPhotoPreview(pd.photo_url);
+        }
+        setPhotoUploading(false);
+      }
       setScreen((prev) => ({ ...prev, ...updated }));
       setEditOpen(false);
     } catch (err: unknown) {
@@ -606,6 +624,42 @@ export default function ScreenDetailClient({
                   placeholder="1920x1080"
                   style={inputStyle}
                 />
+              </div>
+
+              {/* Screen Photo */}
+              <div>
+                <label style={labelStyle}>Screen Photo</label>
+                {editPhotoPreview ? (
+                  <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                    <img src={editPhotoPreview} alt="screen" className="w-full h-full object-cover" />
+                    <div className="absolute top-2 right-2 flex gap-1.5">
+                      <label className="p-1.5 rounded-lg cursor-pointer" style={{ background: "rgba(0,0,0,0.6)", color: "#D4FF4F" }} title="Change photo">
+                        <Upload size={13} strokeWidth={2} />
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                          const f = e.target.files?.[0] ?? null;
+                          setEditPhoto(f);
+                          if (f) setEditPhotoPreview(URL.createObjectURL(f));
+                        }} />
+                      </label>
+                      <button type="button" onClick={async () => {
+                        await fetch(`/api/screens/${screen.id}/photo`, { method: "DELETE" });
+                        setEditPhoto(null); setEditPhotoPreview(null);
+                      }} className="p-1.5 rounded-lg" style={{ background: "rgba(0,0,0,0.6)", color: "#F87171" }} title="Remove photo">
+                        <Trash2 size={13} strokeWidth={2} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center gap-2 w-full rounded-xl cursor-pointer" style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", padding: "20px" }}>
+                    <Upload size={18} color="#555" strokeWidth={2} />
+                    <span className="text-xs" style={{ color: "#666" }}>Upload a photo showing where the screen is placed</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const f = e.target.files?.[0] ?? null;
+                      setEditPhoto(f);
+                      if (f) setEditPhotoPreview(URL.createObjectURL(f));
+                    }} />
+                  </label>
+                )}
               </div>
 
               {/* Notes */}

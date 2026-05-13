@@ -54,6 +54,7 @@ export default async function ScreenDetailPage({ params, searchParams }: Props) 
       notes,
       created_at,
       venue_id,
+      photo_url,
       venues (
         id,
         name,
@@ -82,7 +83,7 @@ export default async function ScreenDetailPage({ params, searchParams }: Props) 
 
   return (
     <ScreenDetailClient
-      screen={{ ...screen, venues: venueNorm }}
+      screen={{ ...screen, venues: venueNorm, photo_url: (screen as unknown as Record<string, unknown>).photo_url as string | null ?? null }}
       venues={venues ?? []}
       defaultEdit={edit === "true"}
     />

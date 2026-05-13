@@ -165,6 +165,8 @@ export default function VenueDetailTabs({
   const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>([]);
   const [galleryLoaded, setGalleryLoaded] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
+  const [galleryProgress, setGalleryProgress] = useState(0); // 0-100
+  const [galleryCurrentFile, setGalleryCurrentFile] = useState("");
   const [galleryLightbox, setGalleryLightbox] = useState<GalleryPhoto | null>(null);
   const [galleryDeleting, setGalleryDeleting] = useState<string | null>(null);
   const [galleryError, setGalleryError] = useState<string | null>(null);
@@ -179,26 +181,54 @@ export default function VenueDetailTabs({
     setGalleryLoaded(true);
   }
 
+  function uploadFileWithProgress(file: File): Promise<GalleryPhoto> {
+    return new Promise((resolve, reject) => {
+      const fd = new FormData();
+      fd.append("file", file);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `/api/venues/${venueId}/gallery`);
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          setGalleryProgress(Math.round((e.loaded / e.total) * 100));
+        }
+      };
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try { resolve(JSON.parse(xhr.responseText)); }
+          catch { reject(new Error("Invalid response")); }
+        } else {
+          try {
+            const body = JSON.parse(xhr.responseText);
+            reject(new Error(body.error ?? `Upload failed (${xhr.status})`));
+          } catch {
+            reject(new Error(`Upload failed (${xhr.status}): ${xhr.responseText}`));
+          }
+        }
+      };
+      xhr.onerror = () => reject(new Error("Network error during upload"));
+      xhr.send(fd);
+    });
+  }
+
   async function handleGalleryUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
     setGalleryUploading(true);
     setGalleryError(null);
+    setGalleryProgress(0);
     try {
-      for (const file of Array.from(files)) {
-        const fd = new FormData();
-        fd.append("file", file);
-        const res = await fetch(`/api/venues/${venueId}/gallery`, { method: "POST", body: fd });
-        if (!res.ok) {
-          const body = await res.json();
-          throw new Error(body.error ?? "Upload failed");
-        }
-        const newPhoto = await res.json();
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setGalleryCurrentFile(`${file.name} (${i + 1}/${files.length})`);
+        setGalleryProgress(0);
+        const newPhoto = await uploadFileWithProgress(file);
         setGalleryPhotos((prev) => [newPhoto, ...prev]);
       }
+      setGalleryProgress(100);
     } catch (err: unknown) {
       setGalleryError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setGalleryUploading(false);
+      setGalleryCurrentFile("");
     }
   }
 
@@ -692,6 +722,22 @@ export default function VenueDetailTabs({
               </label>
             )}
           </div>
+
+          {/* Upload progress bar */}
+          {galleryUploading && (
+            <div className="mb-4 rounded-xl p-4" style={{ background: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.15)" }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium" style={{ color: "#D4FF4F" }}>Uploading {galleryCurrentFile}</p>
+                <p className="text-xs tabular-nums" style={{ color: "#D4FF4F" }}>{galleryProgress}%</p>
+              </div>
+              <div className="w-full rounded-full overflow-hidden" style={{ height: 6, background: "rgba(255,255,255,0.08)" }}>
+                <div
+                  className="h-full rounded-full transition-all duration-200"
+                  style={{ width: `${galleryProgress}%`, backgroundColor: "#D4FF4F" }}
+                />
+              </div>
+            </div>
+          )}
 
           {galleryError && (
             <div className="mb-4 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,0.10)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" }}>

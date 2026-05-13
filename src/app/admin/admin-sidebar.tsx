@@ -64,8 +64,9 @@ const NAV_GROUPS: NavGroup[] = [
     label: "VENUES & SCREENS",
     items: [
       { href: "/admin/venues",      slug: "venues",      icon: MapPin,          label: "Venues" },
-      { href: "/admin/screens",     slug: "screens",     icon: Monitor,         label: "Screens" },
-      { href: "/admin/inventory",   slug: "inventory",   icon: Layers,          label: "Inventory" },
+      { href: "/admin/screens",       slug: "screens",       icon: Monitor,  label: "Screens" },
+      { href: "/admin/static-sites",   slug: "static-sites",  icon: Layers,   label: "Static Sites" },
+      { href: "/admin/inventory",      slug: "inventory",     icon: Layers,   label: "Inventory" },
     ],
   },
   {

@@ -20,11 +20,12 @@ import {
   GalleryHorizontal,
   Trash2,
   Upload,
+  Layers,
 } from "lucide-react";
 import EditVenueButton from "./EditVenueButton";
 import { useRole } from "@/lib/useRole";
 
-type Tab = "overview" | "screens" | "contract" | "photos" | "gallery" | "revenue";
+type Tab = "overview" | "screens" | "contract" | "photos" | "gallery" | "static" | "revenue";
 
 interface GymBrand {
   name: string;
@@ -61,6 +62,7 @@ interface Screen {
   orientation: string | null;
   is_active: boolean | null;
   photo_url: string | null;
+  created_at: string;
 }
 
 interface Contract {
@@ -118,6 +120,7 @@ const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "screens", label: "Screens", icon: Monitor },
   { id: "contract", label: "Contract", icon: FileText },
   { id: "gallery", label: "Gallery", icon: GalleryHorizontal },
+  { id: "static", label: "Static Sites", icon: Layers },
   { id: "photos", label: "Proof Of Flight", icon: Image },
   { id: "revenue", label: "Revenue", icon: DollarSign },
 ];
@@ -282,7 +285,7 @@ export default function VenueDetailTabs({
   photos,
   venueId,
 }: Props) {
-  const { canEdit } = useRole();
+  const { canEdit, canCreate } = useRole();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [coverUrl, setCoverUrl] = useState<string | null>(venue.cover_image_url ?? null);
   const [coverPosition, setCoverPosition] = useState<number>(venue.cover_position ?? 50);
@@ -413,6 +416,51 @@ export default function VenueDetailTabs({
     } finally {
       setGalleryDeleting(null);
     }
+  }
+
+  // Static Sites state
+  type StaticSite = { id: string; label: string; site_type: string | null; location_in_venue: string | null; width_cm: number | null; height_cm: number | null; is_active: boolean | null; photo_url: string | null; created_at: string };
+  const [staticSites, setStaticSites] = useState<StaticSite[]>([]);
+  const [staticLoaded, setStaticLoaded] = useState(false);
+  const [staticSort, setStaticSort] = useState<"name" | "date" | "location" | "type">("name");
+  const [showAddStatic, setShowAddStatic] = useState(false);
+  const [staticForm, setStaticForm] = useState({ label: "", site_type: "poster_frame", location_in_venue: "", width_cm: "", height_cm: "", notes: "" });
+  const [staticPhoto, setStaticPhoto] = useState<File | null>(null);
+  const [staticPhotoPreview, setStaticPhotoPreview] = useState<string | null>(null);
+  const [staticSaving, setStaticSaving] = useState(false);
+  const [staticError, setStaticError] = useState<string | null>(null);
+
+  const STATIC_TYPE_LABELS: Record<string, string> = { poster_frame: "Poster Frame", banner: "Banner", a_frame: "A-Frame", standee: "Standee", wall_mount: "Wall Mount", window_vinyl: "Window Vinyl", other: "Other" };
+  const STATIC_LOCATION_OPTIONS = ["entrance", "gym_floor", "reception", "changerooms", "car_park", "corridor", "other"];
+  const STATIC_LOCATION_LABELS: Record<string, string> = { entrance: "Entrance", gym_floor: "Gym Floor", reception: "Reception", changerooms: "Changerooms", car_park: "Car Park", corridor: "Corridor", other: "Other" };
+
+  async function loadStaticSites() {
+    if (staticLoaded) return;
+    const res = await fetch(`/api/static-sites?venue_id=${venueId}`);
+    if (res.ok) setStaticSites(await res.json());
+    setStaticLoaded(true);
+  }
+
+  async function handleAddStaticSite(e: React.FormEvent) {
+    e.preventDefault(); setStaticSaving(true); setStaticError(null);
+    try {
+      const res = await fetch("/api/static-sites", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ venue_id: venueId, label: staticForm.label, site_type: staticForm.site_type, location_in_venue: staticForm.location_in_venue || null, width_cm: staticForm.width_cm ? parseInt(staticForm.width_cm) : null, height_cm: staticForm.height_cm ? parseInt(staticForm.height_cm) : null, notes: staticForm.notes || null }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
+      const newSite = await res.json();
+      if (staticPhoto) {
+        const fd = new FormData(); fd.append("file", staticPhoto);
+        const pr = await fetch(`/api/static-sites/${newSite.id}/photo`, { method: "POST", body: fd });
+        if (pr.ok) { const pd = await pr.json(); newSite.photo_url = pd.photo_url; }
+      }
+      setStaticSites((prev) => [newSite, ...prev]);
+      setShowAddStatic(false);
+      setStaticForm({ label: "", site_type: "poster_frame", location_in_venue: "", width_cm: "", height_cm: "", notes: "" });
+      setStaticPhoto(null); setStaticPhotoPreview(null);
+    } catch (err) { setStaticError(err instanceof Error ? err.message : "Error"); }
+    finally { setStaticSaving(false); }
   }
 
   // Add Screen modal state
@@ -617,7 +665,7 @@ export default function VenueDetailTabs({
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            onClick={() => { setActiveTab(id); if (id === "gallery") loadGallery(); }}
+            onClick={() => { setActiveTab(id); if (id === "gallery") loadGallery(); if (id === "static") loadStaticSites(); }}
             className="flex items-center gap-2 px-3 md:px-4 py-3 text-sm font-medium transition-colors duration-150 flex-shrink-0"
             style={{
               color: activeTab === id ? "#D4FF4F" : "#909090",
@@ -767,8 +815,8 @@ export default function VenueDetailTabs({
               {[...localScreens]
                 .sort((a, b) => {
                   if (screenSort === "name") return (a.label ?? "").localeCompare(b.label ?? "");
-                  if (screenSort === "date") return 0; // server order preserved
-                  if (screenSort === "location") return (a.location_in_venue ?? "").localeCompare(b.location_in_venue ?? "");
+                  if (screenSort === "date") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                  if (screenSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz");
                   if (screenSort === "status") return (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0);
                   return 0;
                 })
@@ -1036,6 +1084,124 @@ export default function VenueDetailTabs({
                 <p className="absolute -bottom-8 left-0 right-0 text-center text-xs" style={{ color: "#555" }}>
                   {galleryLightbox.file_name}
                 </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Static Sites Tab */}
+      {activeTab === "static" && (
+        <div>
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Filter size={13} color="#666" strokeWidth={2} />
+              <select value={staticSort} onChange={(e) => setStaticSort(e.target.value as typeof staticSort)} className="rounded-xl px-3 py-2 text-xs" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}>
+                <option value="name">Name A–Z</option>
+                <option value="date">Date Added</option>
+                <option value="location">Location</option>
+                <option value="type">Type</option>
+              </select>
+            </div>
+            {canCreate && (
+              <button onClick={() => setShowAddStatic(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold" style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}>
+                <Plus size={16} strokeWidth={2.5} /> Add Static Site
+              </button>
+            )}
+          </div>
+
+          {!staticLoaded ? (
+            <div className="flex items-center justify-center py-20"><div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin" /></div>
+          ) : staticSites.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 rounded-2xl" style={cardStyle}>
+              <Layers size={32} strokeWidth={1.5} color="#444" className="mb-3" />
+              <p className="text-sm mb-4" style={{ color: "#B0B0B0" }}>No static sites added yet.</p>
+              {canCreate && <button onClick={() => setShowAddStatic(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold" style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}><Plus size={15} strokeWidth={2.5} />Add Static Site</button>}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...staticSites].sort((a, b) => {
+                if (staticSort === "name") return (a.label ?? "").localeCompare(b.label ?? "");
+                if (staticSort === "date") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                if (staticSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz");
+                if (staticSort === "type") return (a.site_type ?? "").localeCompare(b.site_type ?? "");
+                return 0;
+              }).map((site) => (
+                <div key={site.id} className="rounded-2xl overflow-hidden group" style={cardStyle}>
+                  <div className="relative aspect-video flex items-center justify-center overflow-hidden" style={{ background: "rgba(0,0,0,0.3)" }}>
+                    {site.photo_url ? <img src={site.photo_url} alt={site.label} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center gap-1"><Layers size={24} color="#333" strokeWidth={1.5} /><p className="text-xs" style={{ color: "#444" }}>No photo</p></div>}
+                    {canEdit && (
+                      <label className="absolute inset-0 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,0.6)" }}>
+                        <div className="flex flex-col items-center gap-1.5"><Upload size={18} color="#D4FF4F" strokeWidth={2} /><span className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>{site.photo_url ? "Change" : "Add Photo"}</span></div>
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const f = e.target.files?.[0]; if (!f) return;
+                          const fd = new FormData(); fd.append("file", f);
+                          const res = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
+                          if (res.ok) { const pd = await res.json(); setStaticSites((prev) => prev.map((s) => s.id === site.id ? { ...s, photo_url: pd.photo_url } : s)); }
+                        }} />
+                      </label>
+                    )}
+                    <span className="absolute top-2 right-2 text-xs font-semibold uppercase px-2 py-0.5 rounded-full" style={{ background: site.is_active ? "rgba(212,255,79,0.15)" : "rgba(102,102,102,0.25)", color: site.is_active ? "#D4FF4F" : "#909090", backdropFilter: "blur(4px)" }}>{site.is_active ? "Active" : "Inactive"}</span>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm font-semibold text-white truncate" style={{ fontFamily: "Inter Tight, sans-serif" }}>{site.label}</p>
+                    <p className="text-xs mt-0.5 truncate" style={{ color: "#888" }}>{site.location_in_venue ? STATIC_LOCATION_LABELS[site.location_in_venue] ?? site.location_in_venue : ""}</p>
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: "rgba(212,255,79,0.08)", color: "#D4FF4F" }}>{STATIC_TYPE_LABELS[site.site_type ?? ""] ?? site.site_type}</span>
+                      {(site.width_cm || site.height_cm) && <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}>{site.width_cm}×{site.height_cm}cm</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add Static Site Modal */}
+          {showAddStatic && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "rgba(0,0,0,0.80)" }} onClick={() => setShowAddStatic(false)}>
+              <div className="w-full max-w-md rounded-2xl p-6 overflow-y-auto max-h-[90vh]" style={{ background: "rgba(20,20,20,0.98)", border: "1px solid rgba(255,255,255,0.10)" }} onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-base font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Add Static Site</h3>
+                  <button onClick={() => setShowAddStatic(false)} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}><X size={14} color="#909090" strokeWidth={2} /></button>
+                </div>
+                {staticError && <div className="mb-4 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)", color: "#EF4444" }}>{staticError}</div>}
+                <form onSubmit={handleAddStaticSite} className="space-y-4">
+                  <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Name *</label><input value={staticForm.label} onChange={(e) => setStaticForm((p) => ({ ...p, label: e.target.value }))} required placeholder="e.g. Entrance Poster" className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} /></div>
+                  <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Type</label>
+                    <select value={staticForm.site_type} onChange={(e) => setStaticForm((p) => ({ ...p, site_type: e.target.value }))} className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}>
+                      {Object.entries(STATIC_TYPE_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </div>
+                  <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Location</label>
+                    <select value={staticForm.location_in_venue} onChange={(e) => setStaticForm((p) => ({ ...p, location_in_venue: e.target.value }))} className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}>
+                      <option value="">Select location…</option>
+                      {STATIC_LOCATION_OPTIONS.map((v) => <option key={v} value={v}>{STATIC_LOCATION_LABELS[v]}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Width (cm)</label><input type="number" min={1} value={staticForm.width_cm} onChange={(e) => setStaticForm((p) => ({ ...p, width_cm: e.target.value }))} placeholder="e.g. 60" className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} /></div>
+                    <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Height (cm)</label><input type="number" min={1} value={staticForm.height_cm} onChange={(e) => setStaticForm((p) => ({ ...p, height_cm: e.target.value }))} placeholder="e.g. 90" className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} /></div>
+                  </div>
+                  <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Photo (optional)</label>
+                    {staticPhotoPreview ? (
+                      <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                        <img src={staticPhotoPreview} alt="preview" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => { setStaticPhoto(null); setStaticPhotoPreview(null); }} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={13} strokeWidth={2} /></button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center gap-2 w-full rounded-xl cursor-pointer" style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", padding: "20px" }}>
+                        <Upload size={18} color="#555" strokeWidth={2} />
+                        <span className="text-xs" style={{ color: "#666" }}>Upload a placement photo</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setStaticPhoto(f); setStaticPhotoPreview(URL.createObjectURL(f)); } }} />
+                      </label>
+                    )}
+                  </div>
+                  <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Notes</label><textarea value={staticForm.notes} onChange={(e) => setStaticForm((p) => ({ ...p, notes: e.target.value }))} rows={2} className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none", resize: "vertical" }} /></div>
+                  <div className="flex gap-3 pt-2">
+                    <button type="button" onClick={() => setShowAddStatic(false)} className="flex-1 py-2.5 rounded-xl text-sm" style={{ border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", background: "transparent", cursor: "pointer" }}>Cancel</button>
+                    <button type="submit" disabled={staticSaving} className="flex-1 py-2.5 rounded-xl text-sm font-semibold" style={{ backgroundColor: staticSaving ? "#555" : "#D4FF4F", color: "#0A0A0A", border: "none", cursor: staticSaving ? "wait" : "pointer" }}>{staticSaving ? "Saving…" : "Add Site"}</button>
+                  </div>
+                </form>
               </div>
             </div>
           )}

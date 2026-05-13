@@ -56,7 +56,8 @@ const PAGE_ICONS: Record<string, React.ElementType> = {
   insights:     Lightbulb,
   settings:     Settings,
   "media-kit":  FileText,
-  "rate-card":  Calculator,
+  "rate-card":   Calculator,
+  "static-sites": Layers,
 };
 
 type Profile = {

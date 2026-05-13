@@ -55,10 +55,12 @@ interface Venue {
 interface Screen {
   id: string;
   label: string;
+  location_in_venue: string | null;
   size_inches: number | null;
   resolution: string | null;
   orientation: string | null;
   is_active: boolean | null;
+  photo_url: string | null;
 }
 
 interface Contract {
@@ -144,6 +146,132 @@ function formatBytes(bytes: number | null) {
   if (!bytes) return "";
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// ── Screen Card ───────────────────────────────────────────────────────────────
+function ScreenCard({
+  screen,
+  canEdit,
+  onPhotoUpdate,
+}: {
+  screen: Screen;
+  canEdit: boolean;
+  onPhotoUpdate: (url: string | null) => void;
+}) {
+  const [photoUrl, setPhotoUrl] = React.useState<string | null>(screen.photo_url ?? null);
+  const [uploading, setUploading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+
+  async function handleUpload(file: File | null) {
+    if (!file) return;
+    setUploading(true);
+    setProgress(0);
+    const fd = new FormData();
+    fd.append("file", file);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `/api/screens/${screen.id}/photo`);
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => {
+      setUploading(false);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText);
+        setPhotoUrl(data.photo_url);
+        onPhotoUpdate(data.photo_url);
+      }
+    };
+    xhr.onerror = () => setUploading(false);
+    xhr.send(fd);
+  }
+
+  async function handleRemove() {
+    setUploading(true);
+    await fetch(`/api/screens/${screen.id}/photo`, { method: "DELETE" });
+    setPhotoUrl(null);
+    onPhotoUpdate(null);
+    setUploading(false);
+  }
+
+  const cardBg = { background: "rgba(255,255,255,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.08)" };
+
+  return (
+    <div className="rounded-2xl overflow-hidden" style={cardBg}>
+      {/* Photo area */}
+      <div
+        className="relative aspect-video flex items-center justify-center overflow-hidden group"
+        style={{ background: "rgba(0,0,0,0.3)", minHeight: 160 }}
+      >
+        {photoUrl ? (
+          <img src={photoUrl} alt={screen.label} className="w-full h-full object-cover" />
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <Monitor size={28} color="#333" strokeWidth={1.5} />
+            <p className="text-xs" style={{ color: "#555" }}>No photo</p>
+          </div>
+        )}
+
+        {/* Upload overlay on hover */}
+        {canEdit && !uploading && (
+          <label className="absolute inset-0 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,0.6)" }}>
+            <div className="flex flex-col items-center gap-1.5">
+              <Upload size={20} color="#D4FF4F" strokeWidth={2} />
+              <span className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>{photoUrl ? "Change Photo" : "Add Photo"}</span>
+            </div>
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleUpload(e.target.files?.[0] ?? null)} />
+          </label>
+        )}
+
+        {/* Upload progress */}
+        {uploading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(0,0,0,0.7)" }}>
+            <p className="text-xs mb-2 font-semibold" style={{ color: "#D4FF4F" }}>{progress}%</p>
+            <div className="w-24 rounded-full overflow-hidden" style={{ height: 4, background: "rgba(255,255,255,0.15)" }}>
+              <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: "#D4FF4F" }} />
+            </div>
+          </div>
+        )}
+
+        {/* Status badge */}
+        <span
+          className="absolute top-2 right-2 text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+          style={{
+            backgroundColor: screen.is_active ? "rgba(212,255,79,0.15)" : "rgba(102,102,102,0.25)",
+            color: screen.is_active ? "#D4FF4F" : "#909090",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          {screen.is_active ? "Active" : "Inactive"}
+        </span>
+      </div>
+
+      {/* Info */}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-white truncate" style={{ fontFamily: "Inter Tight, sans-serif" }}>{screen.label}</p>
+            {screen.location_in_venue && (
+              <p className="text-xs mt-0.5 truncate" style={{ color: "#888" }}>{screen.location_in_venue}</p>
+            )}
+          </div>
+          {canEdit && photoUrl && (
+            <button onClick={handleRemove} disabled={uploading} className="flex-shrink-0 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors" style={{ color: "#555" }} title="Remove photo">
+              <Trash2 size={13} strokeWidth={2} />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-3 mt-3">
+          {screen.size_inches && (
+            <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}>{screen.size_inches}"</span>
+          )}
+          {screen.resolution && (
+            <span className="text-xs px-2 py-0.5 rounded-lg font-mono" style={{ background: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}>{screen.resolution}</span>
+          )}
+          {screen.orientation && (
+            <span className="text-xs px-2 py-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}>{screen.orientation}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function VenueDetailTabs({
@@ -577,104 +705,39 @@ export default function VenueDetailTabs({
       {activeTab === "screens" && (
         <div>
           <div className="flex justify-end mb-4">
-            <button
-              onClick={() => setShowAddScreen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
-              style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A", height: "44px" }}
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              Add Screen
-            </button>
-          </div>
-          <div
-            className="rounded-2xl overflow-hidden"
-            style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            {localScreens.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16" style={{ color: "#B0B0B0" }}>
-                <Monitor size={32} strokeWidth={1.5} color="#444" className="mb-3" />
-                <p className="text-sm">No screens configured for this venue.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-              <table className="w-full min-w-[500px]">
-                <thead>
-                  <tr
-                    style={{
-                      background: "rgba(255,255,255,0.04)",
-                      backdropFilter: "blur(8px)",
-                      WebkitBackdropFilter: "blur(8px)",
-                      borderBottom: "1px solid rgba(255,255,255,0.08)",
-                    }}
-                  >
-                    {["Label", "Size", "Resolution", "Orientation", "Status"].map((h) => (
-                      <th
-                        key={h}
-                        className="text-left px-6 py-3 text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: "#B0B0B0", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {localScreens.map((screen, idx) => (
-                    <tr
-                      key={screen.id}
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        backdropFilter: "blur(8px)",
-                        WebkitBackdropFilter: "blur(8px)",
-                        borderTop:
-                          idx > 0
-                            ? "1px solid rgba(255,255,255,0.08)"
-                            : "none",
-                      }}
-                    >
-                      <td className="px-6 py-4 text-sm text-white">
-                        {screen.label}
-                      </td>
-                      <td
-                        className="px-6 py-4 text-sm"
-                        style={{ color: "#C8C8C8" }}
-                      >
-                        {screen.size_inches != null
-                          ? `${screen.size_inches}"`
-                          : "—"}
-                      </td>
-                      <td
-                        className="px-6 py-4 text-sm font-mono"
-                        style={{ color: "#C8C8C8" }}
-                      >
-                        {screen.resolution ?? "—"}
-                      </td>
-                      <td
-                        className="px-6 py-4 text-sm"
-                        style={{ color: "#C8C8C8" }}
-                      >
-                        {screen.orientation ?? "—"}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
-                          style={{
-                            backgroundColor: screen.is_active
-                              ? "rgba(212,255,79,0.1)"
-                              : "rgba(102,102,102,0.15)",
-                            color: screen.is_active ? "#D4FF4F" : "#909090",
-                          }}
-                        >
-                          {screen.is_active ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              </div>
+            {canEdit && (
+              <button
+                onClick={() => setShowAddScreen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+                style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                Add Screen
+              </button>
             )}
           </div>
+
+          {localScreens.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 rounded-2xl" style={cardStyle}>
+              <Monitor size={32} strokeWidth={1.5} color="#444" className="mb-3" />
+              <p className="text-sm" style={{ color: "#B0B0B0" }}>No screens configured for this venue.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {localScreens.map((screen) => (
+                <ScreenCard
+                  key={screen.id}
+                  screen={screen}
+                  canEdit={canEdit}
+                  onPhotoUpdate={(photoUrl) => {
+                    setLocalScreens((prev) =>
+                      prev.map((s) => s.id === screen.id ? { ...s, photo_url: photoUrl } : s)
+                    );
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

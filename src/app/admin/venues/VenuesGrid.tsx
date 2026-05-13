@@ -75,17 +75,29 @@ function VenueCard({ venue }: { venue: Venue }) {
       <div
         className="relative flex items-end px-5 pt-5 pb-4"
         style={{
-          backgroundImage: venue.cover_image_url ? `url(${venue.cover_image_url})` : undefined,
-          backgroundSize: venue.cover_image_url ? "cover" : undefined,
-          backgroundPosition: venue.cover_image_url ? `center ${venue.cover_position ?? 50}%` : undefined,
-          background: venue.cover_image_url ? undefined : `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
+          background: venue.cover_image_url ? "#000" : `linear-gradient(135deg, ${brandColor}18 0%, rgba(255,255,255,0.03) 100%)`,
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           minHeight: 88,
+          overflow: "hidden",
         }}
       >
+        {/* Cover image as <img> — more reliable than CSS background, respects object-position */}
+        {venue.cover_image_url && (
+          <img
+            src={venue.cover_image_url}
+            alt=""
+            className="absolute inset-0 w-full h-full"
+            style={{
+              objectFit: "cover",
+              objectPosition: `center ${venue.cover_position ?? 50}%`,
+              display: "block",
+            }}
+            loading="eager"
+          />
+        )}
         {/* Strong gradient overlay — ensures text is always readable */}
         {venue.cover_image_url && (
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.82) 100%)", borderRadius: 0 }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.82) 100%)" }} />
         )}
         {/* Avatar */}
         <div

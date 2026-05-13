@@ -4,6 +4,10 @@ import AddVenueForm from "./add-venue-form";
 import VenuesGrid from "./VenuesGrid";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
 
+// Always fetch fresh — never serve cached venue list
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function VenuesPage() {
   const supabase = await createClient();
 

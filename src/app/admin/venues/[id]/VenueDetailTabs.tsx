@@ -524,13 +524,20 @@ export default function VenueDetailTabs({
         className="relative rounded-2xl overflow-hidden mb-6"
         style={{
           minHeight: coverUrl ? 200 : 100,
-          backgroundImage: coverUrl ? `url(${coverUrl})` : undefined,
-          backgroundSize: coverUrl ? "cover" : undefined,
-          backgroundPosition: coverUrl ? `center ${coverPosition}%` : undefined,
-          background: coverUrl ? undefined : "rgba(255,255,255,0.04)",
+          background: coverUrl ? "#000" : "rgba(255,255,255,0.04)",
           border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
+        {/* Cover image as <img> — reliable, respects object-position for repositioning */}
+        {coverUrl && (
+          <img
+            src={coverUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full"
+            style={{ objectFit: "cover", objectPosition: `center ${coverPosition}%`, display: "block" }}
+            loading="eager"
+          />
+        )}
         {/* Strong gradient overlay */}
         {coverUrl && <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)" }} />}
 

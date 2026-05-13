@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import VenueDetailTabs from "./VenueDetailTabs";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function VenueDetailPage({
   params,
 }: {

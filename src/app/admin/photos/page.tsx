@@ -37,18 +37,13 @@ export default async function PhotosPage() {
     .order('start_date', { ascending: false })
 
   // Generate signed URLs for photos that have storage_path
-  const photos = await Promise.all(
-    (rawPhotos ?? []).map(async (photo) => {
-      let signedUrl: string | null = null
-      if (photo.storage_path) {
-        const { data } = await supabase.storage
-          .from('venue-photos')
-          .createSignedUrl(photo.storage_path, 3600)
-        signedUrl = data?.signedUrl ?? null
-      }
-      return { ...photo, signedUrl }
-    })
-  )
+  // Use public URLs — bucket is public
+  const photos = (rawPhotos ?? []).map((photo) => {
+    const signedUrl = photo.storage_path
+      ? supabase.storage.from('venue-photos').getPublicUrl(photo.storage_path).data.publicUrl
+      : null;
+    return { ...photo, signedUrl };
+  })
 
   return (
     <PhotosClient

@@ -48,15 +48,11 @@ export default async function VenuePage({
     .order("created_at", { ascending: false })
     .limit(20);
 
-  // Get signed URLs for approved photos
-  const photosWithUrls = await Promise.all(
-    (photos ?? []).map(async (p) => {
-      const { data } = await supabase.storage
-        .from("venue-photos")
-        .createSignedUrl(p.storage_path, 3600);
-      return { ...p, url: data?.signedUrl ?? null };
-    })
-  );
+  // Use public URLs — bucket is public
+  const photosWithUrls = (photos ?? []).map((p) => ({
+    ...p,
+    url: supabase.storage.from("venue-photos").getPublicUrl(p.storage_path).data.publicUrl,
+  }));
 
   // Revenue last 12 months
   const now = new Date();

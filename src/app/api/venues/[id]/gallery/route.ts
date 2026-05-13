@@ -33,15 +33,13 @@ export async function GET(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Generate signed URLs via service client
-  const withUrls = await Promise.all(
-    (data ?? []).map(async (photo) => {
-      const { data: signed } = await svc.storage
-        .from("venue-photos")
-        .createSignedUrl(photo.storage_path, 3600);
-      return { ...photo, signedUrl: signed?.signedUrl ?? null };
-    })
-  );
+  // Use public URLs — bucket is public, no expiry, no CORS issues
+  const withUrls = (data ?? []).map((photo) => {
+    const { data: { publicUrl } } = svc.storage
+      .from("venue-photos")
+      .getPublicUrl(photo.storage_path);
+    return { ...photo, signedUrl: publicUrl };
+  });
 
   return NextResponse.json(withUrls);
 }
@@ -108,11 +106,11 @@ export async function POST(
 
   if (dbError) return NextResponse.json({ error: dbError.message }, { status: 500 });
 
-  const { data: signed } = await service.storage
+  const { data: { publicUrl } } = service.storage
     .from("venue-photos")
-    .createSignedUrl(storagePath, 3600);
+    .getPublicUrl(storagePath);
 
-  return NextResponse.json({ ...row, signedUrl: signed?.signedUrl ?? null }, { status: 201 });
+  return NextResponse.json({ ...row, signedUrl: publicUrl }, { status: 201 });
 }
 
 // DELETE /api/venues/[id]/gallery?photo_id=xxx

@@ -17,11 +17,14 @@ import {
   Archive,
   Filter,
   X,
+  GalleryHorizontal,
+  Trash2,
+  Upload,
 } from "lucide-react";
 import EditVenueButton from "./EditVenueButton";
 import { useRole } from "@/lib/useRole";
 
-type Tab = "overview" | "screens" | "contract" | "photos" | "revenue";
+type Tab = "overview" | "screens" | "contract" | "photos" | "gallery" | "revenue";
 
 interface GymBrand {
   name: string;
@@ -110,7 +113,8 @@ const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Overview", icon: BarChart2 },
   { id: "screens", label: "Screens", icon: Monitor },
   { id: "contract", label: "Contract", icon: FileText },
-  { id: "photos", label: "Photos", icon: Image },
+  { id: "gallery", label: "Gallery", icon: GalleryHorizontal },
+  { id: "photos", label: "Proof Of Flight", icon: Image },
   { id: "revenue", label: "Revenue", icon: DollarSign },
 ];
 
@@ -155,6 +159,58 @@ export default function VenueDetailTabs({
   const [downloading, setDownloading] = useState<string | null>(null);
   const [exportingZip, setExportingZip] = useState(false);
   const [lightbox, setLightbox] = useState<Photo | null>(null);
+
+  // Gallery state
+  type GalleryPhoto = { id: string; storage_path: string; file_name: string | null; file_size_bytes: number | null; area_tag: string | null; created_at: string; signedUrl: string | null };
+  const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>([]);
+  const [galleryLoaded, setGalleryLoaded] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
+  const [galleryLightbox, setGalleryLightbox] = useState<GalleryPhoto | null>(null);
+  const [galleryDeleting, setGalleryDeleting] = useState<string | null>(null);
+  const [galleryError, setGalleryError] = useState<string | null>(null);
+
+  async function loadGallery() {
+    if (galleryLoaded) return;
+    const res = await fetch(`/api/venues/${venueId}/gallery`);
+    if (res.ok) {
+      const data = await res.json();
+      setGalleryPhotos(data);
+    }
+    setGalleryLoaded(true);
+  }
+
+  async function handleGalleryUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setGalleryUploading(true);
+    setGalleryError(null);
+    try {
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch(`/api/venues/${venueId}/gallery`, { method: "POST", body: fd });
+        if (!res.ok) {
+          const body = await res.json();
+          throw new Error(body.error ?? "Upload failed");
+        }
+        const newPhoto = await res.json();
+        setGalleryPhotos((prev) => [newPhoto, ...prev]);
+      }
+    } catch (err: unknown) {
+      setGalleryError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setGalleryUploading(false);
+    }
+  }
+
+  async function handleGalleryDelete(photoId: string) {
+    setGalleryDeleting(photoId);
+    try {
+      const res = await fetch(`/api/venues/${venueId}/gallery?photo_id=${photoId}`, { method: "DELETE" });
+      if (res.ok) setGalleryPhotos((prev) => prev.filter((p) => p.id !== photoId));
+    } finally {
+      setGalleryDeleting(null);
+    }
+  }
 
   // Add Screen modal state
   const [showAddScreen, setShowAddScreen] = useState(false);
@@ -283,7 +339,7 @@ export default function VenueDetailTabs({
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            onClick={() => setActiveTab(id)}
+            onClick={() => { setActiveTab(id); if (id === "gallery") loadGallery(); }}
             className="flex items-center gap-2 px-3 md:px-4 py-3 text-sm font-medium transition-colors duration-150 flex-shrink-0"
             style={{
               color: activeTab === id ? "#D4FF4F" : "#909090",
@@ -599,6 +655,135 @@ export default function VenueDetailTabs({
                     </label>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Gallery Tab */}
+      {activeTab === "gallery" && (
+        <div>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wider mb-1" style={{ color: "#D4FF4F", fontWeight: 700 }}>Venue Gallery</p>
+              <p className="text-xs" style={{ color: "#666" }}>Showcase images for sales decks and media kit. Admin upload only.</p>
+            </div>
+            {canEdit && (
+              <label
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer transition-all"
+                style={{
+                  backgroundColor: galleryUploading ? "rgba(255,255,255,0.04)" : "rgba(212,255,79,0.10)",
+                  color: galleryUploading ? "#666" : "#D4FF4F",
+                  border: "1px solid rgba(212,255,79,0.2)",
+                  pointerEvents: galleryUploading ? "none" : "auto",
+                }}
+              >
+                <Upload size={14} strokeWidth={2} />
+                {galleryUploading ? "Uploading..." : "Upload Photos"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleGalleryUpload(e.target.files)}
+                />
+              </label>
+            )}
+          </div>
+
+          {galleryError && (
+            <div className="mb-4 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,0.10)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" }}>
+              {galleryError}
+            </div>
+          )}
+
+          {!galleryLoaded ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+            </div>
+          ) : galleryPhotos.length === 0 ? (
+            <div className="rounded-2xl p-12 flex flex-col items-center justify-center" style={cardStyle}>
+              <GalleryHorizontal size={36} color="#333" strokeWidth={1.5} className="mb-3" />
+              <p className="text-sm font-medium text-white mb-1">No showcase photos yet</p>
+              <p className="text-xs mb-4" style={{ color: "#666" }}>Upload mockups or photos of this gym's screens.</p>
+              {canEdit && (
+                <label
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer"
+                  style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
+                >
+                  <Upload size={15} strokeWidth={2.5} />
+                  Upload First Photo
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleGalleryUpload(e.target.files)} />
+                </label>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {galleryPhotos.map((photo) => (
+                <div key={photo.id} className="rounded-2xl overflow-hidden flex flex-col group" style={cardStyle}>
+                  {/* Thumbnail */}
+                  <div
+                    className="aspect-video flex items-center justify-center overflow-hidden cursor-pointer relative"
+                    style={{ background: "rgba(255,255,255,0.04)" }}
+                    onClick={() => setGalleryLightbox(photo)}
+                  >
+                    {photo.signedUrl ? (
+                      <img src={photo.signedUrl} alt={photo.file_name ?? "photo"} className="w-full h-full object-cover" />
+                    ) : (
+                      <GalleryHorizontal size={24} color="#444" strokeWidth={1.5} />
+                    )}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-xs text-white font-medium">View</span>
+                    </div>
+                  </div>
+                  {/* Info row */}
+                  <div className="px-3 py-2 flex items-center justify-between gap-2">
+                    <p className="text-xs truncate" style={{ color: "#999" }}>{photo.file_name ?? "photo"}</p>
+                    {canEdit && (
+                      <button
+                        onClick={() => handleGalleryDelete(photo.id)}
+                        disabled={galleryDeleting === photo.id}
+                        className="flex-shrink-0 p-1.5 rounded-lg transition-colors hover:bg-red-500/10"
+                        style={{ color: galleryDeleting === photo.id ? "#444" : "#666" }}
+                        title="Delete"
+                      >
+                        <Trash2 size={13} strokeWidth={2} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Gallery Lightbox */}
+          {galleryLightbox && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              style={{ backgroundColor: "rgba(0,0,0,0.92)" }}
+              onClick={() => setGalleryLightbox(null)}
+            >
+              <div className="relative max-w-5xl max-h-[90vh] w-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => setGalleryLightbox(null)}
+                  className="absolute -top-10 right-0 p-2 rounded-xl"
+                  style={{ color: "#999", background: "rgba(255,255,255,0.06)" }}
+                >
+                  <X size={18} strokeWidth={2} />
+                </button>
+                {galleryLightbox.signedUrl && (
+                  <img
+                    src={galleryLightbox.signedUrl}
+                    alt={galleryLightbox.file_name ?? "photo"}
+                    className="max-h-[85vh] max-w-full rounded-2xl object-contain"
+                    style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.8)" }}
+                  />
+                )}
+                <p className="absolute -bottom-8 left-0 right-0 text-center text-xs" style={{ color: "#555" }}>
+                  {galleryLightbox.file_name}
+                </p>
               </div>
             </div>
           )}

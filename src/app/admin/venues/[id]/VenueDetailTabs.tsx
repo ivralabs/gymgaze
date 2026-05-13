@@ -422,7 +422,7 @@ export default function VenueDetailTabs({
   type StaticSite = { id: string; label: string; site_type: string | null; location_in_venue: string | null; width_cm: number | null; height_cm: number | null; is_active: boolean | null; photo_url: string | null; created_at: string };
   const [staticSites, setStaticSites] = useState<StaticSite[]>([]);
   const [staticLoaded, setStaticLoaded] = useState(false);
-  const [staticSort, setStaticSort] = useState<"name" | "date" | "location" | "type">("name");
+  const [staticSort, setStaticSort] = useState<"name" | "numeric" | "date" | "location" | "type">("name");
   const [showAddStatic, setShowAddStatic] = useState(false);
   const [staticForm, setStaticForm] = useState({ label: "", site_type: "poster_frame", location_in_venue: "", width_cm: "", height_cm: "", notes: "" });
   const [staticPhoto, setStaticPhoto] = useState<File | null>(null);
@@ -471,7 +471,7 @@ export default function VenueDetailTabs({
   const [screenSaving, setScreenSaving] = useState(false);
   const [screenError, setScreenError] = useState<string | null>(null);
   const [localScreens, setLocalScreens] = useState<Screen[]>(screens);
-  const [screenSort, setScreenSort] = useState<"name" | "date" | "location" | "status">("name");
+  const [screenSort, setScreenSort] = useState<"name" | "numeric" | "date" | "location" | "status">("name");
 
   async function handleAddScreen(e: React.FormEvent) {
     e.preventDefault();
@@ -788,6 +788,7 @@ export default function VenueDetailTabs({
                 style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}
               >
                 <option value="name">Name A–Z</option>
+                <option value="numeric">Numerical</option>
                 <option value="date">Date Added</option>
                 <option value="location">Location</option>
                 <option value="status">Status</option>
@@ -814,9 +815,10 @@ export default function VenueDetailTabs({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[...localScreens]
                 .sort((a, b) => {
-                  if (screenSort === "name") return (a.label ?? "").localeCompare(b.label ?? "");
+                  if (screenSort === "name") return (a.label ?? "").localeCompare(b.label ?? "", undefined, { sensitivity: "base" });
+                  if (screenSort === "numeric") return (a.label ?? "").localeCompare(b.label ?? "", undefined, { numeric: true, sensitivity: "base" });
                   if (screenSort === "date") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                  if (screenSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz");
+                  if (screenSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz", undefined, { numeric: true });
                   if (screenSort === "status") return (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0);
                   return 0;
                 })
@@ -1098,6 +1100,7 @@ export default function VenueDetailTabs({
               <Filter size={13} color="#666" strokeWidth={2} />
               <select value={staticSort} onChange={(e) => setStaticSort(e.target.value as typeof staticSort)} className="rounded-xl px-3 py-2 text-xs" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}>
                 <option value="name">Name A–Z</option>
+                <option value="numeric">Numerical</option>
                 <option value="date">Date Added</option>
                 <option value="location">Location</option>
                 <option value="type">Type</option>
@@ -1121,9 +1124,10 @@ export default function VenueDetailTabs({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[...staticSites].sort((a, b) => {
-                if (staticSort === "name") return (a.label ?? "").localeCompare(b.label ?? "");
+                if (staticSort === "name") return (a.label ?? "").localeCompare(b.label ?? "", undefined, { sensitivity: "base" });
+                if (staticSort === "numeric") return (a.label ?? "").localeCompare(b.label ?? "", undefined, { numeric: true, sensitivity: "base" });
                 if (staticSort === "date") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                if (staticSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz");
+                if (staticSort === "location") return (a.location_in_venue ?? "zzz").localeCompare(b.location_in_venue ?? "zzz", undefined, { numeric: true });
                 if (staticSort === "type") return (a.site_type ?? "").localeCompare(b.site_type ?? "");
                 return 0;
               }).map((site) => (

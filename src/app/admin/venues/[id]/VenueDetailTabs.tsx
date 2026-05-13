@@ -418,6 +418,8 @@ export default function VenueDetailTabs({
   // Add Screen modal state
   const [showAddScreen, setShowAddScreen] = useState(false);
   const [screenForm, setScreenForm] = useState({ label: "", location_in_venue: "", size_inches: "", resolution: "", orientation: "landscape", notes: "" });
+  const [screenPhoto, setScreenPhoto] = useState<File | null>(null);
+  const [screenPhotoPreview, setScreenPhotoPreview] = useState<string | null>(null);
   const [screenSaving, setScreenSaving] = useState(false);
   const [screenError, setScreenError] = useState<string | null>(null);
   const [localScreens, setLocalScreens] = useState<Screen[]>(screens);
@@ -445,9 +447,24 @@ export default function VenueDetailTabs({
         throw new Error(body.error ?? "Failed to add screen");
       }
       const newScreen = await res.json();
-      setLocalScreens((prev) => [...prev, newScreen]);
+
+      // Upload photo if selected
+      let photoUrl: string | null = null;
+      if (screenPhoto) {
+        const fd = new FormData();
+        fd.append("file", screenPhoto);
+        const photoRes = await fetch(`/api/screens/${newScreen.id}/photo`, { method: "POST", body: fd });
+        if (photoRes.ok) {
+          const photoData = await photoRes.json();
+          photoUrl = photoData.photo_url;
+        }
+      }
+
+      setLocalScreens((prev) => [...prev, { ...newScreen, photo_url: photoUrl }]);
       setShowAddScreen(false);
       setScreenForm({ label: "", location_in_venue: "", size_inches: "", resolution: "", orientation: "landscape", notes: "" });
+      setScreenPhoto(null);
+      setScreenPhotoPreview(null);
     } catch (err: unknown) {
       setScreenError(err instanceof Error ? err.message : "Error");
     } finally {
@@ -1389,6 +1406,42 @@ export default function VenueDetailTabs({
                   className="w-full rounded-xl px-4 py-2.5 text-sm"
                   style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }}
                 />
+              </div>
+
+              {/* Screen Photo */}
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Screen Photo (optional)</label>
+                {screenPhotoPreview ? (
+                  <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                    <img src={screenPhotoPreview} alt="preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => { setScreenPhoto(null); setScreenPhotoPreview(null); }}
+                      className="absolute top-2 right-2 p-1.5 rounded-lg"
+                      style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}
+                    >
+                      <X size={13} strokeWidth={2} />
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    className="flex flex-col items-center justify-center gap-2 w-full rounded-xl cursor-pointer transition-colors"
+                    style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", padding: "20px", minHeight: 80 }}
+                  >
+                    <Upload size={18} color="#555" strokeWidth={2} />
+                    <span className="text-xs" style={{ color: "#666" }}>Click to upload a photo of where the screen is placed</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] ?? null;
+                        setScreenPhoto(file);
+                        if (file) setScreenPhotoPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                  </label>
+                )}
               </div>
 
               {/* Notes */}

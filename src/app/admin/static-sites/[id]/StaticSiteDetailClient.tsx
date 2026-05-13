@@ -57,6 +57,7 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
   const [saveError, setSaveError] = useState<string | null>(null);
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [editPhotoPreview, setEditPhotoPreview] = useState<string | null>(site.photo_url ?? null);
+  const [unit, setUnit] = useState<"cm" | "m">("cm");
 
   function setField(key: string, value: string | boolean) { setEditForm((p) => ({ ...p, [key]: value })); }
 
@@ -185,9 +186,19 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                   {LOCATIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><label style={labelStyle}>Width (cm)</label><input type="number" min={1} value={editForm.width_cm} onChange={(e) => setField("width_cm", e.target.value)} placeholder="e.g. 60" style={inputStyle} /></div>
-                <div><label style={labelStyle}>Height (cm)</label><input type="number" min={1} value={editForm.height_cm} onChange={(e) => setField("height_cm", e.target.value)} placeholder="e.g. 90" style={inputStyle} /></div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label style={labelStyle}>Dimensions</label>
+                  <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)" }}>
+                    {(["cm", "m"] as const).map((u) => (
+                      <button key={u} type="button" onClick={() => setUnit(u)} className="px-3 py-1 text-xs font-semibold" style={{ background: unit === u ? "rgba(212,255,79,0.15)" : "transparent", color: unit === u ? "#D4FF4F" : "#666" }}>{u}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Width ({unit})</label><input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={editForm.width_cm} onChange={(e) => setField("width_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.6" : "e.g. 60"} style={inputStyle} /></div>
+                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Height ({unit})</label><input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={editForm.height_cm} onChange={(e) => setField("height_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.9" : "e.g. 90"} style={inputStyle} /></div>
+                </div>
               </div>
               <div><label style={labelStyle}>Photo</label>
                 {editPhotoPreview ? (

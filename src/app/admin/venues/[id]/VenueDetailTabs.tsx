@@ -425,6 +425,7 @@ export default function VenueDetailTabs({
   const [staticSort, setStaticSort] = useState<"name" | "numeric" | "date" | "location" | "type">("name");
   const [showAddStatic, setShowAddStatic] = useState(false);
   const [staticForm, setStaticForm] = useState({ label: "", site_type: "poster_frame", location_in_venue: "", width_cm: "", height_cm: "", notes: "" });
+  const [staticUnit, setStaticUnit] = useState<"cm" | "m">("cm");
   const [staticPhoto, setStaticPhoto] = useState<File | null>(null);
   const [staticPhotoPreview, setStaticPhotoPreview] = useState<string | null>(null);
   const [staticSaving, setStaticSaving] = useState(false);
@@ -446,7 +447,7 @@ export default function VenueDetailTabs({
     try {
       const res = await fetch("/api/static-sites", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ venue_id: venueId, label: staticForm.label, site_type: staticForm.site_type, location_in_venue: staticForm.location_in_venue || null, width_cm: staticForm.width_cm ? parseInt(staticForm.width_cm) : null, height_cm: staticForm.height_cm ? parseInt(staticForm.height_cm) : null, notes: staticForm.notes || null }),
+        body: JSON.stringify({ venue_id: venueId, label: staticForm.label, site_type: staticForm.site_type, location_in_venue: staticForm.location_in_venue || null, width_cm: staticForm.width_cm ? Math.round(parseFloat(staticForm.width_cm) * (staticUnit === "m" ? 100 : 1)) : null, height_cm: staticForm.height_cm ? Math.round(parseFloat(staticForm.height_cm) * (staticUnit === "m" ? 100 : 1)) : null, notes: staticForm.notes || null }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
       const newSite = await res.json();
@@ -1182,9 +1183,28 @@ export default function VenueDetailTabs({
                       {STATIC_LOCATION_OPTIONS.map((v) => <option key={v} value={v}>{STATIC_LOCATION_LABELS[v]}</option>)}
                     </select>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Width (cm)</label><input type="number" min={1} value={staticForm.width_cm} onChange={(e) => setStaticForm((p) => ({ ...p, width_cm: e.target.value }))} placeholder="e.g. 60" className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} /></div>
-                    <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Height (cm)</label><input type="number" min={1} value={staticForm.height_cm} onChange={(e) => setStaticForm((p) => ({ ...p, height_cm: e.target.value }))} placeholder="e.g. 90" className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} /></div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-medium" style={{ color: "#C8C8C8" }}>Dimensions</label>
+                      <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)" }}>
+                        {(["cm", "m"] as const).map((u) => (
+                          <button key={u} type="button" onClick={() => setStaticUnit(u)}
+                            className="px-3 py-1 text-xs font-semibold transition-colors"
+                            style={{ background: staticUnit === u ? "rgba(212,255,79,0.15)" : "transparent", color: staticUnit === u ? "#D4FF4F" : "#666" }}
+                          >{u}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs mb-1" style={{ color: "#777" }}>Width ({staticUnit})</label>
+                        <input type="number" min={0} step={staticUnit === "m" ? 0.01 : 1} value={staticForm.width_cm} onChange={(e) => setStaticForm((p) => ({ ...p, width_cm: e.target.value }))} placeholder={staticUnit === "m" ? "e.g. 0.6" : "e.g. 60"} className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} />
+                      </div>
+                      <div>
+                        <label className="block text-xs mb-1" style={{ color: "#777" }}>Height ({staticUnit})</label>
+                        <input type="number" min={0} step={staticUnit === "m" ? 0.01 : 1} value={staticForm.height_cm} onChange={(e) => setStaticForm((p) => ({ ...p, height_cm: e.target.value }))} placeholder={staticUnit === "m" ? "e.g. 0.9" : "e.g. 90"} className="w-full rounded-xl px-4 py-2.5 text-sm" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#fff", outline: "none" }} />
+                      </div>
+                    </div>
                   </div>
                   <div><label className="block text-xs font-medium mb-1.5" style={{ color: "#C8C8C8" }}>Photo (optional)</label>
                     {staticPhotoPreview ? (

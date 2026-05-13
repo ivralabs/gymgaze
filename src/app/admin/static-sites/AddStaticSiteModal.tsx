@@ -78,6 +78,7 @@ export default function AddStaticSiteModal({
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [unit, setUnit] = useState<"cm" | "m">("cm");
 
   function set(key: string, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -97,8 +98,8 @@ export default function AddStaticSiteModal({
           label: form.label,
           site_type: form.site_type || "poster_frame",
           location_in_venue: form.location_in_venue || null,
-          width_cm: form.width_cm ? parseInt(form.width_cm) : null,
-          height_cm: form.height_cm ? parseInt(form.height_cm) : null,
+          width_cm: form.width_cm ? Math.round(parseFloat(form.width_cm) * (unit === "m" ? 100 : 1)) : null,
+          height_cm: form.height_cm ? Math.round(parseFloat(form.height_cm) * (unit === "m" ? 100 : 1)) : null,
           notes: form.notes || null,
         }),
       });
@@ -260,29 +261,28 @@ export default function AddStaticSiteModal({
             </select>
           </div>
 
-          {/* Width + Height */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label style={labelStyle}>Width (cm)</label>
-              <input
-                type="number"
-                min={1}
-                value={form.width_cm}
-                onChange={(e) => set("width_cm", e.target.value)}
-                placeholder="e.g. 60"
-                style={inputStyle}
-              />
+          {/* Width + Height with unit toggle */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label style={labelStyle}>Dimensions</label>
+              <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)" }}>
+                {(["cm", "m"] as const).map((u) => (
+                  <button key={u} type="button" onClick={() => setUnit(u)}
+                    className="px-3 py-1 text-xs font-semibold transition-colors"
+                    style={{ background: unit === u ? "rgba(212,255,79,0.15)" : "transparent", color: unit === u ? "#D4FF4F" : "#666" }}
+                  >{u}</button>
+                ))}
+              </div>
             </div>
-            <div>
-              <label style={labelStyle}>Height (cm)</label>
-              <input
-                type="number"
-                min={1}
-                value={form.height_cm}
-                onChange={(e) => set("height_cm", e.target.value)}
-                placeholder="e.g. 90"
-                style={inputStyle}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs mb-1" style={{ color: "#777" }}>Width ({unit})</label>
+                <input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={form.width_cm} onChange={(e) => set("width_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.6" : "e.g. 60"} style={inputStyle} />
+              </div>
+              <div>
+                <label className="block text-xs mb-1" style={{ color: "#777" }}>Height ({unit})</label>
+                <input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={form.height_cm} onChange={(e) => set("height_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.9" : "e.g. 90"} style={inputStyle} />
+              </div>
             </div>
           </div>
 

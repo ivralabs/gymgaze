@@ -423,6 +423,7 @@ export default function VenueDetailTabs({
   const [screenSaving, setScreenSaving] = useState(false);
   const [screenError, setScreenError] = useState<string | null>(null);
   const [localScreens, setLocalScreens] = useState<Screen[]>(screens);
+  const [screenSort, setScreenSort] = useState<"name" | "date" | "location" | "status">("name");
 
   async function handleAddScreen(e: React.FormEvent) {
     e.preventDefault();
@@ -728,7 +729,22 @@ export default function VenueDetailTabs({
       {/* Screens Tab */}
       {activeTab === "screens" && (
         <div>
-          <div className="flex justify-end mb-4">
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+            {/* Sort dropdown */}
+            <div className="flex items-center gap-2">
+              <Filter size={13} color="#666" strokeWidth={2} />
+              <select
+                value={screenSort}
+                onChange={(e) => setScreenSort(e.target.value as typeof screenSort)}
+                className="rounded-xl px-3 py-2 text-xs"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8", outline: "none" }}
+              >
+                <option value="name">Name A–Z</option>
+                <option value="date">Date Added</option>
+                <option value="location">Location</option>
+                <option value="status">Status</option>
+              </select>
+            </div>
             {canEdit && (
               <button
                 onClick={() => setShowAddScreen(true)}
@@ -748,18 +764,26 @@ export default function VenueDetailTabs({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {localScreens.map((screen) => (
-                <ScreenCard
-                  key={screen.id}
-                  screen={screen}
-                  canEdit={canEdit}
-                  onPhotoUpdate={(photoUrl) => {
-                    setLocalScreens((prev) =>
-                      prev.map((s) => s.id === screen.id ? { ...s, photo_url: photoUrl } : s)
-                    );
-                  }}
-                />
-              ))}
+              {[...localScreens]
+                .sort((a, b) => {
+                  if (screenSort === "name") return (a.label ?? "").localeCompare(b.label ?? "");
+                  if (screenSort === "date") return 0; // server order preserved
+                  if (screenSort === "location") return (a.location_in_venue ?? "").localeCompare(b.location_in_venue ?? "");
+                  if (screenSort === "status") return (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0);
+                  return 0;
+                })
+                .map((screen) => (
+                  <ScreenCard
+                    key={screen.id}
+                    screen={screen}
+                    canEdit={canEdit}
+                    onPhotoUpdate={(photoUrl) => {
+                      setLocalScreens((prev) =>
+                        prev.map((s) => s.id === screen.id ? { ...s, photo_url: photoUrl } : s)
+                      );
+                    }}
+                  />
+                ))}
             </div>
           )}
         </div>

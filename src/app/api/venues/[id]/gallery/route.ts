@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 // GET /api/venues/[id]/gallery — fetch showcase photos for a venue
 export async function GET(
@@ -41,12 +41,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  // Auth check with regular client (respects session)
   const supabase = await createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Only admins can upload showcase photos
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -66,8 +65,11 @@ export async function POST(
   const ext = file.name.split(".").pop() ?? "jpg";
   const storagePath = `${id}/showcase/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
+  // Use service client for storage + DB writes (bypasses RLS)
+  const service = await createServiceClient();
+
   const arrayBuffer = await file.arrayBuffer();
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await service.storage
     .from("venue-photos")
     .upload(storagePath, arrayBuffer, {
       contentType: file.type || "image/jpeg",
@@ -76,7 +78,7 @@ export async function POST(
 
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 });
 
-  const { data: row, error: dbError } = await supabase
+  const { data: row, error: dbError } = await service
     .from("venue_photos")
     .insert({
       venue_id: id,
@@ -86,17 +88,15 @@ export async function POST(
       file_size_bytes: file.size,
       area_tag: areaTag,
       photo_type: "showcase",
-      // proof_of_flight fields — set nulls for showcase
       month: null,
-      status: "approved", // showcase photos don't need approval
+      status: "approved",
     })
     .select("id, storage_path, file_name, file_size_bytes, area_tag, created_at")
     .single();
 
   if (dbError) return NextResponse.json({ error: dbError.message }, { status: 500 });
 
-  // Return signed URL too
-  const { data: signed } = await supabase.storage
+  const { data: signed } = await service.storage
     .from("venue-photos")
     .createSignedUrl(storagePath, 3600);
 
@@ -110,7 +110,6 @@ export async function DELETE(
 ) {
   const { id } = await params;
   const supabase = await createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -128,8 +127,10 @@ export async function DELETE(
   const photoId = searchParams.get("photo_id");
   if (!photoId) return NextResponse.json({ error: "photo_id required" }, { status: 400 });
 
-  // Fetch the row to get storage_path
-  const { data: photo } = await supabase
+  // Use service client for deletes (bypasses RLS)
+  const service = await createServiceClient();
+
+  const { data: photo } = await service
     .from("venue_photos")
     .select("storage_path")
     .eq("id", photoId)
@@ -139,11 +140,8 @@ export async function DELETE(
 
   if (!photo) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Delete from storage
-  await supabase.storage.from("venue-photos").remove([photo.storage_path]);
-
-  // Delete DB row
-  await supabase.from("venue_photos").delete().eq("id", photoId);
+  await service.storage.from("venue-photos").remove([photo.storage_path]);
+  await service.from("venue_photos").delete().eq("id", photoId);
 
   return NextResponse.json({ ok: true });
 }

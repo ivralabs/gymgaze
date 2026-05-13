@@ -444,6 +444,58 @@ export default function ScreenDetailClient({
             </div>
           </div>
 
+          {/* Placement Photo */}
+          <div className="rounded-2xl overflow-hidden" style={cardStyle}>
+            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Placement Photo</h2>
+              <label
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
+                style={{ background: "rgba(212,255,79,0.10)", color: "#D4FF4F", border: "1px solid rgba(212,255,79,0.2)" }}
+              >
+                <Upload size={12} strokeWidth={2} />
+                {editPhotoPreview ? "Change" : "Upload"}
+                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  if (!f) return;
+                  setEditPhoto(f);
+                  const preview = URL.createObjectURL(f);
+                  setEditPhotoPreview(preview);
+                  // Upload immediately
+                  const fd = new FormData();
+                  fd.append("file", f);
+                  const res = await fetch(`/api/screens/${screen.id}/photo`, { method: "POST", body: fd });
+                  if (res.ok) {
+                    const pd = await res.json();
+                    setEditPhotoPreview(pd.photo_url);
+                    setScreen((prev) => ({ ...prev, photo_url: pd.photo_url }));
+                  }
+                }} />
+              </label>
+            </div>
+            {editPhotoPreview ? (
+              <div className="relative">
+                <img src={editPhotoPreview} alt="Screen placement" className="w-full object-cover" style={{ maxHeight: 320 }} />
+                <button
+                  onClick={async () => {
+                    await fetch(`/api/screens/${screen.id}/photo`, { method: "DELETE" });
+                    setEditPhotoPreview(null);
+                    setScreen((prev) => ({ ...prev, photo_url: null }));
+                  }}
+                  className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
+                  style={{ background: "rgba(0,0,0,0.6)", color: "#F87171", backdropFilter: "blur(4px)" }}
+                >
+                  <Trash2 size={12} strokeWidth={2} /> Remove
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 px-6">
+                <Monitor size={28} color="#333" strokeWidth={1.5} className="mb-2" />
+                <p className="text-sm" style={{ color: "#555" }}>No placement photo yet</p>
+                <p className="text-xs mt-1" style={{ color: "#444" }}>Upload a photo to show where this screen is positioned in the venue</p>
+              </div>
+            )}
+          </div>
+
           {/* Notes */}
           <div className="rounded-2xl p-6" style={cardStyle}>
             <h2

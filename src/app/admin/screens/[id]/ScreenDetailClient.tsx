@@ -250,18 +250,34 @@ export default function ScreenDetailClient({
         throw new Error(body.error ?? "Failed to save");
       }
       const updated = await res.json() as ScreenDetail;
-      // Upload new photo if selected
+      // Upload new photo if selected — direct to Supabase (bypass Vercel 4.5MB limit)
       if (editPhoto) {
         setPhotoUploading(true);
-        const fd = new FormData();
-        fd.append("file", editPhoto);
-        const photoRes = await fetch(`/api/screens/${screen.id}/photo`, { method: "POST", body: fd });
-        if (photoRes.ok) {
-          const pd = await photoRes.json();
-          updated.photo_url = pd.photo_url;
-          setEditPhotoPreview(pd.photo_url);
+        try {
+          const urlRes = await fetch(`/api/screens/${screen.id}/photo/upload-url`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fileName: editPhoto.name, contentType: editPhoto.type || "image/jpeg" }),
+          });
+          if (urlRes.ok) {
+            const { token, path, publicUrl } = await urlRes.json();
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            await fetch(`${supabaseUrl}/storage/v1/object/upload/sign/screen-photos/${path}?token=${token}`, {
+              method: "PUT",
+              headers: { "Content-Type": editPhoto.type || "image/jpeg" },
+              body: editPhoto,
+            });
+            await fetch(`/api/screens/${screen.id}/photo/confirm`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ publicUrl }),
+            });
+            updated.photo_url = publicUrl;
+            setEditPhotoPreview(publicUrl);
+          }
+        } finally {
+          setPhotoUploading(false);
         }
-        setPhotoUploading(false);
       }
       setScreen((prev) => ({ ...prev, ...updated }));
       setEditOpen(false);
@@ -460,14 +476,27 @@ export default function ScreenDetailClient({
                   setEditPhoto(f);
                   const preview = URL.createObjectURL(f);
                   setEditPhotoPreview(preview);
-                  // Upload immediately
-                  const fd = new FormData();
-                  fd.append("file", f);
-                  const res = await fetch(`/api/screens/${screen.id}/photo`, { method: "POST", body: fd });
-                  if (res.ok) {
-                    const pd = await res.json();
-                    setEditPhotoPreview(pd.photo_url);
-                    setScreen((prev) => ({ ...prev, photo_url: pd.photo_url }));
+                  // Upload directly to Supabase (bypass Vercel 4.5MB limit)
+                  const urlRes = await fetch(`/api/screens/${screen.id}/photo/upload-url`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ fileName: f.name, contentType: f.type || "image/jpeg" }),
+                  });
+                  if (urlRes.ok) {
+                    const { token, path, publicUrl } = await urlRes.json();
+                    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+                    await fetch(`${supabaseUrl}/storage/v1/object/upload/sign/screen-photos/${path}?token=${token}`, {
+                      method: "PUT",
+                      headers: { "Content-Type": f.type || "image/jpeg" },
+                      body: f,
+                    });
+                    await fetch(`/api/screens/${screen.id}/photo/confirm`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ publicUrl }),
+                    });
+                    setEditPhotoPreview(publicUrl);
+                    setScreen((prev) => ({ ...prev, photo_url: publicUrl }));
                   }
                 }} />
               </label>

@@ -309,12 +309,33 @@ export default function VenueDetailTabs({
     if (!file) return;
     setCoverUploading(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch(`/api/venues/${venueId}/cover`, { method: "POST", body: fd });
-      if (res.ok) {
-        const data = await res.json();
-        setCoverUrl(data.cover_image_url + "?t=" + Date.now());
+      // Step 1: Get signed upload URL
+      const urlRes = await fetch(`/api/venues/${venueId}/cover/upload-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, contentType: file.type || "image/jpeg" }),
+      });
+      if (!urlRes.ok) throw new Error("Failed to get upload URL");
+      const { token, path, publicUrl } = await urlRes.json();
+
+      // Step 2: Upload directly to Supabase (bypasses Vercel 4.5MB limit)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const uploadUrl = `${supabaseUrl}/storage/v1/object/upload/sign/venue-covers/${path}?token=${token}`;
+      const uploadRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type || "image/jpeg" },
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error("Storage upload failed");
+
+      // Step 3: Confirm DB update
+      const confirmRes = await fetch(`/api/venues/${venueId}/cover/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicUrl }),
+      });
+      if (confirmRes.ok) {
+        setCoverUrl(publicUrl + "?t=" + Date.now());
       }
     } finally {
       setCoverUploading(false);

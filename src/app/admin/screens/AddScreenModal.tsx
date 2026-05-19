@@ -93,11 +93,27 @@ export default function AddScreenModal({
         throw new Error(body.error ?? "Failed to add screen");
       }
       const newScreen = await res.json() as ScreenRow;
-      // Upload photo if selected
+      // Upload photo if selected — direct to Supabase (bypass Vercel 4.5MB limit)
       if (photo) {
-        const fd = new FormData();
-        fd.append("file", photo);
-        await fetch(`/api/screens/${newScreen.id}/photo`, { method: "POST", body: fd });
+        const urlRes = await fetch(`/api/screens/${newScreen.id}/photo/upload-url`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileName: photo.name, contentType: photo.type || "image/jpeg" }),
+        });
+        if (urlRes.ok) {
+          const { token, path, publicUrl } = await urlRes.json();
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          await fetch(`${supabaseUrl}/storage/v1/object/upload/sign/screen-photos/${path}?token=${token}`, {
+            method: "PUT",
+            headers: { "Content-Type": photo.type || "image/jpeg" },
+            body: photo,
+          });
+          await fetch(`/api/screens/${newScreen.id}/photo/confirm`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ publicUrl }),
+          });
+        }
       }
       onAdded(newScreen);
     } catch (err: unknown) {

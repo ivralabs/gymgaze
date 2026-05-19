@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Layers, Plus, X, Filter, Upload, ExternalLink } from "lucide-react";
 import AddStaticSiteModal, {
   type StaticSiteRow,
@@ -46,6 +47,7 @@ function SiteCard({
   canEdit: boolean;
   onPhotoUpdate: (url: string | null) => void;
 }) {
+  const router = useRouter();
   const [photoUrl, setPhotoUrl] = useState<string | null>(site.photo_url ?? null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -58,10 +60,11 @@ function SiteCard({
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
       setPhotoUrl(data.photo_url);
       onPhotoUpdate(data.photo_url);
+      router.refresh();
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -122,12 +125,15 @@ function SiteCard({
         )}
 
         {uploadError && (
-          <div
-            className="absolute inset-x-0 bottom-0 px-3 py-2 text-xs text-center"
-            style={{ background: "rgba(239,68,68,0.85)", color: "#fff" }}
+          <button
+            onClick={() => setUploadError(null)}
+            className="absolute inset-x-0 bottom-0 px-3 py-2 text-xs text-center cursor-pointer flex items-center justify-center gap-2"
+            style={{ background: "rgba(239,68,68,0.85)", color: "#fff", border: 0, width: "100%" }}
+            title="Click to dismiss"
           >
             {uploadError}
-          </div>
+            <X size={11} strokeWidth={2.5} />
+          </button>
         )}
 
         <span

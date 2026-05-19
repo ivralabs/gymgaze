@@ -357,33 +357,60 @@ export default function VenueDetailTabs({
     setGalleryLoaded(true);
   }
 
-  function uploadFileWithProgress(file: File): Promise<GalleryPhoto> {
-    return new Promise((resolve, reject) => {
-      const fd = new FormData();
-      fd.append("file", file);
+  async function uploadFileWithProgress(file: File): Promise<GalleryPhoto> {
+    // Step 1: Get signed upload URL from server (tiny JSON request — no 4.5MB Vercel limit)
+    const urlRes = await fetch(`/api/venues/${venueId}/gallery/upload-url`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type || "image/jpeg",
+        areaTag: "other",
+      }),
+    });
+    if (!urlRes.ok) {
+      const body = await urlRes.json().catch(() => ({}));
+      throw new Error(body.error ?? `Failed to get upload URL (${urlRes.status})`);
+    }
+    const { token, path, publicUrl, areaTag } = await urlRes.json();
+
+    // Step 2: Upload file directly to Supabase Storage (bypasses Vercel — no size limit)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/upload/sign/venue-photos/${path}?token=${token}`;
+    await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", `/api/venues/${venueId}/gallery`);
+      xhr.open("PUT", uploadUrl);
+      xhr.setRequestHeader("Content-Type", file.type || "image/jpeg");
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) {
           setGalleryProgress(Math.round((e.loaded / e.total) * 100));
         }
       };
       xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try { resolve(JSON.parse(xhr.responseText)); }
-          catch { reject(new Error("Invalid response")); }
-        } else {
-          try {
-            const body = JSON.parse(xhr.responseText);
-            reject(new Error(body.error ?? `Upload failed (${xhr.status})`));
-          } catch {
-            reject(new Error(`Upload failed (${xhr.status}): ${xhr.responseText}`));
-          }
-        }
+        if (xhr.status >= 200 && xhr.status < 300) resolve();
+        else reject(new Error(`Storage upload failed (${xhr.status}): ${xhr.responseText}`));
       };
       xhr.onerror = () => reject(new Error("Network error during upload"));
-      xhr.send(fd);
+      xhr.send(file);
     });
+
+    // Step 3: Confirm with server to save DB row
+    const confirmRes = await fetch(`/api/venues/${venueId}/gallery/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        publicUrl,
+        path,
+        fileName: file.name,
+        fileSize: file.size,
+        areaTag,
+      }),
+    });
+    if (!confirmRes.ok) {
+      const body = await confirmRes.json().catch(() => ({}));
+      throw new Error(body.error ?? `Failed to confirm upload (${confirmRes.status})`);
+    }
+    return confirmRes.json();
   }
 
   async function handleGalleryUpload(files: FileList | null) {

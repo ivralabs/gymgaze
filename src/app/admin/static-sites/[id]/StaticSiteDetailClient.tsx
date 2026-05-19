@@ -71,9 +71,30 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
       if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
       const updated = await res.json();
       if (editPhoto) {
-        const fd = new FormData(); fd.append("file", editPhoto);
-        const pr = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
-        if (pr.ok) { const pd = await pr.json(); updated.photo_url = pd.photo_url; setEditPhotoPreview(pd.photo_url); }
+        const ext = (editPhoto.name.split(".").pop() ?? "jpg").toLowerCase();
+        const urlRes = await fetch(`/api/static-sites/${site.id}/photo/upload-url`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ext }),
+        });
+        const urlData = await urlRes.json();
+        if (urlRes.ok) {
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+          const up = await fetch(`${supabaseUrl}/storage/v1/object/upload/sign/static-site-photos/${urlData.path}?token=${urlData.token}`, {
+            method: "PUT",
+            headers: { "Content-Type": editPhoto.type || "image/jpeg" },
+            body: editPhoto,
+          });
+          if (up.ok) {
+            await fetch(`/api/static-sites/${site.id}/photo/confirm`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ publicUrl: urlData.publicUrl }),
+            });
+            updated.photo_url = urlData.publicUrl;
+            setEditPhotoPreview(urlData.publicUrl);
+          }
+        }
       }
       setSite((p) => ({ ...p, ...updated })); setEditOpen(false);
     } catch (err) { setSaveError(err instanceof Error ? err.message : "Error"); }
@@ -127,9 +148,32 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                     const f = e.target.files?.[0]; if (!f) return;
                     setEditPhotoPreview(URL.createObjectURL(f));
-                    const fd = new FormData(); fd.append("file", f);
-                    const res = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
-                    if (res.ok) { const pd = await res.json(); setEditPhotoPreview(pd.photo_url); setSite((p) => ({ ...p, photo_url: pd.photo_url })); }
+                    try {
+                      const ext = (f.name.split(".").pop() ?? "jpg").toLowerCase();
+                      const urlRes = await fetch(`/api/static-sites/${site.id}/photo/upload-url`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ ext }),
+                      });
+                      const urlData = await urlRes.json();
+                      if (!urlRes.ok) throw new Error(urlData.error ?? "Upload init failed");
+                      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+                      const up = await fetch(`${supabaseUrl}/storage/v1/object/upload/sign/static-site-photos/${urlData.path}?token=${urlData.token}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": f.type || "image/jpeg" },
+                        body: f,
+                      });
+                      if (!up.ok) throw new Error(`Storage upload failed (${up.status})`);
+                      await fetch(`/api/static-sites/${site.id}/photo/confirm`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ publicUrl: urlData.publicUrl }),
+                      });
+                      setEditPhotoPreview(urlData.publicUrl);
+                      setSite((p) => ({ ...p, photo_url: urlData.publicUrl }));
+                    } catch (err) {
+                      alert(err instanceof Error ? err.message : "Upload failed");
+                    }
                   }} />
                 </label>
               )}

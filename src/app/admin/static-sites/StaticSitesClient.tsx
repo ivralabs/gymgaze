@@ -57,13 +57,41 @@ function SiteCard({
     setUploading(true);
     setUploadError(null);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
-      setPhotoUrl(data.photo_url);
-      onPhotoUpdate(data.photo_url);
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+
+      // 1. Get signed upload URL from server
+      const urlRes = await fetch(`/api/static-sites/${site.id}/photo/upload-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ext }),
+      });
+      const urlData = await urlRes.json().catch(() => ({}));
+      if (!urlRes.ok) throw new Error(urlData.error ?? `Upload init failed (${urlRes.status})`);
+
+      // 2. Upload directly to Supabase Storage (bypasses Vercel body limit)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const uploadEndpoint = `${supabaseUrl}/storage/v1/object/upload/sign/static-site-photos/${urlData.path}?token=${urlData.token}`;
+      const uploadRes = await fetch(uploadEndpoint, {
+        method: "PUT",
+        headers: { "Content-Type": file.type || "image/jpeg" },
+        body: file,
+      });
+      if (!uploadRes.ok) {
+        const txt = await uploadRes.text().catch(() => "");
+        throw new Error(`Storage upload failed (${uploadRes.status}): ${txt.slice(0, 80)}`);
+      }
+
+      // 3. Confirm: save the public URL to the DB
+      const confirmRes = await fetch(`/api/static-sites/${site.id}/photo/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicUrl: urlData.publicUrl }),
+      });
+      const confirmData = await confirmRes.json().catch(() => ({}));
+      if (!confirmRes.ok) throw new Error(confirmData.error ?? `Save failed (${confirmRes.status})`);
+
+      setPhotoUrl(urlData.publicUrl);
+      onPhotoUpdate(urlData.publicUrl);
       router.refresh();
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Upload failed");

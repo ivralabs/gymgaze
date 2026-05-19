@@ -25,9 +25,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   // Delete old photo if replacing
   if (site.photo_url) {
     try {
-      const url = new URL(site.photo_url);
-      const path = url.pathname.split("/object/public/static-site-photos/")[1];
-      if (path) await svc.storage.from("static-site-photos").remove([path]);
+      const oldUrl = new URL(site.photo_url);
+      const parts = oldUrl.pathname.split("/object/public/static-site-photos/");
+      const oldPath = parts.length > 1 ? parts[1] : null;
+      if (oldPath && oldPath.trim().length > 0) {
+        await svc.storage.from("static-site-photos").remove([decodeURIComponent(oldPath)]);
+      }
     } catch { /* ignore cleanup errors */ }
   }
 
@@ -56,9 +59,12 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   const { data: site } = await svc.from("static_sites").select("photo_url").eq("id", id).single();
   if (site?.photo_url) {
     try {
-      const url = new URL(site.photo_url);
-      const path = url.pathname.split("/object/public/static-site-photos/")[1];
-      if (path) await svc.storage.from("static-site-photos").remove([path]);
+      const oldUrl = new URL(site.photo_url);
+      const parts = oldUrl.pathname.split("/object/public/static-site-photos/");
+      const oldPath = parts.length > 1 ? parts[1] : null;
+      if (oldPath && oldPath.trim().length > 0) {
+        await svc.storage.from("static-site-photos").remove([decodeURIComponent(oldPath)]);
+      }
     } catch { /* ignore */ }
   }
   await svc.from("static_sites").update({ photo_url: null }).eq("id", id);

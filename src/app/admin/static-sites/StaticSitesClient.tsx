@@ -48,29 +48,25 @@ function SiteCard({
 }) {
   const [photoUrl, setPhotoUrl] = useState<string | null>(site.photo_url ?? null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   async function handleUpload(file: File | null) {
     if (!file) return;
     setUploading(true);
-    setProgress(0);
-    const fd = new FormData();
-    fd.append("file", file);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/static-sites/${site.id}/photo`);
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
-    };
-    xhr.onload = () => {
+    setUploadError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`/api/static-sites/${site.id}/photo`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
+      setPhotoUrl(data.photo_url);
+      onPhotoUpdate(data.photo_url);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
       setUploading(false);
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const data = JSON.parse(xhr.responseText);
-        setPhotoUrl(data.photo_url);
-        onPhotoUpdate(data.photo_url);
-      }
-    };
-    xhr.onerror = () => setUploading(false);
-    xhr.send(fd);
+    }
   }
 
   const cardBg = {
@@ -121,13 +117,16 @@ function SiteCard({
             className="absolute inset-0 flex flex-col items-center justify-center"
             style={{ background: "rgba(0,0,0,0.7)" }}
           >
-            <p className="text-xs mb-2 font-semibold" style={{ color: "#D4FF4F" }}>{progress}%</p>
-            <div className="w-24 rounded-full overflow-hidden" style={{ height: 4, background: "rgba(255,255,255,0.15)" }}>
-              <div
-                className="h-full rounded-full transition-all"
-                style={{ width: `${progress}%`, backgroundColor: "#D4FF4F" }}
-              />
-            </div>
+            <p className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>Uploading…</p>
+          </div>
+        )}
+
+        {uploadError && (
+          <div
+            className="absolute inset-x-0 bottom-0 px-3 py-2 text-xs text-center"
+            style={{ background: "rgba(239,68,68,0.85)", color: "#fff" }}
+          >
+            {uploadError}
           </div>
         )}
 

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createClient as createPureServiceClient } from "@supabase/supabase-js";
 
 function serviceClient() {
@@ -12,10 +11,6 @@ function serviceClient() {
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const body = await req.json();
   const svc = serviceClient();
   const { data, error } = await svc.from("static_sites").update({ ...body, updated_at: new Date().toISOString() }).eq("id", id).select().single();
@@ -25,16 +20,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const svc = serviceClient();
   const { data: site } = await svc.from("static_sites").select("photo_url").eq("id", id).single();
   if (site?.photo_url) {
-    const url = new URL(site.photo_url);
-    const path = url.pathname.split("/object/public/static-site-photos/")[1];
-    if (path) await svc.storage.from("static-site-photos").remove([path]);
+    try {
+      const url = new URL(site.photo_url);
+      const path = url.pathname.split("/object/public/static-site-photos/")[1];
+      if (path) await svc.storage.from("static-site-photos").remove([path]);
+    } catch { /* ignore */ }
   }
   await svc.from("static_sites").delete().eq("id", id);
   return NextResponse.json({ ok: true });

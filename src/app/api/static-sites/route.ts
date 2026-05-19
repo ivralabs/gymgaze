@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createClient as createPureServiceClient } from "@supabase/supabase-js";
 
 function serviceClient() {
@@ -12,10 +11,6 @@ function serviceClient() {
 
 // GET /api/static-sites?venue_id=xxx — fetch static sites for a venue
 export async function GET(req: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { searchParams } = new URL(req.url);
   const venueId = searchParams.get("venue_id");
 
@@ -37,15 +32,6 @@ export async function GET(req: Request) {
 
 // POST /api/static-sites — create a static site
 export async function POST(req: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin" && profile?.role !== "sales") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
   const body = await req.json();
   const { venue_id, label, site_type, location_in_venue, width_cm, height_cm, notes } = body;
 

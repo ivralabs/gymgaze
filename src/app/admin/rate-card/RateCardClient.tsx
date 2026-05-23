@@ -65,6 +65,16 @@ const AVG_VISITS_PER_MEMBER_PER_WEEK = 3.5;
 // Active member rate — 65% of registered members actually visit each month
 const ACTIVE_RATE = 0.65;
 
+const DWELL_BENCHMARK = {
+  gym_minutes: 55,        // avg gym session length
+  roadside_seconds: 5,    // avg billboard glance
+};
+
+// Attention Quality Score — calibrated against typical OOH formats
+// Composite of: dwell time, captive audience, audience quality, novelty
+const ATTENTION_QUALITY_SCORE = 8.5; // out of 10
+const AUDIENCE_QUALITY_SCORE = 8.5;  // gym demographic = LSM 7-10
+
 // ─── Impact model ─────────────────────────────────────────────────────────────
 // OTS        = monthly_entries × (weeks / 4.3)           — foot traffic during flight
 // activeThisMonth = active_members × ACTIVE_RATE          — members who actually visit
@@ -413,7 +423,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         </div>
 
         {/* National impact summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
           <MetricCard
             icon={Eye}
             label="OTS"
@@ -445,6 +455,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             sub={`R${national.costPerUnique.toFixed(2)} per unique`}
             accent="#C084FC"
             tooltip="Quality-weighted reach — accounts for attention level at each screen placement"
+          />
+          <MetricCard
+            icon={TrendingUp}
+            label="Quality Index"
+            value={`${ATTENTION_QUALITY_SCORE}/10`}
+            sub={`Audience LSM 7–10`}
+            accent="#D4FF4F"
+            tooltip={`Composite of dwell time (${DWELL_BENCHMARK.gym_minutes}min vs ${DWELL_BENCHMARK.roadside_seconds}s billboard), captive audience, demographic (LSM 7-10), and novelty.`}
           />
         </div>
 

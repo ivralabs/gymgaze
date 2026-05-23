@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import Link from "next/link";
 import { Building2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";

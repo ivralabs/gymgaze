@@ -268,7 +268,7 @@ export default function UploadPhotoPage() {
                       <p className="text-xs mt-0.5" style={{ color: "#999" }}>{formatBytes(item.file.size)}</p>
                     </div>
                     {item.status === "idle" && (
-                      <button type="button" onClick={() => removeItem(idx)} className="flex-shrink-0 mt-0.5">
+                      <button type="button" onClick={() => removeItem(idx)} aria-label="Remove item" className="flex-shrink-0 mt-0.5">
                         <X size={14} color="#666" strokeWidth={2} />
                       </button>
                     )}

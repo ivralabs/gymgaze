@@ -74,7 +74,7 @@ export default function AddNetworkForm() {
               >
                 Add Network
               </h3>
-              <button onClick={() => setOpen(false)}>
+              <button onClick={() => setOpen(false)} aria-label="Close">
                 <X size={18} color="#909090" strokeWidth={2} />
               </button>
             </div>

@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { createServiceClient } from "@/lib/supabase/server";
 import AdvertiseClient from "./AdvertiseClient";
 
@@ -7,7 +10,7 @@ export const metadata = {
     "Reach South Africa's most engaged gym audience. CPM-based digital advertising across GymGaze screens in premium gym venues.",
 };
 
-export const revalidate = 3600; // revalidate every hour
+// revalidate = 0 set above (force-dynamic)
 
 interface NetworkStats {
   totalVenues: number;

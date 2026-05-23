@@ -308,7 +308,7 @@ export default function VenuesGrid({ venues, brands }: Props) {
             }}
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2">
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2" aria-label="Clear search">
               <X size={14} color="#555" />
             </button>
           )}

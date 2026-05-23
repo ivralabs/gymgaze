@@ -116,7 +116,7 @@ function NewLinkModal({ networks, onClose, onCreated }: {
       <div className="glass-card rounded-2xl w-full max-w-md p-6" style={{ borderRadius: 20, border: "1px solid rgba(255,255,255,0.12)" }}>
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-white text-lg" style={{ fontFamily: "Inter Tight, sans-serif" }}>Create Insight Link</h3>
-          <button onClick={onClose}><X size={18} color="#666" /></button>
+          <button onClick={onClose} aria-label="Close"><X size={18} color="#666" /></button>
         </div>
 
         <div className="space-y-4">
@@ -448,7 +448,7 @@ function LinksManager({ links: initial, networks }: { links: InsightLink[]; netw
                   <button onClick={() => copyLink(link.token)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all" style={{ background: copied === link.token ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.05)", color: copied === link.token ? "#D4FF4F" : "#A3A3A3", border: "1px solid rgba(255,255,255,0.08)" }}>
                     {copied === link.token ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
                   </button>
-                  <button onClick={() => deleteLink(link.id)} className="p-1.5 rounded-lg transition-all hover:bg-red-500/10" style={{ color: "#8A8A8A" }}>
+                  <button onClick={() => deleteLink(link.id)} className="p-1.5 rounded-lg transition-all hover:bg-red-500/10" style={{ color: "#8A8A8A" }} aria-label="Delete link">
                     <Trash2 size={14} />
                   </button>
                 </div>

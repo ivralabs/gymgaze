@@ -1215,7 +1215,7 @@ export default function VenueDetailTabs({
               <div className="w-full max-w-md rounded-2xl p-6 overflow-y-auto max-h-[90vh]" style={{ background: "rgba(20,20,20,0.98)", border: "1px solid rgba(255,255,255,0.10)" }} onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="text-base font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Add Static Site</h3>
-                  <button onClick={() => setShowAddStatic(false)} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}><X size={14} color="#909090" strokeWidth={2} /></button>
+                  <button onClick={() => setShowAddStatic(false)} aria-label="Close" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}><X size={14} color="#909090" strokeWidth={2} /></button>
                 </div>
                 {staticError && <div className="mb-4 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)", color: "#EF4444" }}>{staticError}</div>}
                 <form onSubmit={handleAddStaticSite} className="space-y-4">
@@ -1258,7 +1258,7 @@ export default function VenueDetailTabs({
                     {staticPhotoPreview ? (
                       <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
                         <img src={staticPhotoPreview} alt="preview" className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => { setStaticPhoto(null); setStaticPhotoPreview(null); }} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={13} strokeWidth={2} /></button>
+                        <button type="button" onClick={() => { setStaticPhoto(null); setStaticPhotoPreview(null); }} className="absolute top-2 right-2 p-1.5 rounded-lg" aria-label="Remove photo" style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={13} strokeWidth={2} /></button>
                       </div>
                     ) : (
                       <label className="flex flex-col items-center justify-center gap-2 w-full rounded-xl cursor-pointer" style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.15)", padding: "20px" }}>
@@ -1585,7 +1585,7 @@ export default function VenueDetailTabs({
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Add Screen</h3>
-              <button onClick={() => setShowAddScreen(false)} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}>
+              <button onClick={() => setShowAddScreen(false)} aria-label="Close" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 8, padding: "6px", cursor: "pointer" }}>
                 <X size={14} color="#909090" strokeWidth={2} />
               </button>
             </div>

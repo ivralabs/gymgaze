@@ -351,7 +351,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{ ...GLASS_CARD, padding: 32, width: 440, maxWidth: "90vw", position: "relative" }}>
-        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#666", cursor: "pointer" }}>
+        <button onClick={onClose} aria-label="Close" style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#666", cursor: "pointer" }}>
           <X size={20} />
         </button>
 

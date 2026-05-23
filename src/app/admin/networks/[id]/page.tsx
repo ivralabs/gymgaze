@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Phone, Mail, User, Megaphone, Image as ImageIcon } from "lucide-react";
 import EditBrandButton from "./EditBrandButton";

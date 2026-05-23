@@ -75,6 +75,14 @@ const DWELL_BENCHMARK = {
 const ATTENTION_QUALITY_SCORE = 8.5; // out of 10
 const AUDIENCE_QUALITY_SCORE = 8.5;  // gym demographic = LSM 7-10
 
+const FORMAT_BENCHMARKS = [
+  { name: "GymGaze DOOH",    cpm: 85,  attention: 0.65, color: "#D4FF4F" }, // dynamic — replaced with effectiveCpm at render
+  { name: "Roadside OOH",   cpm: 45,  attention: 0.05, color: "#A1A1AA" },
+  { name: "Radio",          cpm: 120, attention: 0.40, color: "#FF6B35" },
+  { name: "Digital Display",cpm: 15,  attention: 0.02, color: "#6EE7B7" },
+  { name: "TV (Prime)",     cpm: 280, attention: 0.40, color: "#C084FC" },
+];
+
 // ─── Impact model ─────────────────────────────────────────────────────────────
 // OTS        = monthly_entries × (weeks / 4.3)           — foot traffic during flight
 // activeThisMonth = active_members × ACTIVE_RATE          — members who actually visit
@@ -492,6 +500,48 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           </div>
         </div>
       </div>
+
+      {/* ── Format Benchmark ──────────────────────────────────────── */}
+      {(() => {
+        const gymgazeEcpm = effectiveCpm / ATTENTION.default;
+        const benchmarks = FORMAT_BENCHMARKS.map((b) => ({
+          ...b,
+          cpm: b.name === "GymGaze DOOH" ? effectiveCpm : b.cpm,
+          ecpm: b.name === "GymGaze DOOH" ? gymgazeEcpm : b.cpm / b.attention,
+        })).sort((a, b) => a.ecpm - b.ecpm);
+        const maxEcpm = Math.max(...benchmarks.map((b) => b.ecpm));
+        return (
+          <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderRadius: 16 }}>
+            <p style={LABEL}>Format Benchmark — eCPM (cost per attended impression)</p>
+            <div className="flex flex-col gap-3">
+              {benchmarks.map((b) => {
+                const isGymgaze = b.name === "GymGaze DOOH";
+                const barWidth = Math.round((b.ecpm / maxEcpm) * 100);
+                return (
+                  <div
+                    key={b.name}
+                    className="flex items-center gap-3"
+                    style={isGymgaze ? { padding: "6px 8px", borderRadius: 10, border: `1px solid ${b.color}44`, boxShadow: `0 0 8px ${b.color}22` } : {}}
+                  >
+                    <div style={{ width: 130, fontSize: 12, fontWeight: isGymgaze ? 700 : 500, color: isGymgaze ? b.color : "#888", flexShrink: 0 }}>
+                      {b.name}
+                    </div>
+                    <div style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 4, height: 8 }}>
+                      <div style={{ width: `${barWidth}%`, height: 8, borderRadius: 4, background: b.color, opacity: isGymgaze ? 1 : 0.55, transition: "width 0.4s ease" }} />
+                    </div>
+                    <div style={{ width: 80, textAlign: "right", fontSize: 12, fontWeight: isGymgaze ? 700 : 500, color: isGymgaze ? b.color : "#666", flexShrink: 0 }}>
+                      R{Math.round(b.ecpm)} eCPM
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs mt-4" style={{ color: "#555" }}>
+              eCPM = CPM ÷ attention rate. Lower = better value per impression that actually registers.
+            </p>
+          </div>
+        );
+      })()}
 
       {/* ── 2: Impression Breakdown ───────────────────────────────────────── */}
       <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderRadius: 16 }}>

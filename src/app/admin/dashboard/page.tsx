@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
+import { Plus, TrendingUp, Clock, CheckCircle2, Footprints } from "lucide-react";
 import PhotoApprovalButtons from "./photo-approval-buttons";
 import RadialProgress from "@/components/gymgaze/RadialProgress";
 import CommissionCard from "./CommissionCard";
@@ -62,6 +62,20 @@ export default async function AdminDashboard() {
     .from("venues")
     .select("id", { count: "exact", head: true })
     .eq("status", "active");
+
+  // Network footfall totals — sum across all venues
+  const { data: footfallRows } = await supabase
+    .from("venues")
+    .select("daily_entries, weekly_entries, monthly_entries")
+    .eq("status", "active");
+
+  const footfallVenues = (footfallRows ?? []).filter(
+    (v) => v.daily_entries != null || v.weekly_entries != null || v.monthly_entries != null
+  );
+  const totalDaily = footfallRows?.reduce((s, v) => s + (v.daily_entries ?? 0), 0) ?? 0;
+  const totalWeekly = footfallRows?.reduce((s, v) => s + (v.weekly_entries ?? 0), 0) ?? 0;
+  const totalMonthly = footfallRows?.reduce((s, v) => s + (v.monthly_entries ?? 0), 0) ?? 0;
+  const venuesWithData = footfallVenues.length || 1;
 
   const today = new Date().toISOString().slice(0, 10);
   const { count: activeCampaignsCount } = await supabase
@@ -306,6 +320,46 @@ export default async function AdminDashboard() {
               {now.toLocaleDateString("en-ZA", { month: "long", year: "numeric" })}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Network Footfall */}
+      <div className="glass-card rounded-2xl overflow-hidden mb-8" style={{ borderRadius: 16 }}>
+        <div
+          className="flex items-center gap-2 px-6 py-4"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <Footprints size={16} color="#D4FF4F" strokeWidth={2} />
+          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
+            Network Footfall
+          </h2>
+          <span className="text-xs ml-1" style={{ color: "#666" }}>
+            across {venuesCount ?? 0} active venues
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          {[
+            { label: "Daily Entries", value: totalDaily, avg: Math.round(totalDaily / venuesWithData) },
+            { label: "Weekly Entries", value: totalWeekly, avg: Math.round(totalWeekly / venuesWithData) },
+            { label: "Monthly Entries", value: totalMonthly, avg: Math.round(totalMonthly / venuesWithData) },
+          ].map((stat) => (
+            <div key={stat.label} className="px-6 py-5">
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#B0B0B0" }}>
+                {stat.label}
+              </p>
+              <div
+                className="tabular-nums text-white"
+                style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "2.4rem", letterSpacing: "-0.02em", lineHeight: 1 }}
+              >
+                {stat.value > 0 ? stat.value.toLocaleString("en-ZA") : <span style={{ color: "#444", fontSize: "1.4rem", fontWeight: 500 }}>No data</span>}
+              </div>
+              {stat.value > 0 && (
+                <p className="text-xs mt-2" style={{ color: "#666" }}>
+                  avg {stat.avg.toLocaleString("en-ZA")} / venue
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, TrendingUp, Clock, CheckCircle2, Footprints } from "lucide-react";
+import { Plus, TrendingUp, Clock, CheckCircle2, Footprints, Monitor } from "lucide-react";
 import PhotoApprovalButtons from "./photo-approval-buttons";
 import RadialProgress from "@/components/gymgaze/RadialProgress";
 import CommissionCard from "./CommissionCard";
@@ -62,6 +62,27 @@ export default async function AdminDashboard() {
     .from("venues")
     .select("id", { count: "exact", head: true })
     .eq("status", "active");
+
+  // Screen inventory by size
+  const { data: screenSizeRows } = await supabase
+    .from("screens")
+    .select("size_inches")
+    .eq("is_active", true);
+
+  const screenBuckets = [
+    { label: "Small", range: "≤32\"" , min: 0,  max: 32  },
+    { label: "Medium", range: "43–55\"" , min: 33, max: 55  },
+    { label: "Large", range: "65–75\"" , min: 56, max: 75  },
+    { label: "XL",    range: "85\"+"     , min: 76, max: 9999 },
+  ];
+
+  const totalScreens = (screenSizeRows ?? []).length;
+  const bucketCounts = screenBuckets.map((b) => ({
+    ...b,
+    count: (screenSizeRows ?? []).filter(
+      (s) => (s.size_inches ?? 0) >= b.min && (s.size_inches ?? 0) <= b.max
+    ).length,
+  }));
 
   // Network footfall totals — sum across all venues
   const { data: footfallRows } = await supabase
@@ -321,6 +342,56 @@ export default async function AdminDashboard() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Screen Inventory */}
+      <div className="glass-card rounded-2xl overflow-hidden mb-8" style={{ borderRadius: 16 }}>
+        <div
+          className="flex items-center gap-2 px-6 py-4"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <Monitor size={16} color="#D4FF4F" strokeWidth={2} />
+          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
+            Screen Inventory
+          </h2>
+          <span className="text-xs ml-1" style={{ color: "#666" }}>
+            {totalScreens} active screen{totalScreens !== 1 ? "s" : ""}
+          </span>
+        </div>
+        {totalScreens === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <Monitor size={28} color="#333" strokeWidth={1.5} className="mb-2" />
+            <p className="text-sm" style={{ color: "#555" }}>No active screens yet</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+            {bucketCounts.map((b) => {
+              const pct = totalScreens > 0 ? Math.round((b.count / totalScreens) * 100) : 0;
+              return (
+                <div key={b.label} className="px-6 py-5">
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#B0B0B0" }}>{b.label}</p>
+                    <p className="text-xs" style={{ color: "#555" }}>{b.range}</p>
+                  </div>
+                  <div
+                    className="tabular-nums text-white"
+                    style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "2.4rem", letterSpacing: "-0.02em", lineHeight: 1 }}
+                  >
+                    {b.count}
+                  </div>
+                  <p className="text-xs mt-2 mb-3" style={{ color: "#666" }}>{pct}% of network</p>
+                  {/* Fill bar */}
+                  <div className="w-full rounded-full overflow-hidden" style={{ height: 4, backgroundColor: "rgba(255,255,255,0.06)" }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%`, backgroundColor: pct > 0 ? "#D4FF4F" : "transparent" }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Network Footfall */}

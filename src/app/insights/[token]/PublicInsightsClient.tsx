@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Monitor, Users, TrendingUp, MapPin, Lock, Eye, Clock, Building2, ChevronDown, Download } from "lucide-react";
+import { Monitor, Users, TrendingUp, MapPin, Lock, Eye, Clock, ChevronDown, Download, Zap, Target, BarChart3 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,7 +19,7 @@ type Venue = {
 };
 type Screen = { id: string; venue_id: string; is_active: boolean | null };
 type Photo = { venue_id: string; status: string | null };
-type CampaignRaw = { id: string; name: string; advertiser: string | null; end_date: string | null };
+type CampaignRaw = { id: string; end_date: string | null };
 type CampaignVenue = { venue_id: string; campaigns: CampaignRaw | CampaignRaw[] | null };
 
 function getCampaign(raw: CampaignRaw | CampaignRaw[] | null): CampaignRaw | null {
@@ -37,6 +37,30 @@ interface Props {
   pinProtected: boolean; initialData: InsightData | null;
 }
 
+// ─── Media model constants (mirrored from RateCardClient.tsx) ─────────────────
+
+const PLAYS_PER_SCREEN_PER_WEEK = 1596;
+const ACTIVE_RATE = 0.65;
+const AVG_VISITS_PER_MEMBER_PER_WEEK = 3.5;
+const ATTENTION_QUALITY_SCORE = 8.5;
+
+function calcMetrics(
+  venue: Venue,
+  filteredScreens: Screen[],
+  weeks = 4
+) {
+  const screenCount = filteredScreens.filter((s) => s.venue_id === venue.id && s.is_active).length;
+  const activeMembers = venue.active_members ?? 0;
+  const monthlyEntries = venue.monthly_entries ?? 0;
+  const activeThisMonth = Math.round(activeMembers * ACTIVE_RATE);
+  const ots = Math.round(monthlyEntries * (weeks / 4.3));
+  const reachUncapped = Math.round(activeThisMonth * Math.min(weeks / 4.3, 1.5));
+  const reach = Math.min(reachUncapped, activeMembers);
+  const frequency = reach > 0 ? Math.round((ots / reach) * 10) / 10 : 0;
+  const impact = Math.round(reach * ACTIVE_RATE);
+  return { screens: screenCount, ots, reach, frequency, impact, activeMembers, activeThisMonth };
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function fmt(n: number) { return n.toLocaleString("en-ZA"); }
@@ -46,14 +70,14 @@ function unique<T>(arr: (T | null | undefined)[]): T[] {
 }
 
 const VENUE_TYPE_COLORS: Record<string, string> = {
-  "Shopping Mall":    "#A78BFA",
-  "Shopping Centre":  "#60A5FA",
-  "Free Standing":    "#34D399",
-  "Office Park":      "#F59E0B",
+  "Shopping Mall":      "#A78BFA",
+  "Shopping Centre":    "#60A5FA",
+  "Free Standing":      "#34D399",
+  "Office Park":        "#F59E0B",
   "Residential Estate": "#F472B6",
-  "Industrial Park":  "#FB923C",
-  "CBD":              "#38BDF8",
-  "Other":            "#9CA3AF",
+  "Industrial Park":    "#FB923C",
+  "CBD":                "#38BDF8",
+  "Other":              "#9CA3AF",
 };
 
 // ─── PIN Gate ─────────────────────────────────────────────────────────────────
@@ -133,7 +157,7 @@ function GymGazeLogo() {
   );
 }
 
-// ─── Venue Type Donut (pure CSS) ──────────────────────────────────────────────
+// ─── Venue Type Bar ───────────────────────────────────────────────────────────
 
 function VenueTypeBar({ venues }: { venues: Venue[] }) {
   const counts: Record<string, number> = {};
@@ -148,7 +172,6 @@ function VenueTypeBar({ venues }: { venues: Venue[] }) {
 
   return (
     <div>
-      {/* Stacked bar */}
       <div className="flex h-3 rounded-full overflow-hidden gap-0.5 mb-3">
         {entries.map(([type, count]) => (
           <div
@@ -157,7 +180,6 @@ function VenueTypeBar({ venues }: { venues: Venue[] }) {
           />
         ))}
       </div>
-      {/* Legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-2">
         {entries.map(([type, count]) => (
           <div key={type} className="flex items-center gap-1.5">
@@ -166,6 +188,300 @@ function VenueTypeBar({ venues }: { venues: Venue[] }) {
             <span className="text-xs font-bold text-white">{count}</span>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Media Metrics Strip (NEW) ────────────────────────────────────────────────
+
+function MediaMetricsStrip({
+  venues,
+  filteredScreens,
+}: {
+  venues: Venue[];
+  filteredScreens: Screen[];
+}) {
+  const totalReach = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
+
+  // Aggregate calcMetrics across all venues for 4-week flight
+  let totalOts = 0;
+  let totalUniqueReach = 0;
+  let totalFreqNumer = 0;
+
+  for (const v of venues) {
+    const m = calcMetrics(v, filteredScreens, 4);
+    totalOts += m.ots;
+    totalUniqueReach += m.reach;
+    totalFreqNumer += m.ots;
+  }
+
+  const avgFrequency =
+    totalUniqueReach > 0
+      ? Math.round((totalFreqNumer / totalUniqueReach) * 10) / 10
+      : 0;
+
+  const tiles = [
+    {
+      label: "Total Reach",
+      value: fmt(totalReach),
+      sub: "active gym members",
+      color: "#FFFFFF",
+      icon: Users,
+      tooltip: undefined,
+    },
+    {
+      label: "Monthly OTS",
+      value: fmt(totalOts),
+      sub: "4-week flight",
+      color: "#D4FF4F",
+      icon: Eye,
+      tooltip: "Opportunities To See — total ad impressions across your flight",
+    },
+    {
+      label: "Avg Frequency",
+      value: `${avgFrequency}×`,
+      sub: "per person",
+      color: "#A78BFA",
+      icon: Zap,
+      tooltip: "How many times each person sees your ad in a 4-week flight",
+    },
+    {
+      label: "Unique Reach",
+      value: fmt(totalUniqueReach),
+      sub: "individuals reached",
+      color: "#60A5FA",
+      icon: Target,
+      tooltip: "Active members who visit at least once during your flight",
+    },
+    {
+      label: "Avg Dwell",
+      value: "60 min",
+      sub: "per gym session",
+      color: "#FF6B35",
+      icon: Clock,
+      tooltip: "Average time a member spends in the gym per visit",
+    },
+    {
+      label: "Attention Quality",
+      value: `${ATTENTION_QUALITY_SCORE}/10`,
+      sub: "composite score",
+      color: "#D4FF4F",
+      icon: BarChart3,
+      tooltip:
+        "Composite score: dwell time, captive audience, audience quality. 10 = perfect recall environment",
+    },
+  ];
+
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>
+        Media Metrics · 4-week flight
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {tiles.map(({ label, value, sub, color, icon: Icon, tooltip }) => (
+          <div
+            key={label}
+            className="rounded-2xl p-4"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+            title={tooltip}
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <Icon size={12} strokeWidth={2} style={{ color: "#555" }} />
+              <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: "#8A8A8A" }}>
+                {label}
+              </p>
+              {tooltip && (
+                <span
+                  className="text-xs flex-shrink-0"
+                  style={{ color: "#555", cursor: "help" }}
+                  title={tooltip}
+                >
+                  ⓘ
+                </span>
+              )}
+            </div>
+            <p
+              className="text-2xl font-bold tabular-nums"
+              style={{ color, fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+            >
+              {value}
+            </p>
+            <p className="text-xs mt-1" style={{ color: "#777" }}>{sub}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── eCPM Explainer (NEW) ──────────────────────────────────────────────────────
+
+function ECPMExplainer() {
+  const rows = [
+    { format: "Digital Display",     cpm: "R15",  attention: "2%",  ecpm: "R750",  highlight: false },
+    { format: "Roadside OOH",        cpm: "R45",  attention: "5%",  ecpm: "R900",  highlight: false },
+    { format: "Radio",               cpm: "R120", attention: "40%", ecpm: "R300",  highlight: false },
+    { format: "TV Prime",            cpm: "R280", attention: "40%", ecpm: "R700",  highlight: false },
+    { format: "GymGaze",             cpm: "R85",  attention: "65%", ecpm: "R131",  highlight: true  },
+  ];
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.08)",
+      }}
+    >
+      <div className="p-5 md:p-6">
+        {/* Heading */}
+        <div className="flex items-start gap-3 mb-4">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: "rgba(212,255,79,0.10)", border: "1px solid rgba(212,255,79,0.2)" }}
+          >
+            <BarChart3 size={18} color="#D4FF4F" strokeWidth={2} />
+          </div>
+          <div>
+            <h2
+              className="text-lg font-bold text-white leading-snug"
+              style={{ fontFamily: "Inter Tight, sans-serif" }}
+            >
+              What is eCPM — and why does it matter?
+            </h2>
+            <p className="text-sm mt-0.5" style={{ color: "#8A8A8A" }}>
+              The metric that separates cheap reach from effective reach.
+            </p>
+          </div>
+        </div>
+
+        {/* Body copy */}
+        <div className="space-y-3 mb-6">
+          <p className="text-sm leading-relaxed" style={{ color: "#C8C8C8" }}>
+            <span className="font-semibold text-white">CPM</span> (Cost Per 1,000 Impressions) is the standard pricing metric
+            used across all media — from digital banners to TV spots. It tells you how much you pay to reach 1,000 people.
+            But CPM alone doesn&apos;t tell you if those people actually saw — let alone absorbed — your message.
+          </p>
+          <p className="text-sm leading-relaxed" style={{ color: "#C8C8C8" }}>
+            <span className="font-semibold text-white">eCPM</span> (Effective CPM) corrects for this. It divides CPM by the
+            format&apos;s attention rate — the percentage of the audience that genuinely engages with the ad. A lower eCPM means
+            more real impressions per rand spent.
+          </p>
+
+          {/* Worked examples */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <div
+              className="rounded-xl p-4"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#EF4444" }}>
+                Digital Display
+              </p>
+              <p className="text-sm" style={{ color: "#C8C8C8" }}>
+                CPM: <span className="font-bold text-white">R15</span> &nbsp;·&nbsp; Attention: <span className="font-bold text-white">2%</span>
+              </p>
+              <p className="text-xl font-bold mt-1" style={{ color: "#EF4444", fontFamily: "Inter Tight, sans-serif" }}>
+                eCPM = R750
+              </p>
+              <p className="text-xs mt-1" style={{ color: "#777" }}>You&apos;re paying for 1,000 impressions but only ~20 register.</p>
+            </div>
+            <div
+              className="rounded-xl p-4"
+              style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.15)" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#D4FF4F" }}>
+                GymGaze
+              </p>
+              <p className="text-sm" style={{ color: "#C8C8C8" }}>
+                CPM: <span className="font-bold text-white">R85</span> &nbsp;·&nbsp; Attention: <span className="font-bold text-white">65%</span>
+              </p>
+              <p className="text-xl font-bold mt-1" style={{ color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif" }}>
+                eCPM = R131
+              </p>
+              <p className="text-xs mt-1" style={{ color: "#777" }}>Captive, dwell-rich audience. 650 of every 1,000 actually register.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Comparison table */}
+        <div className="overflow-x-auto rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+          <table className="w-full min-w-[480px]">
+            <thead>
+              <tr style={{ background: "rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                {["Format", "CPM", "Attention Rate", "eCPM"].map((h) => (
+                  <th
+                    key={h}
+                    className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "#8A8A8A" }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr
+                  key={row.format}
+                  style={{
+                    borderBottom: "1px solid rgba(255,255,255,0.04)",
+                    background: row.highlight ? "rgba(212,255,79,0.05)" : "transparent",
+                  }}
+                >
+                  <td className="px-4 py-3">
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: row.highlight ? "#D4FF4F" : "#A3A3A3" }}
+                    >
+                      {row.format}
+                    </span>
+                    {row.highlight && (
+                      <span
+                        className="ml-2 text-xs px-1.5 py-0.5 rounded-full"
+                        style={{ background: "rgba(212,255,79,0.12)", color: "#D4FF4F", border: "1px solid rgba(212,255,79,0.3)" }}
+                      >
+                        Best value
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-sm font-mono" style={{ color: row.highlight ? "#fff" : "#888" }}>
+                      {row.cpm}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: row.highlight ? "#D4FF4F" : "#888" }}
+                    >
+                      {row.attention}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className="text-sm font-bold tabular-nums"
+                      style={{
+                        color: row.highlight ? "#D4FF4F" : "#888",
+                        fontFamily: "Inter Tight, sans-serif",
+                      }}
+                    >
+                      {row.ecpm}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer note */}
+        <p className="text-xs mt-3" style={{ color: "#555" }}>
+          eCPM source: industry benchmarks. GymGaze attention rate based on 60+ min captive dwell time vs avg 5s roadside glance.
+        </p>
       </div>
     </div>
   );
@@ -302,7 +618,7 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
           ))}
         </ul>
 
-        {/* Quick stats for this industry */}
+        {/* Quick stats */}
         <div className="grid grid-cols-3 gap-2">
           {[
             { label: "Reach", value: fmt(totalMembers) },
@@ -324,11 +640,11 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
 
 function MediaComparison() {
   const rows = [
-    { format: "GymGaze Screen", dwell: "60+ min", skippable: false, captive: true, highlight: true },
-    { format: "Roadside Billboard", dwell: "2 sec", skippable: true, captive: false, highlight: false },
-    { format: "Social Media Ad", dwell: "1.5 sec", skippable: true, captive: false, highlight: false },
-    { format: "Radio", dwell: "—", skippable: true, captive: false, highlight: false },
-    { format: "Cinema", dwell: "30 sec", skippable: false, captive: true, highlight: false },
+    { format: "GymGaze Screen",  dwell: "60+ min", skippable: false, captive: true,  highlight: true  },
+    { format: "Roadside Billboard", dwell: "2 sec",    skippable: true,  captive: false, highlight: false },
+    { format: "Social Media Ad",    dwell: "1.5 sec",  skippable: true,  captive: false, highlight: false },
+    { format: "Radio",              dwell: "—",        skippable: true,  captive: false, highlight: false },
+    { format: "Cinema",             dwell: "30 sec",   skippable: false, captive: true,  highlight: false },
   ];
 
   return (
@@ -371,10 +687,43 @@ function MediaComparison() {
   );
 }
 
+// ─── Why This Audience (NEW) ──────────────────────────────────────────────────
+
+function WhyThisAudience() {
+  const points = [
+    { label: "LSM 7–10 dominant",            icon: "💳", sub: "Above-average disposable income, brand-conscious consumers" },
+    { label: "65% visit 3+ times per week",   icon: "📅", sub: "High repeat exposure — your campaign compounds over time" },
+    { label: "Average session: 55–65 minutes", icon: "⏱️", sub: "Among the longest dwell times of any out-of-home format" },
+    { label: "Zero ad-skipping environment",  icon: "🚫", sub: "No remote, no scroll, no skip button — screens are ambient" },
+  ];
+
+  return (
+    <div
+      className="rounded-2xl p-5"
+      style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.12)" }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#D4FF4F" }}>
+        Why this audience
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {points.map(({ label, icon, sub }) => (
+          <div key={label} className="flex items-start gap-3">
+            <span className="text-lg flex-shrink-0 mt-0.5">{icon}</span>
+            <div>
+              <p className="text-sm font-semibold text-white leading-snug">{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Deck ────────────────────────────────────────────────────────────────
 
 function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
-  const { networks, venues, screens, photos, campaignVenues } = data;
+  const { networks, venues, screens, campaignVenues } = data;
 
   // Geography state
   const provinces = unique(venues.map((v) => v.province)).sort();
@@ -385,36 +734,37 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
   const [activeCity, setActiveCity] = useState<string | null>(null);
   const [venuesOpen, setVenuesOpen] = useState(false);
 
-  // Reset city when province changes
   function selectProvince(p: string | null) {
     setActiveProvince(p);
     setActiveCity(null);
   }
 
-  // Filtered venues
-  const filtered = useMemo(() => venues.filter((v) => {
-    if (activeProvince && v.province !== activeProvince) return false;
-    if (activeCity && v.city !== activeCity) return false;
-    return true;
-  }), [venues, activeProvince, activeCity]);
+  const filtered = useMemo(
+    () =>
+      venues.filter((v) => {
+        if (activeProvince && v.province !== activeProvince) return false;
+        if (activeCity && v.city !== activeCity) return false;
+        return true;
+      }),
+    [venues, activeProvince, activeCity]
+  );
 
   const filteredIds = new Set(filtered.map((v) => v.id));
   const filteredScreens = screens.filter((s) => filteredIds.has(s.venue_id));
-  const filteredPhotos = photos.filter((p) => filteredIds.has(p.venue_id));
 
-  // Derived metrics
+  // Hero metrics
   const totalMembers = filtered.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = filtered.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
   const ots = totalMonthly * filteredScreens.length;
   const weeklyOts = Math.round(ots / 4.33);
-  const avgDwell = networks.reduce((s, n) => s + (n.avg_dwell_minutes ?? 60), 0) / (networks.length || 1);
-  const activeCampaigns = new Set(
-    campaignVenues.filter((cv) => { const c = getCampaign(cv.campaigns); return filteredIds.has(cv.venue_id) && c?.end_date && new Date(c.end_date) >= new Date(); }).map((cv) => getCampaign(cv.campaigns)?.id)
-  ).size;
-  const approved = filteredPhotos.filter((p) => p.status === "approved").length;
-  const compliance = filteredPhotos.length > 0 ? Math.round((approved / filteredPhotos.length) * 100) : 0;
+  const avgDwell =
+    networks.reduce((s, n) => s + (n.avg_dwell_minutes ?? 60), 0) / (networks.length || 1);
 
-  // Hero headline
+  // Suppress unused variable warning — campaignVenues used for future admin features
+  void campaignVenues;
+  void AVG_VISITS_PER_MEMBER_PER_WEEK;
+  void PLAYS_PER_SCREEN_PER_WEEK;
+
   const geoLabel = activeCity ?? activeProvince ?? "South Africa";
 
   const pillStyle = (active: boolean): React.CSSProperties => ({
@@ -427,8 +777,15 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
 
   return (
     <div className="min-h-screen" style={{ background: "#0A0A0A", color: "#fff" }}>
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)", position: "sticky", top: 0, zIndex: 10, backdropFilter: "blur(12px)" }}>
+      {/* Sticky header */}
+      <div
+        style={{
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          background: "rgba(255,255,255,0.02)",
+          position: "sticky", top: 0, zIndex: 10,
+          backdropFilter: "blur(12px)",
+        }}
+      >
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
           <GymGazeLogo />
           <div className="flex items-center gap-3">
@@ -437,6 +794,7 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
               onClick={() => window.print()}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all print:hidden"
               style={{ background: "rgba(212,255,79,0.10)", border: "1px solid rgba(212,255,79,0.25)", color: "#D4FF4F" }}
+              aria-label="Export as PDF"
             >
               <Download size={13} strokeWidth={2} />
               Export PDF
@@ -447,12 +805,18 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
 
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12 space-y-6 md:space-y-8">
 
-        {/* Hero statement */}
+        {/* 1. Hero statement */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#8A8A8A" }}>
             {new Date().toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}
           </p>
-          <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem,5vw,2.8rem)", letterSpacing: "-0.02em", lineHeight: 1.1, color: "#fff" }}>
+          <h1
+            style={{
+              fontFamily: "Inter Tight, sans-serif", fontWeight: 800,
+              fontSize: "clamp(1.6rem,5vw,2.8rem)", letterSpacing: "-0.02em",
+              lineHeight: 1.1, color: "#fff",
+            }}
+          >
             <span style={{ color: "#D4FF4F" }}>{fmt(totalMembers)}</span> active gym members
             <br />across <span style={{ color: "#D4FF4F" }}>{filtered.length}</span> venue{filtered.length !== 1 ? "s" : ""} in {geoLabel}
           </h1>
@@ -474,7 +838,7 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
           </div>
         )}
 
-        {/* City filter — only shows when province selected or single province */}
+        {/* City filter */}
         {cities.length > 1 && (
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#8A8A8A" }}>City</p>
@@ -487,84 +851,84 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
           </div>
         )}
 
-        {/* KPI tiles */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {[
-            { icon: Users,    label: "Total Reach",     value: fmt(totalMembers),    sub: "active members",    color: "#fff" },
-            { icon: Eye,      label: "Weekly OTS",      value: fmt(weeklyOts),       sub: "opp. to see",       color: "#D4FF4F" },
-            { icon: Clock,    label: "Avg Dwell",       value: `${Math.round(avgDwell)} min`, sub: "per visit", color: "#A78BFA" },
-            { icon: Monitor,  label: "Screens",         value: filteredScreens.length.toString(), sub: "digital screens", color: "#60A5FA" },
-          ].map(({ icon: Icon, label, value, sub, color }) => (
-            <div key={label} className="rounded-2xl p-4 md:p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
-              <div className="flex items-center gap-1.5 mb-2">
-                <Icon size={13} color="#555" strokeWidth={2} />
-                <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: "#8A8A8A" }}>{label}</p>
-              </div>
-              <p className="text-2xl font-bold tabular-nums" style={{ color, fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}>{value}</p>
-              <p className="text-xs mt-1" style={{ color: "#777" }}>{sub}</p>
-            </div>
-          ))}
-        </div>
-
         {/* Venue type breakdown */}
-        <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
+        <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Venue Types</p>
           <VenueTypeBar venues={filtered} />
         </div>
 
-        {/* Industry tailoring */}
+        {/* 2. Media Metrics Strip */}
+        <MediaMetricsStrip venues={filtered} filteredScreens={filteredScreens} />
+
+        {/* 3. eCPM Explainer */}
+        <ECPMExplainer />
+
+        {/* 4. Industry tailoring */}
         <IndustryPanel venues={filtered} screens={filteredScreens} />
 
-        {/* Media comparison */}
+        {/* 5. Media comparison */}
         <MediaComparison />
 
-        {/* Audience demographics */}
+        {/* 6. Audience Demographics */}
         {networks.some((n) => n.audience_male_pct !== null) && (
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Audience Profile</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {networks.filter((n) => n.audience_male_pct !== null || n.audience_age_18_24 !== null).map((n) => (
-                <div key={n.id} className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
-                  <p className="text-sm font-semibold text-white mb-4">{n.name}</p>
-                  {(n.audience_male_pct !== null || n.audience_female_pct !== null) && (
-                    <div className="mb-4">
-                      <p className="text-xs mb-2" style={{ color: "#8A8A8A" }}>Gender Split</p>
-                      <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
-                        <div style={{ width: `${n.audience_male_pct ?? 50}%`, background: "#60A5FA", borderRadius: "99px 0 0 99px" }} />
-                        <div style={{ width: `${n.audience_female_pct ?? 50}%`, background: "#F472B6", borderRadius: "0 99px 99px 0" }} />
+
+            {/* Why this audience summary card */}
+            <WhyThisAudience />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {networks
+                .filter((n) => n.audience_male_pct !== null || n.audience_age_18_24 !== null)
+                .map((n) => (
+                  <div
+                    key={n.id}
+                    className="rounded-2xl p-5"
+                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                  >
+                    <p className="text-sm font-semibold text-white mb-4">{n.name}</p>
+                    {(n.audience_male_pct !== null || n.audience_female_pct !== null) && (
+                      <div className="mb-4">
+                        <p className="text-xs mb-2" style={{ color: "#8A8A8A" }}>Gender Split</p>
+                        <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
+                          <div style={{ width: `${n.audience_male_pct ?? 50}%`, background: "#60A5FA", borderRadius: "99px 0 0 99px" }} />
+                          <div style={{ width: `${n.audience_female_pct ?? 50}%`, background: "#F472B6", borderRadius: "0 99px 99px 0" }} />
+                        </div>
+                        <div className="flex justify-between mt-1.5">
+                          <span className="text-xs" style={{ color: "#60A5FA" }}>Male {n.audience_male_pct ?? "—"}%</span>
+                          <span className="text-xs" style={{ color: "#F472B6" }}>Female {n.audience_female_pct ?? "—"}%</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between mt-1.5">
-                        <span className="text-xs" style={{ color: "#60A5FA" }}>Male {n.audience_male_pct ?? "—"}%</span>
-                        <span className="text-xs" style={{ color: "#F472B6" }}>Female {n.audience_female_pct ?? "—"}%</span>
-                      </div>
-                    </div>
-                  )}
-                  {[
-                    { label: "18–24", val: n.audience_age_18_24 },
-                    { label: "25–34", val: n.audience_age_25_34 },
-                    { label: "35–44", val: n.audience_age_35_44 },
-                    { label: "45+",   val: n.audience_age_45_plus },
-                  ].filter((a) => a.val !== null).map(({ label, val }) => (
-                    <div key={label} className="flex items-center gap-3 mb-1.5">
-                      <span className="text-xs w-10 flex-shrink-0" style={{ color: "#8A8A8A" }}>{label}</span>
-                      <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
-                        <div style={{ width: `${val}%`, height: 4, background: "#D4FF4F", borderRadius: 99 }} />
-                      </div>
-                      <span className="text-xs w-8 text-right tabular-nums" style={{ color: "#C8C8C8" }}>{val}%</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    )}
+                    {[
+                      { label: "18–24", val: n.audience_age_18_24 },
+                      { label: "25–34", val: n.audience_age_25_34 },
+                      { label: "35–44", val: n.audience_age_35_44 },
+                      { label: "45+",   val: n.audience_age_45_plus },
+                    ]
+                      .filter((a) => a.val !== null)
+                      .map(({ label, val }) => (
+                        <div key={label} className="flex items-center gap-3 mb-1.5">
+                          <span className="text-xs w-10 flex-shrink-0" style={{ color: "#8A8A8A" }}>{label}</span>
+                          <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99 }}>
+                            <div style={{ width: `${val}%`, height: 4, background: "#D4FF4F", borderRadius: 99 }} />
+                          </div>
+                          <span className="text-xs w-8 text-right tabular-nums" style={{ color: "#C8C8C8" }}>{val}%</span>
+                        </div>
+                      ))}
+                  </div>
+                ))}
             </div>
           </div>
         )}
 
-        {/* Venue grid — collapsible */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
+        {/* 7. Venue Breakdown — collapsible */}
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
           <button
             onClick={() => setVenuesOpen((p) => !p)}
             className="w-full flex items-center justify-between px-5 py-4 transition-all"
             style={{ background: venuesOpen ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)" }}
+            aria-label="Toggle venue breakdown"
           >
             <div className="flex items-center gap-3">
               <p className="text-sm font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>Venue Breakdown</p>
@@ -572,59 +936,86 @@ function InsightsDeck({ title, data }: { title: string; data: InsightData }) {
                 {filtered.length} location{filtered.length !== 1 ? "s" : ""}
               </span>
             </div>
-            <ChevronDown size={16} color="#777" style={{ transform: venuesOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} />
+            <ChevronDown
+              size={16}
+              color="#777"
+              style={{ transform: venuesOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+            />
           </button>
           {venuesOpen && (
-          <div className="p-4 pt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            {filtered.map((venue) => {
-              const vScreens = screens.filter((s) => s.venue_id === venue.id).length;
-              const vNet = networks.find((n) => n.id === venue.gym_brand_id);
-              const brandColor = vNet?.primary_color ?? "#D4FF4F";
-              const typeColor = VENUE_TYPE_COLORS[venue.region ?? ""] ?? "#9CA3AF";
-              return (
-                <div key={venue.id} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${brandColor}20`, border: `1px solid ${brandColor}33` }}>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: brandColor, fontFamily: "Inter Tight, sans-serif" }}>{venue.name.slice(0, 2).toUpperCase()}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{venue.name}</p>
-                      <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                        <MapPin size={10} color="#555" strokeWidth={2} />
-                        <p className="text-xs" style={{ color: "#8A8A8A" }}>{[venue.city, venue.province].filter(Boolean).join(", ")}</p>
-                        {venue.region && (
-                          <span className="text-xs px-1.5 py-0.5 rounded-full ml-1" style={{ background: `${typeColor}18`, color: typeColor }}>{venue.region}</span>
-                        )}
+            <div className="p-4 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                {filtered.map((venue) => {
+                  const vScreens = screens.filter((s) => s.venue_id === venue.id);
+                  const vActiveScreens = vScreens.filter((s) => s.is_active).length;
+                  const vMetrics = calcMetrics(venue, screens, 4);
+                  const vNet = networks.find((n) => n.id === venue.gym_brand_id);
+                  const brandColor = vNet?.primary_color ?? "#D4FF4F";
+                  const typeColor = VENUE_TYPE_COLORS[venue.region ?? ""] ?? "#9CA3AF";
+                  return (
+                    <div
+                      key={venue.id}
+                      className="rounded-2xl p-4"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                          style={{ background: `${brandColor}20`, border: `1px solid ${brandColor}33` }}
+                        >
+                          <span style={{ fontSize: 11, fontWeight: 800, color: brandColor, fontFamily: "Inter Tight, sans-serif" }}>
+                            {venue.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{venue.name}</p>
+                          <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                            <MapPin size={10} color="#555" strokeWidth={2} />
+                            <p className="text-xs" style={{ color: "#8A8A8A" }}>
+                              {[venue.city, venue.province].filter(Boolean).join(", ")}
+                            </p>
+                            {venue.region && (
+                              <span
+                                className="text-xs px-1.5 py-0.5 rounded-full ml-1"
+                                style={{ background: `${typeColor}18`, color: typeColor }}
+                              >
+                                {venue.region}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className="grid grid-cols-3 gap-2 mt-3 pt-3"
+                        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                      >
+                        <div className="text-center">
+                          <p className="text-xs tabular-nums font-bold text-white">{fmt(venue.active_members ?? 0)}</p>
+                          <p className="text-xs mt-0.5" style={{ color: "#777" }}>members</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs tabular-nums font-bold text-white">{fmt(vMetrics.ots)}</p>
+                          <p className="text-xs mt-0.5" style={{ color: "#777" }}>monthly OTS</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs tabular-nums font-bold text-white">{vActiveScreens}</p>
+                          <p className="text-xs mt-0.5" style={{ color: "#777" }}>screens</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div className="flex items-center gap-1">
-                      <Users size={12} color="#555" strokeWidth={2} />
-                      <span className="text-xs tabular-nums font-semibold text-white">{fmt(venue.active_members ?? 0)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Monitor size={12} color="#555" strokeWidth={2} />
-                      <span className="text-xs tabular-nums" style={{ color: "#C8C8C8" }}>{vScreens} screens</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TrendingUp size={12} color="#555" strokeWidth={2} />
-                      <span className="text-xs tabular-nums" style={{ color: "#C8C8C8" }}>{fmt(venue.monthly_entries ?? 0)}/mo</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Footer */}
+        {/* 8. Footer */}
         <div className="pt-8 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <GymGazeLogo />
-          <p className="text-xs mt-2" style={{ color: "#999" }}>Powered by GymGaze · Confidential · {new Date().getFullYear()}</p>
+          <p className="text-xs mt-2" style={{ color: "#999" }}>
+            Powered by GymGaze · Confidential · {new Date().getFullYear()}
+          </p>
         </div>
       </div>
     </div>

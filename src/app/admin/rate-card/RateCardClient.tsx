@@ -489,7 +489,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           </div>
           <div>
             <p className="text-xs mb-0.5" style={{ color: "#555" }}>Cost Per Unique</p>
-            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#C084FC" }}>R{national.costPerUnique.toFixed(2)}</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#C084FC" }}>R{national.costPerUnique < 1 ? national.costPerUnique.toFixed(2) : national.costPerUnique.toFixed(2)}</p>
+          </div>
+          <div title="Effective CPM after attention quality adjustment">
+            <p className="text-xs mb-0.5" style={{ color: "#555" }}>eCPM</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#D4FF4F" }}>R{(effectiveCpm / ATTENTION.default).toFixed(0)}</p>
           </div>
           <div>
             <p className="text-xs mb-0.5" style={{ color: "#555" }}>Screens</p>

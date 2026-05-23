@@ -13,6 +13,7 @@ import {
   Zap,
   ClipboardList,
   ChevronDown,
+  BadgeDollarSign,
 } from "lucide-react";
 
 import TeamSection from "./sections/TeamSection";
@@ -24,12 +25,14 @@ import ReportSchedulerSection from "./sections/ReportSchedulerSection";
 import NotificationsSection from "./sections/NotificationsSection";
 import IntegrationsSection from "./sections/IntegrationsSection";
 import AuditLogSection from "./sections/AuditLogSection";
+import PricingSection from "./sections/PricingSection";
 
 type TabKey =
   | "team"
   | "owner-portal"
   | "manager-portal"
   | "platform"
+  | "pricing"
   | "whitelabel"
   | "reports"
   | "notifications"
@@ -41,6 +44,7 @@ const NAV_ITEMS: { key: TabKey; label: string; Icon: React.ElementType }[] = [
   { key: "owner-portal", label: "Owner Portal", Icon: LayoutDashboard },
   { key: "manager-portal", label: "Manager Portal", Icon: UserCheck },
   { key: "platform", label: "Platform Settings", Icon: Settings },
+  { key: "pricing", label: "CPM Pricing", Icon: BadgeDollarSign },
   { key: "whitelabel", label: "White-Label", Icon: Paintbrush },
   { key: "reports", label: "Report Scheduler", Icon: FileText },
   { key: "notifications", label: "Notifications", Icon: Bell },
@@ -53,6 +57,7 @@ const SECTION_MAP: Record<TabKey, React.ReactNode> = {
   "owner-portal": <OwnerPortalSection />,
   "manager-portal": <ManagerPortalSection />,
   platform: <PlatformSection />,
+  pricing: <PricingSection />,
   whitelabel: <WhitelabelSection />,
   reports: <ReportSchedulerSection />,
   notifications: <NotificationsSection />,

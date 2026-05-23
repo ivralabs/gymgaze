@@ -26,18 +26,23 @@ export type VenueRow = {
   screens: { id: string; is_active: boolean | null }[] | null;
 };
 
+export type PricingTier = {
+  id: string;
+  tier_key: string;
+  label: string;
+  cpm_zar: number;
+  min_spend: number;
+  duration_sec: number;
+  description: string | null;
+  color: string;
+  bg: string;
+  sort_order: number;
+};
+
 interface Props {
   venues: VenueRow[];
+  pricingTiers: PricingTier[];
 }
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const CPM_TIERS = [
-  { label: "Standard 7s", value: 65,  color: "#A1A1AA", bg: "rgba(113,113,122,0.18)" },
-  { label: "Premium 15s", value: 85,  color: "#FF6B35", bg: "rgba(255,107,53,0.18)" },
-  { label: "Prime 15s",   value: 120, color: "#D4FF4F", bg: "rgba(212,255,79,0.14)" },
-  { label: "Spotlight 30s", value: 160, color: "#C084FC", bg: "rgba(168,85,247,0.18)" },
-];
 
 // Impressions per screen per week based on avg gym operating hours (6am–10pm, 16h/day)
 // Loop = 251s → ~228 plays/screen/day → 1,596 plays/screen/week
@@ -83,8 +88,11 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string;
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function RateCardClient({ venues }: Props) {
-  const [cpm, setCpm] = useState(85);
+export default function RateCardClient({ venues, pricingTiers }: Props) {
+  const defaultCpm = pricingTiers.find((t) => t.tier_key === "premium")?.cpm_zar
+    ?? pricingTiers[0]?.cpm_zar
+    ?? 85;
+  const [cpm, setCpm] = useState(defaultCpm);
   const [customCpm, setCustomCpm] = useState("");
   const [weeks, setWeeks] = useState(4);
   const [selectedVenues, setSelectedVenues] = useState<string[]>([]);
@@ -261,18 +269,18 @@ export default function RateCardClient({ venues }: Props) {
 
         {/* Tier pills */}
         <div className="flex flex-wrap gap-2 mb-5">
-          {CPM_TIERS.map((tier) => (
+          {pricingTiers.map((tier) => (
             <button
-              key={tier.value}
-              onClick={() => { setCpm(tier.value); setCustomCpm(""); }}
+              key={tier.id}
+              onClick={() => { setCpm(tier.cpm_zar); setCustomCpm(""); }}
               className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
               style={{
-                background: cpm === tier.value && !customCpm ? tier.bg : "rgba(255,255,255,0.04)",
-                color: cpm === tier.value && !customCpm ? tier.color : "#666",
-                border: `1px solid ${cpm === tier.value && !customCpm ? tier.color + "44" : "rgba(255,255,255,0.08)"}`,
+                background: cpm === tier.cpm_zar && !customCpm ? tier.bg : "rgba(255,255,255,0.04)",
+                color: cpm === tier.cpm_zar && !customCpm ? tier.color : "#666",
+                border: `1px solid ${cpm === tier.cpm_zar && !customCpm ? tier.color + "44" : "rgba(255,255,255,0.08)"}`,
               }}
             >
-              {tier.label} — R{tier.value}
+              {tier.label} — R{tier.cpm_zar}
             </button>
           ))}
         </div>

@@ -7,11 +7,14 @@ import {
   MapPin,
   Building2,
   Globe,
-  FileText,
   Copy,
   Check,
   ChevronDown,
   ChevronUp,
+  Eye,
+  Users,
+  Repeat2,
+  Zap,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -44,20 +47,52 @@ interface Props {
   pricingTiers: PricingTier[];
 }
 
-// Impressions per screen per week based on avg gym operating hours (6am–10pm, 16h/day)
-// Loop = 251s → ~228 plays/screen/day → 1,596 plays/screen/week
-// Estimated reach: 1 play = ~4 unique eyeballs (dwell time + footfall blend)
+// ─── Media constants ──────────────────────────────────────────────────────────
+// Loop = 251s → ~228 plays/screen/day (16h operating) → 1,596/week
 const PLAYS_PER_SCREEN_PER_WEEK = 1596;
-const EYEBALLS_PER_PLAY = 4;
 
-function screenCount(v: VenueRow) {
-  return Array.isArray(v.screens) ? v.screens.filter((s) => s.is_active).length : 0;
+// Attention factors by screen placement
+const ATTENTION = {
+  reception:   0.85,
+  gym_floor:   0.60,
+  changerooms: 0.75,
+  default:     0.65,
+};
+
+// Members visit avg 3.5× per week → repeat exposure builds frequency
+const AVG_VISITS_PER_MEMBER_PER_WEEK = 3.5;
+
+// Unique reach: 70% of OTS are unique individuals (rest are repeat visits)
+const UNIQUE_REACH_FACTOR = 0.70;
+
+// ─── Impact model ─────────────────────────────────────────────────────────────
+// OTS  = monthly_entries × (weeks / 4.3)           — foot traffic during flight
+// Reach = OTS × 0.70                               — unique individuals
+// Freq  = OTS / Reach                               — avg exposures per person
+// Impact = Reach × attention_factor                 — quality-weighted reach
+
+function calcMetrics(v: VenueRow, weeks: number) {
+  const screens = Array.isArray(v.screens) ? v.screens.filter((s) => s.is_active).length : 0;
+
+  // OTS: use monthly_entries as ground truth for foot traffic
+  const monthlyEntries = v.monthly_entries ?? 0;
+  const ots = Math.round(monthlyEntries * (weeks / 4.3));
+
+  // Reach & frequency
+  const reach = Math.round(ots * UNIQUE_REACH_FACTOR);
+  const frequency = reach > 0 ? Math.round((ots / reach) * 10) / 10 : 0;
+
+  // Impact = reach × avg attention factor
+  const attentionFactor = ATTENTION.default;
+  const impact = Math.round(reach * attentionFactor);
+
+  // Plays-based OTS (screen play count) — used for CPM billing
+  const playsOts = screens * PLAYS_PER_SCREEN_PER_WEEK * weeks;
+
+  return { screens, ots, reach, frequency, impact, playsOts };
 }
 
-function venueImpressions(v: VenueRow, weeks: number) {
-  const screens = screenCount(v);
-  return screens * PLAYS_PER_SCREEN_PER_WEEK * EYEBALLS_PER_PLAY * weeks;
-}
+// ─── Formatters ───────────────────────────────────────────────────────────────
 
 function fmtR(n: number) {
   return `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
@@ -69,29 +104,55 @@ function fmtNum(n: number) {
   return n.toString();
 }
 
-// ─── Card component ───────────────────────────────────────────────────────────
+function fmtFreq(f: number) {
+  return `${f.toFixed(1)}×`;
+}
 
-function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  accent,
+  tooltip,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  sub?: string;
+  accent?: string;
+  tooltip?: string;
+}) {
   return (
-    <div className="glass-card rounded-2xl p-4 md:p-5" style={{ borderRadius: 16 }}>
-      <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>{label}</p>
+    <div
+      className="glass-card rounded-2xl p-4 md:p-5 flex flex-col gap-2"
+      style={{ borderRadius: 16 }}
+      title={tooltip}
+    >
+      <div className="flex items-center gap-2">
+        <Icon size={14} color={accent ?? "#888"} strokeWidth={2} />
+        <p className="text-xs uppercase tracking-wider" style={{ color: "#888", fontWeight: 600 }}>{label}</p>
+      </div>
       <p
         className="text-2xl md:text-3xl font-bold tabular-nums"
         style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1, color: accent ?? "#fff" }}
       >
         {value}
       </p>
-      {sub && <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>{sub}</p>}
+      {sub && <p className="text-xs" style={{ color: "#8A8A8A" }}>{sub}</p>}
     </div>
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function RateCardClient({ venues, pricingTiers }: Props) {
   const defaultCpm = pricingTiers.find((t) => t.tier_key === "premium")?.cpm_zar
     ?? pricingTiers[0]?.cpm_zar
     ?? 85;
+
   const [cpm, setCpm] = useState(defaultCpm);
   const [customCpm, setCustomCpm] = useState("");
   const [weeks, setWeeks] = useState(4);
@@ -105,70 +166,83 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
   const months = Math.round((weeks / 4) * 10) / 10;
 
-  // ── Impression calculations ────────────────────────────────────────────────
+  // ── Per-venue metrics ──────────────────────────────────────────────────────
   const venueData = useMemo(() => {
-    return venues.map((v) => ({
-      ...v,
-      impressions: venueImpressions(v, weeks),
-      screens: screenCount(v),
-      cost: ((venueImpressions(v, weeks) / 1000) * effectiveCpm),
-    }));
+    return venues.map((v) => {
+      const m = calcMetrics(v, weeks);
+      const cost = (m.playsOts / 1000) * effectiveCpm;
+      const costPerUnique = m.reach > 0 ? cost / m.reach : 0;
+      return { ...v, ...m, cost, costPerUnique };
+    });
   }, [venues, weeks, effectiveCpm]);
 
+  // ── City rollup ────────────────────────────────────────────────────────────
   const cityData = useMemo(() => {
-    const map = new Map<string, { impressions: number; screens: number; venues: number }>();
+    const map = new Map<string, { ots: number; reach: number; impact: number; screens: number; venues: number; cost: number }>();
     venueData.forEach((v) => {
-      const city = v.city ?? "Unknown";
-      const existing = map.get(city) ?? { impressions: 0, screens: 0, venues: 0 };
-      map.set(city, {
-        impressions: existing.impressions + v.impressions,
-        screens: existing.screens + v.screens,
-        venues: existing.venues + 1,
+      const key = v.city ?? "Unknown";
+      const e = map.get(key) ?? { ots: 0, reach: 0, impact: 0, screens: 0, venues: 0, cost: 0 };
+      map.set(key, {
+        ots: e.ots + v.ots,
+        reach: e.reach + v.reach,
+        impact: e.impact + v.impact,
+        screens: e.screens + v.screens,
+        venues: e.venues + 1,
+        cost: e.cost + v.cost,
       });
     });
     return Array.from(map.entries())
-      .map(([city, d]) => ({ city, ...d, cost: (d.impressions / 1000) * effectiveCpm }))
-      .sort((a, b) => b.impressions - a.impressions);
-  }, [venueData, effectiveCpm]);
+      .map(([city, d]) => ({ city, ...d, frequency: d.reach > 0 ? Math.round((d.ots / d.reach) * 10) / 10 : 0 }))
+      .sort((a, b) => b.reach - a.reach);
+  }, [venueData]);
 
+  // ── Province rollup ────────────────────────────────────────────────────────
   const provinceData = useMemo(() => {
-    const map = new Map<string, { impressions: number; screens: number; venues: number }>();
+    const map = new Map<string, { ots: number; reach: number; impact: number; screens: number; venues: number; cost: number }>();
     venueData.forEach((v) => {
-      const prov = v.province ?? "Unknown";
-      const existing = map.get(prov) ?? { impressions: 0, screens: 0, venues: 0 };
-      map.set(prov, {
-        impressions: existing.impressions + v.impressions,
-        screens: existing.screens + v.screens,
-        venues: existing.venues + 1,
+      const key = v.province ?? "Unknown";
+      const e = map.get(key) ?? { ots: 0, reach: 0, impact: 0, screens: 0, venues: 0, cost: 0 };
+      map.set(key, {
+        ots: e.ots + v.ots,
+        reach: e.reach + v.reach,
+        impact: e.impact + v.impact,
+        screens: e.screens + v.screens,
+        venues: e.venues + 1,
+        cost: e.cost + v.cost,
       });
     });
     return Array.from(map.entries())
-      .map(([province, d]) => ({ province, ...d, cost: (d.impressions / 1000) * effectiveCpm }))
-      .sort((a, b) => b.impressions - a.impressions);
-  }, [venueData, effectiveCpm]);
+      .map(([province, d]) => ({ province, ...d, frequency: d.reach > 0 ? Math.round((d.ots / d.reach) * 10) / 10 : 0 }))
+      .sort((a, b) => b.reach - a.reach);
+  }, [venueData]);
 
+  // ── National ───────────────────────────────────────────────────────────────
   const national = useMemo(() => {
-    const totalImpressions = venueData.reduce((s, v) => s + v.impressions, 0);
-    const totalScreens = venueData.reduce((s, v) => s + v.screens, 0);
-    return {
-      impressions: totalImpressions,
-      screens: totalScreens,
-      venues: venues.length,
-      cost: (totalImpressions / 1000) * effectiveCpm,
-    };
-  }, [venueData, effectiveCpm]);
+    const ots    = venueData.reduce((s, v) => s + v.ots, 0);
+    const reach  = venueData.reduce((s, v) => s + v.reach, 0);
+    const impact = venueData.reduce((s, v) => s + v.impact, 0);
+    const screens = venueData.reduce((s, v) => s + v.screens, 0);
+    const cost   = venueData.reduce((s, v) => s + v.cost, 0);
+    const freq   = reach > 0 ? Math.round((ots / reach) * 10) / 10 : 0;
+    const costPerUnique = reach > 0 ? cost / reach : 0;
+    return { ots, reach, impact, screens, cost, freq, costPerUnique, venues: venues.length };
+  }, [venueData, venues.length]);
 
-  // ── Quote builder ──────────────────────────────────────────────────────────
+  // ── Quote selection ────────────────────────────────────────────────────────
   const quoteVenues = selectedVenues.length > 0
     ? venueData.filter((v) => selectedVenues.includes(v.id))
     : venueData;
 
   const quoteTotals = useMemo(() => {
-    const totalImpressions = quoteVenues.reduce((s, v) => s + v.impressions, 0);
-    const totalCost = (totalImpressions / 1000) * effectiveCpm;
-    const totalScreens = quoteVenues.reduce((s, v) => s + v.screens, 0);
-    return { totalImpressions, totalCost, totalScreens };
-  }, [quoteVenues, effectiveCpm]);
+    const ots    = quoteVenues.reduce((s, v) => s + v.ots, 0);
+    const reach  = quoteVenues.reduce((s, v) => s + v.reach, 0);
+    const impact = quoteVenues.reduce((s, v) => s + v.impact, 0);
+    const screens = quoteVenues.reduce((s, v) => s + v.screens, 0);
+    const cost   = quoteVenues.reduce((s, v) => s + v.cost, 0);
+    const freq   = reach > 0 ? Math.round((ots / reach) * 10) / 10 : 0;
+    const costPerUnique = reach > 0 ? cost / reach : 0;
+    return { ots, reach, impact, screens, cost, freq, costPerUnique };
+  }, [quoteVenues]);
 
   function toggleVenue(id: string) {
     setSelectedVenues((prev) =>
@@ -177,54 +251,62 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   }
 
   function copyQuote() {
-    const venueList = quoteVenues.map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens, ${fmtNum(v.impressions)} impressions`).join("\n");
+    const venueList = quoteVenues
+      .map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens | OTS ${fmtNum(v.ots)} | Reach ${fmtNum(v.reach)} | Freq ${fmtFreq(v.frequency)} | Impact ${fmtNum(v.impact)}`)
+      .join("\n");
+
+    const selectedTier = pricingTiers.find((t) => t.cpm_zar === effectiveCpm);
+
     const text = [
-      `GymGaze DOOH Quote`,
-      `──────────────────`,
-      clientName ? `Client: ${clientName}` : null,
-      flightStart && flightEnd ? `Flight: ${flightStart} → ${flightEnd}` : null,
-      `Duration: ${weeks} weeks`,
-      `CPM: R${effectiveCpm}`,
+      `GymGaze DOOH Media Proposal`,
+      `═══════════════════════════`,
+      clientName ? `Client:    ${clientName}` : null,
+      flightStart && flightEnd ? `Flight:    ${flightStart} → ${flightEnd}` : null,
+      `Duration:  ${weeks} weeks`,
+      `Tier:      ${selectedTier?.label ?? "Custom"} @ R${effectiveCpm} CPM`,
       ``,
-      `Venues (${quoteVenues.length}):`,
+      `MEDIA METRICS`,
+      `─────────────`,
+      `OTS (Opportunities To See): ${fmtNum(quoteTotals.ots)}`,
+      `Reach (Unique Individuals): ${fmtNum(quoteTotals.reach)}`,
+      `Average Frequency:          ${fmtFreq(quoteTotals.freq)}`,
+      `Impact Score:               ${fmtNum(quoteTotals.impact)}`,
+      `Cost Per Unique:            R${quoteTotals.costPerUnique.toFixed(2)}`,
+      ``,
+      `VENUES (${quoteVenues.length})`,
+      `─────────────`,
       venueList,
       ``,
-      `Total Screens: ${quoteTotals.totalScreens}`,
-      `Total Impressions: ${fmtNum(quoteTotals.totalImpressions)}`,
-      `Total Cost: ${fmtR(quoteTotals.totalCost)}`,
+      `INVESTMENT`,
+      `─────────────`,
+      `Total Screens:  ${quoteTotals.screens}`,
+      `Total Cost:     ${fmtR(Math.round(quoteTotals.cost))}`,
       ``,
-      `Min. spend R2,500. Subject to availability.`,
+      `Min. spend R${pricingTiers[0]?.min_spend?.toLocaleString("en-ZA") ?? "2,500"}. Subject to availability.`,
+      `Generated by GymGaze · gymgaze.vercel.app`,
     ].filter(Boolean).join("\n");
 
     navigator.clipboard.writeText(text).then(() => {
       setCopiedQuote(true);
-      setTimeout(() => setCopiedQuote(false), 2000);
+      setTimeout(() => setCopiedQuote(false), 2500);
     });
   }
 
-  const SECTION_LABEL_STYLE: React.CSSProperties = {
-    fontSize: "11px",
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: "0.08em",
-    color: "#D4FF4F",
-    marginBottom: "12px",
+  // ─── Styles ───────────────────────────────────────────────────────────────
+
+  const LABEL: React.CSSProperties = {
+    fontSize: "11px", fontWeight: 700, textTransform: "uppercase",
+    letterSpacing: "0.08em", color: "#D4FF4F", marginBottom: "12px",
   };
 
-  const TABLE_HEADER: React.CSSProperties = {
-    fontSize: "11px",
-    fontWeight: 600,
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    color: "#555",
-    padding: "10px 16px",
+  const TH: React.CSSProperties = {
+    fontSize: "11px", fontWeight: 600, textTransform: "uppercase",
+    letterSpacing: "0.06em", color: "#555", padding: "10px 14px",
     borderBottom: "1px solid rgba(255,255,255,0.06)",
   };
 
-  const TABLE_CELL: React.CSSProperties = {
-    padding: "12px 16px",
-    fontSize: "13px",
-    color: "#D0D0D0",
+  const TD: React.CSSProperties = {
+    padding: "11px 14px", fontSize: "13px", color: "#C0C0C0",
     borderBottom: "1px solid rgba(255,255,255,0.04)",
   };
 
@@ -249,23 +331,26 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     );
   }
 
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <div className="p-4 md:p-8" style={{ maxWidth: 1100 }}>
-      {/* Page header */}
-      <div className="glass-panel relative overflow-hidden rounded-2xl mb-6 md:mb-8" style={{ borderRadius: 16 }}>
+
+      {/* Header */}
+      <div className="glass-panel relative overflow-hidden rounded-2xl mb-6" style={{ borderRadius: 16 }}>
         <div className="relative z-10 p-5 md:p-8">
-          <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 5vw, 2.5rem)", color: "#fff", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem,5vw,2.5rem)", color: "#fff", letterSpacing: "-0.02em" }}>
             Rate Card
           </h1>
           <p style={{ color: "#999", marginTop: "0.5rem" }}>
-            CPM calculator, impression estimates & quick quote builder
+            CPM calculator · OTS · Reach · Frequency · Impact · Quote builder
           </p>
         </div>
       </div>
 
-      {/* ── Section 1: CPM Calculator ─────────────────────────────────────── */}
+      {/* ── 1: CPM Calculator ─────────────────────────────────────────────── */}
       <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderRadius: 16 }}>
-        <p style={SECTION_LABEL_STYLE}>CPM Calculator</p>
+        <p style={LABEL}>CPM Calculator</p>
 
         {/* Tier pills */}
         <div className="flex flex-wrap gap-2 mb-5">
@@ -279,21 +364,20 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                 color: cpm === tier.cpm_zar && !customCpm ? tier.color : "#666",
                 border: `1px solid ${cpm === tier.cpm_zar && !customCpm ? tier.color + "44" : "rgba(255,255,255,0.08)"}`,
               }}
+              title={tier.description ?? ""}
             >
               {tier.label} — R{tier.cpm_zar}
             </button>
           ))}
         </div>
 
-        {/* Inputs row */}
+        {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-              Custom CPM (R)
-            </label>
+            <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Custom CPM (R)</label>
             <input
               type="number"
-              placeholder={`${cpm}`}
+              placeholder={`${effectiveCpm}`}
               value={customCpm}
               onChange={(e) => setCustomCpm(e.target.value)}
               className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
@@ -301,9 +385,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-              Flight Duration (weeks)
-            </label>
+            <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Flight Duration (weeks)</label>
             <input
               type="number"
               min={1}
@@ -314,81 +396,119 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             />
           </div>
           <div className="flex items-end">
-            <div
-              className="w-full rounded-xl px-4 py-3 text-sm"
-              style={{ background: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.15)" }}
-            >
+            <div className="w-full rounded-xl px-4 py-3 text-sm" style={{ background: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.15)" }}>
               <p className="text-xs mb-1" style={{ color: "#D4FF4F", fontWeight: 600 }}>≈ {months} month{months !== 1 ? "s" : ""}</p>
               <p className="text-xs" style={{ color: "#666" }}>Active CPM: <span style={{ color: "#fff", fontWeight: 600 }}>R{effectiveCpm}</span></p>
             </div>
           </div>
         </div>
 
-        {/* Summary stat cards */}
+        {/* National impact summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatCard
-            label="National / Week"
-            value={fmtR(Math.round((national.impressions / 1000) * effectiveCpm / weeks))}
-            sub={`R${effectiveCpm} CPM`}
+          <MetricCard
+            icon={Eye}
+            label="OTS"
+            value={fmtNum(national.ots)}
+            sub="Opportunities to see"
+            accent="#A1A1AA"
+            tooltip="Total times the ad could be seen — foot traffic during the flight period"
+          />
+          <MetricCard
+            icon={Users}
+            label="Reach"
+            value={fmtNum(national.reach)}
+            sub="Unique individuals"
             accent="#D4FF4F"
+            tooltip="Estimated unique people reached (70% of OTS — repeat gym visits excluded)"
           />
-          <StatCard
-            label="National / Month"
-            value={fmtR(Math.round((national.impressions / 1000) * effectiveCpm / months))}
-            sub={`${fmtNum(Math.round(national.impressions / weeks))} imp/wk`}
-          />
-          <StatCard
-            label={`Full ${weeks}-Week Flight`}
-            value={fmtR(Math.round(national.cost))}
-            sub={`${fmtNum(national.impressions)} total impressions`}
+          <MetricCard
+            icon={Repeat2}
+            label="Frequency"
+            value={fmtFreq(national.freq)}
+            sub="Avg exposures per person"
             accent="#FF6B35"
+            tooltip="How many times the average person sees the ad — gym members visit 3–4× per week"
           />
-          <StatCard
-            label="Total Screens"
-            value={national.screens.toString()}
-            sub={`${national.venues} venue${national.venues !== 1 ? "s" : ""}`}
+          <MetricCard
+            icon={Zap}
+            label="Impact"
+            value={fmtNum(national.impact)}
+            sub={`R${national.costPerUnique.toFixed(2)} per unique`}
+            accent="#C084FC"
+            tooltip="Quality-weighted reach — accounts for attention level at each screen placement"
           />
+        </div>
+
+        {/* Cost summary strip */}
+        <div
+          className="mt-4 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center"
+          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+        >
+          <div>
+            <p className="text-xs mb-0.5" style={{ color: "#555" }}>Total Investment</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#fff" }}>{fmtR(Math.round(national.cost))}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={{ color: "#555" }}>Per Week</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#fff" }}>{fmtR(Math.round(national.cost / weeks))}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={{ color: "#555" }}>Cost Per Unique</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#C084FC" }}>R{national.costPerUnique.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={{ color: "#555" }}>Screens</p>
+            <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#fff" }}>{national.screens}</p>
+          </div>
+          <div className="ml-auto">
+            <TrendingUp size={20} color="#D4FF4F" strokeWidth={1.5} />
+          </div>
         </div>
       </div>
 
-      {/* ── Section 2: Impression Estimates ──────────────────────────────── */}
+      {/* ── 2: Impression Breakdown ───────────────────────────────────────── */}
       <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderRadius: 16 }}>
-        <p style={SECTION_LABEL_STYLE}>Impression Estimates — {weeks} weeks @ R{effectiveCpm} CPM</p>
+        <p style={LABEL}>Media Metrics Breakdown — {weeks} weeks @ R{effectiveCpm} CPM</p>
         <p className="text-xs mb-5" style={{ color: "#555" }}>
-          Based on active screens × {PLAYS_PER_SCREEN_PER_WEEK.toLocaleString()} plays/week × {EYEBALLS_PER_PLAY} eyeballs/play
+          OTS derived from monthly foot traffic · Reach = 70% unique · Impact = reach × attention factor (0.65 default)
         </p>
 
         <div className="flex flex-col gap-2">
+
           {/* Per Gym */}
           <SectionToggle id="gym" label={`Per Gym (${venues.length})`} icon={MapPin} />
           {expandedSection === "gym" && (
-            <div className="rounded-xl overflow-hidden mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <table className="w-full">
+            <div className="rounded-xl overflow-x-auto mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <table className="w-full" style={{ minWidth: 700 }}>
                 <thead>
                   <tr>
-                    <th style={{ ...TABLE_HEADER, textAlign: "left" }}>Venue</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "left" }}>City</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Screens</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Members</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Impressions</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Cost</th>
+                    <th style={{ ...TH, textAlign: "left" }}>Venue</th>
+                    <th style={{ ...TH, textAlign: "left" }}>City</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Screens</th>
+                    <th style={{ ...TH, textAlign: "right" }}>OTS</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Reach</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Freq</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Impact</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Cost</th>
+                    <th style={{ ...TH, textAlign: "right" }}>/ Unique</th>
                   </tr>
                 </thead>
                 <tbody>
                   {venueData.length === 0 ? (
-                    <tr><td colSpan={6} style={{ ...TABLE_CELL, textAlign: "center", color: "#555" }}>No venues found</td></tr>
-                  ) : (
-                    venueData.map((v) => (
-                      <tr key={v.id}>
-                        <td style={{ ...TABLE_CELL, color: "#fff", fontWeight: 500 }}>{v.name}</td>
-                        <td style={TABLE_CELL}>{v.city ?? "—"}</td>
-                        <td style={{ ...TABLE_CELL, textAlign: "right" }}>{v.screens}</td>
-                        <td style={{ ...TABLE_CELL, textAlign: "right" }}>{(v.active_members ?? 0).toLocaleString("en-ZA")}</td>
-                        <td style={{ ...TABLE_CELL, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(v.impressions)}</td>
-                        <td style={{ ...TABLE_CELL, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(v.cost))}</td>
-                      </tr>
-                    ))
-                  )}
+                    <tr><td colSpan={9} style={{ ...TD, textAlign: "center", color: "#555" }}>No venues found</td></tr>
+                  ) : venueData.map((v) => (
+                    <tr key={v.id}>
+                      <td style={{ ...TD, color: "#fff", fontWeight: 500 }}>{v.name}</td>
+                      <td style={TD}>{v.city ?? "—"}</td>
+                      <td style={{ ...TD, textAlign: "right" }}>{v.screens}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#A1A1AA" }}>{fmtNum(v.ots)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(v.reach)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#FF6B35" }}>{fmtFreq(v.frequency)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#C084FC" }}>{fmtNum(v.impact)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(v.cost))}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#666" }}>R{v.costPerUnique.toFixed(2)}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -397,25 +517,31 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           {/* Per City */}
           <SectionToggle id="city" label={`Per City (${cityData.length})`} icon={Building2} />
           {expandedSection === "city" && (
-            <div className="rounded-xl overflow-hidden mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <table className="w-full">
+            <div className="rounded-xl overflow-x-auto mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <table className="w-full" style={{ minWidth: 600 }}>
                 <thead>
                   <tr>
-                    <th style={{ ...TABLE_HEADER, textAlign: "left" }}>City</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Venues</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Screens</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Impressions</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Cost</th>
+                    <th style={{ ...TH, textAlign: "left" }}>City</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Venues</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Screens</th>
+                    <th style={{ ...TH, textAlign: "right" }}>OTS</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Reach</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Freq</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Impact</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Cost</th>
                   </tr>
                 </thead>
                 <tbody>
                   {cityData.map((c) => (
                     <tr key={c.city}>
-                      <td style={{ ...TABLE_CELL, color: "#fff", fontWeight: 500 }}>{c.city}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right" }}>{c.venues}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right" }}>{c.screens}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(c.impressions)}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(c.cost))}</td>
+                      <td style={{ ...TD, color: "#fff", fontWeight: 500 }}>{c.city}</td>
+                      <td style={{ ...TD, textAlign: "right" }}>{c.venues}</td>
+                      <td style={{ ...TD, textAlign: "right" }}>{c.screens}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#A1A1AA" }}>{fmtNum(c.ots)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(c.reach)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#FF6B35" }}>{fmtFreq(c.frequency)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#C084FC" }}>{fmtNum(c.impact)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(c.cost))}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -426,25 +552,31 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           {/* Per Province */}
           <SectionToggle id="province" label={`Per Province (${provinceData.length})`} icon={MapPin} />
           {expandedSection === "province" && (
-            <div className="rounded-xl overflow-hidden mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <table className="w-full">
+            <div className="rounded-xl overflow-x-auto mb-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <table className="w-full" style={{ minWidth: 600 }}>
                 <thead>
                   <tr>
-                    <th style={{ ...TABLE_HEADER, textAlign: "left" }}>Province</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Venues</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Screens</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Impressions</th>
-                    <th style={{ ...TABLE_HEADER, textAlign: "right" }}>Cost</th>
+                    <th style={{ ...TH, textAlign: "left" }}>Province</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Venues</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Screens</th>
+                    <th style={{ ...TH, textAlign: "right" }}>OTS</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Reach</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Freq</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Impact</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Cost</th>
                   </tr>
                 </thead>
                 <tbody>
                   {provinceData.map((p) => (
                     <tr key={p.province}>
-                      <td style={{ ...TABLE_CELL, color: "#fff", fontWeight: 500 }}>{p.province}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right" }}>{p.venues}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right" }}>{p.screens}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(p.impressions)}</td>
-                      <td style={{ ...TABLE_CELL, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(p.cost))}</td>
+                      <td style={{ ...TD, color: "#fff", fontWeight: 500 }}>{p.province}</td>
+                      <td style={{ ...TD, textAlign: "right" }}>{p.venues}</td>
+                      <td style={{ ...TD, textAlign: "right" }}>{p.screens}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#A1A1AA" }}>{fmtNum(p.ots)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#D4FF4F" }}>{fmtNum(p.reach)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#FF6B35" }}>{fmtFreq(p.frequency)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#C084FC" }}>{fmtNum(p.impact)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "#fff", fontWeight: 600 }}>{fmtR(Math.round(p.cost))}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -456,71 +588,54 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           <SectionToggle id="national" label="National Network" icon={Globe} />
           {expandedSection === "national" && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
-              <StatCard label="Venues" value={national.venues.toString()} />
-              <StatCard label="Screens" value={national.screens.toString()} />
-              <StatCard label="Impressions" value={fmtNum(national.impressions)} accent="#D4FF4F" />
-              <StatCard label="Total Cost" value={fmtR(Math.round(national.cost))} accent="#FF6B35" />
+              <MetricCard icon={Eye}     label="OTS"       value={fmtNum(national.ots)}    sub="Total opportunities"       accent="#A1A1AA" />
+              <MetricCard icon={Users}   label="Reach"     value={fmtNum(national.reach)}  sub="Unique individuals"        accent="#D4FF4F" />
+              <MetricCard icon={Repeat2} label="Frequency" value={fmtFreq(national.freq)}  sub="Avg exposures per person"  accent="#FF6B35" />
+              <MetricCard icon={Zap}     label="Impact"    value={fmtNum(national.impact)} sub={`R${national.costPerUnique.toFixed(2)} / unique`} accent="#C084FC" />
             </div>
           )}
         </div>
       </div>
 
-      {/* ── Section 3: Quick Quote Builder ────────────────────────────────── */}
+      {/* ── 3: Quote Builder ──────────────────────────────────────────────── */}
       <div className="glass-card rounded-2xl p-6" style={{ borderRadius: 16 }}>
-        <p style={SECTION_LABEL_STYLE}>Quick Quote Builder</p>
+        <p style={LABEL}>Quick Quote Builder</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           <div>
             <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Client Name</label>
-            <input
-              type="text"
-              placeholder="e.g. Ogilvy SA / Nike SA"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
+            <input type="text" placeholder="e.g. Ogilvy SA / Nike SA" value={clientName} onChange={(e) => setClientName(e.target.value)}
               className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)" }}
-            />
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)" }} />
           </div>
           <div>
             <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Flight Start</label>
-            <input
-              type="date"
-              value={flightStart}
-              onChange={(e) => setFlightStart(e.target.value)}
+            <input type="date" value={flightStart} onChange={(e) => setFlightStart(e.target.value)}
               className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", colorScheme: "dark" }}
-            />
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", colorScheme: "dark" }} />
           </div>
           <div>
             <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Flight End</label>
-            <input
-              type="date"
-              value={flightEnd}
-              onChange={(e) => setFlightEnd(e.target.value)}
+            <input type="date" value={flightEnd} onChange={(e) => setFlightEnd(e.target.value)}
               className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", colorScheme: "dark" }}
-            />
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", colorScheme: "dark" }} />
           </div>
         </div>
 
-        {/* Venue picker */}
         <p className="text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-          Select Venues <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(leave blank = all venues)</span>
+          Select Venues <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(leave blank = all)</span>
         </p>
         <div className="flex flex-wrap gap-2 mb-5">
           {venues.map((v) => {
             const selected = selectedVenues.includes(v.id);
             return (
-              <button
-                key={v.id}
-                onClick={() => toggleVenue(v.id)}
+              <button key={v.id} onClick={() => toggleVenue(v.id)}
                 className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
                 style={{
                   background: selected ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.04)",
                   color: selected ? "#D4FF4F" : "#888",
                   border: `1px solid ${selected ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.08)"}`,
-                }}
-              >
+                }}>
                 {v.name}{v.city ? ` · ${v.city}` : ""}
               </button>
             );
@@ -528,27 +643,38 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         </div>
 
         {/* Quote summary */}
-        <div
-          className="rounded-xl p-4 mb-4"
-          style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.12)" }}
-        >
-          <div className="grid grid-cols-3 gap-4 mb-3">
+        <div className="rounded-xl p-5 mb-4" style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.12)" }}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
             <div>
-              <p className="text-xs mb-1" style={{ color: "#D4FF4F", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Screens</p>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{quoteTotals.totalScreens}</p>
+              <p className="text-xs mb-1" style={{ color: "#A1A1AA", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>OTS</p>
+              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{fmtNum(quoteTotals.ots)}</p>
             </div>
             <div>
-              <p className="text-xs mb-1" style={{ color: "#D4FF4F", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Impressions</p>
-              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{fmtNum(quoteTotals.totalImpressions)}</p>
+              <p className="text-xs mb-1" style={{ color: "#D4FF4F", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Reach</p>
+              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{fmtNum(quoteTotals.reach)}</p>
+            </div>
+            <div>
+              <p className="text-xs mb-1" style={{ color: "#C084FC", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Impact</p>
+              <p className="text-2xl font-bold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>{fmtNum(quoteTotals.impact)}</p>
             </div>
             <div>
               <p className="text-xs mb-1" style={{ color: "#FF6B35", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Cost</p>
-              <p className="text-2xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#FF6B35" }}>{fmtR(Math.round(quoteTotals.totalCost))}</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#FF6B35" }}>{fmtR(Math.round(quoteTotals.cost))}</p>
             </div>
           </div>
-          <p className="text-xs" style={{ color: "#555" }}>
-            {quoteVenues.length} venue{quoteVenues.length !== 1 ? "s" : ""} · {weeks} weeks · R{effectiveCpm} CPM · Min. spend R2,500
-          </p>
+          <div className="flex flex-wrap gap-4 text-xs" style={{ color: "#555" }}>
+            <span>{quoteVenues.length} venue{quoteVenues.length !== 1 ? "s" : ""}</span>
+            <span>·</span>
+            <span>{quoteTotals.screens} screens</span>
+            <span>·</span>
+            <span>{weeks} weeks</span>
+            <span>·</span>
+            <span>R{effectiveCpm} CPM</span>
+            <span>·</span>
+            <span>Freq {fmtFreq(quoteTotals.freq)}</span>
+            <span>·</span>
+            <span style={{ color: "#C084FC" }}>R{quoteTotals.costPerUnique.toFixed(2)} / unique</span>
+          </div>
         </div>
 
         <button
@@ -561,7 +687,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           }}
         >
           {copiedQuote ? <Check size={15} strokeWidth={2.5} /> : <Copy size={15} strokeWidth={2} />}
-          {copiedQuote ? "Copied to clipboard!" : "Copy Quote Summary"}
+          {copiedQuote ? "Copied!" : "Copy Media Proposal"}
         </button>
       </div>
     </div>

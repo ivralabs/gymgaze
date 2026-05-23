@@ -279,10 +279,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
   function copyQuote() {
     const venueList = quoteVenues
-      .map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens | OTS ${fmtNum(v.ots)} | Reach ${fmtNum(v.reach)} | Freq ${fmtFreq(v.frequency)} | Impact ${fmtNum(v.impact)}`)
+      .map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens | Members ${fmtNum(v.activeMembers)} active | OTS ${fmtNum(v.ots)} | Reach ${fmtNum(v.reach)} | Freq ${fmtFreq(v.frequency)} | Impact ${fmtNum(v.impact)}`)
       .join("\n");
 
     const selectedTier = pricingTiers.find((t) => t.cpm_zar === effectiveCpm);
+    const gymgazeEcpm = Math.round(effectiveCpm / ATTENTION.default);
+    const roadsideEcpm = Math.round(45 / 0.05);
+    const tvEcpm = Math.round(280 / 0.40);
+    const totalActiveMembers = quoteVenues.reduce((s, v) => s + (v.activeMembers ?? 0), 0);
 
     const text = [
       `GymGaze DOOH Media Proposal`,
@@ -299,6 +303,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       `Average Frequency:          ${fmtFreq(quoteTotals.freq)}`,
       `Impact Score:               ${fmtNum(quoteTotals.impact)}`,
       `Cost Per Unique:            R${quoteTotals.costPerUnique.toFixed(2)}`,
+      `Active Members (total):     ${fmtNum(totalActiveMembers)}`,
+      `Attention Quality Score:    ${ATTENTION_QUALITY_SCORE}/10 (captive audience, 55min avg session)`,
+      ``,
+      `MEDIA VALUE BENCHMARK`,
+      `─────────────────────`,
+      `GymGaze eCPM:   R${gymgazeEcpm}  ← effective cost per attended impression`,
+      `Roadside OOH:   R${roadsideEcpm} eCPM`,
+      `TV (Prime):     R${tvEcpm} eCPM`,
       ``,
       `VENUES (${quoteVenues.length})`,
       `─────────────`,

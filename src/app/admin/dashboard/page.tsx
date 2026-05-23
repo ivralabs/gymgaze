@@ -69,20 +69,17 @@ export default async function AdminDashboard() {
     .select("size_inches")
     .eq("is_active", true);
 
-  const screenBuckets = [
-    { label: "Small", range: "≤32\"" , min: 0,  max: 32  },
-    { label: "Medium", range: "43–55\"" , min: 33, max: 55  },
-    { label: "Large", range: "65–75\"" , min: 56, max: 75  },
-    { label: "XL",    range: "85\"+"     , min: 76, max: 9999 },
-  ];
-
   const totalScreens = (screenSizeRows ?? []).length;
-  const bucketCounts = screenBuckets.map((b) => ({
-    ...b,
-    count: (screenSizeRows ?? []).filter(
-      (s) => (s.size_inches ?? 0) >= b.min && (s.size_inches ?? 0) <= b.max
-    ).length,
-  }));
+
+  // Group by exact inch size, sort by count desc
+  const sizeMap = new Map<string, number>();
+  for (const s of screenSizeRows ?? []) {
+    const key = s.size_inches != null ? `${s.size_inches}"` : "Unknown";
+    sizeMap.set(key, (sizeMap.get(key) ?? 0) + 1);
+  }
+  const sizeBreakdown = Array.from(sizeMap.entries())
+    .map(([size, count]) => ({ size, count }))
+    .sort((a, b) => b.count - a.count);
 
   // Network footfall totals — sum across all venues
   const { data: footfallRows } = await supabase
@@ -364,28 +361,31 @@ export default async function AdminDashboard() {
             <p className="text-sm" style={{ color: "#555" }}>No active screens yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-            {bucketCounts.map((b) => {
-              const pct = totalScreens > 0 ? Math.round((b.count / totalScreens) * 100) : 0;
+          <div className="px-6 py-4 flex flex-col gap-4">
+            {sizeBreakdown.map((row) => {
+              const pct = Math.round((row.count / totalScreens) * 100);
               return (
-                <div key={b.label} className="px-6 py-5">
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#B0B0B0" }}>{b.label}</p>
-                    <p className="text-xs" style={{ color: "#555" }}>{b.range}</p>
-                  </div>
+                <div key={row.size} className="flex items-center gap-4">
+                  {/* Size label */}
                   <div
-                    className="tabular-nums text-white"
-                    style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "2.4rem", letterSpacing: "-0.02em", lineHeight: 1 }}
+                    className="tabular-nums text-white flex-shrink-0"
+                    style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 700, fontSize: "1rem", width: 44 }}
                   >
-                    {b.count}
+                    {row.size}
                   </div>
-                  <p className="text-xs mt-2 mb-3" style={{ color: "#666" }}>{pct}% of network</p>
                   {/* Fill bar */}
-                  <div className="w-full rounded-full overflow-hidden" style={{ height: 4, backgroundColor: "rgba(255,255,255,0.06)" }}>
+                  <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, backgroundColor: "rgba(255,255,255,0.06)" }}>
                     <div
                       className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%`, backgroundColor: pct > 0 ? "#D4FF4F" : "transparent" }}
+                      style={{ width: `${pct}%`, backgroundColor: "#D4FF4F" }}
                     />
+                  </div>
+                  {/* Count + pct */}
+                  <div className="flex-shrink-0 flex items-center gap-3" style={{ minWidth: 110 }}>
+                    <span className="text-sm font-semibold text-white tabular-nums">
+                      {row.count} screen{row.count !== 1 ? "s" : ""}
+                    </span>
+                    <span className="text-xs tabular-nums" style={{ color: "#666" }}>{pct}%</span>
                   </div>
                 </div>
               );

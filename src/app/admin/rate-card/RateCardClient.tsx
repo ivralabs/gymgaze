@@ -62,34 +62,43 @@ const ATTENTION = {
 // Members visit avg 3.5× per week → repeat exposure builds frequency
 const AVG_VISITS_PER_MEMBER_PER_WEEK = 3.5;
 
-// Unique reach: 70% of OTS are unique individuals (rest are repeat visits)
-const UNIQUE_REACH_FACTOR = 0.70;
+// Active member rate — 65% of registered members actually visit each month
+const ACTIVE_RATE = 0.65;
 
 // ─── Impact model ─────────────────────────────────────────────────────────────
-// OTS  = monthly_entries × (weeks / 4.3)           — foot traffic during flight
-// Reach = OTS × 0.70                               — unique individuals
-// Freq  = OTS / Reach                               — avg exposures per person
-// Impact = Reach × attention_factor                 — quality-weighted reach
+// OTS        = monthly_entries × (weeks / 4.3)           — foot traffic during flight
+// activeThisMonth = active_members × ACTIVE_RATE          — members who actually visit
+// Reach      = activeThisMonth × min(weeks/4.3, 1.5)     — unique individuals, flight-scaled
+// Freq       = OTS / Reach                               — avg exposures per person
+// Impact     = Reach × attention_factor                  — quality-weighted reach
 
 function calcMetrics(v: VenueRow, weeks: number) {
   const screens = Array.isArray(v.screens) ? v.screens.filter((s) => s.is_active).length : 0;
-
-  // OTS: use monthly_entries as ground truth for foot traffic
+  const activeMembers = v.active_members ?? 0;
   const monthlyEntries = v.monthly_entries ?? 0;
+
+  // Active member rate — 65% of registered members actually visit each month
+  const activeThisMonth = Math.round(activeMembers * ACTIVE_RATE);
+
+  // OTS: foot traffic during the flight
   const ots = Math.round(monthlyEntries * (weeks / 4.3));
 
-  // Reach & frequency
-  const reach = Math.round(ots * UNIQUE_REACH_FACTOR);
+  // Reach: actual unique members who visit this month, scaled to flight
+  // For multi-month flights, reach grows but caps at total active members
+  const reachUncapped = Math.round(activeThisMonth * Math.min(weeks / 4.3, 1.5));
+  const reach = Math.min(reachUncapped, activeMembers);
+
+  // Frequency = OTS / Reach (real avg exposures per person)
   const frequency = reach > 0 ? Math.round((ots / reach) * 10) / 10 : 0;
 
-  // Impact = reach × avg attention factor
+  // Impact = reach × attention factor
   const attentionFactor = ATTENTION.default;
   const impact = Math.round(reach * attentionFactor);
 
-  // Plays-based OTS (screen play count) — used for CPM billing
+  // Plays-based OTS for CPM billing
   const playsOts = screens * PLAYS_PER_SCREEN_PER_WEEK * weeks;
 
-  return { screens, ots, reach, frequency, impact, playsOts };
+  return { screens, ots, reach, frequency, impact, playsOts, activeMembers, activeThisMonth };
 }
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -419,7 +428,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             value={fmtNum(national.reach)}
             sub="Unique individuals"
             accent="#D4FF4F"
-            tooltip="Estimated unique people reached (70% of OTS — repeat gym visits excluded)"
+            tooltip="Estimated unique people reached — based on active members (65% of registered) scaled to flight duration"
           />
           <MetricCard
             icon={Repeat2}
@@ -470,7 +479,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderRadius: 16 }}>
         <p style={LABEL}>Media Metrics Breakdown — {weeks} weeks @ R{effectiveCpm} CPM</p>
         <p className="text-xs mb-5" style={{ color: "#555" }}>
-          OTS derived from monthly foot traffic · Reach = 70% unique · Impact = reach × attention factor (0.65 default)
+          OTS derived from monthly foot traffic · Reach = active members (65% of registered) scaled to flight · Impact = reach × attention factor (0.65 default)
         </p>
 
         <div className="flex flex-col gap-2">

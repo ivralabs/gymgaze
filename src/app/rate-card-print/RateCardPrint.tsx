@@ -88,13 +88,12 @@ function calcMetrics(v: VenueRow, weeks: number) {
 }
 
 // ─── Image helpers ───────────────────────────────────────────────
-function optimizeImageUrl(url: string | null | undefined, _width: number, _quality = 75): string {
-  // NOTE: Supabase Image Transformation is a Pro-plan feature; not enabled on this project.
-  // Returning original URL until we either upgrade Supabase or move to a separate image CDN.
-  // Args kept for future swap.
-  void _width; void _quality;
+function optimizeImageUrl(url: string | null | undefined, width: number, quality = 75): string {
   if (!url) return "";
-  return url;
+  // Route through our /api/img proxy which uses sharp to resize + JPEG-compress.
+  // Edge-cached so repeat fetches are instant.
+  const params = new URLSearchParams({ url, w: String(width), q: String(quality) });
+  return `/api/img?${params.toString()}`;
 }
 
 // ─── Formatters ───────────────────────────────────────────────────────────────

@@ -29,7 +29,7 @@ export type VenueRow = {
   province: string | null;
   active_members: number | null;
   monthly_entries: number | null;
-  cover_url?: string | null;
+  cover_image_url?: string | null;
   screens: { id: string; is_active: boolean | null }[] | null;
 };
 
@@ -204,7 +204,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       const m = calcMetrics(v, weeks);
       const cost = (m.playsOts / 1000) * effectiveCpm;
       const costPerUnique = m.reach > 0 ? cost / m.reach : 0;
-      return { ...v, ...m, cost, costPerUnique, cover_url: v.cover_url ?? null };
+      return { ...v, ...m, cost, costPerUnique };
     });
   }, [venues, weeks, effectiveCpm]);
 
@@ -1003,10 +1003,10 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           <div style={{ display: "flex", flex: 1, minHeight: 0, maxHeight: 400 }}>
                             {/* LEFT: venue photo */}
                             <div style={{ width: "55%", position: "relative", background: "#111", flexShrink: 0 }}>
-                              {v.cover_url ? (
+                              {v.cover_image_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
-                                  src={v.cover_url}
+                                  src={v.cover_image_url}
                                   alt={v.name}
                                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                                 />

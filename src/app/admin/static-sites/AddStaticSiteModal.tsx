@@ -34,6 +34,8 @@ export interface StaticSiteRow {
   price_per_month: number | null;
   monthly_impressions: number | null;
   pricing_tier: string | null;
+  production_cost: number | null;
+  flighting_fee: number | null;
   created_at: string;
   venues: { id: string; name: string; city: string | null } | null;
 }
@@ -116,6 +118,8 @@ export default function AddStaticSiteModal({
     price_per_month: "",
     monthly_impressions: "",
     pricing_tier: "",
+    production_cost: "",
+    flighting_fee: "",
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -181,6 +185,8 @@ export default function AddStaticSiteModal({
           price_per_month: form.price_per_month !== "" ? parseFloat(form.price_per_month) : null,
           monthly_impressions: form.monthly_impressions !== "" ? parseInt(form.monthly_impressions) : null,
           pricing_tier: form.pricing_tier || null,
+          production_cost: form.production_cost !== "" ? parseFloat(form.production_cost) : null,
+          flighting_fee: form.flighting_fee !== "" ? parseFloat(form.flighting_fee) : null,
         }),
       });
       if (!res.ok) {
@@ -428,6 +434,34 @@ export default function AddStaticSiteModal({
               />
             </div>
           </div>
+          {/* One-time cost fields */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label style={labelStyle}>Production Cost (R)</label>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={form.production_cost}
+                onChange={(e) => set("production_cost", e.target.value)}
+                placeholder="e.g. 2500"
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Flighting Fee (R)</label>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={form.flighting_fee}
+                onChange={(e) => set("flighting_fee", e.target.value)}
+                placeholder="e.g. 800"
+                style={inputStyle}
+              />
+            </div>
+          </div>
+          <p style={{ fontSize: "0.7rem", color: "#888", marginTop: "-0.5rem" }}>One-time costs added to campaign investment</p>
           {/* Suggest from footfall */}
           {(() => {
             const monthlyEntries = form.venue_id ? (venueEntries[form.venue_id] ?? null) : null;

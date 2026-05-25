@@ -21,6 +21,8 @@ export type StaticSiteWithVenue = {
   price_per_month: number | null;
   monthly_impressions: number | null;
   pricing_tier: string | null;
+  production_cost: number | null;
+  flighting_fee: number | null;
   venues: {
     id: string;
     name: string;
@@ -159,6 +161,16 @@ export default function StaticSitesPrint({
   const totalMonthlyValue = useMemo(() =>
     sites.reduce((s, site) => s + (site.price_per_month ?? 0), 0),
   [sites]);
+
+  const totalProductionCost = useMemo(() =>
+    sites.reduce((s, site) => s + (site.production_cost ?? 0), 0),
+  [sites]);
+
+  const totalFlightingFee = useMemo(() =>
+    sites.reduce((s, site) => s + (site.flighting_fee ?? 0), 0),
+  [sites]);
+
+  const totalOneTimeCosts = totalProductionCost + totalFlightingFee;
 
   const totalImpressions = useMemo(() =>
     sites.reduce((s, site) => s + (site.monthly_impressions ?? 0), 0),
@@ -524,6 +536,13 @@ export default function StaticSitesPrint({
                         <strong style={{ color: "#0a0a0a" }}>{fmtLocation(site.location_in_venue)}</strong> —{" "}
                         {fmtDimensions(site.width_cm, site.height_cm)} ·{" "}
                         {venueName}, {venueCity}{site.venues?.province ? `, ${site.venues.province}` : ""}
+                        {(site.production_cost != null || site.flighting_fee != null) ? (
+                          <span style={{ marginLeft: 8, color: "#888" }}>
+                            {" · "}
+                            {[site.production_cost != null ? `R${Math.round(site.production_cost).toLocaleString("en-ZA")} production` : null, site.flighting_fee != null ? `R${Math.round(site.flighting_fee).toLocaleString("en-ZA")} flighting` : null].filter(Boolean).join(" · ")}
+                            {" (once-off)"}
+                          </span>
+                        ) : null}
                       </div>
 
                       {/* Data grid */}
@@ -535,6 +554,8 @@ export default function StaticSitesPrint({
                           { label: "Location", value: fmtLocation(site.location_in_venue) },
                           { label: "CPM", value: calcCpm(price, impressions) },
                           { label: "Dimensions", value: fmtDimensions(site.width_cm, site.height_cm) },
+                          { label: "Production Cost", value: site.production_cost != null ? fmtR(Math.round(site.production_cost)) : "—" },
+                          { label: "Flighting Fee", value: site.flighting_fee != null ? fmtR(Math.round(site.flighting_fee)) : "—" },
                           { label: "Annual Value", value: fmtR(Math.round(price * 12)) },
                           { label: "Pricing Tier", value: site.pricing_tier ? site.pricing_tier.toUpperCase() : "—" },
                         ].map(({ label, value }) => (
@@ -570,42 +591,57 @@ export default function StaticSitesPrint({
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
                 <thead>
                   <tr style={{ background: "#F9FAFB" }}>
-                    {["Site ID", "Venue", "Type", "Dimensions", "Location", "Monthly Rate"].map((h) => (
-                      <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#888", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
+                    {["Site ID", "Venue", "Type", "Dimensions", "Location", "Monthly Rate", "Production", "Flighting"].map((h) => (
+                      <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontWeight: 700, color: "#888", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {sites.map((site) => (
                     <tr key={site.id} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "7px 12px", fontFamily: "Inter Tight, sans-serif", fontWeight: 700, color: "#D4FF4F", fontSize: 11, background: "#111" }}>{displaySiteId(site.label, site.id)}</td>
-                      <td style={{ padding: "7px 12px", color: "#0a0a0a", fontWeight: 600, fontSize: 11 }}>{site.venues?.name ?? "—"}</td>
-                      <td style={{ padding: "7px 12px", color: "#555", fontSize: 11 }}>{fmtSiteType(site.site_type)}</td>
-                      <td style={{ padding: "7px 12px", color: "#555", fontSize: 11 }}>{fmtDimensions(site.width_cm, site.height_cm)}</td>
-                      <td style={{ padding: "7px 12px", color: "#555", fontSize: 11 }}>{fmtLocation(site.location_in_venue)}</td>
-                      <td style={{ padding: "7px 12px", fontWeight: 700, color: "#0a0a0a", fontSize: 12, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(site.price_per_month ?? 0))}</td>
+                      <td style={{ padding: "7px 10px", fontFamily: "Inter Tight, sans-serif", fontWeight: 700, color: "#D4FF4F", fontSize: 11, background: "#111" }}>{displaySiteId(site.label, site.id)}</td>
+                      <td style={{ padding: "7px 10px", color: "#0a0a0a", fontWeight: 600, fontSize: 11 }}>{site.venues?.name ?? "—"}</td>
+                      <td style={{ padding: "7px 10px", color: "#555", fontSize: 11 }}>{fmtSiteType(site.site_type)}</td>
+                      <td style={{ padding: "7px 10px", color: "#555", fontSize: 11 }}>{fmtDimensions(site.width_cm, site.height_cm)}</td>
+                      <td style={{ padding: "7px 10px", color: "#555", fontSize: 11 }}>{fmtLocation(site.location_in_venue)}</td>
+                      <td style={{ padding: "7px 10px", fontWeight: 700, color: "#0a0a0a", fontSize: 12, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(site.price_per_month ?? 0))}</td>
+                      <td style={{ padding: "7px 10px", fontWeight: 600, color: "#555", fontSize: 11 }}>{site.production_cost != null ? fmtR(Math.round(site.production_cost)) : "—"}</td>
+                      <td style={{ padding: "7px 10px", fontWeight: 600, color: "#555", fontSize: 11 }}>{site.flighting_fee != null ? fmtR(Math.round(site.flighting_fee)) : "—"}</td>
                     </tr>
                   ))}
-                  {/* Subtotals row */}
+                  {/* Monthly subtotal row */}
                   <tr style={{ background: "#F9FAFB", borderTop: "2px solid #E5E7EB" }}>
-                    <td colSpan={5} style={{ padding: "8px 12px", fontWeight: 700, color: "#0a0a0a", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em" }}>Subtotal ({sites.length} sites)</td>
-                    <td style={{ padding: "8px 12px", fontWeight: 800, color: "#0a0a0a", fontSize: 13, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalMonthlyValue))}</td>
+                    <td colSpan={5} style={{ padding: "8px 10px", fontWeight: 700, color: "#0a0a0a", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em" }}>Monthly Subtotal ({sites.length} sites)</td>
+                    <td style={{ padding: "8px 10px", fontWeight: 800, color: "#0a0a0a", fontSize: 13, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalMonthlyValue))}</td>
+                    <td colSpan={2} />
+                  </tr>
+                  {/* One-time costs subtotal row */}
+                  <tr style={{ background: "#FFFBEB", borderTop: "1px solid #E5E7EB" }}>
+                    <td colSpan={5} style={{ padding: "8px 10px", fontWeight: 700, color: "#0a0a0a", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em" }}>One-Time Costs</td>
+                    <td style={{ padding: "8px 10px" }} />
+                    <td style={{ padding: "8px 10px", fontWeight: 800, color: "#0a0a0a", fontSize: 12, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalProductionCost))}</td>
+                    <td style={{ padding: "8px 10px", fontWeight: 800, color: "#0a0a0a", fontSize: 12, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalFlightingFee))}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             {/* Totals hero */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 4 }}>
-              <div style={{ background: "#0a0a0a", borderRadius: 14, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 4, border: "1px solid rgba(212,255,79,0.2)" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#D4FF4F" }}>Total Monthly Investment</div>
-                <div style={{ fontSize: 38, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(totalMonthlyValue))}</div>
-                <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{sites.length} sites · {fmtNum(totalImpressions)} impressions/mo</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginTop: 4 }}>
+              <div style={{ background: "#0a0a0a", borderRadius: 14, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 4, border: "1px solid rgba(212,255,79,0.2)" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#D4FF4F" }}>Monthly Investment</div>
+                <div style={{ fontSize: 30, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(totalMonthlyValue))}</div>
+                <div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{sites.length} sites · {fmtNum(totalImpressions)} impr/mo</div>
               </div>
-              <div style={{ background: "#F9FAFB", borderRadius: 14, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 4, border: "1px solid #E5E7EB" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#888" }}>Total Annual Investment</div>
-                <div style={{ fontSize: 38, fontWeight: 900, color: "#0a0a0a", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(totalMonthlyValue * 12))}</div>
-                <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>12-month commitment</div>
+              <div style={{ background: "#FFFBEB", borderRadius: 14, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 4, border: "1px solid #FDE68A" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#92400E" }}>One-Time Costs</div>
+                <div style={{ fontSize: 30, fontWeight: 900, color: "#92400E", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(totalOneTimeCosts))}</div>
+                <div style={{ fontSize: 11, color: "#A16207", marginTop: 2 }}>Production + Flighting</div>
+              </div>
+              <div style={{ background: "#F9FAFB", borderRadius: 14, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 4, border: "1px solid #E5E7EB" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "#888" }}>Total Campaign Cost</div>
+                <div style={{ fontSize: 30, fontWeight: 900, color: "#0a0a0a", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(totalMonthlyValue + totalOneTimeCosts))}</div>
+                <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>Monthly + once-off (4 weeks)</div>
               </div>
             </div>
           </div>

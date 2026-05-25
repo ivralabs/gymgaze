@@ -123,6 +123,8 @@ export default async function ScreensPage() {
     price_per_month: number | null;
     monthly_impressions: number | null;
     pricing_tier: string | null;
+    production_cost: number | null;
+    flighting_fee: number | null;
     created_at: string;
     venues: { id: string; name: string; city: string | null } | null;
   }

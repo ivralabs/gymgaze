@@ -35,6 +35,8 @@ export type StaticSiteForCard = {
   price_per_month: number | null;
   monthly_impressions: number | null;
   pricing_tier: string | null;
+  production_cost: number | null;
+  flighting_fee: number | null;
   venues: {
     id: string;
     name: string;
@@ -196,6 +198,9 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
   const totalMonthlyValue = quoteSites.reduce((sum, s) => sum + (s.price_per_month ?? 0), 0);
   const totalImpressions = quoteSites.reduce((sum, s) => sum + effectiveImpressions(s)[0], 0);
   const annualValue = totalMonthlyValue * 12;
+  const totalProductionCosts = quoteSites.reduce((sum, s) => sum + (s.production_cost ?? 0), 0);
+  const totalFlightingFees = quoteSites.reduce((sum, s) => sum + (s.flighting_fee ?? 0), 0);
+  const totalOneTimeCosts = totalProductionCosts + totalFlightingFees;
 
   // ── Open print page ───────────────────────────────────────────────────────
   function openPrintPage() {
@@ -311,6 +316,18 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
         <div>
           <p className="text-xs mb-0.5" style={{ color: "#555" }}>Monthly Impressions</p>
           <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#A1A1AA" }}>{fmtNum(totalImpressions)}</p>
+        </div>
+        <div style={{ borderLeft: "1px solid rgba(255,255,255,0.08)", paddingLeft: 24 }}>
+          <p className="text-xs mb-0.5" style={{ color: "#555" }}>Total Production</p>
+          <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#FCD34D" }}>{fmtR(Math.round(totalProductionCosts))}</p>
+        </div>
+        <div>
+          <p className="text-xs mb-0.5" style={{ color: "#555" }}>Total Flighting</p>
+          <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#FCD34D" }}>{fmtR(Math.round(totalFlightingFees))}</p>
+        </div>
+        <div>
+          <p className="text-xs mb-0.5" style={{ color: "#555" }}>One-Time Costs</p>
+          <p className="text-xl font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: "#F59E0B" }}>{fmtR(Math.round(totalOneTimeCosts))}</p>
         </div>
       </div>
 

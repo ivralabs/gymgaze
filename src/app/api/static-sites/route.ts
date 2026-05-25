@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 // POST /api/static-sites — create a static site
 export async function POST(req: Request) {
   const body = await req.json();
-  const { venue_id, label, site_type, location_in_venue, width_cm, height_cm, notes, price_per_month, monthly_impressions, pricing_tier } = body;
+  const { venue_id, label, site_type, location_in_venue, width_cm, height_cm, notes, price_per_month, monthly_impressions, pricing_tier, production_cost, flighting_fee } = body;
 
   if (!venue_id || !label) {
     return NextResponse.json({ error: "venue_id and label are required" }, { status: 400 });
@@ -62,6 +62,8 @@ export async function POST(req: Request) {
       price_per_month: price_per_month !== undefined && price_per_month !== null && price_per_month !== "" ? parseFloat(String(price_per_month)) : null,
       monthly_impressions: monthly_impressions !== undefined && monthly_impressions !== null && monthly_impressions !== "" ? parseInt(String(monthly_impressions)) : null,
       pricing_tier: pricing_tier || null,
+      production_cost: production_cost !== undefined && production_cost !== null && production_cost !== "" ? parseFloat(String(production_cost)) : null,
+      flighting_fee: flighting_fee !== undefined && flighting_fee !== null && flighting_fee !== "" ? parseFloat(String(flighting_fee)) : null,
     })
     .select("*, venues(id, name, city)")
     .single();

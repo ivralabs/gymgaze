@@ -25,6 +25,7 @@ interface Site {
   location_in_venue: string | null; width_cm: number | null; height_cm: number | null;
   is_active: boolean | null; photo_url: string | null; notes: string | null;
   price_per_month: number | null; monthly_impressions: number | null; pricing_tier: string | null;
+  production_cost: number | null; flighting_fee: number | null;
   created_at: string; venues: { id: string; name: string; city: string | null; province: string | null; monthly_entries: number | null; brand_code?: string | null; metro_code?: string | null; venue_code?: string | null } | null;
 }
 
@@ -61,6 +62,8 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
     price_per_month: site.price_per_month?.toString() ?? "",
     monthly_impressions: site.monthly_impressions?.toString() ?? "",
     pricing_tier: site.pricing_tier ?? "",
+    production_cost: site.production_cost?.toString() ?? "",
+    flighting_fee: site.flighting_fee?.toString() ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -99,6 +102,8 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
           price_per_month: editForm.price_per_month !== "" ? parseFloat(editForm.price_per_month) : null,
           monthly_impressions: editForm.monthly_impressions !== "" ? parseInt(editForm.monthly_impressions) : null,
           pricing_tier: editForm.pricing_tier || null,
+          production_cost: editForm.production_cost !== "" ? parseFloat(editForm.production_cost) : null,
+          flighting_fee: editForm.flighting_fee !== "" ? parseFloat(editForm.flighting_fee) : null,
         }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
@@ -171,6 +176,8 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
             <SpecRow label="Rate per Month" value={site.price_per_month != null ? `R ${site.price_per_month.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—"} />
             <SpecRow label="Monthly Impressions" value={site.monthly_impressions != null ? site.monthly_impressions.toLocaleString("en-ZA") : "—"} />
             <SpecRow label="Pricing Tier" value={site.pricing_tier ?? "—"} />
+            <SpecRow label="Production Cost" value={site.production_cost != null ? `R ${site.production_cost.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—"} />
+            <SpecRow label="Flighting Fee" value={site.flighting_fee != null ? `R ${site.flighting_fee.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—"} />
             <SpecRow label="Added" value={new Date(site.created_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })} />
           </div>
 
@@ -330,6 +337,30 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                   />
                 </div>
               </div>
+              {/* One-time cost fields */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label style={labelStyle}>Production Cost (R)</label>
+                  <input
+                    type="number" min={0} step={1}
+                    value={editForm.production_cost}
+                    onChange={(e) => setField("production_cost", e.target.value)}
+                    placeholder="e.g. 2500"
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Flighting Fee (R)</label>
+                  <input
+                    type="number" min={0} step={1}
+                    value={editForm.flighting_fee}
+                    onChange={(e) => setField("flighting_fee", e.target.value)}
+                    placeholder="e.g. 800"
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+              <p style={{ fontSize: "0.7rem", color: "#888", marginTop: "-0.5rem" }}>One-time costs added to campaign investment</p>
               {/* Suggest from footfall */}
               {(() => {
                 const monthlyEntries = site.venues?.monthly_entries ?? null;

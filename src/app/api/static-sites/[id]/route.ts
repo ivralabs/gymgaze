@@ -20,6 +20,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (body.monthly_impressions !== undefined && body.monthly_impressions !== null && parseInt(String(body.monthly_impressions)) < 0) {
     return NextResponse.json({ error: "monthly_impressions must be >= 0" }, { status: 400 });
   }
+  if (body.production_cost !== undefined && body.production_cost !== null && parseFloat(String(body.production_cost)) < 0) {
+    return NextResponse.json({ error: "production_cost must be >= 0" }, { status: 400 });
+  }
+  if (body.flighting_fee !== undefined && body.flighting_fee !== null && parseFloat(String(body.flighting_fee)) < 0) {
+    return NextResponse.json({ error: "flighting_fee must be >= 0" }, { status: 400 });
+  }
 
   const svc = serviceClient();
   const { data, error } = await svc.from("static_sites").update({ ...body, updated_at: new Date().toISOString() }).eq("id", id).select().single();

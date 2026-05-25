@@ -88,14 +88,12 @@ function calcMetrics(v: VenueRow, weeks: number) {
 }
 
 // ─── Image helpers ───────────────────────────────────────────────
-function optimizeImageUrl(url: string | null | undefined, width: number, quality = 75): string {
+function optimizeImageUrl(url: string | null | undefined, _width: number, _quality = 75): string {
+  // NOTE: Supabase Image Transformation is a Pro-plan feature; not enabled on this project.
+  // Returning original URL until we either upgrade Supabase or move to a separate image CDN.
+  // Args kept for future swap.
+  void _width; void _quality;
   if (!url) return "";
-  // Rewrite Supabase public-bucket URLs to use the image render/transform CDN
-  if (url.includes("/storage/v1/object/public/")) {
-    const rendered = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
-    const sep = rendered.includes("?") ? "&" : "?";
-    return `${rendered}${sep}width=${width}&quality=${quality}&resize=cover`;
-  }
   return url;
 }
 

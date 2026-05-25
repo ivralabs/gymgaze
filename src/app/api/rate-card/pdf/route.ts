@@ -71,16 +71,25 @@ export async function GET(req: NextRequest) {
     }
 
     await page.setViewport({ width: 1400, height: 900 });
-    await page.goto(printUrl.toString(), { waitUntil: "networkidle0", timeout: 50000 });
+    await page.goto(printUrl.toString(), { waitUntil: "domcontentloaded", timeout: 45000 });
+    // Wait for the actual print pages to be in the DOM (not for unrelated network)
+    try {
+      await page.waitForSelector('[data-print-page="true"]', { timeout: 15000 });
+    } catch {
+      // continue anyway — better a partial PDF than no PDF
+    }
     // Give images a moment to settle
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 2500));
+
+    // Force print media so our print CSS is applied
+    await page.emulateMediaType("print");
 
     const pdf = await page.pdf({
-      format: "A4",
-      landscape: true,
+      width: "297mm",
+      height: "210mm",
       printBackground: true,
       margin: { top: 0, right: 0, bottom: 0, left: 0 },
-      preferCSSPageSize: true,
+      preferCSSPageSize: false,
     });
 
     const filename = sp.get("filename") || "GymGaze-Rate-Card.pdf";

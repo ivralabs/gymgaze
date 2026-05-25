@@ -847,6 +847,10 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   margin: 0 !important;
                   padding: 0 !important;
                 }
+                #rate-card-printable * {
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
                 .no-print { display: none !important; }
                 .page-break { page-break-after: always; break-after: page; }
                 @page { size: A4 landscape; margin: 0; }
@@ -937,7 +941,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                         `${quoteVenues.length} Venues`,
                         `${fmtNum(totalActiveMembers)} Active Members`,
                       ].map((pill) => (
-                        <span key={pill} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(212,255,79,0.25)", color: "#D4FF4F", fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 20, letterSpacing: "0.02em" }}>
+                        <span key={pill} style={{ background: "rgba(212, 255, 79, 0.12)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(212, 255, 79, 0.25)", borderRadius: 20, color: "#D4FF4F", fontSize: 12, fontWeight: 700, padding: "6px 14px", letterSpacing: "0.02em" }}>
                           {pill}
                         </span>
                       ))}
@@ -957,7 +961,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           { label: "OTS", value: fmtNum(quoteTotals.ots) },
                           { label: "eCPM", value: `R${gymgazeEcpm}` },
                         ] as { label: string; value: string }[]).map(({ label, value }) => (
-                          <div key={label} style={{ background: "#111", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
+                          <div key={label} style={{ background: "rgba(15, 15, 15, 0.72)", backdropFilter: "blur(16px) saturate(180%)", WebkitBackdropFilter: "blur(16px) saturate(180%)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
                             <div style={{ fontSize: 36, fontWeight: 800, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{value}</div>
                             <div style={{ fontSize: 11, color: "#888", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
                           </div>
@@ -994,7 +998,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div
                         key={v.id}
                         className={isLast && pricingTiers.length === 0 ? undefined : "page-break"}
-                        style={{ ...PAGE_STYLE, background: "#ffffff" }}
+                        style={{ ...PAGE_STYLE, background: "#F8F8F6" }}
                       >
                         <PageHeader rightContent={<span>{v.name}{v.city ? <span style={{ color: "#999", fontWeight: 400 }}> · {v.city}</span> : null}</span>} />
 
@@ -1017,7 +1021,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               )}
                             </div>
                             {/* RIGHT: location card */}
-                            <div style={{ flex: 1, background: "#111", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "24px 32px" }}>
+                            <div style={{ flex: 1, background: "rgba(15, 15, 15, 0.85)", backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)", border: "1px solid rgba(255,255,255,0.10)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "24px 32px" }}>
                               <MapPin size={28} color="#D4FF4F" strokeWidth={1.5} />
                               <div style={{ fontSize: 28, fontWeight: 800, color: "#ffffff", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", textAlign: "center" }}>{v.city ?? "—"}</div>
                               {v.province && <div style={{ fontSize: 14, color: "#999", fontWeight: 500, textAlign: "center" }}>{v.province}</div>}
@@ -1030,7 +1034,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           </div>
 
                           {/* Data grid */}
-                          <div style={{ background: "#0f0f0f", margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+                          <div style={{ background: "rgba(15, 15, 15, 0.72)", backdropFilter: "blur(16px) saturate(180%)", WebkitBackdropFilter: "blur(16px) saturate(180%)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 12, margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
                             {[
                               { label: "Rate PM", value: fmtR(Math.round(v.cost)) },
                               { label: "City", value: v.city ?? "—" },
@@ -1049,7 +1053,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           </div>
 
                           {/* Spec strip */}
-                          <div style={{ background: "#0f0f0f", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "10px 32px", textAlign: "center", fontSize: 11, color: "#666", marginTop: "auto" }}>
+                          <div style={{ background: "rgba(15, 15, 15, 0.60)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderTop: "1px solid rgba(255,255,255,0.08)", padding: "10px 32px", textAlign: "center", fontSize: 11, color: "#666", marginTop: "auto" }}>
                             Slot: 15s in 251s loop · ~1,596 plays/screen/week · Audience: LSM 7–10 · Avg dwell: 55 min
                           </div>
                         </div>
@@ -1058,7 +1062,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   })}
 
                   {/* ═══ LAST PAGE — PRICING TIERS + FOOTER ═══ */}
-                  <div style={{ ...PAGE_STYLE, background: "#ffffff" }}>
+                  <div style={{ ...PAGE_STYLE, background: "#F8F8F6" }}>
                     <PageHeader rightContent={clientName ? `Investment Summary — ${clientName}` : "Investment Summary"} />
 
                     <div style={{ padding: "24px 32px", flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
@@ -1095,7 +1099,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       {/* 2-col: investment + terms */}
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, flex: 1 }}>
                         {/* Investment summary */}
-                        <div style={{ background: "#0f0f0f", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ background: "rgba(15, 15, 15, 0.72)", backdropFilter: "blur(16px) saturate(180%)", WebkitBackdropFilter: "blur(16px) saturate(180%)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
                           <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#D4FF4F", marginBottom: 4 }}>Investment Summary</div>
                           <div style={{ fontSize: 12, color: "#666" }}>Flight Duration</div>
                           <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "Inter Tight, sans-serif" }}>{weeks} weeks</div>

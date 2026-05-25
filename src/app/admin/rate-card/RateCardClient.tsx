@@ -15,6 +15,9 @@ import {
   Users,
   Repeat2,
   Zap,
+  FileText,
+  Printer,
+  X,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -188,6 +191,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [flightStart, setFlightStart] = useState("");
   const [flightEnd, setFlightEnd] = useState("");
   const [copiedQuote, setCopiedQuote] = useState(false);
+  const [showRateCard, setShowRateCard] = useState(false);
   const [expandedSection, setExpandedSection] = useState<"gym" | "city" | "province" | "national" | null>("gym");
 
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
@@ -690,9 +694,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         </div>
       </div>
 
-      {/* ── 3: Quote Builder ──────────────────────────────────────────────── */}
+      {/* ── 3: Rate Card Generator ───────────────────────────────────────── */}
       <div className="glass-card rounded-2xl p-6" style={{ borderRadius: 16 }}>
-        <p style={LABEL}>Quick Quote Builder</p>
+        <p style={LABEL}>Rate Card Generator</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           <div>
@@ -718,7 +722,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         <p className="text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Select Venues <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(leave blank = all)</span>
         </p>
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-6">
           {venues.map((v) => {
             const selected = selectedVenues.includes(v.id);
             return (
@@ -735,8 +739,8 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           })}
         </div>
 
-        {/* Quote summary */}
-        <div className="rounded-xl p-5 mb-4" style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.12)" }}>
+        {/* Quote summary strip */}
+        <div className="rounded-xl p-5 mb-5" style={{ background: "rgba(212,255,79,0.04)", border: "1px solid rgba(212,255,79,0.12)" }}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
             <div>
               <p className="text-xs mb-1" style={{ color: "#A1A1AA", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>OTS</p>
@@ -770,19 +774,293 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           </div>
         </div>
 
+        {/* Generate Rate Card button */}
         <button
-          onClick={copyQuote}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all"
+          onClick={() => setShowRateCard(true)}
+          className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all"
           style={{
-            background: copiedQuote ? "rgba(74,222,128,0.12)" : "rgba(212,255,79,0.10)",
-            color: copiedQuote ? "#4ADE80" : "#D4FF4F",
-            border: `1px solid ${copiedQuote ? "rgba(74,222,128,0.3)" : "rgba(212,255,79,0.25)"}`,
+            background: "#D4FF4F",
+            color: "#0a0a0a",
+            border: "none",
+            boxShadow: "0 0 20px rgba(212,255,79,0.35)",
           }}
         >
-          {copiedQuote ? <Check size={15} strokeWidth={2.5} /> : <Copy size={15} strokeWidth={2} />}
-          {copiedQuote ? "Copied!" : "Copy Media Proposal"}
+          <FileText size={16} strokeWidth={2.5} />
+          Generate Rate Card
         </button>
       </div>
+
+      {/* ── Rate Card Modal ────────────────────────────────────────────────── */}
+      {showRateCard && (() => {
+        const selectedTier = pricingTiers.find((t) => t.cpm_zar === effectiveCpm) ?? pricingTiers[0];
+        const gymgazeEcpm = Math.round(effectiveCpm / ATTENTION.default);
+        const today = new Date().toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
+        const totalActiveMembers = quoteVenues.reduce((s, v) => s + (v.activeMembers ?? 0), 0);
+        const uniqueCities = [...new Set(quoteVenues.map((v) => v.city).filter(Boolean))];
+
+        const benchmarksForCard = FORMAT_BENCHMARKS.map((b) => ({
+          ...b,
+          cpm: b.name === "GymGaze DOOH" ? effectiveCpm : b.cpm,
+          ecpm: b.name === "GymGaze DOOH" ? gymgazeEcpm : Math.round(b.cpm / b.attention),
+        })).sort((a, b) => a.ecpm - b.ecpm);
+
+        const totalPlaysOts = quoteVenues.reduce((s, v) => s + v.playsOts, 0);
+
+        return (
+          <>
+            <style>{`
+              @media print {
+                body * { visibility: hidden !important; }
+                #rate-card-printable, #rate-card-printable * { visibility: visible !important; }
+                #rate-card-printable {
+                  position: fixed !important;
+                  top: 0 !important; left: 0 !important;
+                  width: 100vw !important;
+                  margin: 0 !important;
+                  padding: 40px 52px !important;
+                  box-shadow: none !important;
+                  border-radius: 0 !important;
+                }
+                .no-print { display: none !important; }
+              }
+            `}</style>
+
+            {/* Dark overlay */}
+            <div
+              className="no-print"
+              style={{
+                position: "fixed", inset: 0, zIndex: 50,
+                background: "rgba(0,0,0,0.85)",
+                backdropFilter: "blur(4px)",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "center",
+                overflowY: "auto",
+                padding: "40px 16px",
+              }}
+            >
+              <div style={{ position: "relative", width: "100%", maxWidth: 860 }}>
+                {/* Toolbar */}
+                <div className="no-print flex items-center justify-between mb-4">
+                  <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>Rate Card Preview</span>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => window.print()}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+                      style={{ background: "#D4FF4F", color: "#0a0a0a" }}
+                    >
+                      <Printer size={14} strokeWidth={2.5} />
+                      Print / Save as PDF
+                    </button>
+                    <button
+                      onClick={() => setShowRateCard(false)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+                      style={{ background: "rgba(255,255,255,0.08)", color: "#888", border: "1px solid rgba(255,255,255,0.12)" }}
+                    >
+                      <X size={14} strokeWidth={2} />
+                      Close
+                    </button>
+                  </div>
+                </div>
+
+                {/* ── Printable Rate Card ── */}
+                <div
+                  id="rate-card-printable"
+                  style={{
+                    background: "#fff",
+                    borderRadius: 12,
+                    padding: "48px 52px",
+                    fontFamily: "Inter, sans-serif",
+                    color: "#111",
+                    boxShadow: "0 4px 40px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  {/* HEADER */}
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32, borderBottom: "3px solid #D4FF4F", paddingBottom: 24 }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                        <div style={{ width: 32, height: 32, background: "#D4FF4F", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ fontSize: 18, fontWeight: 900, color: "#0a0a0a", lineHeight: "1" }}>G</span>
+                        </div>
+                        <span style={{ fontSize: 22, fontWeight: 800, color: "#0a0a0a", letterSpacing: "-0.02em" }}>GymGaze</span>
+                      </div>
+                      <div style={{ fontSize: 28, fontWeight: 800, color: "#0a0a0a", letterSpacing: "-0.02em", lineHeight: 1.1 }}>Media Rate Card</div>
+                      {clientName && <div style={{ fontSize: 14, color: "#555", marginTop: 6 }}>Prepared for: <strong>{clientName}</strong></div>}
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{today}</div>
+                      <div style={{ display: "inline-block", background: "#FEF2F2", color: "#DC2626", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>Confidential</div>
+                      {flightStart && flightEnd && (
+                        <div style={{ fontSize: 12, color: "#555", marginTop: 6 }}>Flight: {flightStart} → {flightEnd}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* COVERAGE */}
+                  {(uniqueCities.length > 0 || quoteVenues.length > 0) && (
+                    <div style={{ marginBottom: 28 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 8 }}>Coverage</div>
+                      <div style={{ fontSize: 13, color: "#333" }}>
+                        {uniqueCities.length > 0 && <span><strong>Cities:</strong> {uniqueCities.join(", ")} &nbsp;·&nbsp; </span>}
+                        <strong>Venues:</strong> {quoteVenues.length}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NETWORK SUMMARY */}
+                  <div style={{ background: "#0a0a0a", borderRadius: 10, padding: "20px 24px", marginBottom: 24 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#D4FF4F", marginBottom: 16 }}>Network Summary</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+                      {([
+                        { label: "Total Venues", value: quoteVenues.length.toString() },
+                        { label: "Total Screens", value: quoteTotals.screens.toString() },
+                        { label: "Active Members", value: fmtNum(totalActiveMembers) },
+                        { label: "Total Reach", value: fmtNum(quoteTotals.reach) },
+                      ] as { label: string; value: string }[]).map(({ label, value }) => (
+                        <div key={label}>
+                          <div style={{ fontSize: 10, color: "#666", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{label}</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", fontFamily: "Inter Tight, sans-serif" }}>{value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CAMPAIGN METRICS */}
+                  <div style={{ border: "1px solid #E5E7EB", borderRadius: 10, padding: "20px 24px", marginBottom: 24 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 16 }}>Campaign Metrics</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px 24px" }}>
+                      {([
+                        { label: "Flight Duration", value: `${weeks} weeks` },
+                        { label: "OTS (Opportunities to See)", value: fmtNum(quoteTotals.ots) },
+                        { label: "Unique Reach", value: fmtNum(quoteTotals.reach) },
+                        { label: "Average Frequency", value: fmtFreq(quoteTotals.freq) },
+                        { label: "Attention Quality Score", value: `${ATTENTION_QUALITY_SCORE}/10` },
+                        { label: "eCPM", value: `R${gymgazeEcpm}` },
+                      ] as { label: string; value: string }[]).map(({ label, value }) => (
+                        <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #F3F4F6" }}>
+                          <span style={{ fontSize: 12, color: "#555" }}>{label}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: "#0a0a0a" }}>{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* PRICING TIERS */}
+                  {pricingTiers.length > 0 && (
+                    <div style={{ marginBottom: 24 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 12 }}>Pricing Tiers</div>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                        <thead>
+                          <tr style={{ background: "#F9FAFB" }}>
+                            {["Tier", "Format", "Duration", "CPM", "Min Spend", "Est. Impressions"].map((h) => (
+                              <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pricingTiers.map((tier) => {
+                            const isSelected = tier.cpm_zar === effectiveCpm;
+                            return (
+                              <tr key={tier.id} style={{ background: isSelected ? "#F0FFF0" : "transparent", borderBottom: "1px solid #F3F4F6" }}>
+                                <td style={{ padding: "9px 12px", fontWeight: isSelected ? 700 : 500, color: isSelected ? "#166534" : "#111" }}>
+                                  {tier.label}{isSelected ? " ✓" : ""}
+                                </td>
+                                <td style={{ padding: "9px 12px", color: "#555" }}>DOOH Loop · {tier.duration_sec}s slot</td>
+                                <td style={{ padding: "9px 12px", color: "#555" }}>{weeks} weeks</td>
+                                <td style={{ padding: "9px 12px", fontWeight: 600, color: isSelected ? "#166534" : "#111" }}>R{tier.cpm_zar}</td>
+                                <td style={{ padding: "9px 12px", color: "#555" }}>R{tier.min_spend.toLocaleString("en-ZA")}</td>
+                                <td style={{ padding: "9px 12px", color: "#555" }}>{fmtNum(totalPlaysOts)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* MEDIA VALUE BENCHMARK */}
+                  <div style={{ marginBottom: 24 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 12 }}>Media Value — eCPM Benchmark</div>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                      <thead>
+                        <tr style={{ background: "#F9FAFB" }}>
+                          {["Format", "CPM", "Attention Rate", "eCPM", "vs GymGaze"].map((h) => (
+                            <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {benchmarksForCard.map((b) => {
+                          const isGymgaze = b.name === "GymGaze DOOH";
+                          const ratio = isGymgaze ? "—" : `${Math.round(b.ecpm / gymgazeEcpm)}× pricier`;
+                          return (
+                            <tr key={b.name} style={{ background: isGymgaze ? "#FAFFF0" : "transparent", borderBottom: "1px solid #F3F4F6" }}>
+                              <td style={{ padding: "9px 12px", fontWeight: isGymgaze ? 700 : 500, color: isGymgaze ? "#3B5E00" : "#111" }}>{b.name}{isGymgaze ? " ★" : ""}</td>
+                              <td style={{ padding: "9px 12px", color: "#555" }}>R{b.cpm}</td>
+                              <td style={{ padding: "9px 12px", color: "#555" }}>{Math.round(b.attention * 100)}%</td>
+                              <td style={{ padding: "9px 12px", fontWeight: isGymgaze ? 700 : 500, color: isGymgaze ? "#3B5E00" : "#555" }}>R{Math.round(b.ecpm)}</td>
+                              <td style={{ padding: "9px 12px", color: isGymgaze ? "#3B5E00" : "#888", fontWeight: isGymgaze ? 600 : 400 }}>{ratio}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <p style={{ fontSize: 11, color: "#999", marginTop: 8 }}>eCPM = CPM ÷ attention rate. Lower = better value per impression that actually registers.</p>
+                  </div>
+
+                  {/* VENUE LIST */}
+                  {quoteVenues.length > 0 && (
+                    <div style={{ marginBottom: 32 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 12 }}>Selected Venues</div>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                        <thead>
+                          <tr style={{ background: "#F9FAFB" }}>
+                            {["Venue", "City", "Active Members", "Screens", "OTS", "Reach"].map((h) => (
+                              <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {quoteVenues.map((v) => (
+                            <tr key={v.id} style={{ borderBottom: "1px solid #F3F4F6" }}>
+                              <td style={{ padding: "8px 12px", fontWeight: 500, color: "#111" }}>{v.name}</td>
+                              <td style={{ padding: "8px 12px", color: "#555" }}>{v.city ?? "—"}</td>
+                              <td style={{ padding: "8px 12px", color: "#555" }}>{fmtNum(v.activeMembers)}</td>
+                              <td style={{ padding: "8px 12px", color: "#555" }}>{v.screens}</td>
+                              <td style={{ padding: "8px 12px", color: "#555" }}>{fmtNum(v.ots)}</td>
+                              <td style={{ padding: "8px 12px", color: "#555" }}>{fmtNum(v.reach)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* FOOTER */}
+                  <div style={{ borderTop: "2px solid #E5E7EB", paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ fontSize: 11, color: "#888" }}>
+                      To book, contact: <strong style={{ color: "#0a0a0a" }}>hello@gymgaze.co.za</strong> · <strong style={{ color: "#0a0a0a" }}>gymgaze.vercel.app</strong>
+                    </div>
+                    <div style={{ fontSize: 10, color: "#CCC" }}>Generated by GymGaze · {today}</div>
+                  </div>
+
+                  {/* Print button inside card (hidden in print, visible on screen) */}
+                  <div className="no-print" style={{ marginTop: 28, display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={() => window.print()}
+                      className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold"
+                      style={{ background: "#0a0a0a", color: "#D4FF4F", border: "2px solid #D4FF4F" }}
+                    >
+                      <Printer size={15} strokeWidth={2.5} />
+                      Print / Save as PDF
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </div>
   );
 }

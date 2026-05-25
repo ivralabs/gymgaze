@@ -199,6 +199,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [copiedQuote, setCopiedQuote] = useState(false);
   const [showRateCard, setShowRateCard] = useState(false);
   const [expandedSection, setExpandedSection] = useState<"gym" | "city" | "province" | "national" | null>("gym");
+  const [groupByCity, setGroupByCity] = useState(false);
 
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
   const months = Math.round((weeks / 4) * 10) / 10;
@@ -781,19 +782,33 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         </div>
 
         {/* Generate Rate Card button */}
-        <button
-          onClick={() => setShowRateCard(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all"
-          style={{
-            background: "#D4FF4F",
-            color: "#0a0a0a",
-            border: "none",
-            boxShadow: "0 0 20px rgba(212,255,79,0.35)",
-          }}
-        >
-          <FileText size={16} strokeWidth={2.5} />
-          Generate Rate Card
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowRateCard(true)}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all"
+            style={{
+              background: "#D4FF4F",
+              color: "#0a0a0a",
+              border: "none",
+              boxShadow: "0 0 20px rgba(212,255,79,0.35)",
+            }}
+          >
+            <FileText size={16} strokeWidth={2.5} />
+            Generate Rate Card
+          </button>
+          <button
+            onClick={() => setGroupByCity(g => !g)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+            style={{
+              background: groupByCity ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.04)",
+              color: groupByCity ? "#D4FF4F" : "#666",
+              border: `1px solid ${groupByCity ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.08)"}`,
+            }}
+          >
+            <Building2 size={14} strokeWidth={2} />
+            {groupByCity ? "Grouped by City" : "Group by City"}
+          </button>
+        </div>
       </div>
 
       {/* ── Rate Card Modal ────────────────────────────────────────────────── */}
@@ -996,8 +1011,103 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                     </div>
                   </div>
 
-                  {/* ═══ PAGES 3–N — PER-VENUE PROPERTY CARDS (grouped by province) ═══ */}
+                  {/* ═══ PAGE 3 — CAMPAIGN PACKAGES ═══ */}
                   {(() => {
+                    const topCity = cityData[0];
+                    const topCityVenues = venueData.filter(v => v.city === topCity?.city);
+                    const topCityCost = topCityVenues.reduce((s, v) => s + v.cost, 0);
+                    const topCityReach = topCityVenues.reduce((s, v) => s + v.reach, 0);
+
+                    const topProvince = provinceData[0];
+                    const topProvinceVenues = venueData.filter(v => v.province === topProvince?.province);
+                    const topProvinceCost = topProvinceVenues.reduce((s, v) => s + v.cost, 0);
+                    const topProvinceReach = topProvinceVenues.reduce((s, v) => s + v.reach, 0);
+
+                    const nationalCost = quoteTotals.cost;
+                    const nationalReach = quoteTotals.reach;
+
+                    return (
+                      <div className="page-break" style={{ ...PAGE_STYLE, background: "#ffffff" }}>
+                        <PageHeader rightContent="Campaign Packages" />
+
+                        <div style={{ padding: "20px 32px 8px", flex: 0 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#D4FF4F", background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)", borderRadius: 6, display: "inline-block", padding: "4px 12px" }}>Pre-Built Packages</div>
+                        </div>
+
+                        <div style={{ display: "flex", gap: 16, padding: "16px 32px", flex: 1 }}>
+                          {[
+                            {
+                              name: "City Sprint",
+                              desc: `${topCity?.city ?? "Top City"} · ${weeks} weeks`,
+                              price: fmtR(Math.round(topCityCost)),
+                              reach: fmtFull(topCityReach),
+                              screens: topCityVenues.reduce((s, v) => s + v.screens, 0),
+                              tag: "ENTRY",
+                              tagColor: "#6EE7B7",
+                            },
+                            {
+                              name: "Provincial Blitz",
+                              desc: `${topProvince?.province ?? "Top Province"} · ${weeks} weeks`,
+                              price: fmtR(Math.round(topProvinceCost)),
+                              reach: fmtFull(topProvinceReach),
+                              screens: topProvinceVenues.reduce((s, v) => s + v.screens, 0),
+                              tag: "POPULAR",
+                              tagColor: "#D4FF4F",
+                            },
+                            {
+                              name: "National Launch",
+                              desc: `All ${quoteVenues.length} venues · ${weeks} weeks`,
+                              price: fmtR(Math.round(nationalCost)),
+                              reach: fmtFull(nationalReach),
+                              screens: quoteTotals.screens,
+                              tag: "MAXIMUM",
+                              tagColor: "#C084FC",
+                            },
+                          ].map((pkg) => (
+                            <div key={pkg.name} style={{ flex: 1, background: "#111111", borderRadius: 12, padding: "24px", display: "flex", flexDirection: "column", gap: 12, border: pkg.tag === "POPULAR" ? "1px solid rgba(212,255,79,0.3)" : "1px solid rgba(255,255,255,0.06)" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                <div style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", fontFamily: "Inter Tight, sans-serif" }}>{pkg.name}</div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: pkg.tagColor, background: `${pkg.tagColor}1A`, border: `1px solid ${pkg.tagColor}44`, borderRadius: 10, padding: "2px 8px", letterSpacing: "0.08em" }}>{pkg.tag}</div>
+                              </div>
+                              <div style={{ fontSize: 12, color: "#666" }}>{pkg.desc}</div>
+                              <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
+                              <div style={{ fontSize: 32, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{pkg.price}</div>
+                              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                {[
+                                  { label: "Est. Reach", value: pkg.reach },
+                                  { label: "Screens", value: pkg.screens.toString() },
+                                  { label: "Duration", value: `${weeks} weeks` },
+                                ].map(({ label, value }) => (
+                                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                                    <span style={{ color: "#666" }}>{label}</span>
+                                    <span style={{ color: "#ccc", fontWeight: 600 }}>{value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div style={{ padding: "0 32px 20px", fontSize: 11, color: "#999" }}>
+                          * Packages calculated at {fmtR(effectiveCpm)} CPM · {weeks}-week flight · Subject to availability · Min. spend R{(pricingTiers[0]?.min_spend ?? 2500).toLocaleString("en-ZA")}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* ═══ PAGES 4–N — PER-VENUE PROPERTY CARDS (grouped by province) ═══ */}
+                  {(() => {
+                    // City grouping helper
+                    const citiesInProvince = (pvenues: typeof quoteVenues) => {
+                      const map = new Map<string, typeof quoteVenues>();
+                      pvenues.forEach(v => {
+                        const city = v.city ?? "Unknown";
+                        if (!map.has(city)) map.set(city, []);
+                        map.get(city)!.push(v);
+                      });
+                      return Array.from(map.entries()).map(([city, venues]) => ({ city, venues }));
+                    };
+
                     // Group quoteVenues by province
                     const venuesByProvince = quoteVenues.reduce((acc, v) => {
                       const prov = v.province ?? "Other";
@@ -1042,9 +1152,110 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             </div>
                           </div>
 
-                          {/* Venue property cards for this province */}
-                          {pvenues.map((v, vIdx) => {
+                          {/* Venue property cards or city summary cards for this province */}
+                          {groupByCity ? (
+                            // City summary cards mode
+                            citiesInProvince(pvenues).map(({ city, venues: cityVenues }, cIdx) => {
+                              const isLastCard = pIdx === provinces.length - 1 && cIdx === citiesInProvince(pvenues).length - 1;
+                              const cityScreens = cityVenues.reduce((s, v) => s + v.screens, 0);
+                              const cityMembers = cityVenues.reduce((s, v) => s + v.activeMembers, 0);
+                              const cityOts = cityVenues.reduce((s, v) => s + v.ots, 0);
+                              const cityPlays = cityVenues.reduce((s, v) => s + v.screens * PLAYS_PER_SCREEN_PER_WEEK * 4, 0);
+                              const cityFreq = cityMembers > 0 ? Math.round((cityOts / cityMembers) * 10) / 10 : 0;
+                              const city7sSlots = cityVenues.reduce((s, v) => {
+                                const active = Array.isArray(v.screens) ? (v.screens as { is_active: boolean | null; slots_7sec: number | null }[]).filter(sc => sc.is_active) : [];
+                                return s + active.reduce((ss, sc) => ss + (sc.slots_7sec ?? 8), 0);
+                              }, 0);
+                              const city15sSlots = cityVenues.reduce((s, v) => {
+                                const active = Array.isArray(v.screens) ? (v.screens as { is_active: boolean | null; slots_15sec: number | null }[]).filter(sc => sc.is_active) : [];
+                                return s + active.reduce((ss, sc) => ss + (sc.slots_15sec ?? 4), 0);
+                              }, 0);
+                              const cityCost = cityVenues.reduce((s, v) => s + v.cost, 0);
+                              return (
+                                <div
+                                  key={city}
+                                  className={isLastCard && pricingTiers.length === 0 ? undefined : "page-break"}
+                                  style={{ ...PAGE_STYLE, background: "#ffffff" }}
+                                >
+                                  <PageHeader rightContent={<span>{city}<span style={{ color: "#999", fontWeight: 400 }}> · {province}</span></span>} />
+
+                                  <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                                    {/* Main content: venue list + stats */}
+                                    <div style={{ display: "flex", flex: 1, minHeight: 0, maxHeight: 400 }}>
+                                      {/* LEFT: venue list */}
+                                      <div style={{ width: "55%", background: "#fff", flexShrink: 0, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 8, overflowY: "auto" as const }}>
+                                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#888", marginBottom: 8 }}>Venues in {city}</div>
+                                        {cityVenues.map((cv) => (
+                                          <div key={cv.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid #F3F4F6" }}>
+                                            {cv.cover_image_url ? (
+                                              // eslint-disable-next-line @next/next/no-img-element
+                                              <img src={cv.cover_image_url} alt={cv.name} style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                                            ) : (
+                                              <div style={{ width: 40, height: 40, borderRadius: 6, background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                                <span style={{ fontSize: 14, fontWeight: 800, color: "#D4FF4F" }}>{cv.name.charAt(0)}</span>
+                                              </div>
+                                            )}
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                              <div style={{ fontSize: 13, fontWeight: 600, color: "#0a0a0a", whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis" }}>{cv.name}</div>
+                                              <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>{cv.screens} screen{cv.screens !== 1 ? "s" : ""} · {fmtFull(cv.activeMembers)} members</div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                      {/* RIGHT: city aggregate stats */}
+                                      <div style={{ flex: 1, background: "#111111", display: "flex", flexDirection: "column", justifyContent: "center", gap: 0, padding: "28px 32px" }}>
+                                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#D4FF4F", marginBottom: 16 }}>City Totals</div>
+                                        {[
+                                          { label: "Total Screens", value: cityScreens.toString(), accent: "#D4FF4F", large: true },
+                                          { label: "Active Members", value: fmtFull(cityMembers), accent: "#fff", large: false },
+                                          { label: "Total OTS", value: fmtFull(cityOts), accent: "#A1A1AA", large: false },
+                                          { label: "Monthly Plays", value: fmtFull(cityPlays), accent: "#fff", large: false },
+                                          { label: "Avg Frequency", value: fmtFreq(cityFreq), accent: "#FF6B35", large: false },
+                                          { label: "7s Slots", value: city7sSlots.toString(), accent: "#6EE7B7", large: false },
+                                          { label: "15s Slots", value: city15sSlots.toString(), accent: "#C084FC", large: false },
+                                        ].map(({ label, value, accent, large }, idx) => (
+                                          <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: large ? "0 0 12px" : "5px 0", borderBottom: idx === 0 ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)", marginBottom: idx === 0 ? 12 : 0 }}>
+                                            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.06em", color: "#555" }}>{label}</span>
+                                            <span style={{ fontSize: large ? 28 : 13, fontWeight: large ? 800 : 600, color: accent, fontFamily: "Inter Tight, sans-serif" }}>{value}</span>
+                                          </div>
+                                        ))}
+                                        <div style={{ marginTop: 12, fontSize: 11, color: "#555", fontStyle: "italic" as const }}>
+                                          {cityVenues.length} venue{cityVenues.length !== 1 ? "s" : ""} across {city}, {province} — combined audience of {fmtFull(cityMembers)} active members
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Narrative */}
+                                    <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
+                                      <strong style={{ color: "#0a0a0a" }}>{cityVenues.length} venue{cityVenues.length !== 1 ? "s" : ""}</strong> across <strong style={{ color: "#0a0a0a" }}>{city}</strong>, {province} — combined audience of <strong style={{ color: "#0a0a0a" }}>{fmtFull(cityMembers)}</strong> active members · {fmtR(Math.round(cityCost))} total investment
+                                    </div>
+
+                                    {/* Data strip */}
+                                    <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
+                                      <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Format:</strong> 55&quot; Portrait · 1920×1080 · Digital DOOH</span>
+                                        <span>·</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block</span>
+                                        <span>·</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Plays/slot/screen/week:</strong> 1,487</span>
+                                      </div>
+                                      <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555" }}>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Audience:</strong> LSM 7–10 · Avg dwell 55 min · Captive gym environment</span>
+                                        <span>·</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Operating hours:</strong> 05:00–22:00 · 7 days</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            // Default: per-venue cards
+                            pvenues.map((v, vIdx) => {
                             const isLastVenue = pIdx === provinces.length - 1 && vIdx === pvenues.length - 1;
+                            const activeScreens = Array.isArray(v.screens) ? v.screens.filter(s => s.is_active) : [];
+                            const total7sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_7sec ?? 8), 0);
+                            const total15sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_15sec ?? 4), 0);
                             return (
                       <div
                         key={v.id}
@@ -1071,11 +1282,27 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                 </div>
                               )}
                             </div>
-                            {/* RIGHT: location card */}
-                            <div style={{ flex: 1, background: "#111111", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "24px 32px" }}>
-                              <MapPin size={28} color="#D4FF4F" strokeWidth={1.5} />
-                              <div style={{ fontSize: 28, fontWeight: 800, color: "#ffffff", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", textAlign: "center" }}>{v.city ?? "—"}</div>
-                              {v.province && <div style={{ fontSize: 14, color: "#999", fontWeight: 500, textAlign: "center" }}>{v.province}</div>}
+                            {/* RIGHT: location info panel */}
+                            <div style={{ flex: 1, background: "#111111", display: "flex", flexDirection: "column", justifyContent: "center", gap: 0, padding: "28px 32px" }}>
+                              {/* City name large */}
+                              <div style={{ fontSize: 32, fontWeight: 800, color: "#ffffff", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", marginBottom: 4 }}>{v.city ?? "—"}</div>
+                              {/* Province */}
+                              <div style={{ fontSize: 13, color: "#D4FF4F", fontWeight: 600, marginBottom: 20 }}>{v.province ?? "—"}</div>
+                              {/* Divider */}
+                              <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 20 }} />
+                              {/* Location info rows */}
+                              {[
+                                { label: "Screen Format", value: "55\" Portrait · 1920×1080" },
+                                { label: "Placement", value: activeScreens.length > 0 && activeScreens[0].location_in_venue ? activeScreens[0].location_in_venue.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) : "In-Venue" },
+                                { label: "Operating Hours", value: "05:00 – 22:00 daily" },
+                                { label: "Avg Session", value: "55 minutes" },
+                                { label: "Audience", value: "LSM 7–10" },
+                              ].map(({ label, value }) => (
+                                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                                  <span style={{ fontSize: 11, color: "#666", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{label}</span>
+                                  <span style={{ fontSize: 12, color: "#ccc", fontWeight: 500 }}>{value}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
 
@@ -1086,9 +1313,8 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                           {/* Data grid */}
                           {(() => {
-                            const activeScreens = Array.isArray(v.screens) ? v.screens.filter(s => s.is_active) : [];
-                            const total7sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_7sec ?? 8), 0);
-                            const total15sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_15sec ?? 4), 0);
+                            const total7s = activeScreens.reduce((sum, s) => sum + (s.slots_7sec ?? 8), 0);
+                            const total15s = activeScreens.reduce((sum, s) => sum + (s.slots_15sec ?? 4), 0);
                             return (
                           <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 12, margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
                             {[
@@ -1100,8 +1326,8 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               { label: "OTS", value: fmtFull(v.ots) },
                               { label: "Active Members", value: fmtFull(v.activeMembers) },
                               { label: "Avg Frequency", value: fmtFreq(v.frequency) },
-                              { label: "7s Slots Available", value: total7sSlots.toString() },
-                              { label: "15s Slots Available", value: total15sSlots.toString() },
+                              { label: "7s Slots Available", value: total7s.toString() },
+                              { label: "15s Slots Available", value: total15s.toString() },
                             ].map(({ label, value }) => (
                               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #E5E7EB" }}>
                                 <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#666" }}>{label}</span>
@@ -1113,24 +1339,34 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           })()}
 
                           {/* Spec strip */}
+                          {(() => {
+                            // Loop maths per screen
+                            // 251s loop · 17hr operating day (05:00–22:00) · 7 days/week · 4.3 weeks/month
+                            const loopsPerDay = Math.round(3600 * 17 / 251);
+                            const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
+                            // 8 slots of each type per loop
+                            const plays7sPerMonth = loopsPerMonth * 8;
+                            const plays15sPerMonth = loopsPerMonth * 8;
+                            return (
                           <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                             <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                              <span><strong style={{ color: "#0a0a0a" }}>Format:</strong> 55&quot; Portrait · 1920×1080 · Digital DOOH</span>
-                              <span>·</span>
-                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block</span>
-                              <span>·</span>
-                              <span><strong style={{ color: "#0a0a0a" }}>Plays/slot/screen/week:</strong> 1,487</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
                             </div>
-                            <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555" }}>
-                              <span><strong style={{ color: "#0a0a0a" }}>Audience:</strong> LSM 7–10 · Avg dwell 55 min · Captive gym environment</span>
+                            <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
+                              <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
                               <span>·</span>
-                              <span><strong style={{ color: "#0a0a0a" }}>Operating hours:</strong> 05:00–22:00 · 7 days</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>15s slot:</strong> 8 plays/loop · {plays15sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                              <span>·</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Hours:</strong> 05:00–22:00 · 7 days · LSM 7–10 · Avg dwell 55 min</span>
                             </div>
                           </div>
+                            );
+                          })()}
                         </div>
                       </div>
                             );
-                          })}
+                          })
+                          )}
                         </React.Fragment>
                       );
                     });

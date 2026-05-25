@@ -255,7 +255,7 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
             {saveError && <div className="mb-4 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)", color: "#EF4444" }}>{saveError}</div>}
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label style={labelStyle}>Site ID / Name *</label>
+                <label style={labelStyle}>Site ID *</label>
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <input value={editForm.label} onChange={(e) => setField("label", e.target.value)} required style={{ ...inputStyle, flex: 1 }} />
                   <button

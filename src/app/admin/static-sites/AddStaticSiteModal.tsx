@@ -302,7 +302,7 @@ export default function AddStaticSiteModal({
 
           {/* Label */}
           <div>
-            <label style={labelStyle}>Site ID / Label *</label>
+            <label style={labelStyle}>Site ID *</label>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <input
                 value={form.label}

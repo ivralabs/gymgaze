@@ -1339,10 +1339,8 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 20 }} />
                               {/* Location info rows */}
                               {[
-                                { label: "Screen Format", value: "55\" Portrait · 1920×1080" },
                                 { label: "Placement", value: activeScreens.length > 0 && activeScreens[0].location_in_venue ? activeScreens[0].location_in_venue.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) : "In-Venue" },
-                                { label: "Operating Hours", value: fmtOperatingHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null) },
-                                { label: "Avg Session", value: "55 minutes" },
+                                { label: "Avg Session", value: "55 min" },
                                 { label: "Audience", value: "LSM 7–10" },
                               ].map(({ label, value }) => (
                                 <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -1350,6 +1348,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                   <span style={{ fontSize: 12, color: "#ccc", fontWeight: 500 }}>{value}</span>
                                 </div>
                               ))}
+                              {/* Operating hours — full-width single row */}
+                              <div style={{ padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                                <div style={{ fontSize: 11, color: "#666", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.06em", marginBottom: 3 }}>Operating Hours</div>
+                                <div style={{ fontSize: 12, color: "#ccc", fontWeight: 500 }}>{fmtOperatingHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null)}</div>
+                              </div>
                             </div>
                           </div>
 

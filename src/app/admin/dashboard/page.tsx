@@ -23,15 +23,15 @@ export default async function AdminDashboard() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, sales_target")
     .eq("id", user.id)
     .maybeSingle();
 
   const adminName = profile?.full_name ?? "Mlungisi";
   const userRole = profile?.role ?? "viewer";
 
-  // Sales: fetch their MTD campaigns
-  const SALES_MONTHLY_TARGET = 50000;
+  // Sales: use per-user target from profile, fallback to R50k
+  const SALES_MONTHLY_TARGET: number = (profile as { sales_target?: number | null } | null)?.sales_target ?? 50000;
   let salesCampaignCount = 0;
   let salesRevenueMTD = 0;
 

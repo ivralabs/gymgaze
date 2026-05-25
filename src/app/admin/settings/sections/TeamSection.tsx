@@ -68,6 +68,7 @@ type Profile = {
   permissions: NavSlug[] | null;
   suspended?: boolean;
   last_login_at?: string | null;
+  sales_target?: number | null;
 };
 
 const ROLE_PRESETS: RolePreset[] = ["admin", "manager", "sales", "viewer", "custom"];
@@ -85,6 +86,9 @@ function EditRoleModal({
   const [role, setRole] = useState<RolePreset>(member.role ?? "viewer");
   const [customPerms, setCustomPerms] = useState<NavSlug[]>(
     member.permissions ?? ROLE_DEFAULTS[member.role ?? "viewer"] ?? []
+  );
+  const [salesTarget, setSalesTarget] = useState<string>(
+    String(member.sales_target ?? 50000)
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -109,6 +113,7 @@ function EditRoleModal({
           id: member.id,
           role,
           permissions: role === "custom" ? customPerms : null,
+          ...(role === "sales" ? { sales_target: Number(salesTarget) || 50000 } : {}),
         }),
       });
       const data = await res.json();
@@ -274,6 +279,29 @@ function EditRoleModal({
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* Sales target — only for sales role */}
+        {role === "sales" && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Monthly Sales Target</p>
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold" style={{ color: "#D4FF4F" }}>R</span>
+                <input
+                  type="number"
+                  min={1000}
+                  step={1000}
+                  value={salesTarget}
+                  onChange={(e) => setSalesTarget(e.target.value)}
+                  className="w-full pl-8 pr-4 py-3 rounded-xl text-sm font-semibold text-white"
+                  style={{ background: "rgba(212,255,79,0.06)", border: "1px solid rgba(212,255,79,0.2)", outline: "none" }}
+                />
+              </div>
+              <span className="text-xs" style={{ color: "#666" }}>per month</span>
+            </div>
+            <p className="text-xs mt-2" style={{ color: "#666" }}>This rep's commission card will track progress against this target.</p>
           </div>
         )}
 
@@ -448,7 +476,7 @@ export default function TeamSection() {
 
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, full_name, role, permissions, suspended, last_login_at")
+      .select("id, full_name, role, permissions, suspended, last_login_at, sales_target")
       .order("full_name");
 
     const withEmails: Profile[] = (profiles ?? []).map((p) => ({

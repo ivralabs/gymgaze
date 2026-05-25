@@ -20,7 +20,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { id, role, permissions } = body;
+  const { id, role, permissions, sales_target } = body;
 
   if (!id || !role) {
     return NextResponse.json({ error: "id and role are required" }, { status: 400 });
@@ -31,14 +31,22 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
   }
 
+  // Build update payload
+  const updatePayload: Record<string, unknown> = {
+    role,
+    // For non-custom roles, clear permissions (use defaults). For custom, save the array.
+    permissions: role === "custom" ? (permissions ?? null) : null,
+    updated_at: new Date().toISOString(),
+  };
+
+  // Only persist sales_target when explicitly provided and role is sales
+  if (role === "sales" && typeof sales_target === "number" && sales_target > 0) {
+    updatePayload.sales_target = sales_target;
+  }
+
   const { data, error } = await supabase
     .from("profiles")
-    .update({
-      role,
-      // For non-custom roles, clear permissions (use defaults). For custom, save the array.
-      permissions: role === "custom" ? (permissions ?? null) : null,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq("id", id)
     .select()
     .single();

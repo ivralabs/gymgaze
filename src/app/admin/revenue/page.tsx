@@ -166,11 +166,18 @@ export default async function RevenuePage() {
         : (sMap.get(p.source_id as string) ?? "—"),
   }));
 
+  // Campaign options for invoice dropdown
+  const campaignOptions = allCampaigns.map((c) => ({
+    id: c.id,
+    client_name: c.client_name,
+  }));
+
   return (
     <RevenueClient
       campaigns={allCampaigns}
       sponsorships={allSponsorships}
       payments={enrichedPayments}
+      campaignOptions={campaignOptions}
       summary={{
         totalBilled,
         totalCollected,

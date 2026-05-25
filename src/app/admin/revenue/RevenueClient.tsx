@@ -9,9 +9,11 @@ import {
   Calendar,
   Repeat,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 import type { CampaignRow, SponsorshipRow, PaymentRow } from "./page";
 import RecordPaymentModal from "./RecordPaymentModal";
+import InvoicesTab from "./InvoicesTab";
 
 // ─── Lazy chart ────────────────────────────────────────────────────────────────
 const RevenueBarChart = dynamic(
@@ -52,9 +54,10 @@ interface Props {
   sponsorships: SponsorshipRow[];
   payments: PaymentRow[];
   summary: Summary;
+  campaignOptions: { id: string; client_name: string | null }[];
 }
 
-type Tab = "campaigns" | "sponsorships";
+type Tab = "campaigns" | "sponsorships" | "invoices";
 type StatusFilter = "all" | "active" | "completed" | "draft" | "paused" | "expired";
 type DateFilter = "this-month" | "last-month" | "all";
 
@@ -245,6 +248,7 @@ export default function RevenueClient({
   sponsorships: initialSponsorships,
   payments: initialPayments,
   summary: initialSummary,
+  campaignOptions,
 }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("campaigns");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -549,7 +553,7 @@ export default function RevenueClient({
         >
           {/* Tabs */}
           <div className="flex gap-1">
-            {(["campaigns", "sponsorships"] as Tab[]).map((t) => (
+            {(["campaigns", "sponsorships", "invoices"] as Tab[]).map((t) => (
               <button
                 key={t}
                 onClick={() => {
@@ -567,13 +571,18 @@ export default function RevenueClient({
                   background: "transparent",
                 }}
               >
-                {t}
+                {t === "invoices" ? (
+                  <span className="flex items-center gap-1.5">
+                    <FileText size={13} />
+                    Invoices
+                  </span>
+                ) : t}
               </button>
             ))}
           </div>
 
-          {/* Filters */}
-          <div className="flex items-center gap-2 pb-3 sm:pb-4 flex-wrap">
+          {/* Filters — hidden on invoices tab */}
+          <div className={`flex items-center gap-2 pb-3 sm:pb-4 flex-wrap${activeTab === "invoices" ? " hidden" : ""}`}>
             {/* Status filter */}
             <div className="relative">
               <select
@@ -916,6 +925,11 @@ export default function RevenueClient({
               </>
             )}
           </div>
+        )}
+
+        {/* ── Invoices Tab ── */}
+        {activeTab === "invoices" && (
+          <InvoicesTab campaigns={campaignOptions} />
         )}
       </div>
 

@@ -154,9 +154,11 @@ h6 {
   }
 }
 
-/* Print / PDF export styles */
+/* Print / PDF export styles
+   NOTE: scoped to admin pages only — the dedicated /rate-card-print route
+   handles its own print styling and must not inherit these. */
 @media print {
-  body { background: #0A0A0A !important; color: #fff !important; }
+  body:has(.admin-print-context) { background: #0A0A0A !important; color: #fff !important; }
   .print\:hidden { display: none !important; }
   /* Avoid page breaks inside cards */
   .rounded-2xl { break-inside: avoid; }
@@ -164,7 +166,7 @@ h6 {
   [style*="position: sticky"], [style*="position:sticky"] {
     position: relative !important;
   }
-  /* Force dark background on all elements */
+  /* Force colour preservation */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

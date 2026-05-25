@@ -349,7 +349,7 @@ export default function RateCardPrint({
       <div className="no-print" style={{ height: 56 }} />
 
       {/* ── Rate Card Pages ── */}
-      <div style={{ fontFamily: "Inter, sans-serif", padding: "24px 0" }}>
+      <div id="rate-card-root" style={{ fontFamily: "Inter, sans-serif", padding: "24px 0" }}>
 
         {/* ═══ PAGE 1 — COVER ═══ */}
         <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#0a0a0a" }}>

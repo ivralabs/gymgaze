@@ -217,7 +217,7 @@ export default async function AdminDashboard() {
               Add Venue
             </Link>
             <Link
-              href="/admin/screens/new"
+              href="/admin/screens"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
@@ -229,7 +229,7 @@ export default async function AdminDashboard() {
               Add Screen
             </Link>
             <Link
-              href="/admin/deals/new"
+              href="/admin/pipeline"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
@@ -279,7 +279,7 @@ export default async function AdminDashboard() {
             className="mt-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs"
             style={{ backgroundColor: "rgba(212,255,79,0.08)", color: "#D4FF4F" }}
           >
-            +12% this month
+            this month
           </div>
         </div>
 

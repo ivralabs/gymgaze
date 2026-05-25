@@ -180,8 +180,8 @@ function NetworkRow({ network, venues, screens, revenue, photos, campaignVenues 
   const activeCampaigns = new Set(campaignVenues.filter((cv) => { const c = getCampaign(cv.campaigns); return venueIds.has(cv.venue_id) && c?.end_date && new Date(c.end_date) >= new Date(); }).map((cv) => getCampaign(cv.campaigns)?.id)).size;
   const brandColor = network.primary_color ?? "#D4FF4F";
 
-  // OTS estimate: monthly entries × screens
-  const ots = totalMonthly * netScreens.length;
+  // OTS estimate: monthly entries × (4 weeks / 4.3)
+  const ots = Math.round(totalMonthly * (4 / 4.3));
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden mb-3" style={{ borderRadius: 16 }}>
@@ -658,7 +658,7 @@ function CompetitivePositioning({ venues, networks, screens }: {
   const provinces = Array.from(new Set(venues.map((v) => v.province).filter(Boolean))) as string[];
   const totalMembers = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = venues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
-  const weeklyOts = Math.round((totalMonthly * screens.length) / 4.33);
+  const weeklyOts = Math.round((totalMonthly * (4 / 4.3)) / 4.33);
 
   // SA gym market estimates (public data approximations)
   const SA_GYM_MEMBERS = 1_200_000;
@@ -741,7 +741,7 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
   const totalRevenue = revenue.reduce((s, r) => s + (r.rental_zar ?? 0) + (r.revenue_share_zar ?? 0), 0);
   const approvedPhotos = photos.filter((p) => p.status === "approved").length;
   const overallCompliance = photos.length > 0 ? Math.round((approvedPhotos / photos.length) * 100) : 0;
-  const ots = totalMonthly * totalScreens;
+  const ots = Math.round(totalMonthly * (4 / 4.3));
   const avgDwell = networks.reduce((s, n) => s + (n.avg_dwell_minutes ?? 60), 0) / (networks.length || 1);
 
   // ── Media Performance (4-week flight model) ──────────────────────────────

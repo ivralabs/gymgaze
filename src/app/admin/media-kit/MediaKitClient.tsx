@@ -44,9 +44,9 @@ interface Enquiry {
 interface PricingTier {
   id: string;
   name: string;
-  duration_seconds: number;
+  duration_sec: number;
   cpm_zar: number;
-  min_spend_zar: number;
+  min_spend: number;
   description: string | null;
   is_active: boolean;
   sort_order: number;
@@ -547,7 +547,7 @@ export default function MediaKitClient({
                       >
                         <td className="py-3 pr-6 font-semibold text-white">{tier.name}</td>
                         <td className="py-3 pr-6" style={{ color: "#999" }}>
-                          {tier.duration_seconds}s
+                          {tier.duration_sec}s
                         </td>
                         <td
                           className="py-3 pr-6 font-mono font-bold"
@@ -556,7 +556,7 @@ export default function MediaKitClient({
                           R{tier.cpm_zar.toLocaleString("en-ZA")}
                         </td>
                         <td className="py-3 pr-6 font-mono" style={{ color: "#60A5FA" }}>
-                          R{tier.min_spend_zar.toLocaleString("en-ZA")}
+                          R{tier.min_spend.toLocaleString("en-ZA")}
                         </td>
                         <td className="py-3" style={{ color: "#888" }}>
                           {tier.description ?? "—"}

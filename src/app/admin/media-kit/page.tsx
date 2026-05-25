@@ -12,9 +12,9 @@ export const metadata = {
 interface PricingTier {
   id: string;
   name: string;
-  duration_seconds: number;
+  duration_sec: number;
   cpm_zar: number;
-  min_spend_zar: number;
+  min_spend: number;
   description: string | null;
   is_active: boolean;
   sort_order: number;

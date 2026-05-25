@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Printer, ArrowLeft, CheckCircle, Clock, XCircle, AlertCircle, Send } from "lucide-react";
 import Link from "next/link";
-import type { InvoiceDetail } from "./page";
+import type { InvoiceDetail } from "./types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

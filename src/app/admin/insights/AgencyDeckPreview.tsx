@@ -590,7 +590,7 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
   const industry = INDUSTRIES[selected];
   const totalMembers = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = venues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
-  const ots = totalMonthly * screens.length;
+  const ots = Math.round(totalMonthly * (4 / 4.3));
 
   function handleSelect(key: string) {
     setSelected(key);
@@ -784,7 +784,7 @@ export default function AgencyDeckPreview({ networks, venues, screens, photos, c
 
   const totalMembers = filtered.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = filtered.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
-  const ots = totalMonthly * filteredScreens.length;
+  const ots = Math.round(totalMonthly * (4 / 4.3));
   const weeklyOts = Math.round(ots / 4.33);
   const avgDwell = networks.reduce((s, n) => s + (n.avg_dwell_minutes ?? 60), 0) / (networks.length || 1);
 

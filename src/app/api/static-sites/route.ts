@@ -33,10 +33,18 @@ export async function GET(req: Request) {
 // POST /api/static-sites — create a static site
 export async function POST(req: Request) {
   const body = await req.json();
-  const { venue_id, label, site_type, location_in_venue, width_cm, height_cm, notes } = body;
+  const { venue_id, label, site_type, location_in_venue, width_cm, height_cm, notes, price_per_month, monthly_impressions, pricing_tier } = body;
 
   if (!venue_id || !label) {
     return NextResponse.json({ error: "venue_id and label are required" }, { status: 400 });
+  }
+
+  // Validate pricing fields
+  if (price_per_month !== null && price_per_month !== undefined && parseFloat(String(price_per_month)) < 0) {
+    return NextResponse.json({ error: "price_per_month must be >= 0" }, { status: 400 });
+  }
+  if (monthly_impressions !== null && monthly_impressions !== undefined && parseInt(String(monthly_impressions)) < 0) {
+    return NextResponse.json({ error: "monthly_impressions must be >= 0" }, { status: 400 });
   }
 
   const svc = serviceClient();
@@ -51,6 +59,9 @@ export async function POST(req: Request) {
       height_cm: height_cm ? parseInt(String(height_cm)) : null,
       notes: notes || null,
       is_active: true,
+      price_per_month: price_per_month !== undefined && price_per_month !== null && price_per_month !== "" ? parseFloat(String(price_per_month)) : null,
+      monthly_impressions: monthly_impressions !== undefined && monthly_impressions !== null && monthly_impressions !== "" ? parseInt(String(monthly_impressions)) : null,
+      pricing_tier: pricing_tier || null,
     })
     .select("*, venues(id, name, city)")
     .single();

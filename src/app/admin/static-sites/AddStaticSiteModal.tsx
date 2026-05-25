@@ -20,6 +20,9 @@ export interface StaticSiteRow {
   is_active: boolean | null;
   photo_url: string | null;
   notes: string | null;
+  price_per_month: number | null;
+  monthly_impressions: number | null;
+  pricing_tier: string | null;
   created_at: string;
   venues: { id: string; name: string; city: string | null } | null;
 }
@@ -73,6 +76,9 @@ export default function AddStaticSiteModal({
     width_cm: "",
     height_cm: "",
     notes: "",
+    price_per_month: "",
+    monthly_impressions: "",
+    pricing_tier: "",
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -101,6 +107,9 @@ export default function AddStaticSiteModal({
           width_cm: form.width_cm ? Math.round(parseFloat(form.width_cm) * (unit === "m" ? 100 : 1)) : null,
           height_cm: form.height_cm ? Math.round(parseFloat(form.height_cm) * (unit === "m" ? 100 : 1)) : null,
           notes: form.notes || null,
+          price_per_month: form.price_per_month !== "" ? parseFloat(form.price_per_month) : null,
+          monthly_impressions: form.monthly_impressions !== "" ? parseInt(form.monthly_impressions) : null,
+          pricing_tier: form.pricing_tier || null,
         }),
       });
       if (!res.ok) {
@@ -284,6 +293,48 @@ export default function AddStaticSiteModal({
                 <input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={form.height_cm} onChange={(e) => set("height_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.9" : "e.g. 90"} style={inputStyle} />
               </div>
             </div>
+          </div>
+
+          {/* Pricing fields */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label style={labelStyle}>Rate per Month (R)</label>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={form.price_per_month}
+                onChange={(e) => set("price_per_month", e.target.value)}
+                placeholder="e.g. 3500"
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Monthly Impressions</label>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={form.monthly_impressions}
+                onChange={(e) => set("monthly_impressions", e.target.value)}
+                placeholder="e.g. 12000"
+                style={inputStyle}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={labelStyle}>Pricing Tier (optional)</label>
+            <select
+              value={form.pricing_tier}
+              onChange={(e) => set("pricing_tier", e.target.value)}
+              style={inputStyle}
+            >
+              <option value="">Select tier…</option>
+              <option value="Premium">Premium</option>
+              <option value="Standard">Standard</option>
+              <option value="Entry">Entry</option>
+            </select>
           </div>
 
           {/* Photo upload */}

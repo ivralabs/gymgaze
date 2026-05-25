@@ -12,6 +12,15 @@ function serviceClient() {
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
+
+  // Validate pricing fields if present
+  if (body.price_per_month !== undefined && body.price_per_month !== null && parseFloat(String(body.price_per_month)) < 0) {
+    return NextResponse.json({ error: "price_per_month must be >= 0" }, { status: 400 });
+  }
+  if (body.monthly_impressions !== undefined && body.monthly_impressions !== null && parseInt(String(body.monthly_impressions)) < 0) {
+    return NextResponse.json({ error: "monthly_impressions must be >= 0" }, { status: 400 });
+  }
+
   const svc = serviceClient();
   const { data, error } = await svc.from("static_sites").update({ ...body, updated_at: new Date().toISOString() }).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

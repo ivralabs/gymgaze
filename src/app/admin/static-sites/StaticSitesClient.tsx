@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Layers, Plus, X, Filter, Upload, ExternalLink } from "lucide-react";
+import { Layers, Plus, X, Filter, Upload, ExternalLink, ArrowUpDown, FileText } from "lucide-react";
 import AddStaticSiteModal, {
   type StaticSiteRow,
   SITE_TYPE_LABELS,
@@ -208,6 +208,34 @@ function SiteCard({
             </span>
           )}
         </div>
+        {(site.price_per_month != null || site.monthly_impressions != null) && (
+          <div className="flex items-center gap-3 mt-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+            {site.price_per_month != null && (
+              <div className="flex flex-col">
+                <span className="text-xs" style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Rate/mo</span>
+                <span className="text-sm font-bold" style={{ color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif" }}>
+                  R {site.price_per_month.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </span>
+              </div>
+            )}
+            {site.monthly_impressions != null && (
+              <div className="flex flex-col">
+                <span className="text-xs" style={{ color: "#666", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Impressions/mo</span>
+                <span className="text-sm font-semibold" style={{ color: "#A3A3A3", fontFamily: "Inter Tight, sans-serif" }}>
+                  {site.monthly_impressions.toLocaleString("en-ZA")}
+                </span>
+              </div>
+            )}
+            {site.pricing_tier && (
+              <span
+                className="text-xs font-semibold px-2 py-0.5 rounded-full ml-auto"
+                style={{ background: "rgba(255,255,255,0.06)", color: "#C8C8C8", border: "1px solid rgba(255,255,255,0.10)" }}
+              >
+                {site.pricing_tier}
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="mt-3">
           <Link
@@ -228,21 +256,43 @@ function SiteCard({
   );
 }
 
+type SortKey = "newest" | "oldest" | "label" | "price_asc" | "price_desc" | "impressions_desc";
+
 export default function StaticSitesClient({ sites, venues }: Props) {
   const { canCreate } = useRole();
   const [venueFilter, setVenueFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("newest");
   const [showAddModal, setShowAddModal] = useState(false);
   const [localSites, setLocalSites] = useState<StaticSiteRow[]>(sites);
 
-  const filtered = localSites.filter((s) => {
-    if (venueFilter !== "all" && s.venue_id !== venueFilter) return false;
-    if (typeFilter !== "all" && s.site_type !== typeFilter) return false;
-    if (statusFilter === "active" && s.is_active === false) return false;
-    if (statusFilter === "inactive" && s.is_active !== false) return false;
-    return true;
-  });
+  const filtered = localSites
+    .filter((s) => {
+      if (venueFilter !== "all" && s.venue_id !== venueFilter) return false;
+      if (typeFilter !== "all" && s.site_type !== typeFilter) return false;
+      if (statusFilter === "active" && s.is_active === false) return false;
+      if (statusFilter === "inactive" && s.is_active !== false) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      switch (sortKey) {
+        case "newest":
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "oldest":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case "label":
+          return a.label.localeCompare(b.label);
+        case "price_asc":
+          return (a.price_per_month ?? 0) - (b.price_per_month ?? 0);
+        case "price_desc":
+          return (b.price_per_month ?? 0) - (a.price_per_month ?? 0);
+        case "impressions_desc":
+          return (b.monthly_impressions ?? 0) - (a.monthly_impressions ?? 0);
+        default:
+          return 0;
+      }
+    });
 
   function handleSiteAdded(site: StaticSiteRow) {
     setLocalSites((prev) => [site, ...prev]);
@@ -272,6 +322,7 @@ export default function StaticSitesClient({ sites, venues }: Props) {
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
           <Filter size={13} color="#666" strokeWidth={2} />
+
           <select
             value={venueFilter}
             onChange={(e) => setVenueFilter(e.target.value)}
@@ -306,6 +357,19 @@ export default function StaticSitesClient({ sites, venues }: Props) {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            className="rounded-xl px-3 py-2 text-xs flex items-center gap-1"
+            style={inputStyle}
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="label">Name A–Z</option>
+            <option value="price_desc">Rate: High–Low</option>
+            <option value="price_asc">Rate: Low–High</option>
+            <option value="impressions_desc">Impressions: Most</option>
+          </select>
           {(venueFilter !== "all" || typeFilter !== "all" || statusFilter !== "all") && (
             <button
               onClick={() => { setVenueFilter("all"); setTypeFilter("all"); setStatusFilter("all"); }}
@@ -318,6 +382,15 @@ export default function StaticSitesClient({ sites, venues }: Props) {
           )}
         </div>
 
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/static-sites/rate-card"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold"
+            style={{ background: "rgba(212,255,79,0.10)", color: "#D4FF4F", border: "1px solid rgba(212,255,79,0.20)" }}
+          >
+            <FileText size={15} strokeWidth={2} />
+            Rate Card
+          </Link>
         {canCreate && (
           <button
             onClick={() => setShowAddModal(true)}
@@ -328,6 +401,7 @@ export default function StaticSitesClient({ sites, venues }: Props) {
             Add Static Site
           </button>
         )}
+        </div>
       </div>
 
       {/* Grid */}

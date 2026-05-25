@@ -21,6 +21,7 @@ interface Site {
   id: string; venue_id: string; label: string; site_type: string | null;
   location_in_venue: string | null; width_cm: number | null; height_cm: number | null;
   is_active: boolean | null; photo_url: string | null; notes: string | null;
+  price_per_month: number | null; monthly_impressions: number | null; pricing_tier: string | null;
   created_at: string; venues: { id: string; name: string; city: string | null; province: string | null } | null;
 }
 
@@ -52,6 +53,9 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
     label: site.label, venue_id: site.venue_id, site_type: site.site_type ?? "poster_frame",
     location_in_venue: site.location_in_venue ?? "", width_cm: site.width_cm?.toString() ?? "",
     height_cm: site.height_cm?.toString() ?? "", notes: site.notes ?? "", is_active: site.is_active ?? true,
+    price_per_month: site.price_per_month?.toString() ?? "",
+    monthly_impressions: site.monthly_impressions?.toString() ?? "",
+    pricing_tier: site.pricing_tier ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -66,7 +70,14 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
     try {
       const res = await fetch(`/api/static-sites/${site.id}`, {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...editForm, width_cm: editForm.width_cm ? parseInt(editForm.width_cm) : null, height_cm: editForm.height_cm ? parseInt(editForm.height_cm) : null }),
+        body: JSON.stringify({
+          ...editForm,
+          width_cm: editForm.width_cm ? parseInt(editForm.width_cm) : null,
+          height_cm: editForm.height_cm ? parseInt(editForm.height_cm) : null,
+          price_per_month: editForm.price_per_month !== "" ? parseFloat(editForm.price_per_month) : null,
+          monthly_impressions: editForm.monthly_impressions !== "" ? parseInt(editForm.monthly_impressions) : null,
+          pricing_tier: editForm.pricing_tier || null,
+        }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
       const updated = await res.json();
@@ -135,6 +146,9 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
             <SpecRow label="Location" value={site.location_in_venue ? <span className="flex items-center gap-1"><MapPin size={11} strokeWidth={2} />{LOCATION_LABELS[site.location_in_venue] ?? site.location_in_venue}</span> : "—"} />
             <SpecRow label="Dimensions" value={site.width_cm && site.height_cm ? `${site.width_cm}cm × ${site.height_cm}cm` : site.width_cm ? `${site.width_cm}cm wide` : site.height_cm ? `${site.height_cm}cm tall` : "—"} />
             <SpecRow label="Status" value={<span className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase" style={{ background: site.is_active ? "rgba(212,255,79,0.10)" : "rgba(102,102,102,0.15)", color: site.is_active ? "#D4FF4F" : "#909090" }}>{site.is_active ? "Active" : "Inactive"}</span>} />
+            <SpecRow label="Rate per Month" value={site.price_per_month != null ? `R ${site.price_per_month.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—"} />
+            <SpecRow label="Monthly Impressions" value={site.monthly_impressions != null ? site.monthly_impressions.toLocaleString("en-ZA") : "—"} />
+            <SpecRow label="Pricing Tier" value={site.pricing_tier ?? "—"} />
             <SpecRow label="Added" value={new Date(site.created_at).toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" })} />
           </div>
 
@@ -260,6 +274,42 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setEditPhoto(f); setEditPhotoPreview(URL.createObjectURL(f)); } }} />
                   </label>
                 )}
+              </div>
+              {/* Pricing fields */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label style={labelStyle}>Rate per Month (R)</label>
+                  <input
+                    type="number" min={0} step={1}
+                    value={editForm.price_per_month}
+                    onChange={(e) => setField("price_per_month", e.target.value)}
+                    placeholder="e.g. 3500"
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Monthly Impressions</label>
+                  <input
+                    type="number" min={0} step={1}
+                    value={editForm.monthly_impressions}
+                    onChange={(e) => setField("monthly_impressions", e.target.value)}
+                    placeholder="e.g. 12000"
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Pricing Tier</label>
+                <select
+                  value={editForm.pricing_tier}
+                  onChange={(e) => setField("pricing_tier", e.target.value)}
+                  style={inputStyle}
+                >
+                  <option value="">Select tier…</option>
+                  <option value="Premium">Premium</option>
+                  <option value="Standard">Standard</option>
+                  <option value="Entry">Entry</option>
+                </select>
               </div>
               <div><label style={labelStyle}>Notes</label><textarea value={editForm.notes} onChange={(e) => setField("notes", e.target.value)} rows={2} style={{ ...inputStyle, resize: "vertical" }} /></div>
               <div className="flex items-center gap-3">

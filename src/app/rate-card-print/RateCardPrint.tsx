@@ -155,10 +155,10 @@ function PageHeader({ rightContent }: { rightContent: React.ReactNode }) {
   );
 }
 
-// A4 landscape in pixels at 96dpi = 1123 × 794. Using fixed px is more reliable
-// than mm for cross-browser print sizing (Safari/Chrome both honor it).
-// Slight underscale (1100×780) gives safety margin against pixel rounding bleed.
-const PAGE_W = 1100;
+// A4 landscape at 96dpi = 1123 × 794. We use 1123×780 — width matches exactly,
+// height is 14px under to absorb any pixel rounding. NO margin between pages —
+// the page-break CSS handles separation, margin causes extra blank pages.
+const PAGE_W = 1123;
 const PAGE_H = 780;
 const PAGE_STYLE: React.CSSProperties = {
   width: `${PAGE_W}px`,
@@ -166,7 +166,6 @@ const PAGE_STYLE: React.CSSProperties = {
   maxHeight: `${PAGE_H}px`,
   position: "relative",
   overflow: "hidden",
-  marginBottom: "8px",
   display: "flex",
   flexDirection: "column",
   fontFamily: "Inter, sans-serif",

@@ -33,6 +33,14 @@ export default function RateCardPrintLayout({
               background: white !important;
               min-height: 0 !important;
             }
+            /* SCREEN ONLY: add visual gap between pages so they look like a deck.
+               In print this is removed so pages don't create extra blank breaks. */
+            @media screen {
+              [data-print-page="true"] {
+                margin-bottom: 16px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+              }
+            }
 
             /* PRINT: force A4 landscape, kill all inherited print styles */
             @media print {
@@ -66,10 +74,11 @@ export default function RateCardPrintLayout({
               }
               /* Hide the print toolbar + spacer */
               .no-print { display: none !important; }
-              /* Every printable page = exactly one A4 landscape canvas (1100x780 with safety margin),
-                 fits within 1123x794 (96dpi A4 landscape) leaving room for browser rounding. */
+              /* Every printable page = exactly one A4 landscape canvas.
+                 1123x780 fits within 1123x794 (96dpi A4 landscape).
+                 NO margin — page-break handles separation. */
               [data-print-page="true"] {
-                width: 1100px !important;
+                width: 1123px !important;
                 height: 780px !important;
                 max-height: 780px !important;
                 min-height: 0 !important;
@@ -82,6 +91,7 @@ export default function RateCardPrintLayout({
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
                 position: relative !important;
+                box-shadow: none !important;
               }
               [data-print-page="true"]:last-child {
                 page-break-after: auto !important;

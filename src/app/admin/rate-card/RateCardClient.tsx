@@ -322,7 +322,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   }
 
   function openPrintPage() {
-    const printUrl = `/admin/rate-card/print?` + new URLSearchParams({
+    const printUrl = `/rate-card-print?` + new URLSearchParams({
       venues: selectedVenues.join(","),
       cpm: effectiveCpm.toString(),
       weeks: weeks.toString(),

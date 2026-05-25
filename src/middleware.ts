@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Not authenticated → login (only for protected routes)
-  if (!user && (pathname.startsWith("/admin") || pathname.startsWith("/portal"))) {
+  if (!user && (pathname.startsWith("/admin") || pathname.startsWith("/portal") || pathname.startsWith("/rate-card-print"))) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 

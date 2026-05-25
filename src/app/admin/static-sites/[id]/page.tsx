@@ -23,7 +23,7 @@ export default async function StaticSiteDetailPage({ params }: { params: Promise
   const svc = serviceClient();
   const { data: site } = await svc
     .from("static_sites")
-    .select("*, venues(id, name, city, province)")
+    .select("*, venues(id, name, city, province, monthly_entries)")
     .eq("id", id)
     .single();
 

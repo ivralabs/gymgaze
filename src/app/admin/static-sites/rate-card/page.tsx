@@ -17,7 +17,7 @@ export default async function StaticSitesRateCardPage() {
   const { data: sites } = await svc
     .from("static_sites")
     .select(
-      "id, venue_id, label, site_type, location_in_venue, width_cm, height_cm, is_active, photo_url, notes, price_per_month, monthly_impressions, pricing_tier, venues(id, name, city, province, cover_image_url)"
+      "id, venue_id, label, site_type, location_in_venue, width_cm, height_cm, is_active, photo_url, notes, price_per_month, monthly_impressions, pricing_tier, venues(id, name, city, province, cover_image_url, monthly_entries)"
     )
     .eq("is_active", true)
     .order("created_at");

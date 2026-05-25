@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Layers, Edit2, X, Upload, Trash2, MapPin } from "lucide-react";
 import { useRole } from "@/lib/useRole";
+import { suggestMonthlyImpressions, impressionSuggestionCaption } from "@/lib/staticSiteImpressions";
 
 const SITE_TYPE_LABELS: Record<string, string> = {
   poster_frame: "Poster Frame", banner: "Banner", a_frame: "A-Frame",
@@ -22,7 +23,7 @@ interface Site {
   location_in_venue: string | null; width_cm: number | null; height_cm: number | null;
   is_active: boolean | null; photo_url: string | null; notes: string | null;
   price_per_month: number | null; monthly_impressions: number | null; pricing_tier: string | null;
-  created_at: string; venues: { id: string; name: string; city: string | null; province: string | null } | null;
+  created_at: string; venues: { id: string; name: string; city: string | null; province: string | null; monthly_entries: number | null } | null;
 }
 
 const cardStyle: React.CSSProperties = {
@@ -62,6 +63,7 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [editPhotoPreview, setEditPhotoPreview] = useState<string | null>(site.photo_url ?? null);
   const [unit, setUnit] = useState<"cm" | "m">("cm");
+  const [impressionCaption, setImpressionCaption] = useState<string | null>(null);
 
   function setField(key: string, value: string | boolean) { setEditForm((p) => ({ ...p, [key]: value })); }
 
@@ -292,12 +294,54 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                   <input
                     type="number" min={0} step={1}
                     value={editForm.monthly_impressions}
-                    onChange={(e) => setField("monthly_impressions", e.target.value)}
+                    onChange={(e) => {
+                      setField("monthly_impressions", e.target.value);
+                      setImpressionCaption(null);
+                    }}
                     placeholder="e.g. 12000"
                     style={inputStyle}
                   />
                 </div>
               </div>
+              {/* Suggest from footfall */}
+              {(() => {
+                const monthlyEntries = site.venues?.monthly_entries ?? null;
+                const location = editForm.location_in_venue;
+                const canSuggest = !!location && !!monthlyEntries;
+                return (
+                  <div>
+                    <button
+                      type="button"
+                      disabled={!canSuggest}
+                      onClick={() => {
+                        if (!canSuggest || !monthlyEntries) return;
+                        const suggested = suggestMonthlyImpressions(monthlyEntries, location);
+                        if (suggested !== null) {
+                          setField("monthly_impressions", suggested.toString());
+                          setImpressionCaption(impressionSuggestionCaption(monthlyEntries, location));
+                        }
+                      }}
+                      style={{
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        padding: "0.375rem 0.875rem",
+                        borderRadius: "0.5rem",
+                        border: "1px solid rgba(212,255,79,0.3)",
+                        background: canSuggest ? "rgba(212,255,79,0.10)" : "rgba(255,255,255,0.04)",
+                        color: canSuggest ? "#D4FF4F" : "#555",
+                        cursor: canSuggest ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      ⚡ Suggest from footfall
+                    </button>
+                    {impressionCaption && (
+                      <p style={{ fontSize: "0.7rem", color: "#888", marginTop: "0.375rem", lineHeight: 1.5 }}>
+                        {impressionCaption}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
               <div>
                 <label style={labelStyle}>Pricing Tier</label>
                 <select

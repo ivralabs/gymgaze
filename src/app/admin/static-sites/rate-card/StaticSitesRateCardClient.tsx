@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { suggestMonthlyImpressions } from "@/lib/staticSiteImpressions";
 import {
   Calculator,
   MapPin,
@@ -38,6 +39,7 @@ export type StaticSiteForCard = {
     city: string | null;
     province: string | null;
     cover_image_url?: string | null;
+    monthly_entries?: number | null;
   } | null;
 };
 
@@ -63,6 +65,16 @@ function fmtSiteType(type: string | null): string {
 
 function fmtR(n: number) {
   return `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
+/** Returns [value, isEstimated] */
+function effectiveImpressions(site: StaticSiteForCard): [number, boolean] {
+  if (site.monthly_impressions != null) return [site.monthly_impressions, false];
+  const est = suggestMonthlyImpressions(
+    site.venues?.monthly_entries ?? null,
+    site.location_in_venue
+  );
+  return est != null ? [est, true] : [0, false];
 }
 
 function fmtNum(n: number) {
@@ -180,7 +192,7 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
     : filteredSites;
 
   const totalMonthlyValue = quoteSites.reduce((sum, s) => sum + (s.price_per_month ?? 0), 0);
-  const totalImpressions = quoteSites.reduce((sum, s) => sum + (s.monthly_impressions ?? 0), 0);
+  const totalImpressions = quoteSites.reduce((sum, s) => sum + effectiveImpressions(s)[0], 0);
   const annualValue = totalMonthlyValue * 12;
 
   // ── Open print page ───────────────────────────────────────────────────────
@@ -491,9 +503,14 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
                               <div className="text-sm font-bold" style={{ fontFamily: "Inter Tight, sans-serif", color: isSelected ? "#D4FF4F" : "#fff" }}>
                                 {fmtR(Math.round(site.price_per_month ?? 0))}
                               </div>
-                              {site.monthly_impressions ? (
-                                <div className="text-xs" style={{ color: "#666" }}>{fmtNum(site.monthly_impressions)} impr</div>
-                              ) : null}
+                              {(() => {
+                                const [impr, isEst] = effectiveImpressions(site);
+                                return impr > 0 ? (
+                                  <div className="text-xs" style={{ color: "#666" }}>
+                                    {fmtNum(impr)} impr{isEst ? <sup style={{ color: "#555", fontSize: "0.6em" }}> (est.)</sup> : null}
+                                  </div>
+                                ) : null;
+                              })()}
                             </div>
                           </div>
                         );
@@ -546,7 +563,7 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
               <tbody>
                 {sitesByProvince.map(([province, provSites]) => {
                   const provMonthly = provSites.reduce((s, site) => s + (site.price_per_month ?? 0), 0);
-                  const provImpressions = provSites.reduce((s, site) => s + (site.monthly_impressions ?? 0), 0);
+                  const provImpressions = provSites.reduce((s, site) => s + effectiveImpressions(site)[0], 0);
                   return (
                     <tr key={province} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                       <td style={{ padding: "11px 14px", fontSize: "13px", color: "#C0C0C0", fontWeight: 600 }}>{province}</td>

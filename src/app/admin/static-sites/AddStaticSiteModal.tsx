@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Layers, Upload } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { suggestMonthlyImpressions, impressionSuggestionCaption } from "@/lib/staticSiteImpressions";
 
 interface VenueRow {
   id: string;
   name: string;
   city: string | null;
+  monthly_entries?: number | null;
 }
 
 export interface StaticSiteRow {
@@ -68,6 +71,27 @@ export default function AddStaticSiteModal({
   onClose,
   onAdded,
 }: Props) {
+  // Venue monthly_entries cache (fetched once on mount)
+  const [venueEntries, setVenueEntries] = useState<Record<string, number | null>>({});
+  const [impressionCaption, setImpressionCaption] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchVenueEntries() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("venues")
+        .select("id, monthly_entries");
+      if (data) {
+        const map: Record<string, number | null> = {};
+        data.forEach((v: { id: string; monthly_entries: number | null }) => {
+          map[v.id] = v.monthly_entries ?? null;
+        });
+        setVenueEntries(map);
+      }
+    }
+    fetchVenueEntries();
+  }, []);
+
   const [form, setForm] = useState({
     venue_id: preselectedVenueId ?? "",
     label: "",
@@ -316,12 +340,53 @@ export default function AddStaticSiteModal({
                 min={0}
                 step={1}
                 value={form.monthly_impressions}
-                onChange={(e) => set("monthly_impressions", e.target.value)}
+                onChange={(e) => {
+                  set("monthly_impressions", e.target.value);
+                  setImpressionCaption(null);
+                }}
                 placeholder="e.g. 12000"
                 style={inputStyle}
               />
             </div>
           </div>
+          {/* Suggest from footfall */}
+          {(() => {
+            const monthlyEntries = form.venue_id ? (venueEntries[form.venue_id] ?? null) : null;
+            const canSuggest = !!form.venue_id && !!form.location_in_venue && !!monthlyEntries;
+            return (
+              <div>
+                <button
+                  type="button"
+                  disabled={!canSuggest}
+                  onClick={() => {
+                    if (!canSuggest || !monthlyEntries) return;
+                    const suggested = suggestMonthlyImpressions(monthlyEntries, form.location_in_venue);
+                    if (suggested !== null) {
+                      set("monthly_impressions", suggested.toString());
+                      setImpressionCaption(impressionSuggestionCaption(monthlyEntries, form.location_in_venue));
+                    }
+                  }}
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    padding: "0.375rem 0.875rem",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(212,255,79,0.3)",
+                    background: canSuggest ? "rgba(212,255,79,0.10)" : "rgba(255,255,255,0.04)",
+                    color: canSuggest ? "#D4FF4F" : "#555",
+                    cursor: canSuggest ? "pointer" : "not-allowed",
+                  }}
+                >
+                  ⚡ Suggest from footfall
+                </button>
+                {impressionCaption && (
+                  <p style={{ fontSize: "0.7rem", color: "#888", marginTop: "0.375rem", lineHeight: 1.5 }}>
+                    {impressionCaption}
+                  </p>
+                )}
+              </div>
+            );
+          })()}
 
           <div>
             <label style={labelStyle}>Pricing Tier (optional)</label>

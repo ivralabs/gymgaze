@@ -349,12 +349,14 @@ export default function RateCardPrint({
 
         {/* ═══ PAGE 1 — COVER ═══ */}
         <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#0a0a0a" }}>
-          {/* Dot-grid decorative background */}
+          {/* Dot-grid decorative background — stronger alpha for print fidelity */}
           <div style={{
             position: "absolute", inset: 0,
-            backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.10) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.18) 1.2px, transparent 1.2px)",
             backgroundSize: "28px 28px",
             pointerEvents: "none",
+            WebkitPrintColorAdjust: "exact",
+            printColorAdjust: "exact",
           }} />
 
           {/* Top-left: Logo */}
@@ -554,7 +556,7 @@ export default function RateCardPrint({
             <React.Fragment key={province}>
               {/* Province divider page */}
               <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#0a0a0a", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.08) 1px, transparent 1px)", backgroundSize: "28px 28px", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.16) 1.2px, transparent 1.2px)", backgroundSize: "28px 28px", pointerEvents: "none", WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }} />
                 <div style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "#D4FF4F" }}>Province</div>
                   <div style={{ fontSize: 72, fontWeight: 900, color: "#ffffff", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{province}</div>

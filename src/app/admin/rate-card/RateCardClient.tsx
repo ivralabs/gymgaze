@@ -321,6 +321,19 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     );
   }
 
+  function openPrintPage() {
+    const printUrl = `/admin/rate-card/print?` + new URLSearchParams({
+      venues: selectedVenues.join(","),
+      cpm: effectiveCpm.toString(),
+      weeks: weeks.toString(),
+      client: clientName,
+      start: flightStart,
+      end: flightEnd,
+      groupByCity: groupByCity.toString(),
+    }).toString();
+    window.open(printUrl, "_blank");
+  }
+
   function copyQuote() {
     const venueList = quoteVenues
       .map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens | Members ${fmtNum(v.activeMembers)} active | OTS ${fmtNum(v.ots)} | Reach ${fmtNum(v.reach)} | Freq ${fmtFreq(v.frequency)} | Impact ${fmtNum(v.impact)}`)
@@ -936,7 +949,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>⚡ Rate Card Preview — Landscape A4</span>
                   <div style={{ display: "flex", gap: 12 }}>
                     <button
-                      onClick={() => window.print()}
+                      onClick={openPrintPage}
                       style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}
                     >
                       <Printer size={14} strokeWidth={2.5} />
@@ -1563,7 +1576,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   {/* Print button inside card (hidden in print, visible on screen) */}
                   <div className="no-print" style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
                     <button
-                      onClick={() => window.print()}
+                      onClick={openPrintPage}
                       style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 28px", borderRadius: 10, background: "#0a0a0a", color: "#D4FF4F", border: "2px solid #D4FF4F", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
                     >
                       <Printer size={16} strokeWidth={2.5} />

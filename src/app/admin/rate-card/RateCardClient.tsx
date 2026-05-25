@@ -1238,15 +1238,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                       const plays15sPerMonth = loopsPerMonth * 8;
                                       return (
                                     <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
-                                      <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
-                                      </div>
                                       <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
-                                        <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 plays per loop</span>
                                         <span>·</span>
-                                        <span><strong style={{ color: "#0a0a0a" }}>15s slot:</strong> 8 plays/loop · {plays15sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Per day:</strong> {(loopsPerDay * 16).toLocaleString("en-ZA")} plays</span>
                                         <span>·</span>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Hours:</strong> 05:00–22:00 · 7 days · LSM 7–10 · Avg dwell 55 min</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Per week:</strong> {(loopsPerDay * 7 * 16).toLocaleString("en-ZA")} plays</span>
+                                        <span>·</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Per month:</strong> {(loopsPerMonth * 16).toLocaleString("en-ZA")} plays</span>
                                       </div>
                                     </div>
                                       );
@@ -1332,8 +1331,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               { label: "OTS", value: fmtFull(v.ots) },
                               { label: "Active Members", value: fmtFull(v.activeMembers) },
                               { label: "Avg Frequency", value: fmtFreq(v.frequency) },
-                              { label: "7s Slots Available", value: total7s.toString() },
-                              { label: "15s Slots Available", value: total15s.toString() },
                             ].map(({ label, value }) => (
                               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #E5E7EB" }}>
                                 <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#666" }}>{label}</span>
@@ -1355,15 +1352,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             const plays15sPerMonth = loopsPerMonth * 8;
                             return (
                           <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
-                            <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
-                            </div>
                             <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
-                              <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 plays per loop</span>
                               <span>·</span>
-                              <span><strong style={{ color: "#0a0a0a" }}>15s slot:</strong> 8 plays/loop · {plays15sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Per day:</strong> {(loopsPerDay * 16).toLocaleString("en-ZA")} plays</span>
                               <span>·</span>
-                              <span><strong style={{ color: "#0a0a0a" }}>Hours:</strong> 05:00–22:00 · 7 days · LSM 7–10 · Avg dwell 55 min</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Per week:</strong> {(loopsPerDay * 7 * 16).toLocaleString("en-ZA")} plays</span>
+                              <span>·</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Per month:</strong> {(loopsPerMonth * 16).toLocaleString("en-ZA")} plays</span>
                             </div>
                           </div>
                             );

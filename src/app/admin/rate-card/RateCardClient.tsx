@@ -231,6 +231,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [flightEnd, setFlightEnd] = useState("");
   const [copiedQuote, setCopiedQuote] = useState(false);
   const [showRateCard, setShowRateCard] = useState(false);
+  const [pdfStatus, setPdfStatus] = useState("");
   const [expandedSection, setExpandedSection] = useState<"gym" | "city" | "province" | "national" | null>("gym");
   const [groupByCity, setGroupByCity] = useState(false);
 
@@ -334,20 +335,30 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     window.open(printUrl, "_blank");
   }
 
-  // Server-side PDF download — always landscape, no browser print dialog needed
+  // Client-side PDF generation via html2canvas + jsPDF. Always landscape, no dialog.
   async function downloadPdf() {
-    const params = new URLSearchParams({
-      venues: selectedVenues.join(","),
-      cpm: effectiveCpm.toString(),
-      weeks: weeks.toString(),
-      client: clientName,
-      start: flightStart,
-      end: flightEnd,
-      groupByCity: groupByCity.toString(),
-      filename: `GymGaze-Rate-Card-${clientName ? clientName.replace(/[^a-zA-Z0-9-]/g, "_") + "-" : ""}${new Date().toISOString().slice(0, 10)}.pdf`,
-    });
-    // Open in new tab so the browser shows it as a download with the right filename
-    window.open(`/api/rate-card/pdf?${params.toString()}`, "_blank");
+    setPdfStatus("Loading rate card…");
+    try {
+      const { generateRateCardPdf } = await import("@/lib/generateRateCardPdf");
+      await generateRateCardPdf({
+        venues: selectedVenues,
+        cpm: effectiveCpm,
+        weeks,
+        clientName,
+        flightStart,
+        flightEnd,
+        groupByCity,
+        onProgress: (cur, total, label) => {
+          if (total > 1) setPdfStatus(`${label} (${cur}/${total})`);
+          else setPdfStatus(label);
+        },
+      });
+      setPdfStatus("");
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      setPdfStatus("");
+      alert(`PDF generation failed: ${err instanceof Error ? err.message : "unknown error"}`);
+    }
   }
 
   function copyQuote() {
@@ -962,14 +973,15 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
               <div style={{ position: "relative", width: "100%", maxWidth: "1160px" }}>
                 {/* Toolbar */}
                 <div className="no-print" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                  <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>⚡ Rate Card Preview — Landscape A4</span>
+                  <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>⚡ Rate Card Preview — Landscape A4{pdfStatus && <span style={{ marginLeft: 12, color: "#fff", fontWeight: 500, fontSize: 12 }}>• {pdfStatus}</span>}</span>
                   <div style={{ display: "flex", gap: 12 }}>
                     <button
                       onClick={downloadPdf}
-                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}
+                      disabled={!!pdfStatus}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: pdfStatus ? "#666" : "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: pdfStatus ? "wait" : "pointer", opacity: pdfStatus ? 0.7 : 1 }}
                     >
                       <Printer size={14} strokeWidth={2.5} />
-                      Download PDF
+                      {pdfStatus ? "Generating…" : "Download PDF"}
                     </button>
                     <button
                       onClick={openPrintPage}
@@ -1600,10 +1612,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   <div className="no-print" style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 10 }}>
                     <button
                       onClick={downloadPdf}
-                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 28px", borderRadius: 10, background: "#0a0a0a", color: "#D4FF4F", border: "2px solid #D4FF4F", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
+                      disabled={!!pdfStatus}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 28px", borderRadius: 10, background: "#0a0a0a", color: "#D4FF4F", border: "2px solid #D4FF4F", fontWeight: 700, fontSize: 14, cursor: pdfStatus ? "wait" : "pointer", opacity: pdfStatus ? 0.6 : 1 }}
                     >
                       <Printer size={16} strokeWidth={2.5} />
-                      Download PDF
+                      {pdfStatus || "Download PDF"}
                     </button>
                   </div>
                 </div>

@@ -289,34 +289,11 @@ export default function RateCardPrint({
 
   return (
     <>
+      {/* Print CSS is in /rate-card-print/layout.tsx — do not duplicate here.
+         Duplicating with conflicting units (mm vs px) caused page-bleed bugs. */}
       <style>{`
         @media print {
-          @page { size: A4 landscape; margin: 0; }
-          html, body { margin: 0 !important; padding: 0 !important; }
-          /* Each rate card page is exactly one A4 landscape, no bleed */
-          .page-break {
-            page-break-after: always;
-            break-after: page;
-            page-break-inside: avoid;
-            break-inside: avoid;
-            width: 297mm !important;
-            height: 210mm !important;
-            max-height: 210mm !important;
-            margin: 0 !important;
-            overflow: hidden !important;
-            box-sizing: border-box !important;
-          }
-          /* Also apply to last venue/last card (which don't get .page-break class) */
-          [data-print-page="true"] {
-            page-break-inside: avoid;
-            break-inside: avoid;
-            width: 297mm !important;
-            height: 210mm !important;
-            max-height: 210mm !important;
-            margin: 0 !important;
-            overflow: hidden !important;
-            box-sizing: border-box !important;
-          }
+          /* Belt-and-braces: only colour preservation here, sizing comes from layout */
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .no-print { display: none !important; }
         }

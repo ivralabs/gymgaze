@@ -155,13 +155,18 @@ function PageHeader({ rightContent }: { rightContent: React.ReactNode }) {
   );
 }
 
-// A4 landscape = 297mm × 210mm. Using mm ensures print matches preview exactly.
+// A4 landscape in pixels at 96dpi = 1123 × 794. Using fixed px is more reliable
+// than mm for cross-browser print sizing (Safari/Chrome both honor it).
+// Slight underscale (1100×780) gives safety margin against pixel rounding bleed.
+const PAGE_W = 1100;
+const PAGE_H = 780;
 const PAGE_STYLE: React.CSSProperties = {
-  width: "297mm",
-  height: "210mm",
+  width: `${PAGE_W}px`,
+  height: `${PAGE_H}px`,
+  maxHeight: `${PAGE_H}px`,
   position: "relative",
   overflow: "hidden",
-  marginBottom: "6mm",
+  marginBottom: "8px",
   display: "flex",
   flexDirection: "column",
   fontFamily: "Inter, sans-serif",
@@ -611,8 +616,8 @@ export default function RateCardPrint({
                     >
                       <PageHeader rightContent={<span>{city}<span style={{ color: "#999", fontWeight: 400 }}> · {province}</span></span>} />
 
-                      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                        <div style={{ display: "flex", flex: 1, minHeight: 0, maxHeight: 400 }}>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                        <div style={{ display: "flex", height: 350, flexShrink: 0, overflow: "hidden" }}>
                           {/* LEFT: venue list */}
                           <div style={{ width: "55%", background: "#fff", flexShrink: 0, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 8, overflowY: "auto" as const }}>
                             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "#888", marginBottom: 8 }}>Venues in {city}</div>
@@ -698,9 +703,9 @@ export default function RateCardPrint({
                     >
                       <PageHeader rightContent={<span>{v.name}{v.city ? <span style={{ color: "#999", fontWeight: 400 }}> · {v.city}</span> : null}</span>} />
 
-                      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         {/* Main content: photo + location */}
-                        <div style={{ display: "flex", flex: 1, minHeight: 0, maxHeight: 400 }}>
+                        <div style={{ display: "flex", height: 350, flexShrink: 0, overflow: "hidden" }}>
                           {/* LEFT: venue photo */}
                           <div style={{ width: "55%", position: "relative", background: "#111", flexShrink: 0 }}>
                             {v.cover_image_url ? (

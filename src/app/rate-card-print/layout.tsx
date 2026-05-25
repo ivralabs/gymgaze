@@ -47,7 +47,7 @@ export default function RateCardPrintLayout({
                 background-image: none !important;
                 color: #0a0a0a !important;
                 min-height: 0 !important;
-                width: 297mm !important;
+                width: 1100px !important;
                 height: auto !important;
               }
               body > div:nth-child(1),
@@ -66,11 +66,12 @@ export default function RateCardPrintLayout({
               }
               /* Hide the print toolbar + spacer */
               .no-print { display: none !important; }
-              /* Every printable page = exactly one A4 landscape, no bleed */
+              /* Every printable page = exactly one A4 landscape canvas (1100x780 with safety margin),
+                 fits within 1123x794 (96dpi A4 landscape) leaving room for browser rounding. */
               [data-print-page="true"] {
-                width: 297mm !important;
-                height: 210mm !important;
-                max-height: 210mm !important;
+                width: 1100px !important;
+                height: 780px !important;
+                max-height: 780px !important;
                 min-height: 0 !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -88,7 +89,7 @@ export default function RateCardPrintLayout({
               }
               /* Force all immediate children of a print page to not stretch past */
               [data-print-page="true"] > * {
-                max-height: 210mm !important;
+                max-height: 780px !important;
                 overflow: hidden !important;
               }
 

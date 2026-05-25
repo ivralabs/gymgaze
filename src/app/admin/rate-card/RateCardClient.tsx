@@ -1231,20 +1231,26 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                     </div>
 
                                     {/* Data strip */}
+                                    {(() => {
+                                      const loopsPerDay = Math.round(3600 * 17 / 251);
+                                      const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
+                                      const plays7sPerMonth = loopsPerMonth * 8;
+                                      const plays15sPerMonth = loopsPerMonth * 8;
+                                      return (
                                     <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                                       <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Format:</strong> 55&quot; Portrait · 1920×1080 · Digital DOOH</span>
-                                        <span>·</span>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block</span>
-                                        <span>·</span>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Plays/slot/screen/week:</strong> 1,487</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
                                       </div>
-                                      <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555" }}>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Audience:</strong> LSM 7–10 · Avg dwell 55 min · Captive gym environment</span>
+                                      <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
+                                        <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
                                         <span>·</span>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Operating hours:</strong> 05:00–22:00 · 7 days</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>15s slot:</strong> 8 plays/loop · {plays15sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
+                                        <span>·</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Hours:</strong> 05:00–22:00 · 7 days · LSM 7–10 · Avg dwell 55 min</span>
                                       </div>
                                     </div>
+                                      );
+                                    })()}
                                   </div>
                                 </div>
                               );

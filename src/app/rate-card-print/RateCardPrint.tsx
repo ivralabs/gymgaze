@@ -155,15 +155,17 @@ function PageHeader({ rightContent }: { rightContent: React.ReactNode }) {
   );
 }
 
+// A4 landscape = 297mm × 210mm. Using mm ensures print matches preview exactly.
 const PAGE_STYLE: React.CSSProperties = {
-  width: "1120px",
-  minHeight: "793px",
+  width: "297mm",
+  height: "210mm",
   position: "relative",
   overflow: "hidden",
-  marginBottom: "24px",
+  marginBottom: "6mm",
   display: "flex",
   flexDirection: "column",
   fontFamily: "Inter, sans-serif",
+  boxSizing: "border-box",
 };
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -286,8 +288,31 @@ export default function RateCardPrint({
       <style>{`
         @media print {
           @page { size: A4 landscape; margin: 0; }
-          body { margin: 0; padding: 0; }
-          .page-break { page-break-after: always; break-after: page; }
+          html, body { margin: 0 !important; padding: 0 !important; }
+          /* Each rate card page is exactly one A4 landscape, no bleed */
+          .page-break {
+            page-break-after: always;
+            break-after: page;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            width: 297mm !important;
+            height: 210mm !important;
+            max-height: 210mm !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+          }
+          /* Also apply to last venue/last card (which don't get .page-break class) */
+          [data-print-page="true"] {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            width: 297mm !important;
+            height: 210mm !important;
+            max-height: 210mm !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+          }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .no-print { display: none !important; }
         }
@@ -327,7 +352,7 @@ export default function RateCardPrint({
       <div style={{ fontFamily: "Inter, sans-serif", padding: "24px 0" }}>
 
         {/* ═══ PAGE 1 — COVER ═══ */}
-        <div className="page-break" style={{ ...PAGE_STYLE, background: "#0a0a0a" }}>
+        <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#0a0a0a" }}>
           {/* Dot-grid decorative background */}
           <div style={{
             position: "absolute", inset: 0,
@@ -385,7 +410,7 @@ export default function RateCardPrint({
         </div>
 
         {/* ═══ PAGE 2 — NETWORK SUMMARY ═══ */}
-        <div className="page-break" style={{ ...PAGE_STYLE, background: "#ffffff" }}>
+        <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#ffffff" }}>
           <PageHeader rightContent={clientName ? `${clientName} — Media Proposal` : "Media Proposal"} />
 
           <div style={{ padding: "28px 32px", flex: 1, display: "flex", flexDirection: "column", gap: 24 }}>
@@ -437,7 +462,7 @@ export default function RateCardPrint({
           const nationalReach = quoteTotals.reach;
 
           return (
-            <div className="page-break" style={{ ...PAGE_STYLE, background: "#F7F7F5" }}>
+            <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#F7F7F5" }}>
               <PageHeader rightContent="Campaign Packages" />
 
               <div style={{ padding: "8px 32px 0", fontSize: 13, color: "#888" }}>
@@ -532,7 +557,7 @@ export default function RateCardPrint({
           return (
             <React.Fragment key={province}>
               {/* Province divider page */}
-              <div className="page-break" style={{ width: "1120px", minHeight: "793px", background: "#0a0a0a", position: "relative", overflow: "hidden", marginBottom: "24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE, background: "#0a0a0a", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.08) 1px, transparent 1px)", backgroundSize: "28px 28px", pointerEvents: "none" }} />
                 <div style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "#D4FF4F" }}>Province</div>
@@ -581,6 +606,7 @@ export default function RateCardPrint({
                     <div
                       key={city}
                       className={isLastCard && pricingTiers.length === 0 ? undefined : "page-break"}
+                      data-print-page="true"
                       style={{ ...PAGE_STYLE, background: "#ffffff" }}
                     >
                       <PageHeader rightContent={<span>{city}<span style={{ color: "#999", fontWeight: 400 }}> · {province}</span></span>} />
@@ -667,6 +693,7 @@ export default function RateCardPrint({
                     <div
                       key={v.id}
                       className={isLastVenue && pricingTiers.length === 0 ? undefined : "page-break"}
+                      data-print-page="true"
                       style={{ ...PAGE_STYLE, background: "#ffffff" }}
                     >
                       <PageHeader rightContent={<span>{v.name}{v.city ? <span style={{ color: "#999", fontWeight: 400 }}> · {v.city}</span> : null}</span>} />
@@ -768,7 +795,7 @@ export default function RateCardPrint({
         })}
 
         {/* ═══ LAST PAGE — PRICING TIERS + FOOTER ═══ */}
-        <div style={{ ...PAGE_STYLE, background: "#ffffff" }}>
+        <div data-print-page="true" style={{ ...PAGE_STYLE, background: "#ffffff" }}>
           <PageHeader rightContent={clientName ? `Investment Summary — ${clientName}` : "Investment Summary"} />
 
           <div style={{ padding: "24px 32px", flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>

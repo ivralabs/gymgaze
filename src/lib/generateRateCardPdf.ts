@@ -80,10 +80,9 @@ export async function generateRateCardPdf(opts: GenerateOptions): Promise<void> 
               );
               // Wait for fonts to load in the iframe (CRITICAL for typography)
               try {
-                // @ts-expect-error document.fonts is widely supported
-                if (doc.fonts && doc.fonts.ready) {
-                  // @ts-expect-error
-                  await doc.fonts.ready;
+                const fontFaceSet = (doc as Document & { fonts?: { ready?: Promise<unknown> } }).fonts;
+                if (fontFaceSet?.ready) {
+                  await fontFaceSet.ready;
                 }
               } catch {}
               // Final settle buffer

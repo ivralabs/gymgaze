@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -10,6 +10,20 @@ type Props = {
 
 export default function ScreensTabsWrapper({ screensContent, staticSitesContent }: Props) {
   const [activeTab, setActiveTab] = useState<"screens" | "static-sites">("screens");
+
+  // Honour deep-link hashes: #static-sites or #screens
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const applyHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash === "static-sites" || hash === "screens") {
+        setActiveTab(hash);
+      }
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+  }, []);
 
   const TAB_ACTIVE: React.CSSProperties = {
     color: "#D4FF4F",
@@ -32,14 +46,20 @@ export default function ScreensTabsWrapper({ screensContent, staticSitesContent 
         style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
       >
         <button
-          onClick={() => setActiveTab("screens")}
+          onClick={() => {
+            setActiveTab("screens");
+            if (typeof window !== "undefined") history.replaceState(null, "", "#screens");
+          }}
           className="text-sm transition-colors"
           style={activeTab === "screens" ? TAB_ACTIVE : TAB_INACTIVE}
         >
           Digital Screens
         </button>
         <button
-          onClick={() => setActiveTab("static-sites")}
+          onClick={() => {
+            setActiveTab("static-sites");
+            if (typeof window !== "undefined") history.replaceState(null, "", "#static-sites");
+          }}
           className="text-sm transition-colors"
           style={activeTab === "static-sites" ? TAB_ACTIVE : TAB_INACTIVE}
         >

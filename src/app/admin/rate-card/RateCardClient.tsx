@@ -1239,7 +1239,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                       return (
                                     <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                                       <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
+                                        <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
                                       </div>
                                       <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
                                         <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>
@@ -1356,7 +1356,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             return (
                           <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                             <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
-                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> ~4 min · 16 slots (8×7s + 8×15s) + widget block · {loopsPerDay.toLocaleString("en-ZA")} loops/day · {loopsPerMonth.toLocaleString("en-ZA")} loops/month</span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
                               <span><strong style={{ color: "#0a0a0a" }}>7s slot:</strong> 8 plays/loop · {plays7sPerMonth.toLocaleString("en-ZA")} plays/slot/month</span>

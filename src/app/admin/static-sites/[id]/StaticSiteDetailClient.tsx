@@ -122,12 +122,12 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
     <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/admin/screens#static-sites" className="p-2 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8" }}>
+        <Link href="/admin/screens?tab=static-sites" className="p-2 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", color: "#C8C8C8" }}>
           <ArrowLeft size={18} strokeWidth={2} />
         </Link>
         <div className="flex-1 min-w-0">
           <p className="text-xs mb-1" style={{ color: "#888" }}>
-            <Link href="/admin/screens#static-sites" style={{ color: "#D4FF4F", textDecoration: "none" }}>Static Sites</Link> /
+            <Link href="/admin/screens?tab=static-sites" style={{ color: "#D4FF4F", textDecoration: "none" }}>Static Sites</Link> /
           </p>
           <h1 className="text-2xl font-bold text-white truncate" style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}>{site.label}</h1>
           {site.venues && <p className="text-sm mt-0.5" style={{ color: "#888" }}>{site.venues.name}{site.venues.city ? ` · ${site.venues.city}` : ""}</p>}

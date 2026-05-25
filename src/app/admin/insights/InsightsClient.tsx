@@ -744,6 +744,20 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
   const ots = totalMonthly * totalScreens;
   const avgDwell = networks.reduce((s, n) => s + (n.avg_dwell_minutes ?? 60), 0) / (networks.length || 1);
 
+  // ── Media Performance (4-week flight model) ──────────────────────────────
+  const ACTIVE_RATE = 0.65;
+  const FLIGHT_WEEKS = 4;
+  const WEEKS_PER_MONTH = 4.3;
+  const flightFactor = FLIGHT_WEEKS / WEEKS_PER_MONTH; // ~0.93
+
+  const mediaOTS = venues.reduce((s, v) => s + (v.monthly_entries ?? 0) * flightFactor, 0);
+  const mediaReach = venues.reduce((s, v) => {
+    const activeMembers = v.active_members ?? 0;
+    return s + Math.min(activeMembers * ACTIVE_RATE * Math.min(flightFactor, 1.5), activeMembers);
+  }, 0);
+  const mediaFrequency = mediaReach > 0 ? mediaOTS / mediaReach : 0;
+  const EFFECTIVE_CPM = Math.round(85 / ACTIVE_RATE); // R131
+
   const tabStyle = (active: boolean): React.CSSProperties => ({
     padding: "8px 18px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer",
     background: active ? "rgba(255,255,255,0.10)" : "transparent",
@@ -768,6 +782,41 @@ export default function InsightsClient({ networks, venues, screens, revenue, cam
         {statCard("Total Reach", fmt(totalMembers), "active members")}
         {statCard("Monthly Impressions", fmt(ots), `${totalScreens} screens × entries`, "#A78BFA")}
         {statCard("Photo Compliance", `${overallCompliance}%`, `${approvedPhotos} of ${photos.length} approved`, overallCompliance >= 80 ? "#D4FF4F" : overallCompliance >= 50 ? "#F59E0B" : "#EF4444")}
+      </div>
+
+      {/* ── Media Performance ─────────────────────────────────────────── */}
+      <div className="glass-card rounded-2xl p-5 mb-6 md:mb-8" style={{ borderRadius: 16 }}>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#999" }}>Media Performance — 4-Week Flight</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          {/* OTS */}
+          <div className="rounded-xl p-4" style={{ background: "rgba(212,255,79,0.05)", border: "1px solid rgba(212,255,79,0.15)" }}>
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>Monthly OTS</p>
+            <p className="text-2xl font-bold tabular-nums" style={{ color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{fmt(Math.round(mediaOTS))}</p>
+            <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>opportunities to see</p>
+          </div>
+          {/* Unique Reach */}
+          <div className="rounded-xl p-4" style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.15)" }}>
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>Unique Reach</p>
+            <p className="text-2xl font-bold tabular-nums" style={{ color: "#60A5FA", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{fmt(Math.round(mediaReach))}</p>
+            <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>unique individuals</p>
+          </div>
+          {/* Avg Frequency */}
+          <div className="rounded-xl p-4" style={{ background: "rgba(167,139,250,0.05)", border: "1px solid rgba(167,139,250,0.15)" }} title="avg exposures per person per 4-week flight">
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>Avg Frequency</p>
+            <p className="text-2xl font-bold tabular-nums" style={{ color: "#A78BFA", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{mediaFrequency.toFixed(1)}×</p>
+            <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>exposures per person</p>
+          </div>
+          {/* eCPM */}
+          <div className="rounded-xl p-4" style={{ background: "rgba(212,255,79,0.05)", border: "1px solid rgba(212,255,79,0.15)" }} title="Effective CPM after 65% attention rate adjustment. Lower = better value.">
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: "#999", fontWeight: 600 }}>eCPM</p>
+            <p className="text-2xl font-bold tabular-nums" style={{ color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>R{EFFECTIVE_CPM}</p>
+            <p className="text-xs mt-1.5" style={{ color: "#8A8A8A" }}>effective CPM</p>
+          </div>
+        </div>
+        {/* eCPM Context */}
+        <p className="text-xs" style={{ color: "#666" }}>
+          eCPM R{EFFECTIVE_CPM} vs Digital Display R750 — GymGaze delivers 5.7× more effective impressions per rand
+        </p>
       </div>
 
       {/* Reach & Frequency bar */}

@@ -897,11 +897,14 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                 body * { visibility: hidden !important; }
                 #rate-card-printable, #rate-card-printable * { visibility: visible !important; }
                 #rate-card-printable {
-                  position: fixed !important;
-                  top: 0 !important; left: 0 !important;
+                  position: static !important;
                   width: 100% !important;
                   margin: 0 !important;
                   padding: 0 !important;
+                }
+                #rate-card-printable > div {
+                  width: 100% !important;
+                  max-width: 100% !important;
                 }
                 #rate-card-printable * {
                   -webkit-print-color-adjust: exact !important;

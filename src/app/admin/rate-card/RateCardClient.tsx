@@ -972,7 +972,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             const isGymgaze = b.name === "GymGaze DOOH";
                             const barWidth = Math.round((b.ecpm / maxBenchmarkEcpm) * 100);
                             return (
-                              <div key={b.name} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                              <div key={b.name} style={{ display: "flex", alignItems: "center", gap: 12, background: isGymgaze ? "rgba(212,255,79,0.08)" : "transparent", borderRadius: 6, padding: "4px 8px", margin: "0 -8px" }}>
                                 <div style={{ width: 140, fontSize: 12, fontWeight: isGymgaze ? 700 : 500, color: isGymgaze ? "#0a0a0a" : "#555", flexShrink: 0 }}>{b.name}</div>
                                 <div style={{ flex: 1, background: "#E5E7EB", borderRadius: 4, height: 10 }}>
                                   <div style={{ width: `${barWidth}%`, height: 10, borderRadius: 4, background: isGymgaze ? "#D4FF4F" : "#9CA3AF", transition: "width 0.4s ease" }} />
@@ -1030,7 +1030,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           </div>
 
                           {/* Data grid */}
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px", padding: "16px 32px" }}>
+                          <div style={{ background: "#0f0f0f", margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
                             {[
                               { label: "Rate PM", value: fmtR(Math.round(v.cost)) },
                               { label: "City", value: v.city ?? "—" },
@@ -1041,15 +1041,15 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               { label: "Active Members", value: fmtNum(v.activeMembers) },
                               { label: "Avg Frequency", value: fmtFreq(v.frequency) },
                             ].map(({ label, value }) => (
-                              <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #F3F4F6" }}>
-                                <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9CA3AF" }}>{label}</span>
+                              <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#666" }}>{label}</span>
                                 <span style={{ fontSize: 13, fontWeight: 700, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif" }}>{value}</span>
                               </div>
                             ))}
                           </div>
 
                           {/* Spec strip */}
-                          <div style={{ borderTop: "1px solid #F3F4F6", padding: "10px 32px", textAlign: "center", fontSize: 11, color: "#9CA3AF", marginTop: "auto" }}>
+                          <div style={{ background: "#0f0f0f", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "10px 32px", textAlign: "center", fontSize: 11, color: "#666", marginTop: "auto" }}>
                             Slot: 15s in 251s loop · ~1,596 plays/screen/week · Audience: LSM 7–10 · Avg dwell: 55 min
                           </div>
                         </div>
@@ -1095,11 +1095,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       {/* 2-col: investment + terms */}
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, flex: 1 }}>
                         {/* Investment summary */}
-                        <div style={{ background: "#0a0a0a", borderRadius: 12, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ background: "#0f0f0f", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
                           <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#D4FF4F", marginBottom: 4 }}>Investment Summary</div>
-                          <div style={{ fontSize: 12, color: "#999" }}>Flight Duration</div>
+                          <div style={{ fontSize: 12, color: "#666" }}>Flight Duration</div>
                           <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "Inter Tight, sans-serif" }}>{weeks} weeks</div>
-                          <div style={{ fontSize: 12, color: "#999", marginTop: 8 }}>Total Investment</div>
+                          <div style={{ fontSize: 12, color: "#666", marginTop: 8 }}>Total Investment</div>
                           <div style={{ fontSize: 40, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{fmtR(Math.round(quoteTotals.cost))}</div>
                           <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>{fmtR(Math.round(quoteTotals.cost / weeks))} per week · R{effectiveCpm} CPM</div>
                         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Calculator,
   TrendingUp,
@@ -137,6 +137,11 @@ function fmtNum(n: number) {
 
 function fmtFreq(f: number) {
   return `${f.toFixed(1)}×`;
+}
+
+// Full number formatter for print — no abbreviation
+function fmtFull(n: number) {
+  return n.toLocaleString("en-ZA");
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -957,8 +962,8 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
                         {([
                           { label: "Total Screens", value: quoteTotals.screens.toString() },
-                          { label: "Total Reach", value: fmtNum(quoteTotals.reach) },
-                          { label: "OTS", value: fmtNum(quoteTotals.ots) },
+                          { label: "Total Reach", value: fmtFull(quoteTotals.reach) },
+                          { label: "OTS", value: fmtFull(quoteTotals.ots) },
                           { label: "eCPM", value: `R${gymgazeEcpm}` },
                         ] as { label: string; value: string }[]).map(({ label, value }) => (
                           <div key={label} style={{ background: "#111111", border: "1px solid #E5E7EB", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -991,13 +996,59 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                     </div>
                   </div>
 
-                  {/* ═══ PAGES 3–N — PER-VENUE PROPERTY CARDS ═══ */}
-                  {quoteVenues.map((v, idx) => {
-                    const isLast = idx === quoteVenues.length - 1;
-                    return (
+                  {/* ═══ PAGES 3–N — PER-VENUE PROPERTY CARDS (grouped by province) ═══ */}
+                  {(() => {
+                    // Group quoteVenues by province
+                    const venuesByProvince = quoteVenues.reduce((acc, v) => {
+                      const prov = v.province ?? "Other";
+                      if (!acc[prov]) acc[prov] = [];
+                      acc[prov].push(v);
+                      return acc;
+                    }, {} as Record<string, typeof quoteVenues>);
+                    const provinces = Object.keys(venuesByProvince).sort();
+
+                    return provinces.map((province, pIdx) => {
+                      const pvenues = venuesByProvince[province];
+                      const provScreens = pvenues.reduce((s, v) => s + v.screens, 0);
+                      const provMembers = pvenues.reduce((s, v) => s + v.activeMembers, 0);
+                      return (
+                        <React.Fragment key={province}>
+                          {/* Province divider page */}
+                          <div className="page-break" style={{ width: "1120px", minHeight: "793px", background: "#0a0a0a", position: "relative", overflow: "hidden", marginBottom: "24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                            {/* dot grid decoration */}
+                            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(212,255,79,0.08) 1px, transparent 1px)", backgroundSize: "28px 28px", pointerEvents: "none" }} />
+                            <div style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", color: "#D4FF4F" }}>Province</div>
+                              <div style={{ fontSize: 72, fontWeight: 900, color: "#ffffff", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{province}</div>
+                              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                                {[
+                                  `${pvenues.length} Venue${pvenues.length !== 1 ? "s" : ""}`,
+                                  `${provScreens} Screen${provScreens !== 1 ? "s" : ""}`,
+                                  `${fmtFull(provMembers)} Active Members`,
+                                ].map((pill) => (
+                                  <div key={pill} style={{ background: "rgba(212,255,79,0.12)", border: "1px solid rgba(212,255,79,0.25)", borderRadius: 20, padding: "6px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 600 }}>{pill}</div>
+                                ))}
+                              </div>
+                            </div>
+                            {/* bottom bar */}
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                <div style={{ width: 28, height: 28, background: "#D4FF4F", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                  <span style={{ fontSize: 16, fontWeight: 900, color: "#0a0a0a" }}>G</span>
+                                </div>
+                                <span style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>GymGaze</span>
+                              </div>
+                              <div style={{ fontSize: 12, color: "#666" }}>Section {pIdx + 1} of {provinces.length}</div>
+                            </div>
+                          </div>
+
+                          {/* Venue property cards for this province */}
+                          {pvenues.map((v, vIdx) => {
+                            const isLastVenue = pIdx === provinces.length - 1 && vIdx === pvenues.length - 1;
+                            return (
                       <div
                         key={v.id}
-                        className={isLast && pricingTiers.length === 0 ? undefined : "page-break"}
+                        className={isLastVenue && pricingTiers.length === 0 ? undefined : "page-break"}
                         style={{ ...PAGE_STYLE, background: "#ffffff" }}
                       >
                         <PageHeader rightContent={<span>{v.name}{v.city ? <span style={{ color: "#999", fontWeight: 400 }}> · {v.city}</span> : null}</span>} />
@@ -1030,7 +1081,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                           {/* Narrative line */}
                           <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
-                            This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtNum(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
+                            This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
                           </div>
 
                           {/* Data grid */}
@@ -1040,9 +1091,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               { label: "City", value: v.city ?? "—" },
                               { label: "Screens", value: v.screens.toString() },
                               { label: "Province", value: v.province ?? "—" },
-                              { label: "Weekly Plays", value: fmtNum(v.screens * PLAYS_PER_SCREEN_PER_WEEK) },
-                              { label: "OTS", value: fmtNum(v.ots) },
-                              { label: "Active Members", value: fmtNum(v.activeMembers) },
+                              { label: "Weekly Plays", value: fmtFull(v.screens * PLAYS_PER_SCREEN_PER_WEEK) },
+                              { label: "OTS", value: fmtFull(v.ots) },
+                              { label: "Active Members", value: fmtFull(v.activeMembers) },
                               { label: "Avg Frequency", value: fmtFreq(v.frequency) },
                             ].map(({ label, value }) => (
                               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #E5E7EB" }}>
@@ -1058,8 +1109,12 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                            );
+                          })}
+                        </React.Fragment>
+                      );
+                    });
+                  })()}
 
                   {/* ═══ LAST PAGE — PRICING TIERS + FOOTER ═══ */}
                   <div style={{ ...PAGE_STYLE, background: "#ffffff" }}>

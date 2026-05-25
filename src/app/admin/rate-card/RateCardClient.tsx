@@ -30,7 +30,7 @@ export type VenueRow = {
   active_members: number | null;
   monthly_entries: number | null;
   cover_image_url?: string | null;
-  screens: { id: string; is_active: boolean | null }[] | null;
+  screens: { id: string; is_active: boolean | null; slots_7sec: number | null; slots_15sec: number | null; location_in_venue: string | null; size_inches: number | null }[] | null;
 };
 
 export type PricingTier = {
@@ -52,8 +52,8 @@ interface Props {
 }
 
 // ─── Media constants ──────────────────────────────────────────────────────────
-// Loop = 251s → ~228 plays/screen/day (16h operating) → 1,596/week
-const PLAYS_PER_SCREEN_PER_WEEK = 1596;
+// Loop = 251s (16 slots: 8×7s + 8×15s + widget block) → 1,487 plays/slot/screen/week (based on Edge Fitness operating hours 05:00–22:00)
+const PLAYS_PER_SCREEN_PER_WEEK = 1487;
 
 // Attention factors by screen placement
 const ATTENTION = {
@@ -1085,16 +1085,23 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           </div>
 
                           {/* Data grid */}
+                          {(() => {
+                            const activeScreens = Array.isArray(v.screens) ? v.screens.filter(s => s.is_active) : [];
+                            const total7sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_7sec ?? 8), 0);
+                            const total15sSlots = activeScreens.reduce((sum, s) => sum + (s.slots_15sec ?? 4), 0);
+                            return (
                           <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 12, margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
                             {[
                               { label: "Rate PM", value: fmtR(Math.round(v.cost)) },
                               { label: "City", value: v.city ?? "—" },
                               { label: "Screens", value: v.screens.toString() },
                               { label: "Province", value: v.province ?? "—" },
-                              { label: "Weekly Plays", value: fmtFull(v.screens * PLAYS_PER_SCREEN_PER_WEEK) },
+                              { label: "Monthly Plays", value: fmtFull(v.screens * PLAYS_PER_SCREEN_PER_WEEK * 4) },
                               { label: "OTS", value: fmtFull(v.ots) },
                               { label: "Active Members", value: fmtFull(v.activeMembers) },
                               { label: "Avg Frequency", value: fmtFreq(v.frequency) },
+                              { label: "7s Slots Available", value: total7sSlots.toString() },
+                              { label: "15s Slots Available", value: total15sSlots.toString() },
                             ].map(({ label, value }) => (
                               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #E5E7EB" }}>
                                 <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#666" }}>{label}</span>
@@ -1102,10 +1109,23 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               </div>
                             ))}
                           </div>
+                            );
+                          })()}
 
                           {/* Spec strip */}
-                          <div style={{ background: "#F3F4F6", borderTop: "1px solid #E5E7EB", padding: "10px 32px", textAlign: "center", fontSize: 11, color: "#666", marginTop: "auto" }}>
-                            Slot: 15s in 251s loop · ~1,596 plays/screen/week · Audience: LSM 7–10 · Avg dwell: 55 min
+                          <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
+                            <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555", marginBottom: 4 }}>
+                              <span><strong style={{ color: "#0a0a0a" }}>Format:</strong> 55&quot; Portrait · 1920×1080 · Digital DOOH</span>
+                              <span>·</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Loop:</strong> 251s · 16 slots (8×7s + 8×15s) + widget block</span>
+                              <span>·</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Plays/slot/screen/week:</strong> 1,487</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", gap: 24, fontSize: 11, color: "#555" }}>
+                              <span><strong style={{ color: "#0a0a0a" }}>Audience:</strong> LSM 7–10 · Avg dwell 55 min · Captive gym environment</span>
+                              <span>·</span>
+                              <span><strong style={{ color: "#0a0a0a" }}>Operating hours:</strong> 05:00–22:00 · 7 days</span>
+                            </div>
                           </div>
                         </div>
                       </div>

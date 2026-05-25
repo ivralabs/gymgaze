@@ -185,8 +185,11 @@ export default function RateCardPrint({
 }: Props) {
   const effectiveCpm = cpm;
 
-  // Auto-print on mount
+  // Auto-print on mount — unless headless renderer asked us not to.
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("noAutoPrint") === "1") return;
     const timer = setTimeout(() => {
       window.print();
     }, 800);

@@ -334,6 +334,22 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     window.open(printUrl, "_blank");
   }
 
+  // Server-side PDF download — always landscape, no browser print dialog needed
+  async function downloadPdf() {
+    const params = new URLSearchParams({
+      venues: selectedVenues.join(","),
+      cpm: effectiveCpm.toString(),
+      weeks: weeks.toString(),
+      client: clientName,
+      start: flightStart,
+      end: flightEnd,
+      groupByCity: groupByCity.toString(),
+      filename: `GymGaze-Rate-Card-${clientName ? clientName.replace(/[^a-zA-Z0-9-]/g, "_") + "-" : ""}${new Date().toISOString().slice(0, 10)}.pdf`,
+    });
+    // Open in new tab so the browser shows it as a download with the right filename
+    window.open(`/api/rate-card/pdf?${params.toString()}`, "_blank");
+  }
+
   function copyQuote() {
     const venueList = quoteVenues
       .map((v) => `  • ${v.name} (${v.city ?? "—"}) — ${v.screens} screens | Members ${fmtNum(v.activeMembers)} active | OTS ${fmtNum(v.ots)} | Reach ${fmtNum(v.reach)} | Freq ${fmtFreq(v.frequency)} | Impact ${fmtNum(v.impact)}`)
@@ -949,11 +965,18 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>⚡ Rate Card Preview — Landscape A4</span>
                   <div style={{ display: "flex", gap: 12 }}>
                     <button
-                      onClick={openPrintPage}
+                      onClick={downloadPdf}
                       style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}
                     >
                       <Printer size={14} strokeWidth={2.5} />
-                      Print / Save as PDF
+                      Download PDF
+                    </button>
+                    <button
+                      onClick={openPrintPage}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 10, background: "rgba(212,255,79,0.1)", color: "#D4FF4F", fontWeight: 600, fontSize: 12, border: "1px solid rgba(212,255,79,0.2)", cursor: "pointer" }}
+                      title="Open browser print dialog instead"
+                    >
+                      Print in Browser
                     </button>
                     <button
                       onClick={() => setShowRateCard(false)}
@@ -1574,13 +1597,13 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                   </div>
 
                   {/* Print button inside card (hidden in print, visible on screen) */}
-                  <div className="no-print" style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+                  <div className="no-print" style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 10 }}>
                     <button
-                      onClick={openPrintPage}
+                      onClick={downloadPdf}
                       style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 28px", borderRadius: 10, background: "#0a0a0a", color: "#D4FF4F", border: "2px solid #D4FF4F", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
                     >
                       <Printer size={16} strokeWidth={2.5} />
-                      Print / Save as PDF
+                      Download PDF
                     </button>
                   </div>
                 </div>

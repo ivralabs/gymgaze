@@ -35,9 +35,14 @@ export function fmtSiteUuid(uuid: string): string {
   return `SS-${uuid.slice(0, 8)}`;
 }
 
-// Returns the structured ID if the label matches the pattern, else the short UUID id.
+// Returns the structured ID stripped of L/P orientation (display only).
+// EF-BCM-BEA-SL1 -> EF-BCM-BEA-S1, EF-NMB-GRE-SP3 -> EF-NMB-GRE-S3
 export function displaySiteId(label: string | null | undefined, uuid: string): string {
   if (label && /^[A-Z]{2,4}-[A-Z]{2,4}-[A-Z]{2,4}-S[LP]\d+$/.test(label)) {
+    return label.replace(/-S[LP](\d+)$/, "-S$1");
+  }
+  // Also handle labels already without L/P (e.g. EF-BCM-BEA-S1)
+  if (label && /^[A-Z]{2,4}-[A-Z]{2,4}-[A-Z]{2,4}-S\d+$/.test(label)) {
     return label;
   }
   return fmtSiteUuid(uuid);

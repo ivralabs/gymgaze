@@ -15,6 +15,7 @@ import {
   User,
   Phone,
   Mail,
+  FileText,
 } from "lucide-react";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -184,6 +185,14 @@ export default async function CampaignDetailPage({
             {campaign.client_type === "agency" ? "Agency" : "Direct Brand"}
           </p>
         </div>
+        <Link
+          href={`/admin/campaigns/${id}/report`}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold flex-shrink-0"
+          style={{ background: "rgba(212,255,79,0.10)", color: "#D4FF4F", border: "1px solid rgba(212,255,79,0.20)" }}
+        >
+          <FileText size={14} strokeWidth={2} />
+          View Report
+        </Link>
         {canEdit && (
           <Link
             href={`/admin/campaigns/${id}/edit`}

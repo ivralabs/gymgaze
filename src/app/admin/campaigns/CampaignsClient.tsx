@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Megaphone, Eye, Pencil } from "lucide-react";
+import { Plus, Megaphone, Eye, Pencil, FileText } from "lucide-react";
 import CreateCampaignModal from "./CreateCampaignModal";
 import { useRole } from "@/lib/useRole";
 
@@ -262,7 +262,7 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
                     WebkitBackdropFilter: "blur(6px)",
                   }}
                 >
-                  {["Client", "Format", "Venues", "Dates", "Value", "Collected", "Status", ""].map((h) => (
+                  {["Client", "Format", "Venues", "Dates", "Value", "Collected", "Status", "Actions"].map((h) => (
                     <th
                       key={h}
                       className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider"
@@ -354,6 +354,14 @@ export default function CampaignsClient({ campaigns: initialCampaigns, venues }:
                           >
                             <Eye size={12} strokeWidth={2} />
                             View
+                          </Link>
+                          <Link
+                            href={`/admin/campaigns/${campaign.id}/report`}
+                            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                            style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}
+                          >
+                            <FileText size={12} strokeWidth={2} />
+                            Report
                           </Link>
                           <Link
                             href={`/admin/campaigns/${campaign.id}?edit=1`}

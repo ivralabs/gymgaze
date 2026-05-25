@@ -47,10 +47,10 @@ const NAV_GROUPS: NavGroup[] = [
     label: "SELL",
     items: [
       { href: "/admin/rate-card",   slug: "rate-card",   icon: Calculator,      label: "Rate Card" },
-      { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Insights" },
+      { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Audience & Data" },
       { href: "/admin/media-kit",   slug: "media-kit",   icon: FileText,        label: "Media Kit" },
       { href: "/admin/pipeline",    slug: "pipeline",    icon: TrendingUp,      label: "Pipeline" },
-      { href: "/admin/contacts",    slug: "contacts",    icon: Users,           label: "Contacts" },
+      // contacts merged into Pipeline tab — removed from nav
     ],
   },
   {
@@ -65,21 +65,21 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/venues",      slug: "venues",      icon: MapPin,          label: "Venues" },
       { href: "/admin/screens",       slug: "screens",       icon: Monitor,  label: "Screens" },
-      { href: "/admin/static-sites",   slug: "static-sites",  icon: Layers,   label: "Static Sites" },
-      { href: "/admin/inventory",      slug: "inventory",     icon: Layers,   label: "Inventory" },
+      // static-sites merged into Screens tab — removed from nav
+      { href: "/admin/inventory",      slug: "inventory",     icon: Layers,   label: "Availability" },
     ],
   },
   {
     label: "CAMPAIGNS",
     items: [
       { href: "/admin/campaigns",    slug: "campaigns",    icon: Megaphone,  label: "Campaigns" },
-      { href: "/admin/sponsorships", slug: "sponsorships", icon: Sparkles,   label: "Sponsorships" },
+      // sponsorships merged into Campaigns tab — removed from nav
     ],
   },
   {
     label: "FINANCE",
     items: [
-      { href: "/admin/revenue",     slug: "revenue",     icon: DollarSign,      label: "Revenue" },
+      { href: "/admin/revenue",     slug: "revenue",     icon: DollarSign,      label: "Finance" },
     ],
   },
   {

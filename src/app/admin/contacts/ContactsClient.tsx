@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, Mail, Phone, Users } from "lucide-react";
-import type { AggregatedContact } from "./page";
+import type { AggregatedContact } from "../pipeline/page";
 
 function fmtR(n: number) {
   return `R ${Number(n).toLocaleString("en-ZA")}`;

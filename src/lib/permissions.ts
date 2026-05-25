@@ -7,7 +7,6 @@ export const NAV_PAGES = [
   { slug: "venues",       label: "Venues" },
   { slug: "screens",      label: "Screens" },
   { slug: "campaigns",    label: "Campaigns" },
-  { slug: "sponsorships", label: "Sponsorships" },
   { slug: "inventory",    label: "Inventory" },
   { slug: "revenue",      label: "Revenue" },
   { slug: "analytics",    label: "Analytics" },
@@ -17,8 +16,6 @@ export const NAV_PAGES = [
   { slug: "media-kit",    label: "Media Kit" },
   { slug: "rate-card",    label: "Rate Card" },
   { slug: "pipeline",     label: "Pipeline" },
-  { slug: "contacts",     label: "Contacts" },
-  { slug: "static-sites", label: "Static Sites" },
 ] as const;
 
 export type NavSlug = typeof NAV_PAGES[number]["slug"];
@@ -27,9 +24,9 @@ export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "custom";
 
 // Default permissions per role preset
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
-  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "sponsorships", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit"],
+  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit", "rate-card", "pipeline"],
   manager: ["dashboard", "venues", "screens", "photos"],
-  sales:   ["rate-card", "insights", "media-kit", "campaigns", "sponsorships", "venues", "photos", "pipeline", "contacts", "static-sites"],
+  sales:   ["rate-card", "insights", "media-kit", "campaigns", "venues", "photos", "pipeline", "inventory", "analytics"],
   viewer:  ["dashboard", "analytics", "insights"],
   custom:  [], // filled by the custom permissions array
 };

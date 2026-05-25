@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, TrendingUp, CheckCircle2, ChevronDown } from "lucide-react";
+import { Plus, TrendingUp, CheckCircle2, ChevronDown, Search, Mail, Phone, Users } from "lucide-react";
 import { useRole } from "@/lib/useRole";
-import type { PipelineDeal } from "./page";
+import type { PipelineDeal, AggregatedContact } from "./page";
 
 // ─── Types & constants ────────────────────────────────────────────────────────
 
@@ -363,12 +363,158 @@ function DealCard({ deal, canCreate, onStageChange }: DealCardProps) {
   );
 }
 
+// ─── ContactCard ─────────────────────────────────────────────────────────────
+
+function fmtR_contact(n: number) {
+  return `R ${Number(n).toLocaleString("en-ZA")}`;
+}
+
+function ContactCard({ c }: { c: AggregatedContact }) {
+  const isAgency = c.client_type === "agency";
+  return (
+    <div
+      className="glass-card rounded-2xl p-5 flex flex-col gap-3"
+      style={{ borderRadius: 16 }}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p
+            className="text-base font-bold text-white truncate"
+            style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em" }}
+          >
+            {c.contact_name ?? "Unknown Contact"}
+          </p>
+          {c.client_name && (
+            <p className="text-sm mt-0.5 truncate" style={{ color: "#A3A3A3" }}>
+              {c.client_name}
+            </p>
+          )}
+        </div>
+        <span
+          className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
+          style={{
+            backgroundColor: isAgency ? "rgba(255,107,53,0.15)" : "rgba(96,165,250,0.15)",
+            color: isAgency ? "#FF6B35" : "#60A5FA",
+          }}
+        >
+          {isAgency ? "Agency" : "Direct"}
+        </span>
+      </div>
+
+      {/* Contact details */}
+      <div className="space-y-1.5">
+        {c.contact_email && (
+          <div className="flex items-center gap-2">
+            <Mail size={13} color="#A3A3A3" strokeWidth={2} className="flex-shrink-0" />
+            <a
+              href={`mailto:${c.contact_email}`}
+              className="text-sm truncate hover:text-white transition-colors"
+              style={{ color: "#C8C8C8" }}
+            >
+              {c.contact_email}
+            </a>
+          </div>
+        )}
+        {c.contact_phone && (
+          <div className="flex items-center gap-2">
+            <Phone size={13} color="#A3A3A3" strokeWidth={2} className="flex-shrink-0" />
+            <span className="text-sm" style={{ color: "#C8C8C8" }}>{c.contact_phone}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Stats row */}
+      <div
+        className="flex items-center justify-between pt-3"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        <div className="flex items-center gap-1.5">
+          <Users size={13} color="#8A8A8A" strokeWidth={2} />
+          <span className="text-xs" style={{ color: "#8A8A8A" }}>
+            {c.campaign_count} campaign{c.campaign_count !== 1 ? "s" : ""}
+          </span>
+        </div>
+        {c.total_value > 0 && (
+          <span className="text-xs font-semibold" style={{ color: "#D4FF4F" }}>
+            {fmtR_contact(c.total_value)}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ContactsTab({ contacts }: { contacts: AggregatedContact[] }) {
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) return contacts;
+    return contacts.filter(
+      (c) =>
+        c.contact_name?.toLowerCase().includes(q) ||
+        c.contact_email?.toLowerCase().includes(q) ||
+        c.client_name?.toLowerCase().includes(q)
+    );
+  }, [contacts, query]);
+
+  return (
+    <div>
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search
+          size={16}
+          color="#666"
+          strokeWidth={2}
+          style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }}
+        />
+        <input
+          type="text"
+          placeholder="Search by name, email, or company…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full rounded-xl py-3 pl-10 pr-4 text-sm"
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#FFFFFF",
+            outline: "none",
+          }}
+        />
+      </div>
+
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <div
+          className="glass-card rounded-2xl p-10 text-center"
+          style={{ borderRadius: 16 }}
+        >
+          <p className="text-sm" style={{ color: "#A3A3A3" }}>
+            {query ? "No contacts match your search." : "No contacts yet — they appear from campaigns."}
+          </p>
+        </div>
+      ) : (
+        <div
+          className="grid gap-4"
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        >
+          {filtered.map((c, i) => (
+            <ContactCard key={c.contact_email || `no-email-${i}`} c={c} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── PipelineClient ───────────────────────────────────────────────────────────
 
-export default function PipelineClient({ deals: initialDeals }: { deals: PipelineDeal[] }) {
+export default function PipelineClient({ deals: initialDeals, contacts }: { deals: PipelineDeal[]; contacts: AggregatedContact[] }) {
   const { canCreate, loading } = useRole();
   const [deals, setDeals] = useState<PipelineDeal[]>(initialDeals);
   const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<"deals" | "contacts">("deals");
   const router = useRouter();
 
   // Stats
@@ -423,6 +569,19 @@ export default function PipelineClient({ deals: initialDeals }: { deals: Pipelin
     </div>
   );
 
+  const TAB_STYLE_ACTIVE: React.CSSProperties = {
+    color: "#D4FF4F",
+    borderBottom: "2px solid #D4FF4F",
+    paddingBottom: "10px",
+    fontWeight: 600,
+  };
+  const TAB_STYLE_INACTIVE: React.CSSProperties = {
+    color: "#A3A3A3",
+    borderBottom: "2px solid transparent",
+    paddingBottom: "10px",
+    fontWeight: 500,
+  };
+
   return (
     <div className="p-4 md:p-8">
       {/* Hero */}
@@ -448,7 +607,7 @@ export default function PipelineClient({ deals: initialDeals }: { deals: Pipelin
                 Track deals from prospect to close
               </p>
             </div>
-            {!loading && canCreate && (
+            {!loading && canCreate && activeTab === "deals" && (
               <button
                 onClick={() => setShowModal(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
@@ -461,6 +620,39 @@ export default function PipelineClient({ deals: initialDeals }: { deals: Pipelin
           </div>
         </div>
       </div>
+
+      {/* Tabs */}
+      <div
+        className="flex items-center gap-6 mb-6"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        <button
+          onClick={() => setActiveTab("deals")}
+          className="text-sm transition-colors"
+          style={activeTab === "deals" ? TAB_STYLE_ACTIVE : TAB_STYLE_INACTIVE}
+        >
+          Deals
+        </button>
+        <button
+          onClick={() => setActiveTab("contacts")}
+          className="text-sm transition-colors"
+          style={activeTab === "contacts" ? TAB_STYLE_ACTIVE : TAB_STYLE_INACTIVE}
+        >
+          Contacts
+          <span
+            className="ml-2 text-xs font-bold px-1.5 py-0.5 rounded-full"
+            style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#A3A3A3" }}
+          >
+            {contacts.length}
+          </span>
+        </button>
+      </div>
+
+      {/* Tab: Contacts */}
+      {activeTab === "contacts" && <ContactsTab contacts={contacts} />}
+
+      {/* Tab: Deals */}
+      {activeTab === "deals" && (<>
 
       {/* Summary bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -549,6 +741,7 @@ export default function PipelineClient({ deals: initialDeals }: { deals: Pipelin
           onCreated={handleCreated}
         />
       )}
+      </>)}
     </div>
   );
 }

@@ -335,24 +335,36 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     window.open(printUrl, "_blank");
   }
 
-  // Client-side PDF generation via html2canvas + jsPDF. Always landscape, no dialog.
+  // Server-side PDF generation via Browserless.io. True landscape A4, no dialog.
   async function downloadPdf() {
-    setPdfStatus("Loading rate card…");
+    setPdfStatus("Generating PDF…");
     try {
-      const { generateRateCardPdf } = await import("@/lib/generateRateCardPdf");
-      await generateRateCardPdf({
-        venues: selectedVenues,
-        cpm: effectiveCpm,
-        weeks,
-        clientName,
-        flightStart,
-        flightEnd,
-        groupByCity,
-        onProgress: (cur, total, label) => {
-          if (total > 1) setPdfStatus(`${label} (${cur}/${total})`);
-          else setPdfStatus(label);
-        },
+      const params = new URLSearchParams({
+        venues: selectedVenues.join(","),
+        cpm: effectiveCpm.toString(),
+        weeks: weeks.toString(),
+        client: clientName,
+        start: flightStart,
+        end: flightEnd,
+        groupByCity: groupByCity.toString(),
+        filename: `GymGaze-Rate-Card-${clientName ? clientName.replace(/[^a-zA-Z0-9-]/g, "_") + "-" : ""}${new Date().toISOString().slice(0, 10)}.pdf`,
       });
+
+      const res = await fetch(`/api/rate-card/pdf?${params.toString()}`, { credentials: "include" });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error(`PDF API returned ${res.status}: ${errBody.slice(0, 200)}`);
+      }
+
+      const blob = await res.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `GymGaze-Rate-Card-${clientName ? clientName.replace(/[^a-zA-Z0-9-]/g, "_") + "-" : ""}${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
       setPdfStatus("");
     } catch (err) {
       console.error("PDF generation failed:", err);

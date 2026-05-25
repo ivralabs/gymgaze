@@ -1274,11 +1274,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                     {/* Data strip */}
                                     {(() => {
                                       // Use average of all venues in the city
-                                      const avgDailyHours = cityVenues.reduce((sum, cv) => sum + calcAvgDailyHours(cv.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null), 0) / cityVenues.length;
-                                      const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
+                                      // Fixed network standard — same loop stats on every page
+                                      const loopsPerDay = Math.round(3600 * 15 / 251);
                                       const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
-                                      const plays7sPerMonth = loopsPerMonth * 8;
-                                      const plays15sPerMonth = loopsPerMonth * 8;
                                       return (
                                     <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                                       <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>
@@ -1386,13 +1384,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                           {/* Spec strip */}
                           {(() => {
-                            // Loop maths per screen — use real operating hours from DB
-                            const avgDailyHours = calcAvgDailyHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null);
-                            const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
+                            // Fixed network standard — same loop stats on every page
+                            const loopsPerDay = Math.round(3600 * 15 / 251);
                             const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
-                            // 8 slots of each type per loop
-                            const plays7sPerMonth = loopsPerMonth * 8;
-                            const plays15sPerMonth = loopsPerMonth * 8;
                             return (
                           <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
                             <div style={{ display: "flex", justifyContent: "center", gap: 32, fontSize: 11, color: "#555" }}>

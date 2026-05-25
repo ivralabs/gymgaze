@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Layers, Edit2, X, Upload, Trash2, MapPin } from "lucide-react";
+import { ArrowLeft, Layers, Edit2, X, Upload, Trash2, MapPin, RefreshCw } from "lucide-react";
 import { useRole } from "@/lib/useRole";
 import { suggestMonthlyImpressions, impressionSuggestionCaption } from "@/lib/staticSiteImpressions";
 import { cmToM, mToCm, fmtDimensionsM } from "@/lib/dimensions";
+import { generateSiteId } from "@/lib/siteIdGenerator";
 
 const SITE_TYPE_LABELS: Record<string, string> = {
   poster_frame: "Poster Frame", banner: "Banner", a_frame: "A-Frame",
@@ -18,13 +19,13 @@ const LOCATION_LABELS: Record<string, string> = {
 const SITE_TYPES = Object.entries(SITE_TYPE_LABELS);
 const LOCATIONS = Object.entries(LOCATION_LABELS);
 
-interface Venue { id: string; name: string; city: string | null; }
+interface Venue { id: string; name: string; city: string | null; brand_code?: string | null; metro_code?: string | null; venue_code?: string | null; }
 interface Site {
   id: string; venue_id: string; label: string; site_type: string | null;
   location_in_venue: string | null; width_cm: number | null; height_cm: number | null;
   is_active: boolean | null; photo_url: string | null; notes: string | null;
   price_per_month: number | null; monthly_impressions: number | null; pricing_tier: string | null;
-  created_at: string; venues: { id: string; name: string; city: string | null; province: string | null; monthly_entries: number | null } | null;
+  created_at: string; venues: { id: string; name: string; city: string | null; province: string | null; monthly_entries: number | null; brand_code?: string | null; metro_code?: string | null; venue_code?: string | null } | null;
 }
 
 const cardStyle: React.CSSProperties = {
@@ -68,6 +69,21 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
   const [impressionCaption, setImpressionCaption] = useState<string | null>(null);
 
   function setField(key: string, value: string | boolean) { setEditForm((p) => ({ ...p, [key]: value })); }
+
+  function regenerateLabel() {
+    const venueData = venues.find((v) => v.id === editForm.venue_id) ?? site.venues;
+    const widthCm = editForm.width_m !== "" ? Math.round(parseFloat(editForm.width_m) * 100) : null;
+    const heightCm = editForm.height_m !== "" ? Math.round(parseFloat(editForm.height_m) * 100) : null;
+    const generated = generateSiteId({
+      brandCode: (venueData as Venue | null)?.brand_code ?? null,
+      metroCode: (venueData as Venue | null)?.metro_code ?? null,
+      venueCode: (venueData as Venue | null)?.venue_code ?? null,
+      widthCm,
+      heightCm,
+      sequence: 1, // best-effort: sequence not easily known here
+    });
+    setField("label", generated);
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault(); setSaving(true); setSaveError(null);
@@ -238,7 +254,21 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
             </div>
             {saveError && <div className="mb-4 rounded-xl px-4 py-3 text-sm" style={{ backgroundColor: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)", color: "#EF4444" }}>{saveError}</div>}
             <form onSubmit={handleSave} className="space-y-4">
-              <div><label style={labelStyle}>Name *</label><input value={editForm.label} onChange={(e) => setField("label", e.target.value)} required style={inputStyle} /></div>
+              <div>
+                <label style={labelStyle}>Site ID / Name *</label>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <input value={editForm.label} onChange={(e) => setField("label", e.target.value)} required style={{ ...inputStyle, flex: 1 }} />
+                  <button
+                    type="button"
+                    title="↻ Regenerate from venue codes"
+                    onClick={regenerateLabel}
+                    style={{ flexShrink: 0, padding: "0.625rem", borderRadius: "0.75rem", border: "1px solid rgba(212,255,79,0.3)", background: "rgba(212,255,79,0.08)", color: "#D4FF4F", cursor: "pointer", display: "flex", alignItems: "center" }}
+                  >
+                    <RefreshCw size={14} strokeWidth={2} />
+                  </button>
+                </div>
+                <p style={{ fontSize: "0.7rem", color: "#666", marginTop: "0.3rem" }}>Edit freely or ↻ regenerate from venue codes.</p>
+              </div>
               <div><label style={labelStyle}>Site Type</label>
                 <select value={editForm.site_type} onChange={(e) => setField("site_type", e.target.value)} style={inputStyle}>
                   {SITE_TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}

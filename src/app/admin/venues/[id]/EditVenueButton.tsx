@@ -20,6 +20,9 @@ interface VenueData {
   manager_name: string | null;
   manager_phone: string | null;
   operating_hours: Record<string, { open: string; close: string; closed: boolean }> | null;
+  brand_code: string | null;
+  metro_code: string | null;
+  venue_code: string | null;
 }
 
 interface Props {
@@ -71,6 +74,9 @@ export default function EditVenueButton({ venue }: Props) {
   const [operatingHours, setOperatingHours] = useState<Record<string, DayHours>>(
     venue.operating_hours ?? defaultHours()
   );
+  const [brandCode, setBrandCode] = useState(venue.brand_code ?? "");
+  const [metroCode, setMetroCode] = useState(venue.metro_code ?? "");
+  const [venueCode, setVenueCode] = useState(venue.venue_code ?? "");
 
   function updateDay(day: string, patch: Partial<DayHours>) {
     setOperatingHours((prev) => ({ ...prev, [day]: { ...prev[day], ...patch } }));
@@ -97,6 +103,9 @@ export default function EditVenueButton({ venue }: Props) {
         manager_name: managerName || null,
         manager_phone: managerPhone || null,
         operating_hours: operatingHours,
+        brand_code: brandCode.trim().toUpperCase() || null,
+        metro_code: metroCode.trim().toUpperCase() || null,
+        venue_code: venueCode.trim().toUpperCase() || null,
       };
 
       const res = await fetch(`/api/venues/${venue.id}`, {
@@ -402,6 +411,50 @@ export default function EditVenueButton({ venue }: Props) {
                   <div>
                     <label style={labelStyle}>Manager Phone</label>
                     <input value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} placeholder="+27 ..." style={inputStyle} />
+                  </div>
+                </div>
+
+                <div style={dividerStyle} />
+
+                {/* ── Site ID Codes ── */}
+                <p style={sectionLabelStyle}>Site ID Codes</p>
+                <p style={{ fontSize: 12, color: "#777", marginBottom: 16, lineHeight: 1.5 }}>
+                  Used to auto-generate structured Site IDs (e.g. <span style={{ color: "#D4FF4F", fontFamily: "monospace" }}>EF-BCM-BEA-SL1</span>). Max 4 uppercase characters each.
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={labelStyle}>Brand Code</label>
+                    <input
+                      value={brandCode}
+                      onChange={(e) => setBrandCode(e.target.value.toUpperCase().slice(0, 4))}
+                      placeholder="EF"
+                      maxLength={4}
+                      style={inputStyle}
+                    />
+                    <p style={{ fontSize: 11, color: "#666", marginTop: 4 }}>e.g. EF = Edge Fitness</p>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Metro Code</label>
+                    <input
+                      value={metroCode}
+                      onChange={(e) => setMetroCode(e.target.value.toUpperCase().slice(0, 4))}
+                      placeholder="BCM"
+                      maxLength={4}
+                      style={inputStyle}
+                    />
+                    <p style={{ fontSize: 11, color: "#666", marginTop: 4 }}>e.g. BCM = Buffalo City Metro</p>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Venue Code</label>
+                    <input
+                      value={venueCode}
+                      onChange={(e) => setVenueCode(e.target.value.toUpperCase().slice(0, 4))}
+                      placeholder="BEA"
+                      maxLength={4}
+                      style={inputStyle}
+                    />
+                    <p style={{ fontSize: 11, color: "#666", marginTop: 4 }}>e.g. BEA = Beacon Bay</p>
                   </div>
                 </div>
 

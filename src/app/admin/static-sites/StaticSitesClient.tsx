@@ -11,6 +11,7 @@ import AddStaticSiteModal, {
 } from "./AddStaticSiteModal";
 import { fmtDimensionsM } from "@/lib/dimensions";
 import { useRole } from "@/lib/useRole";
+import { displaySiteId } from "@/lib/siteIdGenerator";
 
 interface VenueRow {
   id: string;
@@ -182,7 +183,7 @@ function SiteCard({
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-white truncate" style={{ fontFamily: "Inter Tight, sans-serif" }}>
-              {site.label}
+              {displaySiteId(site.label, site.id)}
             </p>
             <p className="text-xs mt-0.5 truncate" style={{ color: "#888" }}>
               {site.venues?.name ?? "—"}

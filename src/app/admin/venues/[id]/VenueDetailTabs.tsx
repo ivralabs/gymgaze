@@ -51,6 +51,9 @@ interface Venue {
   gym_brands: GymBrand | null;
   cover_image_url: string | null;
   cover_position: number | null;
+  brand_code: string | null;
+  metro_code: string | null;
+  venue_code: string | null;
 }
 
 interface Screen {

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { suggestMonthlyImpressions } from "@/lib/staticSiteImpressions";
 import { fmtDimensionsM } from "@/lib/dimensions";
+import { displaySiteId } from "@/lib/siteIdGenerator";
 import {
   Calculator,
   MapPin,
@@ -493,7 +494,7 @@ export default function StaticSitesRateCardClient({ sites }: Props) {
                               className="w-4 h-4 accent-[#D4FF4F] cursor-pointer flex-shrink-0"
                             />
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-white truncate">{site.label}</div>
+                              <div className="text-sm font-medium text-white truncate">{displaySiteId(site.label, site.id)}</div>
                               <div className="text-xs" style={{ color: "#666" }}>
                                 {fmtSiteType(site.site_type)}
                                 {(site.width_cm != null || site.height_cm != null) ? ` · ${fmtDimensionsM(site.width_cm, site.height_cm, { compact: true })}` : ""}

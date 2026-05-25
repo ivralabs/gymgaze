@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Printer } from "lucide-react";
 import { fmtDimensionsM } from "@/lib/dimensions";
+import { displaySiteId } from "@/lib/siteIdGenerator";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,10 +78,6 @@ function fmtNum(n: number) {
 
 function fmtFull(n: number) {
   return n.toLocaleString("en-ZA");
-}
-
-function fmtSiteId(uuid: string) {
-  return `SS-${uuid.slice(0, 8)}`;
 }
 
 function fmtDimensions(w: number | null, h: number | null): string {
@@ -444,7 +441,7 @@ export default function StaticSitesPrint({
                           {venueName}
                           {venueCity !== "—" ? <span style={{ color: "#999", fontWeight: 400 }}> · {venueCity}</span> : null}
                           <span style={{ color: "#D4FF4F", fontWeight: 700, marginLeft: 12, fontFamily: "Inter Tight, sans-serif", fontSize: 12 }}>
-                            {fmtSiteId(site.id)}
+                            {displaySiteId(site.label, site.id)}
                           </span>
                         </span>
                       }
@@ -551,7 +548,7 @@ export default function StaticSitesPrint({
                       {/* Bottom strip */}
                       <div style={{ background: "#0a0a0a", padding: "8px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
                         <LogoLockup />
-                        <span style={{ fontSize: 11, color: "#666", fontFamily: "Inter Tight, sans-serif", fontWeight: 700 }}>{fmtSiteId(site.id)}</span>
+                        <span style={{ fontSize: 11, color: "#666", fontFamily: "Inter Tight, sans-serif", fontWeight: 700 }}>{displaySiteId(site.label, site.id)}</span>
                       </div>
                     </div>
                   </div>
@@ -581,7 +578,7 @@ export default function StaticSitesPrint({
                 <tbody>
                   {sites.map((site) => (
                     <tr key={site.id} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "7px 12px", fontFamily: "Inter Tight, sans-serif", fontWeight: 700, color: "#D4FF4F", fontSize: 11, background: "#111" }}>{fmtSiteId(site.id)}</td>
+                      <td style={{ padding: "7px 12px", fontFamily: "Inter Tight, sans-serif", fontWeight: 700, color: "#D4FF4F", fontSize: 11, background: "#111" }}>{displaySiteId(site.label, site.id)}</td>
                       <td style={{ padding: "7px 12px", color: "#0a0a0a", fontWeight: 600, fontSize: 11 }}>{site.venues?.name ?? "—"}</td>
                       <td style={{ padding: "7px 12px", color: "#555", fontSize: 11 }}>{fmtSiteType(site.site_type)}</td>
                       <td style={{ padding: "7px 12px", color: "#555", fontSize: 11 }}>{fmtDimensions(site.width_cm, site.height_cm)}</td>

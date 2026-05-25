@@ -23,13 +23,13 @@ export default async function StaticSiteDetailPage({ params }: { params: Promise
   const svc = serviceClient();
   const { data: site } = await svc
     .from("static_sites")
-    .select("*, venues(id, name, city, province, monthly_entries)")
+    .select("*, venues(id, name, city, province, monthly_entries, brand_code, metro_code, venue_code)")
     .eq("id", id)
     .single();
 
   if (!site) notFound();
 
-  const { data: venues } = await supabase.from("venues").select("id, name, city").order("name");
+  const { data: venues } = await supabase.from("venues").select("id, name, city, brand_code, metro_code, venue_code").order("name");
 
   return <StaticSiteDetailClient site={site} venues={venues ?? []} />;
 }

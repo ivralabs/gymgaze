@@ -1274,8 +1274,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                                     {/* Data strip */}
                                     {(() => {
                                       // Use average of all venues in the city
-                                      // Fixed network standard — same loop stats on every page
-                                      const loopsPerDay = Math.round(3600 * 15 / 251);
+                                      // Per-venue: use avg of city venues' real operating hours
+                                      const avgDailyHours = cityVenues.reduce((sum, cv) => sum + calcAvgDailyHours(cv.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null), 0) / cityVenues.length;
+                                      const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
                                       const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
                                       return (
                                     <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>
@@ -1384,8 +1385,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                           {/* Spec strip */}
                           {(() => {
-                            // Fixed network standard — same loop stats on every page
-                            const loopsPerDay = Math.round(3600 * 15 / 251);
+                            // Per-venue: use real operating hours from DB
+                            const avgDailyHours = calcAvgDailyHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null);
+                            const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
                             const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
                             return (
                           <div style={{ borderTop: "1px solid #E5E7EB", padding: "10px 32px", background: "#F3F4F6", marginTop: "auto" }}>

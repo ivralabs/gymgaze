@@ -29,7 +29,7 @@ export default async function RateCardPage() {
   const [{ data: venues }, { data: pricingTiers }] = await Promise.all([
     supabase
       .from("venues")
-      .select("id, name, city, province, active_members, monthly_entries, screens(id, is_active)")
+      .select("id, name, city, province, active_members, monthly_entries, cover_url, screens(id, is_active)")
       .order("name"),
     svc
       .from("pricing_tiers")

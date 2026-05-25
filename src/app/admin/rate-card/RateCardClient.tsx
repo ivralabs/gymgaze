@@ -847,6 +847,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       {/* ── Rate Card Modal ────────────────────────────────────────────────── */}
       {showRateCard && (() => {
         const selectedTier = pricingTiers.find((t) => t.cpm_zar === effectiveCpm) ?? pricingTiers[0];
+        const slotDuration = selectedTier?.duration_sec ?? 15;
+        const slotLabel = `${slotDuration}s`;
+        const tierLabel = selectedTier?.label ?? "Custom";
         const gymgazeEcpm = Math.round(effectiveCpm / ATTENTION.default);
         const today = new Date().toLocaleDateString("en-ZA", { day: "2-digit", month: "long", year: "numeric" });
         const totalActiveMembers = quoteVenues.reduce((s, v) => s + (v.activeMembers ?? 0), 0);
@@ -980,6 +983,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
                         {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
                       </div>
+                      <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
+                        <div style={{ background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.3)", borderRadius: 20, padding: "5px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 700 }}>
+                          {tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM
+                        </div>
+                      </div>
                     </div>
 
                     {/* Bottom-left: CONFIDENTIAL */}
@@ -1071,7 +1079,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           {[
                             {
                               name: "City Sprint",
-                              desc: `${topCity?.city ?? "Top City"} · ${weeks} weeks`,
+                              desc: `${topCity?.city ?? "Top City"} · ${weeks} weeks · ${slotLabel} slot`,
                               price: fmtR(Math.round(topCityCost)),
                               reach: fmtFull(topCityReach),
                               screens: topCityVenues.reduce((s, v) => s + v.screens, 0),
@@ -1080,7 +1088,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             },
                             {
                               name: "Provincial Blitz",
-                              desc: `${topProvince?.province ?? "Top Province"} · ${weeks} weeks`,
+                              desc: `${topProvince?.province ?? "Top Province"} · ${weeks} weeks · ${slotLabel} slot`,
                               price: fmtR(Math.round(topProvinceCost)),
                               reach: fmtFull(topProvinceReach),
                               screens: topProvinceVenues.reduce((s, v) => s + v.screens, 0),
@@ -1089,7 +1097,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             },
                             {
                               name: "National Launch",
-                              desc: `All ${quoteVenues.length} venues · ${weeks} weeks`,
+                              desc: `All ${quoteVenues.length} venues · ${weeks} weeks · ${slotLabel} slot`,
                               price: fmtR(Math.round(nationalCost)),
                               reach: fmtFull(nationalReach),
                               screens: quoteTotals.screens,
@@ -1358,7 +1366,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                             return (
                           <div style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 12, margin: "0 0 0 0", padding: "16px 32px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
                             {[
-                              { label: "Rate PM", value: fmtR(Math.round(v.cost)) },
+                              { label: `Rate PM (${slotLabel})`, value: fmtR(Math.round(v.cost)) },
                               { label: "City", value: v.city ?? "—" },
                               { label: "Screens", value: v.screens.toString() },
                               { label: "Province", value: v.province ?? "—" },
@@ -1451,9 +1459,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#D4FF4F", marginBottom: 4 }}>Investment Summary</div>
                           <div style={{ fontSize: 12, color: "#666" }}>Flight Duration</div>
                           <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "Inter Tight, sans-serif" }}>{weeks} weeks</div>
-                          <div style={{ fontSize: 12, color: "#666", marginTop: 8 }}>Total Investment</div>
+                          <div style={{ fontSize: 12, color: "#666", marginTop: 8 }}>Total Investment · {tierLabel} {slotLabel}</div>
                           <div style={{ fontSize: 40, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{fmtR(Math.round(quoteTotals.cost))}</div>
-                          <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>{fmtR(Math.round(quoteTotals.cost / weeks))} per week · R{effectiveCpm} CPM</div>
+                          <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>{tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM · {weeks} weeks</div>
                         </div>
                         {/* Terms */}
                         <div style={{ border: "1px solid #E5E7EB", borderRadius: 12, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 10 }}>

@@ -4,7 +4,7 @@ export const revalidate = 0;
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus, TrendingUp, Clock, CheckCircle2, Footprints, Monitor } from "lucide-react";
+import { Plus, TrendingUp, Clock, CheckCircle2, Footprints, Monitor, AlertCircle } from "lucide-react";
 import PhotoApprovalButtons from "./photo-approval-buttons";
 import RadialProgress from "@/components/gymgaze/RadialProgress";
 import CommissionCard from "./CommissionCard";
@@ -137,9 +137,33 @@ export default async function AdminDashboard() {
       : 0;
   const revenuePct = Math.min(100, Math.round((revenueMTD / MONTHLY_TARGET) * 100));
 
+  const hasPendingPhotos = (pendingCount ?? 0) > 0;
+
   return (
-    <div className="p-4 md:p-8">
-      {/* Sales Commission Card — only for sales role */}
+    <div className="p-3 md:p-6">
+
+      {/* ── Pending Photos Banner ── */}
+      {hasPendingPhotos && (
+        <Link
+          href="/admin/photos"
+          className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-4 transition-all hover:opacity-90"
+          style={{
+            background: "rgba(212,255,79,0.08)",
+            border: "1px solid rgba(212,255,79,0.2)",
+            borderRadius: 14,
+          }}
+        >
+          <AlertCircle size={16} color="#D4FF4F" />
+          <p className="text-sm font-semibold" style={{ color: "#D4FF4F" }}>
+            {pendingCount} photo{(pendingCount ?? 0) !== 1 ? "s" : ""} pending approval
+          </p>
+          <span className="text-xs ml-auto" style={{ color: "#888" }}>
+            Review now →
+          </span>
+        </Link>
+      )}
+
+      {/* ── Sales Commission Card — only for sales role (inline, compact) ── */}
       {userRole === "sales" && (
         <CommissionCard
           campaignCount={salesCampaignCount}
@@ -149,75 +173,94 @@ export default async function AdminDashboard() {
         />
       )}
 
-      {/* Hero Panel */}
+      {/* ── Hero Panel ── */}
       <div
-        className="glass-panel relative overflow-hidden rounded-2xl mb-8"
+        className="glass-panel relative overflow-hidden rounded-2xl mb-5"
         style={{ borderRadius: 16 }}
       >
-
-        <div className="relative z-10 p-5 md:p-8">
+        <div className="relative z-10 p-4 md:p-6">
           <h1
             style={{
               fontFamily: "Inter Tight, sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(1.6rem, 5vw, 2.5rem)",
+              fontSize: "clamp(1.4rem, 4vw, 2rem)",
               color: "#fff",
               letterSpacing: "-0.02em",
             }}
           >
             Welcome back, {adminName}
           </h1>
-          <p style={{ color: "#999", marginTop: "0.5rem" }}>
+          <p style={{ color: "#999", marginTop: "0.3rem", fontSize: "0.9rem" }}>
             Your GymGaze command centre
           </p>
-          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+
+          {/* ── Quick Actions ── */}
+          <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <Link
               href="/admin/campaigns/new"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors duration-150"
               style={{ backgroundColor: "#D4FF4F", color: "#0A0A0A" }}
             >
-              <Plus size={14} strokeWidth={2.5} />
+              <Plus size={13} strokeWidth={2.5} />
               New Campaign
             </Link>
             <Link
               href="/admin/venues/new"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "#FFFFFF",
+                border: "1px solid rgba(212,255,79,0.3)",
+                color: "#D4FF4F",
               }}
             >
-              <Plus size={14} strokeWidth={2.5} />
+              <Plus size={13} strokeWidth={2.5} />
               Add Venue
             </Link>
             <Link
+              href="/admin/screens/new"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
+              style={{
+                backgroundColor: "transparent",
+                border: "1px solid rgba(212,255,79,0.3)",
+                color: "#D4FF4F",
+              }}
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              Add Screen
+            </Link>
+            <Link
+              href="/admin/deals/new"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
+              style={{
+                backgroundColor: "transparent",
+                border: "1px solid rgba(212,255,79,0.3)",
+                color: "#D4FF4F",
+              }}
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              New Deal
+            </Link>
+            <Link
               href="/admin/revenue/new"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid rgba(255,255,255,0.12)",
                 color: "#FFFFFF",
               }}
             >
-              <TrendingUp size={14} strokeWidth={2} />
+              <TrendingUp size={13} strokeWidth={2} />
               Log Revenue
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Stat Tiles — Orion style */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        {/* Plain: Networks */}
-        <div
-          className="glass-card rounded-2xl p-6"
-          style={{ borderRadius: 16 }}
-        >
-          <p
-            className="text-xs font-medium uppercase tracking-widest mb-3"
-            style={{ color: "#B0B0B0" }}
-          >
+      {/* ── Stat Tiles ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+        {/* Networks */}
+        <div className="glass-card rounded-2xl p-4 md:p-5" style={{ borderRadius: 16 }}>
+          <p className="text-xs font-medium uppercase tracking-widest mb-2" style={{ color: "#B0B0B0" }}>
             Total Networks
           </p>
           <div
@@ -225,7 +268,7 @@ export default async function AdminDashboard() {
             style={{
               fontFamily: "Inter Tight, sans-serif",
               fontWeight: 800,
-              fontSize: "3.5rem",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
               letterSpacing: "-0.02em",
               lineHeight: 1,
             }}
@@ -240,15 +283,9 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Plain: Venues */}
-        <div
-          className="glass-card rounded-2xl p-6"
-          style={{ borderRadius: 16 }}
-        >
-          <p
-            className="text-xs font-medium uppercase tracking-widest mb-3"
-            style={{ color: "#B0B0B0" }}
-          >
+        {/* Venues */}
+        <div className="glass-card rounded-2xl p-4 md:p-5" style={{ borderRadius: 16 }}>
+          <p className="text-xs font-medium uppercase tracking-widest mb-2" style={{ color: "#B0B0B0" }}>
             Active Venues
           </p>
           <div
@@ -256,7 +293,7 @@ export default async function AdminDashboard() {
             style={{
               fontFamily: "Inter Tight, sans-serif",
               fontWeight: 800,
-              fontSize: "3.5rem",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
               letterSpacing: "-0.02em",
               lineHeight: 1,
             }}
@@ -271,22 +308,14 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Radial: Campaigns */}
+        {/* Campaigns */}
         <div
-          className="glass-card rounded-2xl p-6 flex items-center gap-4"
+          className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-3"
           style={{ borderRadius: 16 }}
         >
-          <RadialProgress
-            value={campaignPct}
-            size={80}
-            label="active"
-            sublabel="of total"
-          />
+          <RadialProgress value={campaignPct} size={70} label="active" sublabel="of total" />
           <div>
-            <p
-              className="text-xs font-medium uppercase tracking-widest mb-2"
-              style={{ color: "#B0B0B0" }}
-            >
+            <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "#B0B0B0" }}>
               Active Campaigns
             </p>
             <div
@@ -294,7 +323,7 @@ export default async function AdminDashboard() {
               style={{
                 fontFamily: "Inter Tight, sans-serif",
                 fontWeight: 800,
-                fontSize: "2rem",
+                fontSize: "1.8rem",
                 letterSpacing: "-0.02em",
                 lineHeight: 1,
               }}
@@ -307,22 +336,14 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Radial: Revenue MTD */}
+        {/* Revenue MTD */}
         <div
-          className="glass-card rounded-2xl p-6 flex items-center gap-4"
+          className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-3"
           style={{ borderRadius: 16 }}
         >
-          <RadialProgress
-            value={revenuePct}
-            size={80}
-            label="target"
-            sublabel="vs 100k"
-          />
+          <RadialProgress value={revenuePct} size={70} label="target" sublabel="vs 100k" />
           <div>
-            <p
-              className="text-xs font-medium uppercase tracking-widest mb-2"
-              style={{ color: "#B0B0B0" }}
-            >
+            <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "#B0B0B0" }}>
               Revenue MTD
             </p>
             <div
@@ -330,7 +351,7 @@ export default async function AdminDashboard() {
               style={{
                 fontFamily: "Inter Tight, sans-serif",
                 fontWeight: 800,
-                fontSize: "1.4rem",
+                fontSize: "1.2rem",
                 letterSpacing: "-0.02em",
                 lineHeight: 1,
               }}
@@ -344,110 +365,111 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* Screen Inventory */}
-      <div className="glass-card rounded-2xl overflow-hidden mb-8" style={{ borderRadius: 16 }}>
-        <div
-          className="flex items-center gap-2 px-6 py-4"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          <Monitor size={16} color="#D4FF4F" strokeWidth={2} />
-          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
-            Screen Inventory
-          </h2>
-          <span className="text-xs ml-1" style={{ color: "#666" }}>
-            {totalScreens} active screen{totalScreens !== 1 ? "s" : ""}
-          </span>
-        </div>
-        {totalScreens === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10">
-            <Monitor size={28} color="#333" strokeWidth={1.5} className="mb-2" />
-            <p className="text-sm" style={{ color: "#555" }}>No active screens yet</p>
+      {/* ── Screen Inventory + Network Footfall — side-by-side on desktop ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        {/* Screen Inventory */}
+        <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+          <div
+            className="flex items-center gap-2 px-4 py-3"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            <Monitor size={15} color="#D4FF4F" strokeWidth={2} />
+            <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
+              Screen Inventory
+            </h2>
+            <span className="text-xs ml-1" style={{ color: "#666" }}>
+              {totalScreens} active screen{totalScreens !== 1 ? "s" : ""}
+            </span>
           </div>
-        ) : (
-          <div className="px-6 py-4 flex flex-col gap-4">
-            {sizeBreakdown.map((row) => {
-              const pct = Math.round((row.count / totalScreens) * 100);
-              return (
-                <div key={row.size} className="flex items-center gap-4">
-                  {/* Size label */}
-                  <div
-                    className="tabular-nums text-white flex-shrink-0"
-                    style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 700, fontSize: "1rem", width: 44 }}
-                  >
-                    {row.size}
-                  </div>
-                  {/* Fill bar */}
-                  <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, backgroundColor: "rgba(255,255,255,0.06)" }}>
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%`, backgroundColor: "#D4FF4F" }}
-                    />
-                  </div>
-                  {/* Count + pct */}
-                  <div className="flex-shrink-0 flex items-center gap-3" style={{ minWidth: 110 }}>
-                    <span className="text-sm font-semibold text-white tabular-nums">
-                      {row.count} screen{row.count !== 1 ? "s" : ""}
-                    </span>
-                    <span className="text-xs tabular-nums" style={{ color: "#666" }}>{pct}%</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Network Footfall */}
-      <div className="glass-card rounded-2xl overflow-hidden mb-8" style={{ borderRadius: 16 }}>
-        <div
-          className="flex items-center gap-2 px-6 py-4"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          <Footprints size={16} color="#D4FF4F" strokeWidth={2} />
-          <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
-            Network Footfall
-          </h2>
-          <span className="text-xs ml-1" style={{ color: "#666" }}>
-            across {venuesCount ?? 0} active venues
-          </span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-          {[
-            { label: "Daily Entries", value: totalDaily, avg: Math.round(totalDaily / venuesWithData) },
-            { label: "Weekly Entries", value: totalWeekly, avg: Math.round(totalWeekly / venuesWithData) },
-            { label: "Monthly Entries", value: totalMonthly, avg: Math.round(totalMonthly / venuesWithData) },
-          ].map((stat) => (
-            <div key={stat.label} className="px-6 py-5">
-              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#B0B0B0" }}>
-                {stat.label}
-              </p>
-              <div
-                className="tabular-nums text-white"
-                style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "2.4rem", letterSpacing: "-0.02em", lineHeight: 1 }}
-              >
-                {stat.value > 0 ? stat.value.toLocaleString("en-ZA") : <span style={{ color: "#444", fontSize: "1.4rem", fontWeight: 500 }}>No data</span>}
-              </div>
-              {stat.value > 0 && (
-                <p className="text-xs mt-2" style={{ color: "#666" }}>
-                  avg {stat.avg.toLocaleString("en-ZA")} / venue
-                </p>
-              )}
+          {totalScreens === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Monitor size={24} color="#333" strokeWidth={1.5} className="mb-2" />
+              <p className="text-sm" style={{ color: "#555" }}>No active screens yet</p>
             </div>
-          ))}
+          ) : (
+            <div className="px-4 py-3 flex flex-col gap-3">
+              {sizeBreakdown.map((row) => {
+                const pct = Math.round((row.count / totalScreens) * 100);
+                return (
+                  <div key={row.size} className="flex items-center gap-3">
+                    <div
+                      className="tabular-nums text-white flex-shrink-0"
+                      style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 700, fontSize: "0.9rem", width: 40 }}
+                    >
+                      {row.size}
+                    </div>
+                    <div className="flex-1 rounded-full overflow-hidden" style={{ height: 5, backgroundColor: "rgba(255,255,255,0.06)" }}>
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%`, backgroundColor: "#D4FF4F" }}
+                      />
+                    </div>
+                    <div className="flex-shrink-0 flex items-center gap-2" style={{ minWidth: 90 }}>
+                      <span className="text-xs font-semibold text-white tabular-nums">
+                        {row.count} screen{row.count !== 1 ? "s" : ""}
+                      </span>
+                      <span className="text-xs tabular-nums" style={{ color: "#666" }}>{pct}%</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Network Footfall */}
+        <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
+          <div
+            className="flex items-center gap-2 px-4 py-3"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            <Footprints size={15} color="#D4FF4F" strokeWidth={2} />
+            <h2 className="text-sm font-semibold text-white" style={{ fontFamily: "Inter Tight, sans-serif" }}>
+              Network Footfall
+            </h2>
+            <span className="text-xs ml-1" style={{ color: "#666" }}>
+              across {venuesCount ?? 0} active venues
+            </span>
+          </div>
+          <div className="grid grid-cols-3 divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+            {[
+              { label: "Daily Entries", value: totalDaily, avg: Math.round(totalDaily / venuesWithData) },
+              { label: "Weekly Entries", value: totalWeekly, avg: Math.round(totalWeekly / venuesWithData) },
+              { label: "Monthly Entries", value: totalMonthly, avg: Math.round(totalMonthly / venuesWithData) },
+            ].map((stat) => (
+              <div key={stat.label} className="px-4 py-4">
+                <p className="text-xs font-medium uppercase tracking-widest mb-2" style={{ color: "#B0B0B0" }}>
+                  {stat.label}
+                </p>
+                <div
+                  className="tabular-nums text-white"
+                  style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 800, fontSize: "1.8rem", letterSpacing: "-0.02em", lineHeight: 1 }}
+                >
+                  {stat.value > 0 ? (
+                    stat.value.toLocaleString("en-ZA")
+                  ) : (
+                    <span style={{ color: "#444", fontSize: "1rem", fontWeight: 500 }}>No data</span>
+                  )}
+                </div>
+                {stat.value > 0 && (
+                  <p className="text-xs mt-1.5" style={{ color: "#666" }}>
+                    avg {stat.avg.toLocaleString("en-ZA")} / venue
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Pending Photos */}
-      <div
-        className="glass-card rounded-2xl overflow-hidden"
-        style={{ borderRadius: 16 }}
-      >
+      {/* ── Pending Photos ── */}
+      <div className="glass-card rounded-2xl overflow-hidden" style={{ borderRadius: 16 }}>
         <div
-          className="flex items-center justify-between px-6 py-4"
+          className="flex items-center justify-between px-4 py-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
         >
           <div className="flex items-center gap-2">
-            <Clock size={16} color="#D4FF4F" strokeWidth={2} />
+            <Clock size={15} color="#D4FF4F" strokeWidth={2} />
             <h2
               className="text-sm font-semibold text-white"
               style={{ fontFamily: "Inter Tight, sans-serif" }}
@@ -474,8 +496,8 @@ export default async function AdminDashboard() {
 
         <div>
           {!pendingPhotos || pendingPhotos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10">
-              <CheckCircle2 size={32} color="#D4FF4F" strokeWidth={1.5} className="mb-2" />
+            <div className="flex flex-col items-center justify-center py-8">
+              <CheckCircle2 size={28} color="#D4FF4F" strokeWidth={1.5} className="mb-2" />
               <p className="text-sm text-white">All caught up!</p>
               <p className="text-xs mt-1" style={{ color: "#B0B0B0" }}>No photos pending approval</p>
             </div>
@@ -493,11 +515,12 @@ export default async function AdminDashboard() {
               return (
                 <div
                   key={photo.id}
-                  className="flex items-center justify-between px-6 py-4"
+                  className="flex items-center justify-between px-4 py-3"
                   style={{
-                    borderBottom: idx < pendingPhotos.length - 1
-                      ? "1px solid rgba(255,255,255,0.06)"
-                      : "none",
+                    borderBottom:
+                      idx < pendingPhotos.length - 1
+                        ? "1px solid rgba(255,255,255,0.06)"
+                        : "none",
                   }}
                 >
                   <div>

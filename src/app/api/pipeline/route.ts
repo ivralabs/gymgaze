@@ -1,10 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
+function getService() {
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
 export async function GET() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = getService();
 
   const { data, error } = await supabase
     .from("pipeline_deals")
@@ -16,9 +21,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = getService();
 
   const body = await req.json();
   const {
@@ -31,6 +34,7 @@ export async function POST(req: NextRequest) {
     stage,
     expected_close_date,
     notes,
+    created_by,
   } = body;
 
   if (!client_name) {
@@ -40,7 +44,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase
     .from("pipeline_deals")
     .insert({
-      created_by: user.id,
+      created_by: created_by ?? null,
       client_name,
       client_type: client_type ?? "direct",
       contact_name: contact_name || null,

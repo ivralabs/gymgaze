@@ -30,6 +30,7 @@ export type VenueRow = {
   active_members: number | null;
   monthly_entries: number | null;
   cover_image_url?: string | null;
+  operating_hours?: Record<string, { open: string; close: string; closed: boolean }> | null;
   screens: { id: string; is_active: boolean | null; slots_7sec: number | null; slots_15sec: number | null; location_in_venue: string | null; size_inches: number | null }[] | null;
 };
 
@@ -144,7 +145,39 @@ function fmtFull(n: number) {
   return n.toLocaleString("en-ZA");
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Operating hours helpers ─────────────────────────────────────────────────
+
+// Calculate average daily operating hours from venue operating_hours JSONB
+function calcAvgDailyHours(oh: Record<string, { open: string; close: string; closed: boolean }> | null | undefined): number {
+  if (!oh) return 17; // fallback
+  const days = Object.values(oh);
+  const openDays = days.filter(d => !d.closed);
+  if (openDays.length === 0) return 17;
+  const totalHours = openDays.reduce((sum, d) => {
+    const [oh2, om] = d.open.split(":").map(Number);
+    const [ch, cm] = d.close.split(":").map(Number);
+    return sum + ((ch + cm / 60) - (oh2 + om / 60));
+  }, 0);
+  return totalHours / 7; // avg over 7 days (including closed days — they contribute 0)
+}
+
+// Format operating hours for display — show weekday range + weekend
+function fmtOperatingHours(oh: Record<string, { open: string; close: string; closed: boolean }> | null | undefined): string {
+  if (!oh) return "05:00 – 22:00";
+  const weekdays = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const wdOpen = weekdays.map(d => oh[d]).filter(Boolean).filter(d => !d.closed);
+  if (wdOpen.length === 0) return "05:00 – 22:00";
+  // Use Monday as representative weekday
+  const mon = oh["Monday"];
+  const sat = oh["Saturday"];
+  const sun = oh["Sunday"];
+  let result = mon && !mon.closed ? `Mon–Fri ${mon.open}–${mon.close}` : "";
+  if (sat && !sat.closed) result += ` · Sat ${sat.open}–${sat.close}`;
+  if (sun && !sun.closed) result += ` · Sun ${sun.open}–${sun.close}`;
+  return result || "05:00 – 22:00";
+}
+
+// ─── Sub-components ─────────────────────────────────────────────────────────────
 
 function MetricCard({
   icon: Icon,
@@ -1232,7 +1265,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                                     {/* Data strip */}
                                     {(() => {
-                                      const loopsPerDay = Math.round(3600 * 17 / 251);
+                                      // Use average of all venues in the city
+                                      const avgDailyHours = cityVenues.reduce((sum, cv) => sum + calcAvgDailyHours(cv.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null), 0) / cityVenues.length;
+                                      const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
                                       const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
                                       const plays7sPerMonth = loopsPerMonth * 8;
                                       const plays15sPerMonth = loopsPerMonth * 8;
@@ -1299,7 +1334,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               {[
                                 { label: "Screen Format", value: "55\" Portrait · 1920×1080" },
                                 { label: "Placement", value: activeScreens.length > 0 && activeScreens[0].location_in_venue ? activeScreens[0].location_in_venue.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) : "In-Venue" },
-                                { label: "Operating Hours", value: "05:00 – 22:00 daily" },
+                                { label: "Operating Hours", value: fmtOperatingHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null) },
                                 { label: "Avg Session", value: "55 minutes" },
                                 { label: "Audience", value: "LSM 7–10" },
                               ].map(({ label, value }) => (
@@ -1343,9 +1378,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
 
                           {/* Spec strip */}
                           {(() => {
-                            // Loop maths per screen
-                            // 251s loop · 17hr operating day (05:00–22:00) · 7 days/week · 4.3 weeks/month
-                            const loopsPerDay = Math.round(3600 * 17 / 251);
+                            // Loop maths per screen — use real operating hours from DB
+                            const avgDailyHours = calcAvgDailyHours(v.operating_hours as Record<string, { open: string; close: string; closed: boolean }> | null);
+                            const loopsPerDay = Math.round(3600 * avgDailyHours / 251);
                             const loopsPerMonth = Math.round(loopsPerDay * 7 * 4.3);
                             // 8 slots of each type per loop
                             const plays7sPerMonth = loopsPerMonth * 8;

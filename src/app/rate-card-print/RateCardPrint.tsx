@@ -317,13 +317,16 @@ export default function RateCardPrint({
         }}
       >
         <span style={{ color: "#D4FF4F", fontWeight: 700, fontSize: 14 }}>⚡ GymGaze Rate Card — {venueData.length} venue{venueData.length !== 1 ? "s" : ""} · {weeks} weeks · R{effectiveCpm} CPM</span>
-        <button
-          onClick={() => window.print()}
-          style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}
-        >
-          <Printer size={14} strokeWidth={2.5} />
-          Print / Save as PDF
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ color: "#FFB300", fontSize: 12, fontWeight: 600 }}>⚠ Keep Orientation = Portrait in the print dialog (our pages are pre-rotated to landscape)</span>
+          <button
+            onClick={() => window.print()}
+            style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", borderRadius: 10, background: "#D4FF4F", color: "#0a0a0a", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}
+          >
+            <Printer size={14} strokeWidth={2.5} />
+            Print / Save as PDF
+          </button>
+        </div>
       </div>
 
       {/* Spacer for toolbar */}

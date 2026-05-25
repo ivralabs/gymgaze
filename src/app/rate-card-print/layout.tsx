@@ -42,10 +42,11 @@ export default function RateCardPrintLayout({
               }
             }
 
-            /* PRINT: force A4 landscape, kill all inherited print styles */
+            /* PRINT: force A4 landscape using explicit dimensions (more reliable across
+               Safari/Chrome than 'A4 landscape' which can be overridden by dialog toggle). */
             @media print {
               @page {
-                size: A4 landscape;
+                size: 297mm 210mm;
                 margin: 0;
               }
               html, body {

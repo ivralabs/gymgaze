@@ -87,6 +87,18 @@ function calcMetrics(v: VenueRow, weeks: number) {
   return { screens, ots, reach, frequency, impact, playsOts, activeMembers, activeThisMonth };
 }
 
+// ─── Image helpers ───────────────────────────────────────────────
+function optimizeImageUrl(url: string | null | undefined, width: number, quality = 75): string {
+  if (!url) return "";
+  // Rewrite Supabase public-bucket URLs to use the image render/transform CDN
+  if (url.includes("/storage/v1/object/public/")) {
+    const rendered = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
+    const sep = rendered.includes("?") ? "&" : "?";
+    return `${rendered}${sep}width=${width}&quality=${quality}&resize=cover`;
+  }
+  return url;
+}
+
 // ─── Formatters ───────────────────────────────────────────────────────────────
 function fmtR(n: number) {
   return `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
@@ -604,7 +616,7 @@ export default function RateCardPrint({
                               <div key={cv.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid #F3F4F6" }}>
                                 {cv.cover_image_url ? (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={cv.cover_image_url} alt={cv.name} style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                                  <img src={optimizeImageUrl(cv.cover_image_url, 80, 70)} alt={cv.name} style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
                                 ) : (
                                   <div style={{ width: 40, height: 40, borderRadius: 6, background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                     <span style={{ fontSize: 14, fontWeight: 800, color: "#D4FF4F" }}>{cv.name.charAt(0)}</span>
@@ -690,7 +702,7 @@ export default function RateCardPrint({
                             {v.cover_image_url ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
-                                src={v.cover_image_url}
+                                src={optimizeImageUrl(v.cover_image_url, 800, 75)}
                                 alt={v.name}
                                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                               />

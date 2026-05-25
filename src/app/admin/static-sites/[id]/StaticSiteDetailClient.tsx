@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Layers, Edit2, X, Upload, Trash2, MapPin } from "lucide-react";
 import { useRole } from "@/lib/useRole";
 import { suggestMonthlyImpressions, impressionSuggestionCaption } from "@/lib/staticSiteImpressions";
+import { cmToM, mToCm, fmtDimensionsM } from "@/lib/dimensions";
 
 const SITE_TYPE_LABELS: Record<string, string> = {
   poster_frame: "Poster Frame", banner: "Banner", a_frame: "A-Frame",
@@ -52,8 +53,10 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState({
     label: site.label, venue_id: site.venue_id, site_type: site.site_type ?? "poster_frame",
-    location_in_venue: site.location_in_venue ?? "", width_cm: site.width_cm?.toString() ?? "",
-    height_cm: site.height_cm?.toString() ?? "", notes: site.notes ?? "", is_active: site.is_active ?? true,
+    location_in_venue: site.location_in_venue ?? "",
+    width_m: cmToM(site.width_cm)?.toString() ?? "",
+    height_m: cmToM(site.height_cm)?.toString() ?? "",
+    notes: site.notes ?? "", is_active: site.is_active ?? true,
     price_per_month: site.price_per_month?.toString() ?? "",
     monthly_impressions: site.monthly_impressions?.toString() ?? "",
     pricing_tier: site.pricing_tier ?? "",
@@ -62,7 +65,6 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
   const [saveError, setSaveError] = useState<string | null>(null);
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [editPhotoPreview, setEditPhotoPreview] = useState<string | null>(site.photo_url ?? null);
-  const [unit, setUnit] = useState<"cm" | "m">("cm");
   const [impressionCaption, setImpressionCaption] = useState<string | null>(null);
 
   function setField(key: string, value: string | boolean) { setEditForm((p) => ({ ...p, [key]: value })); }
@@ -74,8 +76,10 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
         method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...editForm,
-          width_cm: editForm.width_cm ? parseInt(editForm.width_cm) : null,
-          height_cm: editForm.height_cm ? parseInt(editForm.height_cm) : null,
+          width_m: undefined,
+          height_m: undefined,
+          width_cm: mToCm(editForm.width_m),
+          height_cm: mToCm(editForm.height_m),
           price_per_month: editForm.price_per_month !== "" ? parseFloat(editForm.price_per_month) : null,
           monthly_impressions: editForm.monthly_impressions !== "" ? parseInt(editForm.monthly_impressions) : null,
           pricing_tier: editForm.pricing_tier || null,
@@ -146,7 +150,7 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
             <SpecRow label="Venue" value={site.venues ? `${site.venues.name}${site.venues.city ? ` · ${site.venues.city}` : ""}` : "—"} />
             <SpecRow label="Type" value={<span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(212,255,79,0.10)", color: "#D4FF4F" }}>{SITE_TYPE_LABELS[site.site_type ?? ""] ?? site.site_type ?? "—"}</span>} />
             <SpecRow label="Location" value={site.location_in_venue ? <span className="flex items-center gap-1"><MapPin size={11} strokeWidth={2} />{LOCATION_LABELS[site.location_in_venue] ?? site.location_in_venue}</span> : "—"} />
-            <SpecRow label="Dimensions" value={site.width_cm && site.height_cm ? `${site.width_cm}cm × ${site.height_cm}cm` : site.width_cm ? `${site.width_cm}cm wide` : site.height_cm ? `${site.height_cm}cm tall` : "—"} />
+            <SpecRow label="Dimensions" value={fmtDimensionsM(site.width_cm, site.height_cm)} />
             <SpecRow label="Status" value={<span className="text-xs font-semibold px-2 py-0.5 rounded-full uppercase" style={{ background: site.is_active ? "rgba(212,255,79,0.10)" : "rgba(102,102,102,0.15)", color: site.is_active ? "#D4FF4F" : "#909090" }}>{site.is_active ? "Active" : "Inactive"}</span>} />
             <SpecRow label="Rate per Month" value={site.price_per_month != null ? `R ${site.price_per_month.toLocaleString("en-ZA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "—"} />
             <SpecRow label="Monthly Impressions" value={site.monthly_impressions != null ? site.monthly_impressions.toLocaleString("en-ZA") : "—"} />
@@ -247,17 +251,10 @@ export default function StaticSiteDetailClient({ site: initialSite, venues }: { 
                 </select>
               </div>
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label style={labelStyle}>Dimensions</label>
-                  <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)" }}>
-                    {(["cm", "m"] as const).map((u) => (
-                      <button key={u} type="button" onClick={() => setUnit(u)} className="px-3 py-1 text-xs font-semibold" style={{ background: unit === u ? "rgba(212,255,79,0.15)" : "transparent", color: unit === u ? "#D4FF4F" : "#666" }}>{u}</button>
-                    ))}
-                  </div>
-                </div>
+                <label style={labelStyle}>Dimensions</label>
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Width ({unit})</label><input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={editForm.width_cm} onChange={(e) => setField("width_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.6" : "e.g. 60"} style={inputStyle} /></div>
-                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Height ({unit})</label><input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={editForm.height_cm} onChange={(e) => setField("height_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.9" : "e.g. 90"} style={inputStyle} /></div>
+                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Width (m)</label><input type="number" min={0} step={0.01} value={editForm.width_m} onChange={(e) => setField("width_m", e.target.value)} placeholder="e.g. 0.60" style={inputStyle} /></div>
+                  <div><label className="block text-xs mb-1" style={{ color: "#777" }}>Height (m)</label><input type="number" min={0} step={0.01} value={editForm.height_m} onChange={(e) => setField("height_m", e.target.value)} placeholder="e.g. 0.90" style={inputStyle} /></div>
                 </div>
               </div>
               <div><label style={labelStyle}>Photo</label>

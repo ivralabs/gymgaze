@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Layers, Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { suggestMonthlyImpressions, impressionSuggestionCaption } from "@/lib/staticSiteImpressions";
+import { mToCm } from "@/lib/dimensions";
 
 interface VenueRow {
   id: string;
@@ -97,8 +98,8 @@ export default function AddStaticSiteModal({
     label: "",
     site_type: "poster_frame",
     location_in_venue: "",
-    width_cm: "",
-    height_cm: "",
+    width_m: "",
+    height_m: "",
     notes: "",
     price_per_month: "",
     monthly_impressions: "",
@@ -108,7 +109,6 @@ export default function AddStaticSiteModal({
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [unit, setUnit] = useState<"cm" | "m">("cm");
 
   function set(key: string, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -128,8 +128,8 @@ export default function AddStaticSiteModal({
           label: form.label,
           site_type: form.site_type || "poster_frame",
           location_in_venue: form.location_in_venue || null,
-          width_cm: form.width_cm ? Math.round(parseFloat(form.width_cm) * (unit === "m" ? 100 : 1)) : null,
-          height_cm: form.height_cm ? Math.round(parseFloat(form.height_cm) * (unit === "m" ? 100 : 1)) : null,
+          width_cm: mToCm(form.width_m),
+          height_cm: mToCm(form.height_m),
           notes: form.notes || null,
           price_per_month: form.price_per_month !== "" ? parseFloat(form.price_per_month) : null,
           monthly_impressions: form.monthly_impressions !== "" ? parseInt(form.monthly_impressions) : null,
@@ -294,27 +294,17 @@ export default function AddStaticSiteModal({
             </select>
           </div>
 
-          {/* Width + Height with unit toggle */}
+          {/* Width + Height in meters */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label style={labelStyle}>Dimensions</label>
-              <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.10)" }}>
-                {(["cm", "m"] as const).map((u) => (
-                  <button key={u} type="button" onClick={() => setUnit(u)}
-                    className="px-3 py-1 text-xs font-semibold transition-colors"
-                    style={{ background: unit === u ? "rgba(212,255,79,0.15)" : "transparent", color: unit === u ? "#D4FF4F" : "#666" }}
-                  >{u}</button>
-                ))}
-              </div>
-            </div>
+            <label style={labelStyle}>Dimensions</label>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs mb-1" style={{ color: "#777" }}>Width ({unit})</label>
-                <input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={form.width_cm} onChange={(e) => set("width_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.6" : "e.g. 60"} style={inputStyle} />
+                <label className="block text-xs mb-1" style={{ color: "#777" }}>Width (m)</label>
+                <input type="number" min={0} step={0.01} value={form.width_m} onChange={(e) => set("width_m", e.target.value)} placeholder="e.g. 0.60" style={inputStyle} />
               </div>
               <div>
-                <label className="block text-xs mb-1" style={{ color: "#777" }}>Height ({unit})</label>
-                <input type="number" min={0} step={unit === "m" ? 0.01 : 1} value={form.height_cm} onChange={(e) => set("height_cm", e.target.value)} placeholder={unit === "m" ? "e.g. 0.9" : "e.g. 90"} style={inputStyle} />
+                <label className="block text-xs mb-1" style={{ color: "#777" }}>Height (m)</label>
+                <input type="number" min={0} step={0.01} value={form.height_m} onChange={(e) => set("height_m", e.target.value)} placeholder="e.g. 0.90" style={inputStyle} />
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import { Printer } from "lucide-react";
+import { fmtDimensionsM } from "@/lib/dimensions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,11 +84,7 @@ function fmtSiteId(uuid: string) {
 }
 
 function fmtDimensions(w: number | null, h: number | null): string {
-  if (!w && !h) return "—";
-  if (w && h) return `${w}×${h} cm`;
-  if (w) return `${w} cm wide`;
-  if (h) return `${h} cm tall`;
-  return "—";
+  return fmtDimensionsM(w, h);
 }
 
 function fmtSiteType(type: string | null): string {

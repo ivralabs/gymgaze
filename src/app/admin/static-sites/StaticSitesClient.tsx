@@ -9,6 +9,7 @@ import AddStaticSiteModal, {
   SITE_TYPE_LABELS,
   LOCATION_LABELS,
 } from "./AddStaticSiteModal";
+import { fmtDimensionsM } from "@/lib/dimensions";
 import { useRole } from "@/lib/useRole";
 
 interface VenueRow {
@@ -199,12 +200,12 @@ function SiteCard({
               {LOCATION_LABELS[site.location_in_venue] ?? site.location_in_venue}
             </span>
           )}
-          {(site.width_cm || site.height_cm) && (
+          {(site.width_cm != null || site.height_cm != null) && (
             <span
               className="text-xs px-2 py-0.5 rounded-lg font-mono"
               style={{ background: "rgba(255,255,255,0.06)", color: "#A3A3A3" }}
             >
-              {site.width_cm ?? "?"}×{site.height_cm ?? "?"} cm
+              {fmtDimensionsM(site.width_cm, site.height_cm, { compact: true })}
             </span>
           )}
         </div>

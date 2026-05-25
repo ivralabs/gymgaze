@@ -3,7 +3,7 @@
 // Renders the same deck the agency sees, embedded inside the admin Insights page.
 // Reuses all logic from PublicInsightsClient — just without the PIN gate and root layout.
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Monitor, Users, TrendingUp, MapPin, Eye, Clock, ChevronDown,
@@ -82,78 +82,181 @@ const VENUE_TYPE_COLORS: Record<string, string> = {
   "Other":              "#9CA3AF",
 };
 
-const INDUSTRIES: Record<string, { label: string; emoji: string; headline: string; bullets: string[] }> = {
+const IconGeneral = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="9" width="3" height="6" rx="0.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <rect x="6" y="5" width="3" height="10" rx="0.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <rect x="11" y="1" width="3" height="14" rx="0.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+  </svg>
+);
+const IconBanking = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="4" width="14" height="9" rx="1.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <line x1="1" y1="7" x2="15" y2="7" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <line x1="4" y1="10.5" x2="6" y2="10.5" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+const IconFMCG = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 3h1.5l1.5 6h6l1.5-5H5" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="7" cy="13" r="1" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <circle cx="11" cy="13" r="1" stroke="#D4FF4F" strokeWidth="1.5"/>
+  </svg>
+);
+const IconTelecoms = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 8c1.9-3.5 5.1-5 7-5s5.1 1.5 7 5" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M3.5 8c1.3-2 2.7-3 4.5-3s3.2 1 4.5 3" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="8" cy="11" r="1.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+  </svg>
+);
+const IconInsurance = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 2L3 4v4c0 3 2.5 5 5 6 2.5-1 5-3 5-6V4L8 2z" stroke="#D4FF4F" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M6 8.5l1.5 1.5 3-3" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+const IconAutomotive = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 10h12M4 10l1.5-4h5L12 10" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="5" cy="12" r="1.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+    <circle cx="11" cy="12" r="1.5" stroke="#D4FF4F" strokeWidth="1.5"/>
+  </svg>
+);
+const IconEvents = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 2l1.5 3.5 3.5.5-2.5 2.5.6 3.5L8 10.5 4.9 12l.6-3.5L3 6l3.5-.5L8 2z" stroke="#D4FF4F" strokeWidth="1.5" strokeLinejoin="round"/>
+  </svg>
+);
+const IconFitness = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 8h2M12 8h2M4 8h8M4 6v4M12 6v4" stroke="#D4FF4F" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="2.5" cy="8" r="1" stroke="#D4FF4F" strokeWidth="1"/>
+    <circle cx="13.5" cy="8" r="1" stroke="#D4FF4F" strokeWidth="1"/>
+  </svg>
+);
+
+type IndustryEntry = {
+  label: string;
+  icon: React.ReactElement;
+  headline: string;
+  bullets: string[];
+  keyMessage: string;
+  bestFormats: string[];
+};
+
+const INDUSTRIES: Record<string, IndustryEntry> = {
   general: {
-    label: "General", emoji: "📊",
+    label: "General",
+    icon: <IconGeneral />,
     headline: "A captive, health-conscious audience with above-average disposable income.",
     bullets: [
-      "Active gym members visit up to 5× per week",
-      "60+ minutes average dwell time per session",
-      "Zero ad-skipping — screens are part of the environment",
+      "Active gym members visit up to 5× per week — unmatched natural frequency",
+      "60+ minutes average dwell time per session, with no scroll-away or skip button",
+      "LSM 7–10 skew: gym membership self-selects for spending power",
+      "Zero ad-skipping — screens are an organic part of the gym environment",
+      "Attention Quality Score of 8.5/10 vs 2.1 for roadside formats",
     ],
+    keyMessage: "GymGaze delivers premium eyeballs in a premium environment — with the dwell time to actually land your message.",
+    bestFormats: ["Prime 15s for brand awareness", "Standard 7s for frequency & recall", "Takeover for launches"],
   },
   banking: {
-    label: "Banking & Financial Services", emoji: "🏦",
-    headline: "Reach LSM 7–10 professionals with financial decisions to make.",
+    label: "Banking & Financial Services",
+    icon: <IconBanking />,
+    headline: "Reach LSM 7–10 professionals with financial decisions on their minds.",
     bullets: [
-      "Gym membership signals disposable income — pre-qualified audience",
-      "60+ min dwell time for complex financial messaging",
-      "Professionals, decision-makers, and business owners",
+      "Gym membership is a proven proxy for disposable income — a pre-qualified financial audience",
+      "60+ min dwell time gives complex financial messaging room to breathe",
+      "Professionals, business owners, and decision-makers dominate the membership base",
+      "Multiple weekly touchpoints build the trust required for high-consideration products",
+      "Post-workout endorphin state increases receptiveness and positive brand association",
     ],
+    keyMessage: "You can't buy a more financially qualified captive audience than the one already paying R1 000+/month to be there.",
+    bestFormats: ["Prime 15s for product education", "Standard 30s for trust-building sequences", "Contextual 7s for rate/offer recall"],
   },
   fmcg: {
-    label: "FMCG", emoji: "🛒",
-    headline: "High-frequency impressions to health-conscious shoppers.",
+    label: "FMCG",
+    icon: <IconFMCG />,
+    headline: "High-frequency impressions to health-conscious shoppers who act fast.",
     bullets: [
-      "Members shop for nutrition, supplements, and lifestyle products",
-      "Multiple weekly visits = high campaign frequency",
-      "Post-workout mindset = receptive to health & food brands",
+      "Members actively shop for nutrition, supplements, and lifestyle products weekly",
+      "3–5 visits per week = campaign frequency that rivals any digital channel",
+      "Post-workout mindset primes receptiveness to health, food, and beverage brands",
+      "Nutritional awareness is high — on-screen product claims land with credibility",
+      "Female membership growth (45%+ in many networks) expands FMCG reach further",
     ],
+    keyMessage: "Catch health-driven consumers in the exact mindset where your product is most relevant — and hit them 5× a week.",
+    bestFormats: ["Standard 7s for maximum frequency", "Prime 15s for new product launches", "Seasonal takeovers for promotion windows"],
   },
   telecoms: {
-    label: "Telecoms & Streaming", emoji: "📱",
-    headline: "Young adults on their phones — even at the gym.",
+    label: "Telecoms & Streaming",
+    icon: <IconTelecoms />,
+    headline: "Young, digitally native adults — even when they're offline, they're thinking about their phone.",
     bullets: [
-      "18–34 demographic dominates gym membership",
-      "Long dwell time = time to absorb product features",
-      "Ideal for data, streaming, and device upgrade campaigns",
+      "18–34 demographic is the dominant gym membership cohort in South Africa",
+      "60+ min dwell time gives data, streaming, and device campaigns space to convert",
+      "No phone in hand = undivided visual attention on your screen message",
+      "Ideal for upgrade cycles, SIM-only plan switches, and streaming service trials",
+      "App-first audience: QR + screen combos drive measurable digital conversion",
     ],
+    keyMessage: "The audience that lives on their phone is staring at your screen for an hour — there's no better moment to steal the upgrade.",
+    bestFormats: ["Prime 15s with QR for direct response", "Standard 7s for plan awareness", "Contextual 15s for device launches"],
   },
   insurance: {
-    label: "Insurance & Healthcare", emoji: "🏥",
-    headline: "The most health-conscious consumer segment, already self-selected.",
+    label: "Insurance & Healthcare",
+    icon: <IconInsurance />,
+    headline: "The most health-conscious consumer segment in SA, already self-selected.",
     bullets: [
-      "Active gym members are ideal insurance risk profiles",
-      "Health-first mindset aligns with wellness product messaging",
-      "Consistent weekly touchpoints for trust-building campaigns",
+      "Active gym members represent the lowest-risk, highest-value insurance cohort",
+      "Health-first mindset makes wellness, gap cover, and life product messaging highly resonant",
+      "Discovery Vitality, Momentum Multiply — gym culture and health insurance are already linked",
+      "3–5 weekly visits provide consistent touchpoints to build trust for considered purchases",
+      "Older membership segments (35–55) are peak life and disability insurance buyers",
     ],
+    keyMessage: "Your ideal policyholder is already paying to stay healthy — meet them where they prove it every day.",
+    bestFormats: ["Prime 30s for policy education", "Standard 15s for brand recall", "Sequential 7s to build the consideration journey"],
   },
   automotive: {
-    label: "Automotive", emoji: "🚗",
-    headline: "Aspirational lifestyle audience in a premium environment.",
+    label: "Automotive",
+    icon: <IconAutomotive />,
+    headline: "Aspirational lifestyle audience in a premium, performance-driven environment.",
     bullets: [
-      "Gym culture = aspiration, performance, and achievement",
-      "Income profile aligns with vehicle purchase decisions",
-      "Long dwell time suits detailed product storytelling",
+      "Gym culture is built on aspiration, performance, and achievement — the same values auto brands own",
+      "Income profile (LSM 8–10 skew) aligns directly with new vehicle purchase decisions",
+      "60+ min dwell time is unmatched for detailed product storytelling and spec communication",
+      "Test drive and finance CTAs perform well in environments that reward action-takers",
+      "Seasonal campaign windows (Q4, model year-end) can own gym screens for high-impact launches",
     ],
+    keyMessage: "The person who wakes up at 5 AM to train is the same person who researches their next car at 9 PM — reach them in both modes.",
+    bestFormats: ["Prime 30s for model storytelling", "Standard 15s for offer/finance recall", "Takeover for new model launches"],
   },
   events: {
-    label: "Events & Entertainment", emoji: "🎟️",
-    headline: "High-frequency reach for time-sensitive campaigns.",
+    label: "Events & Entertainment",
+    icon: <IconEvents />,
+    headline: "High-frequency reach for time-sensitive campaigns that need to move fast.",
     bullets: [
-      "Multiple visits per week = rapid awareness build",
-      "Young, socially active audience primed for event discovery",
-      "Ideal for countdowns, launches, and ticket promotions",
+      "3–5 visits per week means a 4-week campaign reaches the same person 12–20 times",
+      "Young, socially active 18–34 audience is the primary events and entertainment consumer",
+      "Countdown mechanics work powerfully on gym screens — urgency drives ticket sales",
+      "Music, sport, and lifestyle events all align with the gym audience's identity",
+      "Screen format supports dynamic creative — update messaging as the event approaches",
     ],
+    keyMessage: "No media channel builds event buzz faster than a screen your audience sees every single day of the week.",
+    bestFormats: ["Countdown 15s for urgency-driven campaigns", "Standard 7s for awareness at scale", "Prime 30s for festival/major event storytelling"],
   },
   fitness: {
-    label: "Fitness Brands", emoji: "💪",
-    headline: "Speak to an audience that already lives your brand values.",
+    label: "Fitness Brands",
+    icon: <IconFitness />,
+    headline: "Speak directly to an audience that already lives your brand values — every day.",
     bullets: [
-      "100% fitness-engaged audience — zero wasted impressions",
-      "In-gym context makes fitness product ads feel native",
-      "Supplement, apparel, and equipment brands thrive here",
+      "100% fitness-engaged audience — zero demographic waste, zero contextual mismatch",
+      "In-gym placement makes supplement, apparel, and equipment ads feel native and credible",
+      "Members are in active purchase consideration: gear, nutrition, apparel, recovery",
+      "Peer influence is high in gym settings — seeing a brand repeatedly creates social proof",
+      "New year, summer, and sporting season windows drive predictable purchase spikes",
     ],
+    keyMessage: "There is no more natural or credible environment for a fitness brand than the gym floor — your ad belongs here.",
+    bestFormats: ["Standard 7s for product recall", "Prime 15s for product education & differentiation", "Seasonal takeovers for launch windows"],
   },
 };
 
@@ -488,27 +591,53 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
   const totalMembers = venues.reduce((s, v) => s + (v.active_members ?? 0), 0);
   const totalMonthly = venues.reduce((s, v) => s + (v.monthly_entries ?? 0), 0);
   const ots = totalMonthly * screens.length;
+
+  function handleSelect(key: string) {
+    setSelected(key);
+    setOpen(false);
+  }
+
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 }}>
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#999" }}>Tailor this deck for</p>
         <div className="relative">
-          <button onClick={() => setOpen((p) => !p)} className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)" }}>
-            <span>{industry.emoji} {industry.label}</span>
+          <button
+            onClick={() => setOpen((p) => !p)}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-white transition-all"
+            style={{
+              background: "rgba(212,255,79,0.08)",
+              border: "1px solid rgba(212,255,79,0.2)",
+              boxShadow: open ? "0 0 0 2px rgba(212,255,79,0.25)" : "0 0 8px rgba(212,255,79,0.12)",
+            }}
+          >
+            <span className="flex items-center gap-2">{industry.icon} {industry.label}</span>
             <ChevronDown size={16} color="#D4FF4F" className={`transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
           {open && (
-            <div className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20" style={{ background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)" }}>
+            <div
+              className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden"
+              style={{ background: "#1A1A1A", border: "1px solid rgba(255,255,255,0.12)", zIndex: 50 }}
+            >
               {Object.entries(INDUSTRIES).map(([key, ind]) => (
-                <button key={key} onClick={() => { setSelected(key); setOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm" style={{ background: selected === key ? "rgba(212,255,79,0.08)" : "transparent", color: selected === key ? "#D4FF4F" : "#A3A3A3" }}>
-                  {ind.emoji} {ind.label}
+                <button
+                  key={key}
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); handleSelect(key); }}
+                  className="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2"
+                  style={{ background: selected === key ? "rgba(212,255,79,0.08)" : "transparent", color: selected === key ? "#D4FF4F" : "#A3A3A3" }}
+                >
+                  {ind.icon} {ind.label}
                 </button>
               ))}
             </div>
           )}
         </div>
       </div>
-      <div className="p-5">
+      <div
+        className="p-5 transition-opacity duration-200"
+        style={{ borderLeft: "3px solid rgba(212,255,79,0.35)" }}
+      >
         <p className="text-base font-bold text-white mb-4 leading-snug" style={{ fontFamily: "Inter Tight, sans-serif" }}>{industry.headline}</p>
         <ul className="space-y-2.5 mb-5">
           {industry.bullets.map((b) => (
@@ -518,6 +647,30 @@ function IndustryPanel({ venues, screens }: { venues: Venue[]; screens: Screen[]
             </li>
           ))}
         </ul>
+
+        {/* Key Message */}
+        <div className="mb-4 pl-3" style={{ borderLeft: "2px solid #D4FF4F" }}>
+          <p className="text-sm italic leading-relaxed" style={{ color: "#E8E8E8", fontSize: "0.9rem" }}>
+            &ldquo;{industry.keyMessage}&rdquo;
+          </p>
+        </div>
+
+        {/* Best Ad Formats */}
+        <div className="mb-5">
+          <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#666" }}>Best Ad Formats</p>
+          <div className="flex flex-wrap gap-2">
+            {industry.bestFormats.map((f) => (
+              <span
+                key={f}
+                className="text-xs font-medium px-2.5 py-1 rounded-full"
+                style={{ background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.3)", color: "#D4FF4F" }}
+              >
+                {f}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-3 gap-2">
           {[{ label: "Reach", value: fmt(totalMembers) }, { label: "Monthly OTS", value: fmt(ots) }, { label: "Avg Dwell", value: "60+ min" }].map(({ label, value }) => (
             <div key={label} className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>

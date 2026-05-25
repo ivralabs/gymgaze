@@ -27,10 +27,14 @@ export async function GET(req: NextRequest) {
     const origin = req.nextUrl.origin;
     const filename = sp.get("filename") || "GymGaze-Rate-Card.pdf";
 
+    // source=static-sites → render /static-sites-print instead of /rate-card-print
+    const source = sp.get("source");
+    const printRoute = source === "static-sites" ? "/static-sites-print" : "/rate-card-print";
+
     // Build the print page URL with all rate card params forwarded
-    const printUrl = new URL("/rate-card-print", origin);
+    const printUrl = new URL(printRoute, origin);
     sp.forEach((value, key) => {
-      if (key !== "filename") printUrl.searchParams.set(key, value);
+      if (key !== "filename" && key !== "source") printUrl.searchParams.set(key, value);
     });
     printUrl.searchParams.set("noAutoPrint", "1");
 

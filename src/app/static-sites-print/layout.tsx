@@ -1,6 +1,5 @@
 // This layout has NO <html> or <body> — it inherits from root layout.
-// We inject print-specific styles and ensure clean white background.
-// Copied exactly from /rate-card-print/layout.tsx
+// Near-identical to /rate-card-print/layout.tsx — same A4 landscape CSS.
 import "../globals.css";
 
 export default function StaticSitesPrintLayout({
@@ -34,8 +33,7 @@ export default function StaticSitesPrintLayout({
               background: white !important;
               min-height: 0 !important;
             }
-            /* SCREEN ONLY: add visual gap between pages so they look like a deck.
-               In print this is removed so pages don't create extra blank breaks. */
+            /* SCREEN ONLY: add visual gap between pages so they look like a deck. */
             @media screen {
               [data-print-page="true"] {
                 margin-bottom: 16px;
@@ -43,8 +41,7 @@ export default function StaticSitesPrintLayout({
               }
             }
 
-            /* PRINT: force A4 landscape using explicit dimensions (more reliable across
-               Safari/Chrome than 'A4 landscape' which can be overridden by dialog toggle). */
+            /* PRINT: force A4 landscape using explicit dimensions */
             @media print {
               @page {
                 size: 297mm 210mm;
@@ -69,16 +66,11 @@ export default function StaticSitesPrintLayout({
                 z-index: auto !important;
                 background: white !important;
               }
-              /* Reset the rate card root container in print */
               #rate-card-root {
                 padding: 0 !important;
                 margin: 0 !important;
               }
-              /* Hide the print toolbar + spacer */
               .no-print { display: none !important; }
-              /* Every printable page = exactly one A4 landscape canvas.
-                 1123x780 fits within 1123x794 (96dpi A4 landscape).
-                 NO margin — page-break handles separation. */
               [data-print-page="true"] {
                 width: 1123px !important;
                 height: 780px !important;
@@ -99,13 +91,10 @@ export default function StaticSitesPrintLayout({
                 page-break-after: auto !important;
                 break-after: auto !important;
               }
-              /* Force all immediate children of a print page to not stretch past */
               [data-print-page="true"] > * {
                 max-height: 780px !important;
                 overflow: hidden !important;
               }
-
-              /* Kill the globals.css print rule forcing dark body */
               * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;

@@ -46,7 +46,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "SELL",
     items: [
-      { href: "/admin/rate-card",   slug: "rate-card",   icon: Calculator,      label: "Rate Card" },
+      { href: "/admin/rate-card",              slug: "rate-card",              icon: Calculator, label: "Rate Card" },
+      { href: "/admin/static-sites/rate-card", slug: "static-sites-rate-card", icon: FileText,   label: "Static Sites Rate Card" },
       { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Audience & Data" },
       { href: "/admin/media-kit",   slug: "media-kit",   icon: FileText,        label: "Media Kit" },
       { href: "/admin/pipeline",    slug: "pipeline",    icon: TrendingUp,      label: "Pipeline" },

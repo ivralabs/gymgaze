@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { createClient as createPureServiceClient } from "@supabase/supabase-js";
-import StaticSitesPrint from "./StaticSitesPrint";
+import StaticSitesRateCardClient from "./StaticSitesRateCardClient";
 
 function serviceClient() {
   return createPureServiceClient(
@@ -11,12 +11,7 @@ function serviceClient() {
   );
 }
 
-export default async function StaticSitesPrintPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
-}) {
-  const params = await searchParams;
+export default async function StaticSitesRateCardPage() {
   const svc = serviceClient();
 
   const { data: sites } = await svc
@@ -27,19 +22,9 @@ export default async function StaticSitesPrintPage({
     .eq("is_active", true)
     .order("created_at");
 
-  const allSites = sites ?? [];
-  const selectedSiteIds = params.sites ? params.sites.split(",").filter(Boolean) : [];
-  const filteredSites =
-    selectedSiteIds.length > 0
-      ? allSites.filter((s) => selectedSiteIds.includes(s.id))
-      : allSites;
-
   return (
-    <StaticSitesPrint
-      sites={filteredSites as unknown as Parameters<typeof StaticSitesPrint>[0]["sites"]}
-      clientName={params.client ?? ""}
-      flightStart={params.start ?? ""}
-      flightEnd={params.end ?? ""}
+    <StaticSitesRateCardClient
+      sites={(sites ?? []) as unknown as Parameters<typeof StaticSitesRateCardClient>[0]["sites"]}
     />
   );
 }

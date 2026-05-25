@@ -120,6 +120,9 @@ export default async function ScreensPage() {
     is_active: boolean | null;
     photo_url: string | null;
     notes: string | null;
+    price_per_month: number | null;
+    monthly_impressions: number | null;
+    pricing_tier: string | null;
     created_at: string;
     venues: { id: string; name: string; city: string | null } | null;
   }

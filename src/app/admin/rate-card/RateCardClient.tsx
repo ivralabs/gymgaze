@@ -977,6 +977,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div style={{ fontSize: 64, fontWeight: 900, color: "#ffffff", letterSpacing: "-0.03em", fontFamily: "Inter Tight, sans-serif", lineHeight: 1, textAlign: "center" }}>
                         MEDIA RATE CARD
                       </div>
+                      <div style={{ width: 60, height: 3, background: "#D4FF4F", borderRadius: 2, margin: "16px auto 0" }} />
                       <div style={{ marginTop: 20, fontSize: 22, fontWeight: 600, color: "#D4FF4F", letterSpacing: "-0.01em" }}>
                         {clientName || "GymGaze Gym DOOH Network"}
                       </div>
@@ -1068,11 +1069,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                     const nationalReach = quoteTotals.reach;
 
                     return (
-                      <div className="page-break" style={{ ...PAGE_STYLE, background: "#ffffff" }}>
+                      <div className="page-break" style={{ ...PAGE_STYLE, background: "#F7F7F5" }}>
                         <PageHeader rightContent="Campaign Packages" />
 
-                        <div style={{ padding: "20px 32px 8px", flex: 0 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#D4FF4F", background: "rgba(212,255,79,0.08)", border: "1px solid rgba(212,255,79,0.2)", borderRadius: 6, display: "inline-block", padding: "4px 12px" }}>Pre-Built Packages</div>
+                        <div style={{ padding: "8px 32px 0", fontSize: 13, color: "#888" }}>
+                          Choose a package or build a custom campaign — all prices calculated at {tierLabel} {slotLabel} · R{effectiveCpm} CPM
                         </div>
 
                         <div style={{ display: "flex", gap: 16, padding: "16px 32px", flex: 1 }}>
@@ -1105,23 +1106,64 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               tagColor: "#C084FC",
                             },
                           ].map((pkg) => (
-                            <div key={pkg.name} style={{ flex: 1, background: "#111111", borderRadius: 12, padding: "24px", display: "flex", flexDirection: "column", gap: 12, border: pkg.tag === "POPULAR" ? "1px solid rgba(212,255,79,0.3)" : "1px solid rgba(255,255,255,0.06)" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", fontFamily: "Inter Tight, sans-serif" }}>{pkg.name}</div>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: pkg.tagColor, background: `${pkg.tagColor}1A`, border: `1px solid ${pkg.tagColor}44`, borderRadius: 10, padding: "2px 8px", letterSpacing: "0.08em" }}>{pkg.tag}</div>
-                              </div>
-                              <div style={{ fontSize: 12, color: "#666" }}>{pkg.desc}</div>
-                              <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
-                              <div style={{ fontSize: 32, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.02em", lineHeight: 1 }}>{pkg.price}</div>
-                              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <div key={pkg.name} style={{
+                              flex: 1,
+                              background: pkg.tag === "POPULAR" ? "#0a0a0a" : "#FFFFFF",
+                              borderRadius: 16,
+                              padding: "28px 24px",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 14,
+                              border: pkg.tag === "POPULAR" ? "2px solid #D4FF4F" : "1.5px solid #E5E7EB",
+                              boxShadow: pkg.tag === "POPULAR" ? "0 4px 24px rgba(212,255,79,0.15)" : "0 2px 8px rgba(0,0,0,0.04)",
+                              position: "relative",
+                              overflow: "hidden",
+                            }}>
+                              {/* Tag badge — top right */}
+                              <div style={{
+                                position: "absolute", top: 16, right: 16,
+                                fontSize: 10, fontWeight: 800, color: pkg.tag === "POPULAR" ? "#0a0a0a" : pkg.tagColor,
+                                background: pkg.tag === "POPULAR" ? "#D4FF4F" : `${pkg.tagColor}22`,
+                                border: pkg.tag === "POPULAR" ? "none" : `1px solid ${pkg.tagColor}55`,
+                                borderRadius: 20, padding: "3px 10px", letterSpacing: "0.1em",
+                              }}>{pkg.tag}</div>
+
+                              {/* Package name */}
+                              <div style={{
+                                fontSize: 18, fontWeight: 800,
+                                color: pkg.tag === "POPULAR" ? "#ffffff" : "#0a0a0a",
+                                fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.01em",
+                                paddingRight: 60,
+                              }}>{pkg.name}</div>
+
+                              {/* Description */}
+                              <div style={{ fontSize: 12, color: pkg.tag === "POPULAR" ? "#999" : "#888" }}>{pkg.desc}</div>
+
+                              {/* Divider */}
+                              <div style={{ height: 1, background: pkg.tag === "POPULAR" ? "rgba(255,255,255,0.08)" : "#F0F0F0" }} />
+
+                              {/* Price — BIG */}
+                              <div style={{
+                                fontSize: 38, fontWeight: 900,
+                                color: pkg.tag === "POPULAR" ? "#D4FF4F" : "#0a0a0a",
+                                fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1,
+                              }}>{pkg.price}</div>
+
+                              {/* Stats rows */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
                                 {[
                                   { label: "Est. Reach", value: pkg.reach },
                                   { label: "Screens", value: pkg.screens.toString() },
                                   { label: "Duration", value: `${weeks} weeks` },
                                 ].map(({ label, value }) => (
-                                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                                    <span style={{ color: "#666" }}>{label}</span>
-                                    <span style={{ color: "#ccc", fontWeight: 600 }}>{value}</span>
+                                  <div key={label} style={{
+                                    display: "flex", justifyContent: "space-between",
+                                    padding: "5px 0",
+                                    borderBottom: `1px solid ${pkg.tag === "POPULAR" ? "rgba(255,255,255,0.06)" : "#F5F5F5"}`,
+                                    fontSize: 12,
+                                  }}>
+                                    <span style={{ color: pkg.tag === "POPULAR" ? "#666" : "#999" }}>{label}</span>
+                                    <span style={{ color: pkg.tag === "POPULAR" ? "#ffffff" : "#0a0a0a", fontWeight: 600 }}>{value}</span>
                                   </div>
                                 ))}
                               </div>
@@ -1421,59 +1463,87 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                     <PageHeader rightContent={clientName ? `Investment Summary — ${clientName}` : "Investment Summary"} />
 
                     <div style={{ padding: "24px 32px", flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
-                      {/* Pricing table */}
-                      {pricingTiers.length > 0 && (
-                        <div>
-                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 10 }}>Pricing Tiers</div>
-                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                            <thead>
-                              <tr style={{ background: "#F9FAFB" }}>
-                                {["Tier", "Duration", "CPM", "Min Spend", "Description"].map((h) => (
-                                  <th key={h} style={{ padding: "8px 14px", textAlign: "left", fontWeight: 700, color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {pricingTiers.map((tier) => {
-                                const isSelected = tier.cpm_zar === effectiveCpm;
-                                return (
-                                  <tr key={tier.id} style={{ borderBottom: "1px solid #F3F4F6", borderLeft: isSelected ? "4px solid #D4FF4F" : "4px solid transparent" }}>
-                                    <td style={{ padding: "9px 14px", fontWeight: isSelected ? 700 : 500, color: "#111" }}>{tier.label}{isSelected ? " ✓" : ""}</td>
-                                    <td style={{ padding: "9px 14px", color: "#555" }}>{weeks} weeks</td>
-                                    <td style={{ padding: "9px 14px", fontWeight: 600, color: isSelected ? "#0a0a0a" : "#555" }}>R{tier.cpm_zar}</td>
-                                    <td style={{ padding: "9px 14px", color: "#555" }}>R{tier.min_spend.toLocaleString("en-ZA")}</td>
-                                    <td style={{ padding: "9px 14px", color: "#888", fontSize: 11 }}>{tier.description ?? "—"}</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
 
-                      {/* 2-col: investment + terms */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, flex: 1 }}>
-                        {/* Investment summary */}
-                        <div style={{ background: "#111111", border: "1px solid #E5E7EB", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#D4FF4F", marginBottom: 4 }}>Investment Summary</div>
-                          <div style={{ fontSize: 12, color: "#666" }}>Flight Duration</div>
-                          <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "Inter Tight, sans-serif" }}>{weeks} weeks</div>
-                          <div style={{ fontSize: 12, color: "#666", marginTop: 8 }}>Total Investment · {tierLabel} {slotLabel}</div>
-                          <div style={{ fontSize: 40, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{fmtR(Math.round(quoteTotals.cost))}</div>
-                          <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>{tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM · {weeks} weeks</div>
+                      {/* TOP ROW: big investment hero + flight details */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+
+                        {/* Investment hero tile */}
+                        <div style={{
+                          background: "#0a0a0a", borderRadius: 16, padding: "28px 32px",
+                          display: "flex", flexDirection: "column", gap: 8,
+                          border: "1px solid rgba(212,255,79,0.2)",
+                        }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.12em", color: "#D4FF4F" }}>Total Investment</div>
+                          <div style={{ fontSize: 48, fontWeight: 900, color: "#D4FF4F", fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1, marginTop: 4 }}>{fmtR(Math.round(quoteTotals.cost))}</div>
+                          <div style={{ fontSize: 13, color: "#666", marginTop: 4 }}>{tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM</div>
                         </div>
+
+                        {/* Flight details tile */}
+                        <div style={{
+                          background: "#F9FAFB", borderRadius: 16, padding: "28px 32px",
+                          display: "flex", flexDirection: "column", gap: 14,
+                          border: "1px solid #E5E7EB",
+                        }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.12em", color: "#888" }}>Flight Details</div>
+                          {[
+                            { label: "Duration", value: `${weeks} weeks` },
+                            { label: "Venues", value: quoteVenues.length.toString() },
+                            { label: "Total Screens", value: quoteTotals.screens.toString() },
+                            { label: "Total Reach", value: fmtFull(quoteTotals.reach) },
+                            { label: "Cost Per Unique", value: `R${quoteTotals.costPerUnique.toFixed(2)}` },
+                          ].map(({ label, value }) => (
+                            <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderBottom: "1px solid #F0F0F0", paddingBottom: 6 }}>
+                              <span style={{ color: "#888" }}>{label}</span>
+                              <span style={{ color: "#0a0a0a", fontWeight: 700 }}>{value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* BOTTOM ROW: pricing tiers table (compact) + terms */}
+                      <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 20, flex: 1 }}>
+
+                        {/* Pricing tiers */}
+                        {pricingTiers.length > 0 && (
+                          <div>
+                            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#888", marginBottom: 10 }}>Pricing Tiers</div>
+                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                              <thead>
+                                <tr style={{ background: "#F9FAFB" }}>
+                                  {["Tier", "Slot", "CPM", "Min Spend"].map((h) => (
+                                    <th key={h} style={{ padding: "7px 12px", textAlign: "left", fontWeight: 700, color: "#888", fontSize: 10, textTransform: "uppercase" as const, letterSpacing: "0.06em", borderBottom: "2px solid #E5E7EB" }}>{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pricingTiers.map((tier) => {
+                                  const isSelected = tier.cpm_zar === effectiveCpm;
+                                  return (
+                                    <tr key={tier.id} style={{ borderBottom: "1px solid #F3F4F6", background: isSelected ? "rgba(212,255,79,0.06)" : "transparent", borderLeft: isSelected ? "3px solid #D4FF4F" : "3px solid transparent" }}>
+                                      <td style={{ padding: "8px 12px", fontWeight: isSelected ? 700 : 500, color: "#111", fontSize: 12 }}>{tier.label}{isSelected ? " ✓" : ""}</td>
+                                      <td style={{ padding: "8px 12px", color: "#555", fontSize: 12 }}>{tier.duration_sec}s</td>
+                                      <td style={{ padding: "8px 12px", fontWeight: isSelected ? 700 : 500, color: isSelected ? "#0a0a0a" : "#555", fontSize: 12 }}>R{tier.cpm_zar}</td>
+                                      <td style={{ padding: "8px 12px", color: "#555", fontSize: 12 }}>R{tier.min_spend.toLocaleString("en-ZA")}</td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+
                         {/* Terms */}
-                        <div style={{ border: "1px solid #E5E7EB", borderRadius: 12, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 10 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 4 }}>Terms &amp; Contact</div>
+                        <div style={{ background: "#F9FAFB", borderRadius: 12, padding: "20px 24px", border: "1px solid #E5E7EB" }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#888", marginBottom: 12 }}>Terms &amp; Contact</div>
                           {[
                             { label: "Minimum Spend", value: `R${pricingTiers[0]?.min_spend?.toLocaleString("en-ZA") ?? "2,500"}` },
                             { label: "Contact", value: "hello@gymgaze.co.za" },
                             { label: "Quote Validity", value: "30 days from issue" },
                             { label: "Booking", value: "Subject to availability" },
                           ].map(({ label, value }) => (
-                            <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #F9FAFB", fontSize: 12 }}>
+                            <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid #EEEEEE", fontSize: 12 }}>
                               <span style={{ color: "#888", fontWeight: 500 }}>{label}</span>
-                              <span style={{ color: "#0a0a0a", fontWeight: 600 }}>{value}</span>
+                              <span style={{ color: "#0a0a0a", fontWeight: 700 }}>{value}</span>
                             </div>
                           ))}
                         </div>

@@ -12,8 +12,14 @@ async function getBrowser() {
 
   if (isVercel) {
     return puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: { width: 1400, height: 900 },
+      args: [
+        ...chromium.args,
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--single-process",
+        "--no-zygote",
+      ],
+      defaultViewport: { width: 1200, height: 800 },
       executablePath: await chromium.executablePath(),
       headless: true,
     });
@@ -70,19 +76,22 @@ export async function GET(req: NextRequest) {
       await page.setCookie(...cookies);
     }
 
-    await page.setViewport({ width: 1400, height: 900 });
-    await page.goto(printUrl.toString(), { waitUntil: "domcontentloaded", timeout: 45000 });
-    // Wait for the actual print pages to be in the DOM (not for unrelated network)
-    try {
-      await page.waitForSelector('[data-print-page="true"]', { timeout: 15000 });
-    } catch {
-      // continue anyway — better a partial PDF than no PDF
-    }
-    // Give images a moment to settle
-    await new Promise(r => setTimeout(r, 2500));
+    await page.setViewport({ width: 1200, height: 800 });
 
-    // Force print media so our print CSS is applied
+    // Force print media BEFORE navigation so the right CSS applies on first paint
     await page.emulateMediaType("print");
+
+    await page.goto(printUrl.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
+
+    // Wait for the actual print pages to be in the DOM
+    try {
+      await page.waitForSelector('[data-print-page="true"]', { timeout: 12000 });
+    } catch {
+      // continue anyway
+    }
+
+    // Give images a moment to settle
+    await new Promise(r => setTimeout(r, 2000));
 
     const pdf = await page.pdf({
       width: "297mm",

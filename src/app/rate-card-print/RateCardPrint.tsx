@@ -420,17 +420,7 @@ export default function RateCardPrint({
             <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
               {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
             </div>
-            {clientLocations.length > 0 && (
-              <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", flexWrap: "wrap", maxWidth: 700, margin: "8px auto 0" }}>
-                <span style={{ color: "#555", flexShrink: 0 }}>Client Locations:</span>
-                <span>{clientLocations.map((l) => l.address).join(" · ")}</span>
-              </div>
-            )}
-            {clientLocations.length > 0 && radius != null && (
-              <div style={{ marginTop: 6, fontSize: 12, color: "#666", textAlign: "center" }}>
-                Venues within {radius}km of client locations
-              </div>
-            )}
+
             <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
               <div style={{ background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.3)", borderRadius: 20, padding: "5px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 700 }}>
                 {tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM
@@ -786,21 +776,9 @@ export default function RateCardPrint({
                           </div>
                         </div>
 
-                        {/* Narrative line + GPS distance */}
+                        {/* Narrative line */}
                         <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
                           This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
-                          {v.latitude != null && v.longitude != null && clientLocations.length > 0 ? (() => {
-                            const near = nearestLocation(v.latitude, v.longitude, clientLocations);
-                            return near ? (
-                              <span style={{ marginLeft: 8, color: "#555" }}>
-                                📍 Nearest: <strong style={{ color: "#0a0a0a" }}>{near.address}</strong> — <strong style={{ color: "#0a0a0a" }}>{near.distanceKm.toFixed(1)} km</strong>
-                              </span>
-                            ) : null;
-                          })() : v.latitude != null && v.longitude != null ? (
-                            <span style={{ marginLeft: 8, color: "#888" }}>
-                              📍 {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
-                            </span>
-                          ) : null}
                         </div>
 
                         {/* Data grid */}
@@ -825,6 +803,16 @@ export default function RateCardPrint({
                             </div>
                           );
                         })()}
+
+                        {/* Proximity info — white space between data grid and spec strip */}
+                        {v.latitude != null && v.longitude != null && clientLocations.length > 0 ? (() => {
+                          const near = nearestLocation(v.latitude, v.longitude, clientLocations);
+                          return near ? (
+                            <div style={{ padding: "7px 32px", borderTop: "1px solid #E5E7EB" }}>
+                              <span style={{ fontSize: 11, color: "#999" }}>📍 Nearest client location: <strong style={{ color: "#777", fontWeight: 600 }}>{near.address}</strong> — {near.distanceKm.toFixed(1)} km</span>
+                            </div>
+                          ) : null;
+                        })() : null}
 
                         {/* Spec strip */}
                         {(() => {

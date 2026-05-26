@@ -512,7 +512,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   value: "8.5 / 10",
                   label: "Attention Quality Score",
                   sub: "Captive, in-venue environment vs 0.5/10 for scrolling social",
-                  accent: LIME,
+                  accent: DARK,
                 },
                 {
                   value: fmtNum(Math.round(totalActiveMembers / Math.max(venueCount, 1))),
@@ -913,7 +913,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                       <td style={{ padding: "5px 8px", color: DARK, fontWeight: 600, textAlign: "right" }}>{pv.screens}</td>
                       <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(pv.grossAdRevenue))}</td>
                       <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(pv.rentalFee)}</td>
-                      <td style={{ padding: "5px 8px", color: isActive ? DARK : "#ef4444", textAlign: "right", fontWeight: isActive ? 600 : 400 }}>{fmtR(rentalOwed)}</td>
+                      <td style={{ padding: "5px 8px", color: isActive ? DARK : "#b91c1c", textAlign: "right", fontWeight: isActive ? 600 : 400 }}>{fmtR(rentalOwed)}</td>
                       <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(pv.partnerAdShare))}</td>
                       <td style={{ padding: "5px 8px", fontWeight: 700, color: DARK, textAlign: "right" }}>{fmtR(Math.round(pv.partnerAdShare + rentalOwed))}</td>
                       <td style={{ padding: "5px 8px", textAlign: "center" }}>
@@ -940,7 +940,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                       <td colSpan={3} style={{ padding: "8px 8px", fontWeight: 800, color: DARK, fontSize: 11 }}>TOTAL</td>
                       <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalGrossAdRevenue))}</td>
                       <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalRentalFees))}</td>
-                      <td style={{ padding: "8px 8px", fontWeight: 900, color: totalRentalOwed === 0 ? "#ef4444" : DARK, textAlign: "right", fontSize: 11 }}>{fmtR(Math.round(totalRentalOwed))}</td>
+                      <td style={{ padding: "8px 8px", fontWeight: 900, color: totalRentalOwed === 0 ? "#b91c1c" : DARK, textAlign: "right", fontSize: 11 }}>{fmtR(Math.round(totalRentalOwed))}</td>
                       <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalPartnerAdShare))}</td>
                       <td style={{ padding: "8px 8px", fontWeight: 900, color: DARK, textAlign: "right", fontSize: 13, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalPartnerAdShare + totalRentalOwed))}</td>
                       <td />
@@ -961,7 +961,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   {[
                     { label: "Gross Ad Revenue",           value: fmtR(Math.round(totalGrossAdRevenue)), sub: "All venues / month",            accent: DARK },
                     { label: "Rental Potential (at floor)", value: fmtR(Math.round(totalRentalFees)),    sub: `At ≥${occupancyFloor}% occupancy`, accent: DARK },
-                    { label: "Rental Currently Owed",      value: fmtR(Math.round(totalRentalOwed)),     sub: "Setup Phase: R0",               accent: totalRentalOwed === 0 ? "#ef4444" : DARK },
+                    { label: "Rental Currently Owed",      value: fmtR(Math.round(totalRentalOwed)),     sub: "Setup Phase: R0",               accent: totalRentalOwed === 0 ? "#b91c1c" : DARK },
                     { label: `${partnerPct}% Rev Share`,   value: fmtR(Math.round(totalPartnerAdShare)), sub: "On top of rental",              accent: DARK },
                   ].map(({ label, value, sub, accent }) => (
                     <div key={label} style={{ background: "#fafafa", border: `1px solid ${BORDER_GREY}`, borderRadius: 8, padding: "9px 12px" }}>
@@ -984,7 +984,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 Total rental potential (at ≥{occupancyFloor}% occupancy floor): {fmtR(Math.round(totalRentalFees))}/mo
               </span>
               <span style={{ width: 1, height: 16, background: BORDER_GREY }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#ef4444" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#b91c1c" }}>
                 Total rental currently owed (Setup Phase): R\u00a00/mo
               </span>
             </div>
@@ -1100,7 +1100,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     background: "rgba(239,68,68,0.18)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                   }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, color: "#ef4444" }}>R0 rental owed</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "#b91c1c" }}>R0 rental owed</span>
                   </div>
                   {/* Above floor zone */}
                   <div style={{
@@ -1223,17 +1223,17 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     ].map(({ venue, occ, active, rental, pot, ytd }, idx) => (
                       <tr key={venue} style={{ background: idx % 2 === 0 ? "#fff" : "#fafafa", borderBottom: `1px solid ${BORDER_GREY}` }}>
                         <td style={{ padding: "8px 10px", fontWeight: 600, color: DARK }}>{venue}</td>
-                        <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 600, color: active ? "#3a7d00" : "#ef4444" }}>{occ}%</td>
+                        <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 600, color: active ? "#3a7d00" : "#b91c1c" }}>{occ}%</td>
                         <td style={{ padding: "8px 10px", textAlign: "center" }}>
                           <span style={{
                             padding: "2px 8px", borderRadius: 20, fontSize: 10, fontWeight: 700,
                             background: active ? "rgba(212,255,79,0.15)" : "rgba(239,68,68,0.1)",
-                            color: active ? "#3a7d00" : "#ef4444",
+                            color: active ? "#3a7d00" : "#b91c1c",
                           }}>
                             {active ? "✓ Active" : "✗ Below"}
                           </span>
                         </td>
-                        <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 700, color: active ? DARK : "#ef4444" }}>{rental}</td>
+                        <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 700, color: active ? DARK : "#b91c1c" }}>{rental}</td>
                         <td style={{ padding: "8px 10px", textAlign: "center", color: active ? "#aaa" : "#F59E0B", fontWeight: active ? 400 : 700 }}>{pot}</td>
                         <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 600, color: DARK }}>{ytd}</td>
                       </tr>

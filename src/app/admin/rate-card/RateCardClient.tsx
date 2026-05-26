@@ -19,6 +19,9 @@ import {
   Printer,
   X,
 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const PlacesSearch = dynamic(() => import("@/components/PlacesSearch"), { ssr: false });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,7 +35,18 @@ export type VenueRow = {
   cover_image_url?: string | null;
   operating_hours?: Record<string, { open: string; close: string; closed: boolean }> | null;
   screens: { id: string; is_active: boolean | null; slots_7sec: number | null; slots_15sec: number | null; location_in_venue: string | null; size_inches: number | null }[] | null;
+  latitude?: number | null;
+  longitude?: number | null;
 };
+
+// ─── Haversine ───────────────────────────────────────────────────────────────
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
 
 export type PricingTier = {
   id: string;
@@ -234,6 +248,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [pdfStatus, setPdfStatus] = useState("");
   const [expandedSection, setExpandedSection] = useState<"gym" | "city" | "province" | "national" | null>("gym");
   const [groupByCity, setGroupByCity] = useState(false);
+  const [clientLat, setClientLat] = useState<number | null>(null);
+  const [clientLng, setClientLng] = useState<number | null>(null);
+  const [clientAddress, setClientAddress] = useState<string>("");
 
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
   const months = Math.round((weeks / 4) * 10) / 10;
@@ -323,7 +340,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   }
 
   function openPrintPage() {
-    const printUrl = `/rate-card-print?` + new URLSearchParams({
+    const printParams: Record<string, string> = {
       venues: selectedVenues.join(","),
       cpm: effectiveCpm.toString(),
       weeks: weeks.toString(),
@@ -331,7 +348,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       start: flightStart,
       end: flightEnd,
       groupByCity: groupByCity.toString(),
-    }).toString();
+    };
+    if (clientLat != null) printParams.clientLat = clientLat.toString();
+    if (clientLng != null) printParams.clientLng = clientLng.toString();
+    if (clientAddress) printParams.clientAddress = clientAddress;
+    const printUrl = `/rate-card-print?` + new URLSearchParams(printParams).toString();
     window.open(printUrl, "_blank");
   }
 
@@ -339,7 +360,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   async function downloadPdf() {
     setPdfStatus("Generating PDF…");
     try {
-      const params = new URLSearchParams({
+      const pdfParams: Record<string, string> = {
         venues: selectedVenues.join(","),
         cpm: effectiveCpm.toString(),
         weeks: weeks.toString(),
@@ -348,7 +369,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         end: flightEnd,
         groupByCity: groupByCity.toString(),
         filename: `GymGaze-Rate-Card-${clientName ? clientName.replace(/[^a-zA-Z0-9-]/g, "_") + "-" : ""}${new Date().toISOString().slice(0, 10)}.pdf`,
-      });
+      };
+      if (clientLat != null) pdfParams.clientLat = clientLat.toString();
+      if (clientLng != null) pdfParams.clientLng = clientLng.toString();
+      if (clientAddress) pdfParams.clientAddress = clientAddress;
+      const params = new URLSearchParams(pdfParams);
 
       const res = await fetch(`/api/rate-card/pdf?${params.toString()}`, { credentials: "include" });
       if (!res.ok) {
@@ -811,6 +836,29 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           </div>
         </div>
 
+        {/* Client Location */}
+        <div className="mb-5">
+          <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Client Location <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(optional)</span></label>
+          <PlacesSearch
+            placeholder="Search client location for distance calculations…"
+            defaultValue={clientAddress}
+            onSelect={(lat, lng, addr) => {
+              if (lat === 0 && lng === 0) {
+                setClientLat(null);
+                setClientLng(null);
+                setClientAddress("");
+              } else {
+                setClientLat(lat);
+                setClientLng(lng);
+                setClientAddress(addr);
+              }
+            }}
+          />
+          {clientAddress && (
+            <p className="text-xs mt-1" style={{ color: "#666" }}>Distance to each venue will appear on the rate card property pages.</p>
+          )}
+        </div>
+
         <p className="text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Select Venues <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(leave blank = all)</span>
         </p>
@@ -1047,6 +1095,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
                         {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
                       </div>
+                      {clientAddress && (
+                        <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center" }}>
+                          <span style={{ color: "#555" }}>Location:</span> {clientAddress}
+                        </div>
+                      )}
                       <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
                         <div style={{ background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.3)", borderRadius: 20, padding: "5px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 700 }}>
                           {tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM
@@ -1464,6 +1517,15 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           {/* Narrative line */}
                           <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
                             This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
+                            {v.latitude != null && v.longitude != null && clientLat != null && clientLng != null ? (
+                              <span style={{ marginLeft: 8, color: "#555" }}>
+                                📍 <strong style={{ color: "#0a0a0a" }}>{clientAddress}</strong> — <strong style={{ color: "#0a0a0a" }}>{haversineKm(clientLat, clientLng, v.latitude, v.longitude).toFixed(1)} km</strong> away
+                              </span>
+                            ) : v.latitude != null && v.longitude != null ? (
+                              <span style={{ marginLeft: 8, color: "#888" }}>
+                                📍 {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
+                              </span>
+                            ) : null}
                           </div>
 
                           {/* Data grid */}

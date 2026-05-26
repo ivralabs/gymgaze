@@ -23,7 +23,7 @@ export default async function RateCardPrintPage({
     svc
       .from("venues")
       .select(
-        "id, name, city, province, active_members, monthly_entries, cover_image_url, operating_hours, screens(id, is_active, slots_7sec, slots_15sec, location_in_venue, size_inches)"
+        "id, name, city, province, active_members, monthly_entries, cover_image_url, operating_hours, latitude, longitude, screens(id, is_active, slots_7sec, slots_15sec, location_in_venue, size_inches)"
       )
       .order("name"),
     svc
@@ -40,6 +40,9 @@ export default async function RateCardPrintPage({
       ? allVenues.filter((v) => selectedVenueIds.includes(v.id))
       : allVenues;
 
+  const clientLat = params.clientLat ? parseFloat(params.clientLat) : null;
+  const clientLng = params.clientLng ? parseFloat(params.clientLng) : null;
+
   return (
     <RateCardPrint
       venues={filteredVenues}
@@ -50,6 +53,9 @@ export default async function RateCardPrintPage({
       flightStart={params.start ?? ""}
       flightEnd={params.end ?? ""}
       groupByCity={params.groupByCity === "true"}
+      clientLat={clientLat}
+      clientLng={clientLng}
+      clientAddress={params.clientAddress ?? ""}
     />
   );
 }

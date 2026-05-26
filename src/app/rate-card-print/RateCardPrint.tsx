@@ -15,6 +15,8 @@ export type VenueRow = {
   cover_image_url?: string | null;
   operating_hours?: Record<string, { open: string; close: string; closed: boolean }> | null;
   screens: { id: string; is_active: boolean | null; slots_7sec: number | null; slots_15sec: number | null; location_in_venue: string | null; size_inches: number | null }[] | null;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 export type PricingTier = {
@@ -39,6 +41,9 @@ interface Props {
   flightStart: string;
   flightEnd: string;
   groupByCity: boolean;
+  clientLat?: number | null;
+  clientLng?: number | null;
+  clientAddress?: string;
 }
 
 // ─── Media constants ──────────────────────────────────────────────────────────
@@ -85,6 +90,15 @@ function calcMetrics(v: VenueRow, weeks: number) {
   const playsOts = screens * PLAYS_PER_SCREEN_PER_WEEK * weeks;
 
   return { screens, ots, reach, frequency, impact, playsOts, activeMembers, activeThisMonth };
+}
+
+// ─── Haversine distance ──────────────────────────────────────────────────────
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.asin(Math.sqrt(a));
 }
 
 // ─── Image helpers ───────────────────────────────────────────────
@@ -191,6 +205,9 @@ export default function RateCardPrint({
   flightStart,
   flightEnd,
   groupByCity,
+  clientLat,
+  clientLng,
+  clientAddress,
 }: Props) {
   const effectiveCpm = cpm;
 
@@ -378,6 +395,11 @@ export default function RateCardPrint({
             <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
               {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
             </div>
+            {clientAddress && (
+              <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center" }}>
+                <span style={{ color: "#555" }}>Location:</span> {clientAddress}
+              </div>
+            )}
             <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
               <div style={{ background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.3)", borderRadius: 20, padding: "5px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 700 }}>
                 {tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM
@@ -733,9 +755,18 @@ export default function RateCardPrint({
                           </div>
                         </div>
 
-                        {/* Narrative line */}
+                        {/* Narrative line + GPS distance */}
                         <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
                           This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
+                          {v.latitude != null && v.longitude != null && clientLat != null && clientLng != null ? (
+                            <span style={{ marginLeft: 8, color: "#555" }}>
+                              📍 <strong style={{ color: "#0a0a0a" }}>{clientAddress}</strong> — <strong style={{ color: "#0a0a0a" }}>{haversineKm(clientLat, clientLng, v.latitude, v.longitude).toFixed(1)} km</strong> away
+                            </span>
+                          ) : v.latitude != null && v.longitude != null ? (
+                            <span style={{ marginLeft: 8, color: "#888" }}>
+                              📍 {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
+                            </span>
+                          ) : null}
                         </div>
 
                         {/* Data grid */}

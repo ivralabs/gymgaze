@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Pencil, X } from "lucide-react";
+import { Pencil, X, MapPin } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const PlacesSearch = dynamic(() => import("@/components/PlacesSearch"), { ssr: false });
 
 interface VenueData {
   id: string;
@@ -23,6 +26,8 @@ interface VenueData {
   brand_code: string | null;
   metro_code: string | null;
   venue_code: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface Props {
@@ -77,6 +82,9 @@ export default function EditVenueButton({ venue }: Props) {
   const [brandCode, setBrandCode] = useState(venue.brand_code ?? "");
   const [metroCode, setMetroCode] = useState(venue.metro_code ?? "");
   const [venueCode, setVenueCode] = useState(venue.venue_code ?? "");
+  const [latitude, setLatitude] = useState<number | null>(venue.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(venue.longitude ?? null);
+  const [locationAddress, setLocationAddress] = useState<string>("");
 
   function updateDay(day: string, patch: Partial<DayHours>) {
     setOperatingHours((prev) => ({ ...prev, [day]: { ...prev[day], ...patch } }));
@@ -106,6 +114,8 @@ export default function EditVenueButton({ venue }: Props) {
         brand_code: brandCode.trim().toUpperCase() || null,
         metro_code: metroCode.trim().toUpperCase() || null,
         venue_code: venueCode.trim().toUpperCase() || null,
+        latitude,
+        longitude,
       };
 
       const res = await fetch(`/api/venues/${venue.id}`, {
@@ -413,6 +423,72 @@ export default function EditVenueButton({ venue }: Props) {
                     <input value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} placeholder="+27 ..." style={inputStyle} />
                   </div>
                 </div>
+
+                <div style={dividerStyle} />
+
+                <div style={dividerStyle} />
+
+                {/* ── Venue Location (GPS) ── */}
+                <p style={sectionLabelStyle}>Venue Location (GPS)</p>
+                <p style={{ fontSize: 12, color: "#777", marginBottom: 16, lineHeight: 1.5 }}>
+                  Search for the venue address to set GPS coordinates for distance calculations on rate cards.
+                </p>
+
+                {/* Current coordinates display */}
+                {latitude != null && longitude != null && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "10px 14px",
+                      borderRadius: 10,
+                      background: "rgba(212,255,79,0.06)",
+                      border: "1px solid rgba(212,255,79,0.2)",
+                      marginBottom: 12,
+                    }}
+                  >
+                    <MapPin size={14} color="#D4FF4F" strokeWidth={2} />
+                    <span style={{ fontSize: 13, color: "#D4FF4F", fontFamily: "monospace" }}>
+                      {latitude.toFixed(4)}, {longitude.toFixed(4)}
+                    </span>
+                    {locationAddress && (
+                      <span style={{ fontSize: 12, color: "#666", marginLeft: 4 }}>{locationAddress}</span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => { setLatitude(null); setLongitude(null); setLocationAddress(""); }}
+                      style={{
+                        marginLeft: "auto",
+                        background: "rgba(255,255,255,0.06)",
+                        border: "none",
+                        borderRadius: 6,
+                        padding: "3px 8px",
+                        cursor: "pointer",
+                        color: "#666",
+                        fontSize: 11,
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+
+                <PlacesSearch
+                  placeholder="Search venue address…"
+                  defaultValue={locationAddress}
+                  onSelect={(lat, lng, addr) => {
+                    if (lat === 0 && lng === 0) {
+                      setLatitude(null);
+                      setLongitude(null);
+                      setLocationAddress("");
+                    } else {
+                      setLatitude(lat);
+                      setLongitude(lng);
+                      setLocationAddress(addr);
+                    }
+                  }}
+                />
 
                 <div style={dividerStyle} />
 

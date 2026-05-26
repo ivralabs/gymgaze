@@ -985,7 +985,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
               </span>
               <span style={{ width: 1, height: 16, background: BORDER_GREY }} />
               <span style={{ fontSize: 10, fontWeight: 700, color: "#b91c1c" }}>
-                Total rental currently owed (Setup Phase): R\u00a00/mo
+                Total rental currently owed (Setup Phase): {fmtR(0)}/mo
               </span>
             </div>
 

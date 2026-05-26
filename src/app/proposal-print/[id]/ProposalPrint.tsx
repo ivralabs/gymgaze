@@ -87,8 +87,11 @@ interface Props {
 // ─── Constants ────────────────────────────────────────────────────────────────
 const LIME = "#D4FF4F";
 const DARK = "#0a0a0a";
-const GREY_TEXT = "#555";
+const GREY_TEXT = "#333";
 const BORDER_GREY = "#E5E7EB";
+// Accessible label colors (WCAG AA compliant)
+const LABEL_GREY = "#555";   // for small uppercase labels and captions
+const CAPTION_GREY = "#666"; // for footnotes/disclaimers (min allowed)
 const PLAYS_PER_SCREEN_PER_WEEK = 1487;
 const SELL_THROUGH = 0.60;
 
@@ -168,7 +171,7 @@ function PageHeader({ left, right }: { left: React.ReactNode; right?: React.Reac
       background: "#fff",
     }}>
       <div style={{ fontSize: 13, fontWeight: 700, color: DARK }}>{left}</div>
-      {right && <div style={{ fontSize: 12, color: "#888" }}>{right}</div>}
+      {right && <div style={{ fontSize: 12, color: LABEL_GREY }}>{right}</div>}
     </div>
   );
 }
@@ -180,10 +183,10 @@ function PageFooter({ page, total, networkName }: { page: number; total: number;
       padding: "0 36px", borderTop: `1px solid ${BORDER_GREY}`,
       background: "#fafafa", flexShrink: 0,
     }}>
-      <span style={{ fontSize: 10, color: "#aaa" }}>
+      <span style={{ fontSize: 10, color: CAPTION_GREY }}>
         CONFIDENTIAL — {networkName} × GymGaze Strategic Media Partnership
       </span>
-      <span style={{ fontSize: 10, color: "#bbb" }}>
+      <span style={{ fontSize: 10, color: LABEL_GREY }}>
         {page} / {total}
       </span>
     </div>
@@ -203,7 +206,7 @@ function StatBox({
       padding: "16px 20px", display: "flex", flexDirection: "column", gap: 4,
     }}>
       <div style={{ fontSize: 34, fontWeight: 800, color: accent, fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.03em", lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 11, color: "#888", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
+      <div style={{ fontSize: 11, color: LABEL_GREY, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
     </div>
   );
 }
@@ -445,7 +448,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             {/* Right: key facts callout */}
             <div style={{ width: 280, padding: "28px 28px 28px 0", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
               <LimeCallout>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", marginBottom: 14 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: LABEL_GREY, marginBottom: 14 }}>
                   Key Facts
                 </div>
                 {[
@@ -460,7 +463,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     display: "flex", justifyContent: "space-between", padding: "7px 0",
                     borderBottom: `1px solid rgba(0,0,0,0.06)`, fontSize: 12,
                   }}>
-                    <span style={{ color: "#777" }}>{label}</span>
+                    <span style={{ color: LABEL_GREY }}>{label}</span>
                     <span style={{ fontWeight: 700, color: DARK }}>{value}</span>
                   </div>
                 ))}
@@ -468,7 +471,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
 
               {/* Province pills */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#aaa", marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: LABEL_GREY, marginBottom: 10 }}>
                   Geographic Spread
                 </div>
                 {Array.from(provinceMap.entries()).map(([prov, count]) => (
@@ -535,7 +538,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   <div style={{ fontSize: 12, fontWeight: 700, color: DARK, marginTop: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     {label}
                   </div>
-                  <div style={{ fontSize: 11, color: "#999", marginTop: 6, lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 11, color: LABEL_GREY, marginTop: 6, lineHeight: 1.5 }}>
                     {sub}
                   </div>
                 </div>
@@ -552,12 +555,12 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 <div key={title} style={{ padding: "12px 0", borderTop: `1px solid ${BORDER_GREY}` }}>
                   <span style={{ fontSize: 20 }}>{icon}</span>
                   <div style={{ fontSize: 12, fontWeight: 700, color: DARK, margin: "6px 0 4px" }}>{title}</div>
-                  <div style={{ fontSize: 11, color: "#888", lineHeight: 1.5 }}>{desc}</div>
+                  <div style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.5 }}>{desc}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ fontSize: 10, color: "#bbb", marginTop: "auto" }}>
+            <div style={{ fontSize: 10, color: CAPTION_GREY, marginTop: "auto" }}>
               Source: GymGaze network data · Industry DOOH benchmarks · South African Out of Home Advertising Association (OOHSA)
             </div>
           </div>
@@ -572,7 +575,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
           <div style={{ flex: 1, padding: "24px 36px", display: "flex", gap: 32, overflow: "hidden" }}>
             {/* Left: province summary */}
             <div style={{ width: 260, flexShrink: 0 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#888", marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: LABEL_GREY, marginBottom: 12 }}>
                 By Province
               </div>
               {Array.from(provinceMap.entries()).map(([prov, count]) => (
@@ -589,10 +592,10 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
 
               <div style={{ marginTop: 24, padding: "16px", background: "#fafafa", borderRadius: 10, border: `1px solid ${BORDER_GREY}` }}>
                 <div style={{ fontSize: 30, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{venueCount}</div>
-                <div style={{ fontSize: 11, color: "#888", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 2 }}>Total Venues</div>
+                <div style={{ fontSize: 11, color: LABEL_GREY, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 2 }}>Total Venues</div>
                 <div style={{ height: 1, background: BORDER_GREY, margin: "10px 0" }} />
                 <div style={{ fontSize: 30, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{fmtFull(totalActiveMembers)}</div>
-                <div style={{ fontSize: 11, color: "#888", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 2 }}>Active Members</div>
+                <div style={{ fontSize: 11, color: LABEL_GREY, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 2 }}>Active Members</div>
               </div>
             </div>
 
@@ -604,7 +607,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     {["Venue", "City", "Province", "Active Members", "Screens Planned"].map((h) => (
                       <th key={h} style={{
                         padding: "8px 12px", textAlign: "left", fontWeight: 700,
-                        color: "#888", fontSize: 10, textTransform: "uppercase",
+                        color: LABEL_GREY, fontSize: 10, textTransform: "uppercase",
                         letterSpacing: "0.06em", borderBottom: `2px solid ${BORDER_GREY}`,
                       }}>{h}</th>
                     ))}
@@ -626,7 +629,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
           </div>
 
           <div style={{ padding: "0 36px 8px" }}>
-            <p style={{ fontSize: 10, color: "#bbb", margin: 0 }}>
+            <p style={{ fontSize: 10, color: CAPTION_GREY, margin: 0 }}>
               * All venues currently active. New venues added to the partnership subject to mutual written agreement. Member counts represent active registered members.
             </p>
           </div>
@@ -653,7 +656,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
 
               {/* Example calc */}
               <LimeCallout>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#888", marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: LABEL_GREY, marginBottom: 12 }}>
                   Example Calculation
                 </div>
                 {[
@@ -701,12 +704,12 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     <span style={{ fontSize: 24 }}>{icon}</span>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: DARK }}>{label}</div>
-                      <div style={{ fontSize: 11, color: "#999", marginTop: 2 }}>{sub}</div>
+                      <div style={{ fontSize: 11, color: LABEL_GREY, marginTop: 2 }}>{sub}</div>
                     </div>
                   </div>
                   {idx < 2 && (
                     <div style={{ display: "flex", justifyContent: "center", margin: "4px 0" }}>
-                      <div style={{ fontSize: 18, color: "#ccc" }}>↓</div>
+                      <div style={{ fontSize: 18, color: LABEL_GREY }}>↓</div>
                     </div>
                   )}
                 </div>
@@ -755,7 +758,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     <span style={{ fontSize: 16, fontWeight: 800, color: DARK }}>{partnerPct}%</span>
                   </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "#888" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: LABEL_GREY }}>
                   <span>GymGaze</span>
                   <span>{networkName}</span>
                 </div>
@@ -770,7 +773,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 }}>
                   <div style={{ fontSize: 26, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{gymgazePct}%</div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "3px 0" }}>to GymGaze</div>
-                  <div style={{ fontSize: 11, color: "#666", lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.5 }}>
                     Covers ad sales, hardware, ops, content moderation, ad serving, platform, and monthly reporting.
                   </div>
                 </div>
@@ -781,10 +784,10 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                     <div style={{ fontSize: 26, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{partnerPct}%</div>
-                    <div style={{ fontSize: 11, color: "#888" }}>+ guaranteed rental</div>
+                    <div style={{ fontSize: 11, color: LABEL_GREY }}>+ guaranteed rental</div>
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "3px 0" }}>to {networkName}</div>
-                  <div style={{ fontSize: 11, color: "#666", lineHeight: 1.6 }}>
+                  <div style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.6 }}>
                     <strong style={{ color: DARK }}>{partnerPct}%</strong> of digital ad revenue (monthly, net 30)<br />
                     + <strong style={{ color: DARK }}>Guaranteed monthly rental fee</strong> per venue (location lease)
                   </div>
@@ -802,7 +805,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 border: `1.5px solid ${BORDER_GREY}`, borderRadius: 10, padding: "14px 16px",
                 background: "#fafafa",
               }}>
-                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: "#888", marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: LABEL_GREY, marginBottom: 10 }}>
                   How the model works
                 </div>
                 {[
@@ -825,7 +828,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 border: `2px solid ${LIME}`, borderRadius: 10, padding: "12px 14px",
                 background: "rgba(212,255,79,0.04)",
               }}>
-                <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#888", marginBottom: 6 }}>
+                <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: LABEL_GREY, marginBottom: 6 }}>
                   ⚠️ Important Exclusion
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 4 }}>
@@ -859,10 +862,10 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 </div>
               </div>
 
-              <div style={{ marginTop: "auto", fontSize: 9, color: "#bbb", lineHeight: 1.6 }}>
+              <div style={{ marginTop: "auto", fontSize: 9, color: CAPTION_GREY, lineHeight: 1.6 }}>
                 * Revenue calculated net of agency commissions and VAT. All amounts in ZAR.<br />
                 * {networkName} receives a guaranteed monthly rental fee + {partnerPct}% of digital ad revenue per venue, after agency commission and VAT.<br />
-                * <strong style={{ color: "#888" }}>Guaranteed rental fees subject to {occupancyFloor}% occupancy floor — see Page 8 for full activation conditions.</strong>
+                * <strong style={{ color: LABEL_GREY }}>Guaranteed rental fees subject to {occupancyFloor}% occupancy floor — see Page 8 for full activation conditions.</strong>
               </div>
             </div>
           </div>
@@ -891,7 +894,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   ].map(({ h, align }) => (
                     <th key={h} style={{
                       padding: "6px 8px", textAlign: align, fontWeight: 700,
-                      color: "#888", fontSize: 9, textTransform: "uppercase",
+                      color: LABEL_GREY, fontSize: 9, textTransform: "uppercase",
                       letterSpacing: "0.04em", borderBottom: `2px solid ${BORDER_GREY}`,
                       whiteSpace: "nowrap",
                     }}>{h}</th>
@@ -964,7 +967,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                     <div key={label} style={{ background: "#fafafa", border: `1px solid ${BORDER_GREY}`, borderRadius: 8, padding: "9px 12px" }}>
                       <div style={{ fontSize: 14, fontWeight: 800, color: accent, fontFamily: "Inter Tight, sans-serif" }}>{value}</div>
                       <div style={{ fontSize: 9, fontWeight: 700, color: DARK, marginTop: 3 }}>{label}</div>
-                      <div style={{ fontSize: 9, color: "#aaa", marginTop: 2 }}>{sub}</div>
+                      <div style={{ fontSize: 9, color: CAPTION_GREY, marginTop: 2 }}>{sub}</div>
                     </div>
                   ))}
                 </div>
@@ -986,7 +989,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
               </span>
             </div>
 
-            <div style={{ marginTop: 8, fontSize: 9, color: "#bbb", lineHeight: 1.6 }}>
+            <div style={{ marginTop: 8, fontSize: 9, color: CAPTION_GREY, lineHeight: 1.6 }}>
               * Projections only — not guaranteed. Calc: 16 slots × 1,487 plays/screen/week × 4.33 weeks × R{cpm} CPM × 60% sell-through.
               {" "}&#8220;Rental Owed&#8221; shows R0 during Setup Phase (pre-launch, 0% occupancy). Rental activates per venue at ≥{occupancyFloor}% slot occupancy.
             </div>
@@ -1114,7 +1117,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   }} />
                 </div>
                 {/* Labels */}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 10, color: "#888" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 10, color: LABEL_GREY }}>
                   <span>0%</span>
                   <span style={{ fontWeight: 700, color: DARK }}>← {occupancyFloor}% threshold →</span>
                   <span>100%</span>
@@ -1123,7 +1126,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
 
               {/* Activation mechanics */}
               <LimeCallout>
-                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: "#888", marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: LABEL_GREY, marginBottom: 10 }}>
                   Activation Mechanics
                 </div>
                 {[
@@ -1139,7 +1142,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 ))}
               </LimeCallout>
 
-              <div style={{ marginTop: "auto", fontSize: 10, color: "#bbb", lineHeight: 1.5 }}>
+              <div style={{ marginTop: "auto", fontSize: 10, color: CAPTION_GREY, lineHeight: 1.5 }}>
                 See Page 9 for the Rental Pot Transparency tracker — how {networkName} can see what each venue would be earning at full occupancy.
               </div>
             </div>
@@ -1159,7 +1162,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 <div style={{ fontSize: 20, fontWeight: 800, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>
                   The Rental Pot
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 500, color: "#888", fontFamily: "Inter Tight, sans-serif", marginTop: 2 }}>
+                <div style={{ fontSize: 14, fontWeight: 500, color: LABEL_GREY, fontFamily: "Inter Tight, sans-serif", marginTop: 2 }}>
                   What you&apos;d be earning at full occupancy
                 </div>
                 <LimeDivider />
@@ -1206,7 +1209,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                       {["Venue", "Occupancy", "Threshold", "Rental Owed", "In Pot", "YTD Pot"].map((h) => (
                         <th key={h} style={{
                           padding: "8px 10px", textAlign: h === "Venue" ? "left" : "center",
-                          fontWeight: 700, color: "#888", fontSize: 9, textTransform: "uppercase",
+                          fontWeight: 700, color: LABEL_GREY, fontSize: 9, textTransform: "uppercase",
                           letterSpacing: "0.06em", borderBottom: `2px solid ${BORDER_GREY}`,
                         }}>{h}</th>
                       ))}
@@ -1238,7 +1241,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   </tbody>
                 </table>
                 <div style={{ padding: "10px", background: "rgba(212,255,79,0.04)", borderTop: `1px solid ${BORDER_GREY}` }}>
-                  <div style={{ fontSize: 10, color: "#888", textAlign: "center" }}>
+                  <div style={{ fontSize: 10, color: LABEL_GREY, textAlign: "center" }}>
                     Sample data for illustration. Actual figures depend on real occupancy at each venue.
                   </div>
                 </div>
@@ -1267,7 +1270,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 ))}
               </div>
 
-              <div style={{ fontSize: 10, color: "#bbb", lineHeight: 1.5, marginTop: "auto" }}>
+              <div style={{ fontSize: 10, color: CAPTION_GREY, lineHeight: 1.5, marginTop: "auto" }}>
                 Real-time tracking available in your {networkName} partner portal once the partnership goes live. Pot resets are never made — the YTD pot is a running total of foregone rental since partnership commencement.
               </div>
             </div>
@@ -1357,7 +1360,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             {[
               {
                 title: `${networkName} Provides`,
-                color: LIME,
+                color: DARK,
                 bg: "rgba(212,255,79,0.06)",
                 border: LIME,
                 items: [
@@ -1588,7 +1591,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                       <div style={{ fontSize: 14, fontWeight: 700, color: DARK }}>{title}</div>
-                      <div style={{ fontSize: 10, fontWeight: 600, color: "#888", background: "#f5f5f5", padding: "2px 8px", borderRadius: 20 }}>{timeline}</div>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: LABEL_GREY, background: "#f5f5f5", padding: "2px 8px", borderRadius: 20 }}>{timeline}</div>
                     </div>
                     <div style={{ fontSize: 12, color: GREY_TEXT, lineHeight: 1.5 }}>{desc}</div>
                   </div>
@@ -1610,7 +1613,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
                     {process.env.NEXT_PUBLIC_CONTACT_NAME ?? "GymGaze Sales Team"}
                   </div>
-                  <div style={{ fontSize: 12, color: "#666" }}>
+                  <div style={{ fontSize: 12, color: "#aaa" }}>
                     {process.env.NEXT_PUBLIC_CONTACT_TITLE ?? "Partnership Development"}
                   </div>
                 </div>
@@ -1629,7 +1632,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 </div>
               </div>
 
-              <div style={{ marginTop: 16, fontSize: 10, color: "#bbb", lineHeight: 1.6 }}>
+              <div style={{ marginTop: 16, fontSize: 10, color: CAPTION_GREY, lineHeight: 1.6 }}>
                 This proposal is valid for 30 days from the date of issue. Please reach out with any questions before the expiry date.
               </div>
             </div>
@@ -1666,30 +1669,30 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   <div style={{ fontSize: 16, fontWeight: 800, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>
                     {party}
                   </div>
-                  <div style={{ fontSize: 12, color: "#888" }}>{role}</div>
+                  <div style={{ fontSize: 12, color: LABEL_GREY }}>{role}</div>
                   <div style={{ height: 1, background: BORDER_GREY }} />
 
                   {/* Signature line */}
                   <div>
                     <div style={{ height: 60, borderBottom: `1.5px solid ${DARK}`, marginBottom: 6 }} />
-                    <div style={{ fontSize: 11, color: "#aaa" }}>Signature</div>
+                    <div style={{ fontSize: 11, color: CAPTION_GREY }}>Signature</div>
                   </div>
 
                   {/* Name */}
                   <div>
                     <div style={{ height: 36, borderBottom: `1px solid ${BORDER_GREY}`, marginBottom: 6 }} />
-                    <div style={{ fontSize: 11, color: "#aaa" }}>Full Name & Designation</div>
+                    <div style={{ fontSize: 11, color: CAPTION_GREY }}>Full Name & Designation</div>
                   </div>
 
                   {/* Date */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                     <div>
                       <div style={{ height: 36, borderBottom: `1px solid ${BORDER_GREY}`, marginBottom: 6 }} />
-                      <div style={{ fontSize: 11, color: "#aaa" }}>Date</div>
+                      <div style={{ fontSize: 11, color: CAPTION_GREY }}>Date</div>
                     </div>
                     <div>
                       <div style={{ height: 36, borderBottom: `1px solid ${BORDER_GREY}`, marginBottom: 6 }} />
-                      <div style={{ fontSize: 11, color: "#aaa" }}>Date of Witness</div>
+                      <div style={{ fontSize: 11, color: CAPTION_GREY }}>Date of Witness</div>
                     </div>
                   </div>
                 </div>
@@ -1697,7 +1700,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             </div>
 
             {/* Footer note */}
-            <div style={{ textAlign: "center", fontSize: 10, color: "#ccc" }}>
+            <div style={{ textAlign: "center", fontSize: 10, color: CAPTION_GREY }}>
               This proposal was generated on {today} · Proposal ID: {proposal.id} · v{proposal.version} · CONFIDENTIAL
             </div>
           </div>

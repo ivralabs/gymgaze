@@ -24,6 +24,7 @@ import {
   Calculator,
   TrendingUp,
   Users,
+  Handshake,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
@@ -50,6 +51,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/static-sites/rate-card", slug: "static-sites-rate-card", icon: FileText,   label: "Static Sites Rate Card" },
       { href: "/admin/insights",    slug: "insights",    icon: Lightbulb,       label: "Audience & Data" },
       { href: "/admin/media-kit",   slug: "media-kit",   icon: FileText,        label: "Media Kit" },
+      { href: "/admin/proposals",   slug: "proposals",   icon: Handshake,       label: "Proposals" },
       { href: "/admin/pipeline",    slug: "pipeline",    icon: TrendingUp,      label: "Pipeline" },
       // contacts merged into Pipeline tab — removed from nav
     ],

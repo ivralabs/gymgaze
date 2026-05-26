@@ -34,6 +34,41 @@ export async function PATCH(
   const supabase = await createServiceClient();
   const body = await req.json();
 
+  // Validate pot-to-credit fields if present
+  if (
+    "pot_to_credit_pct" in body &&
+    body.pot_to_credit_pct !== null &&
+    body.pot_to_credit_pct !== undefined
+  ) {
+    const pct = Number(body.pot_to_credit_pct);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+      return NextResponse.json(
+        { error: "pot_to_credit_pct must be between 0 and 100" },
+        { status: 400 }
+      );
+    }
+    body.pot_to_credit_pct = pct;
+  }
+  if ("pot_to_credit_enabled" in body) {
+    body.pot_to_credit_enabled = Boolean(body.pot_to_credit_enabled);
+  }
+  if ("pot_credit_uses" in body && body.pot_credit_uses !== null) {
+    if (!Array.isArray(body.pot_credit_uses)) {
+      return NextResponse.json(
+        { error: "pot_credit_uses must be an array" },
+        { status: 400 }
+      );
+    }
+    const allowed = ["top_up_bonus", "cobranded_marketing", "extra_dedicated_slot"];
+    const invalid = (body.pot_credit_uses as string[]).filter((u) => !allowed.includes(u));
+    if (invalid.length > 0) {
+      return NextResponse.json(
+        { error: `Invalid pot_credit_uses values: ${invalid.join(", ")}` },
+        { status: 400 }
+      );
+    }
+  }
+
   const { data, error } = await supabase
     .from("partnership_proposals")
     .update(body)

@@ -25,6 +25,9 @@ export default async function ProposalPrintPage({
       .from("partnership_proposals")
       .select(`
         *,
+        pot_to_credit_enabled,
+        pot_to_credit_pct,
+        pot_credit_uses,
         gym_networks(id, name, slug, logo_url, primary_contact_name, primary_contact_email, primary_contact_phone),
         partnership_proposal_venues(
           id, venue_id, screens_planned, static_sites_planned, monthly_rental_projection,

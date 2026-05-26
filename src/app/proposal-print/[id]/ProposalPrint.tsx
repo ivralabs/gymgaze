@@ -61,6 +61,10 @@ export type Proposal = {
   occupancy_floor_pct: number | null;
   occupancy_measurement: string | null;
   rental_pot_enabled: boolean | null;
+  // Pot-to-credit fields (added in schema-pot-credit-v1.sql)
+  pot_to_credit_enabled: boolean | null;
+  pot_to_credit_pct: number | null;
+  pot_credit_uses: string[] | null;
   gym_networks: GymNetwork | null;
   partnership_proposal_venues: ProposalVenueRow[];
 };
@@ -1267,6 +1271,79 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 Real-time tracking available in your {networkName} partner portal once the partnership goes live. Pot resets are never made — the YTD pot is a running total of foregone rental since partnership commencement.
               </div>
             </div>
+          </div>
+
+          {/* ── FAQ callout: does the pot pay out? (always visible) ── */}
+          <div style={{ padding: "0 36px 20px" }}>
+            <div style={{
+              background: "#f5f5f5",
+              borderRadius: 10,
+              padding: "16px 20px",
+              display: "flex",
+              gap: 14,
+              alignItems: "flex-start",
+            }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: "50%",
+                background: LIME, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 14, fontWeight: 900, color: DARK,
+              }}>?</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: DARK, marginBottom: 6 }}>
+                  Frequently Asked: Does the pot pay out?
+                </div>
+                <p style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.65, margin: 0 }}>
+                  No. The pot is a transparency display only — it shows the foregone rental opportunity when a venue is below the {occupancyFloor}% occupancy floor. It is not a liability or a deferred balance and does not accumulate as a payout owed to {networkName}.
+                </p>
+                <p style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.65, margin: "6px 0 0" }}>
+                  The pot exists so both teams see real-time the cost of under-performance and align on growing occupancy fast. Rental fees are only owed and paid for months at or above the {occupancyFloor}% floor. The pot resets quarterly as a fresh tracker.
+                </p>
+              </div>
+            </div>
+
+            {/* ── Pot-to-credit explainer: only when toggle is ON ── */}
+            {proposal.pot_to_credit_enabled && (
+              <div style={{
+                marginTop: 12,
+                border: `2px solid ${LIME}`,
+                borderRadius: 10,
+                background: "#ffffff",
+                padding: "16px 20px",
+                display: "flex",
+                gap: 14,
+                alignItems: "flex-start",
+              }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: LIME, flexShrink: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 14, fontWeight: 900, color: DARK,
+                }}>→</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: DARK, marginBottom: 6 }}>
+                    Pot-to-Credit Conversion (Optional Programme)
+                  </div>
+                  <p style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.65, margin: 0 }}>
+                    By mutual agreement, <strong style={{ color: DARK }}>{proposal.pot_to_credit_pct ?? 25}%</strong> of the unpaid pot balance can be converted into {networkName} promotional credits at quarter-end. These credits can be applied to:
+                  </p>
+                  <ul style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.65, margin: "6px 0 0", paddingLeft: 18 }}>
+                    {(proposal.pot_credit_uses ?? []).includes("top_up_bonus") && (
+                      <li>Top-up bonus in months {networkName} hits the {occupancyFloor}% floor (added to the regular rental payout)</li>
+                    )}
+                    {(proposal.pot_credit_uses ?? []).includes("cobranded_marketing") && (
+                      <li>Co-branded marketing campaigns produced by GymGaze (creative for {networkName} member recruitment, class promos, brand campaigns)</li>
+                    )}
+                    {(proposal.pot_credit_uses ?? []).includes("extra_dedicated_slot") && (
+                      <li>Expansion of dedicated slot allocation (additional 7-second slots reserved for {networkName} content)</li>
+                    )}
+                  </ul>
+                  <p style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.65, margin: "6px 0 0" }}>
+                    This programme rewards sustained occupancy growth and gives {networkName} visible value from the platform&apos;s transparency model. Credits expire 12 months after issue and are not redeemable for cash.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <PageFooter page={9} total={TOTAL_PAGES} networkName={networkName} />

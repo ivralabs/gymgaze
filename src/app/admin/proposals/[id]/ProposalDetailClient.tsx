@@ -66,6 +66,10 @@ export type Proposal = {
   notes: string | null;
   created_at: string;
   updated_at: string | null;
+  // Pot-to-credit fields (schema-pot-credit-v1.sql)
+  pot_to_credit_enabled: boolean | null;
+  pot_to_credit_pct: number | null;
+  pot_credit_uses: string[] | null;
   gym_networks: Network | null;
   partnership_proposal_venues: ProposalVenue[];
 };
@@ -116,6 +120,13 @@ export default function ProposalDetailClient({ proposal, allVenues }: Props) {
   const [dataSharingRequired, setDataSharingRequired] = useState(proposal.data_sharing_required);
   const [proofOfFlightRequired, setProofOfFlightRequired] = useState(proposal.proof_of_flight_required);
 
+  // Pot-to-credit state
+  const [potToCreditEnabled, setPotToCreditEnabled] = useState(proposal.pot_to_credit_enabled ?? false);
+  const [potToCreditPct, setPotToCreditPct] = useState(proposal.pot_to_credit_pct ?? 25);
+  const [potCreditUses, setPotCreditUses] = useState<string[]>(
+    proposal.pot_credit_uses ?? ["top_up_bonus", "cobranded_marketing", "extra_dedicated_slot"]
+  );
+
   const network = proposal.gym_networks;
   const gymgazePct = 100 - partnerPct;
   const linkedVenueIds = new Set(proposal.partnership_proposal_venues.map((pv) => pv.venue_id));
@@ -144,6 +155,9 @@ export default function ProposalDetailClient({ proposal, allVenues }: Props) {
           digital_screens_included: digitalScreensIncluded,
           data_sharing_required: dataSharingRequired,
           proof_of_flight_required: proofOfFlightRequired,
+          pot_to_credit_enabled: potToCreditEnabled,
+          pot_to_credit_pct: potToCreditEnabled ? potToCreditPct : null,
+          pot_credit_uses: potCreditUses,
         }),
       });
       if (!res.ok) throw new Error("Save failed");
@@ -372,6 +386,88 @@ export default function ProposalDetailClient({ proposal, allVenues }: Props) {
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Rental Pot Settings */}
+          <div style={sectionStyle}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#D4FF4F", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Rental Pot Settings</div>
+            <div style={{ fontSize: 11, color: "#555", marginBottom: 16, lineHeight: 1.5 }}>
+              Control the pot-to-credit conversion programme. Disabled by default — use as a negotiation lever if the partner pushes back on the pure-transparency model.
+            </div>
+
+            {/* Toggle */}
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", marginBottom: 12 }}>
+              <input
+                type="checkbox"
+                checked={potToCreditEnabled}
+                onChange={(e) => setPotToCreditEnabled(e.target.checked)}
+                style={{ accentColor: "#D4FF4F", marginTop: 2, flexShrink: 0 }}
+              />
+              <div>
+                <span style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>Convert pot to credit (opt-in)</span>
+                <div style={{ fontSize: 11, color: "#666", marginTop: 3, lineHeight: 1.5 }}>
+                  When enabled, a percentage of unpaid pot balance converts to promotional credits quarterly. Use this as a negotiation lever if the partner pushes back on the pure-transparency model.
+                </div>
+              </div>
+            </label>
+
+            {/* Expanded settings — only when enabled */}
+            {potToCreditEnabled && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, paddingTop: 4 }}>
+                {/* Credit conversion percentage */}
+                <div>
+                  <label style={labelStyle}>Credit conversion percentage</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={potToCreditPct}
+                      onChange={(e) => setPotToCreditPct(Number(e.target.value))}
+                      style={{ flex: 1, accentColor: "#D4FF4F" }}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={potToCreditPct}
+                      onChange={(e) => setPotToCreditPct(Math.min(100, Math.max(0, Number(e.target.value))))}
+                      style={{ ...inputStyle, width: 70, flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: 12, color: "#888", flexShrink: 0 }}>%</span>
+                  </div>
+                </div>
+
+                {/* Credit use checkboxes */}
+                <div>
+                  <label style={labelStyle}>Credit can be used for</label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {([
+                      { value: "top_up_bonus",          label: "Top-up bonus on rental payouts" },
+                      { value: "cobranded_marketing",   label: "Co-branded marketing campaigns" },
+                      { value: "extra_dedicated_slot",  label: "Extra dedicated slot allocation" },
+                    ] as const).map(({ value, label }) => (
+                      <label key={value} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={potCreditUses.includes(value)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setPotCreditUses((prev) => [...prev, value]);
+                            } else {
+                              setPotCreditUses((prev) => prev.filter((u) => u !== value));
+                            }
+                          }}
+                          style={{ accentColor: "#D4FF4F" }}
+                        />
+                        <span style={{ fontSize: 12, color: "#ccc" }}>{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Linked venues */}

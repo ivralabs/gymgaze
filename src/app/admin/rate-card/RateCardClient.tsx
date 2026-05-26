@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Calculator,
   TrendingUp,
@@ -18,7 +18,11 @@ import {
   FileText,
   Printer,
   X,
+  Save,
+  Trash2,
+  FolderOpen,
 } from "lucide-react";
+import Toast, { useToast } from "@/components/gymgaze/Toast";
 import dynamic from "next/dynamic";
 
 const PlacesSearch = dynamic(() => import("@/components/PlacesSearch"), { ssr: false });
@@ -254,6 +258,18 @@ function MetricCard({
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+// ─── Saved Client type ────────────────────────────────────────────────────────
+type SavedClient = {
+  id: string;
+  name: string;
+  client_locations: { lat: number; lng: number; address: string }[];
+  tier: string | null;
+  slot_seconds: number | null;
+  flight_start: string | null;
+  flight_end: string | null;
+  notes: string | null;
+};
+
 export default function RateCardClient({ venues, pricingTiers }: Props) {
   const defaultCpm = pricingTiers.find((t) => t.tier_key === "premium")?.cpm_zar
     ?? pricingTiers[0]?.cpm_zar
@@ -273,7 +289,119 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [groupByCity, setGroupByCity] = useState(false);
   const [clientLocations, setClientLocations] = useState<{ lat: number; lng: number; address: string }[]>([]);
 
+  // ── Saved Clients state ───────────────────────────────────────────────────
+  const [savedClients, setSavedClients] = useState<SavedClient[]>([]);
+  const [loadedClientId, setLoadedClientId] = useState<string | null>(null);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveNameInput, setSaveNameInput] = useState("");
+  const [savingClient, setSavingClient] = useState(false);
+  const [deletingClient, setDeletingClient] = useState(false);
+  const { toast, showToast, hideToast } = useToast();
+
+  // effectiveCpm needed in save handler — declared here before handlers
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
+
+  // Fetch saved clients list
+  const fetchSavedClients = useCallback(async () => {
+    try {
+      const res = await fetch("/api/rate-card-clients", { credentials: "include" });
+      if (!res.ok) return;
+      const data: SavedClient[] = await res.json();
+      setSavedClients(data);
+    } catch {
+      // silently ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSavedClients();
+  }, [fetchSavedClients]);
+
+  // Load a saved client into form state
+  function loadClient(client: SavedClient) {
+    setClientLocations(client.client_locations ?? []);
+    if (client.flight_start) setFlightStart(client.flight_start);
+    if (client.flight_end) setFlightEnd(client.flight_end);
+    // Update client name field
+    setClientName(client.name);
+    // Update CPM tier if saved
+    if (client.tier) {
+      const matchedTier = pricingTiers.find((t) => t.tier_key === client.tier);
+      if (matchedTier) { setCpm(matchedTier.cpm_zar); setCustomCpm(""); }
+    }
+    setLoadedClientId(client.id);
+    showToast(`Loaded "${client.name}"`, "success");
+  }
+
+  // Open save modal
+  function openSaveModal() {
+    setSaveNameInput(clientName || "");
+    setShowSaveModal(true);
+  }
+
+  // Save / upsert client
+  async function handleSaveClient() {
+    const name = saveNameInput.trim();
+    if (!name) return;
+    setSavingClient(true);
+    try {
+      const selectedTier = pricingTiers.find((t) => t.cpm_zar === effectiveCpm);
+      const res = await fetch("/api/rate-card-clients", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          client_locations: clientLocations,
+          tier: selectedTier?.tier_key ?? null,
+          slot_seconds: selectedTier?.duration_sec ?? null,
+          flight_start: flightStart || null,
+          flight_end: flightEnd || null,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error ?? "Failed to save", "error");
+        return;
+      }
+      const saved: SavedClient = await res.json();
+      setLoadedClientId(saved.id);
+      setShowSaveModal(false);
+      showToast(`Saved as "${name}"`, "success");
+      await fetchSavedClients();
+    } catch {
+      showToast("Failed to save client", "error");
+    } finally {
+      setSavingClient(false);
+    }
+  }
+
+  // Delete loaded client
+  async function handleDeleteClient() {
+    if (!loadedClientId) return;
+    const client = savedClients.find((c) => c.id === loadedClientId);
+    const confirmed = window.confirm(`Delete saved client "${client?.name ?? "this client"}"? This cannot be undone.`);
+    if (!confirmed) return;
+    setDeletingClient(true);
+    try {
+      const res = await fetch(`/api/rate-card-clients/${loadedClientId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        showToast("Failed to delete client", "error");
+        return;
+      }
+      showToast(`Deleted "${client?.name ?? "client"}"`, "success");
+      setLoadedClientId(null);
+      await fetchSavedClients();
+    } catch {
+      showToast("Failed to delete client", "error");
+    } finally {
+      setDeletingClient(false);
+    }
+  }
+
   const months = Math.round((weeks / 4) * 10) / 10;
 
   // ── Per-venue metrics ──────────────────────────────────────────────────────
@@ -864,6 +992,85 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           </div>
         </div>
 
+        {/* ── Saved Clients ─────────────────────────────────────────── */}
+        <div className="mb-5">
+          <p className="text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Saved Clients</p>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Load dropdown */}
+            <div style={{ position: "relative" }}>
+              <select
+                value={loadedClientId ?? ""}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  if (!id) { setLoadedClientId(null); return; }
+                  const client = savedClients.find((c) => c.id === id);
+                  if (client) loadClient(client);
+                }}
+                className="rounded-xl px-4 py-2.5 text-sm outline-none appearance-none pr-9"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  color: loadedClientId ? "#D4FF4F" : "#888",
+                  minWidth: 180,
+                  cursor: "pointer",
+                }}
+              >
+                <option value="">Load client…</option>
+                {savedClients.map((c) => (
+                  <option key={c.id} value={c.id} style={{ background: "#1a1a1a", color: "#fff" }}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <FolderOpen
+                size={14}
+                strokeWidth={2}
+                style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", color: "#666", pointerEvents: "none" }}
+              />
+            </div>
+
+            {/* Save button */}
+            <button
+              onClick={openSaveModal}
+              disabled={clientLocations.length === 0 && !clientName.trim()}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+              style={{
+                background: (clientLocations.length > 0 || clientName.trim()) ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.03)",
+                color: (clientLocations.length > 0 || clientName.trim()) ? "#D4FF4F" : "#444",
+                border: `1px solid ${(clientLocations.length > 0 || clientName.trim()) ? "rgba(212,255,79,0.25)" : "rgba(255,255,255,0.07)"}`,
+                cursor: (clientLocations.length === 0 && !clientName.trim()) ? "not-allowed" : "pointer",
+                opacity: (clientLocations.length === 0 && !clientName.trim()) ? 0.5 : 1,
+              }}
+            >
+              <Save size={14} strokeWidth={2} />
+              Save as client
+            </button>
+
+            {/* Delete button */}
+            <button
+              onClick={handleDeleteClient}
+              disabled={!loadedClientId || deletingClient}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+              style={{
+                background: loadedClientId ? "rgba(239,68,68,0.08)" : "rgba(255,255,255,0.03)",
+                color: loadedClientId ? "#EF4444" : "#444",
+                border: `1px solid ${loadedClientId ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.07)"}`,
+                cursor: (!loadedClientId || deletingClient) ? "not-allowed" : "pointer",
+                opacity: (!loadedClientId || deletingClient) ? 0.5 : 1,
+              }}
+            >
+              <Trash2 size={14} strokeWidth={2} />
+              {deletingClient ? "Deleting…" : "Delete saved client"}
+            </button>
+
+            {loadedClientId && (
+              <span className="text-xs" style={{ color: "#D4FF4F", fontWeight: 600 }}>
+                ✓ {savedClients.find((c) => c.id === loadedClientId)?.name ?? "loaded"}
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Client Locations */}
         <div className="mb-5">
           <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
@@ -970,6 +1177,86 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             <span style={{ color: "#C084FC" }}>R{quoteTotals.costPerUnique.toFixed(2)} / unique</span>
           </div>
         </div>
+
+        {/* ── Save Modal ────────────────────────────────────────────────── */}
+        {showSaveModal && (
+          <div
+            style={{
+              position: "fixed", inset: 0, zIndex: 200,
+              background: "rgba(0,0,0,0.75)",
+              backdropFilter: "blur(4px)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) setShowSaveModal(false); }}
+          >
+            <div
+              style={{
+                background: "#111",
+                border: "1px solid rgba(212,255,79,0.2)",
+                borderRadius: 16,
+                padding: "28px 32px",
+                width: "100%",
+                maxWidth: 420,
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <p style={{ fontFamily: "Inter Tight, sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>
+                  Save Client
+                </p>
+                <button onClick={() => setShowSaveModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666" }}>
+                  <X size={16} strokeWidth={2} />
+                </button>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Client Name</label>
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="e.g. Old Mutual"
+                  value={saveNameInput}
+                  onChange={(e) => setSaveNameInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && saveNameInput.trim()) handleSaveClient(); }}
+                  className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(212,255,79,0.2)" }}
+                />
+              </div>
+              <p className="text-xs" style={{ color: "#666" }}>
+                Saves {clientLocations.length} location{clientLocations.length !== 1 ? "s" : ""}.
+                {loadedClientId && savedClients.find((c) => c.id === loadedClientId)?.name?.toLowerCase() === saveNameInput.trim().toLowerCase()
+                  ? " Will update the existing record."
+                  : " Existing client with same name will be updated."}
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  style={{ padding: "8px 18px", borderRadius: 10, background: "rgba(255,255,255,0.06)", color: "#888", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", fontWeight: 600, fontSize: 13 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveClient}
+                  disabled={!saveNameInput.trim() || savingClient}
+                  style={{
+                    padding: "8px 22px", borderRadius: 10,
+                    background: saveNameInput.trim() && !savingClient ? "#D4FF4F" : "rgba(212,255,79,0.2)",
+                    color: saveNameInput.trim() && !savingClient ? "#0a0a0a" : "#666",
+                    border: "none",
+                    cursor: (!saveNameInput.trim() || savingClient) ? "not-allowed" : "pointer",
+                    fontWeight: 700, fontSize: 13,
+                  }}
+                >
+                  {savingClient ? "Saving…" : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Toast */}
+        <Toast message={toast.message} type={toast.type} visible={toast.visible} onDismiss={hideToast} />
 
         {/* Generate Rate Card button */}
         <div className="flex items-center gap-3">

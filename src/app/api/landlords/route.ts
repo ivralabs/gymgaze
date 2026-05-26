@@ -16,7 +16,8 @@ export async function GET() {
     .select(
       "id, name, city, province, monthly_entries, active_members, " +
       "rental_fee_monthly, rental_payment_cycle, rental_start_date, " +
-      "rental_escalation_pct, rental_notes, rental_bank_details, rental_updated_at"
+      "rental_escalation_pct, rental_notes, rental_bank_details, rental_updated_at, " +
+      "current_occupancy_pct, occupancy_updated_at"
     )
     .order("city", { ascending: true })
     .order("name", { ascending: true });

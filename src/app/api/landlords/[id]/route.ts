@@ -25,6 +25,7 @@ export async function PATCH(
     "rental_escalation_pct",
     "rental_notes",
     "rental_bank_details",
+    "current_occupancy_pct",
   ] as const;
 
   type AllowedKey = typeof allowed[number];
@@ -40,14 +41,34 @@ export async function PATCH(
     );
   }
 
+  // Validate current_occupancy_pct
+  if (
+    "current_occupancy_pct" in body &&
+    (typeof body.current_occupancy_pct !== "number" ||
+      body.current_occupancy_pct < 0 ||
+      body.current_occupancy_pct > 100)
+  ) {
+    return NextResponse.json(
+      { error: "current_occupancy_pct must be a number between 0 and 100" },
+      { status: 400 }
+    );
+  }
+
   // Build update payload — only whitelisted keys
-  const update: Partial<Record<AllowedKey, unknown>> & { rental_updated_at: string } = {
+  const update: Partial<Record<AllowedKey, unknown>> & {
+    rental_updated_at: string;
+    occupancy_updated_at?: string;
+  } = {
     rental_updated_at: new Date().toISOString(),
   };
   for (const key of allowed) {
     if (key in body) {
       update[key] = body[key] === "" ? null : body[key];
     }
+  }
+  // Auto-stamp occupancy_updated_at when occupancy is patched
+  if ("current_occupancy_pct" in body) {
+    update.occupancy_updated_at = new Date().toISOString();
   }
 
   const { data, error } = await supabase
@@ -57,7 +78,8 @@ export async function PATCH(
     .select(
       "id, name, city, province, monthly_entries, active_members, " +
       "rental_fee_monthly, rental_payment_cycle, rental_start_date, " +
-      "rental_escalation_pct, rental_notes, rental_bank_details, rental_updated_at"
+      "rental_escalation_pct, rental_notes, rental_bank_details, rental_updated_at, " +
+      "current_occupancy_pct, occupancy_updated_at"
     )
     .single();
 

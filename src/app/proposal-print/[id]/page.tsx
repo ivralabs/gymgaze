@@ -28,14 +28,14 @@ export default async function ProposalPrintPage({
         gym_networks(id, name, slug, logo_url, primary_contact_name, primary_contact_email, primary_contact_phone),
         partnership_proposal_venues(
           id, venue_id, screens_planned, static_sites_planned, monthly_rental_projection,
-          venues(id, name, city, province, active_members, monthly_entries, rental_fee_monthly)
+          venues(id, name, city, province, active_members, monthly_entries, rental_fee_monthly, current_occupancy_pct)
         )
       `)
       .eq("id", id)
       .single(),
     svc
       .from("venues")
-      .select("id, name, city, province, active_members, monthly_entries, rental_fee_monthly")
+      .select("id, name, city, province, active_members, monthly_entries, rental_fee_monthly, current_occupancy_pct")
       .order("name"),
   ]);
 

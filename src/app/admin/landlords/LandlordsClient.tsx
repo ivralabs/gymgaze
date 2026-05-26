@@ -29,7 +29,13 @@ export type LandlordVenue = {
   rental_notes: string | null;
   rental_bank_details: Record<string, unknown> | null;
   rental_updated_at: string | null;
+  current_occupancy_pct: number | null;
+  occupancy_updated_at: string | null;
 };
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const OCCUPANCY_FLOOR = 35;
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
@@ -167,6 +173,7 @@ function VenueDrawer({ venue, onClose, onSaved }: DrawerProps) {
     rental_bank_name: (venue.rental_bank_details as Record<string, string> | null)?.bank ?? "",
     rental_bank_branch: (venue.rental_bank_details as Record<string, string> | null)?.branch ?? "",
     rental_bank_reference: (venue.rental_bank_details as Record<string, string> | null)?.reference ?? "",
+    current_occupancy_pct: String(venue.current_occupancy_pct ?? 0),
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -209,6 +216,7 @@ function VenueDrawer({ venue, onClose, onSaved }: DrawerProps) {
           rental_escalation_pct: parseFloat(form.rental_escalation_pct) || 0,
           rental_notes: form.rental_notes || null,
           rental_bank_details: bankDetails,
+          current_occupancy_pct: parseFloat(form.current_occupancy_pct) || 0,
         }),
       });
       const json = await res.json();
@@ -321,6 +329,27 @@ function VenueDrawer({ venue, onClose, onSaved }: DrawerProps) {
 
         {/* Body */}
         <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 18, flex: 1 }}>
+          {/* Current Occupancy */}
+          <div>
+            <label style={labelStyle}>Current Occupancy %</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                style={{ ...inputStyle }}
+                type="number"
+                min={0}
+                max={100}
+                step={1}
+                value={form.current_occupancy_pct}
+                onChange={(e) => set("current_occupancy_pct", e.target.value)}
+                placeholder="0"
+              />
+              <span style={{ color: "#A3A3A3", fontSize: 14, flexShrink: 0 }}>%</span>
+            </div>
+            <div style={{ marginTop: 4, fontSize: 10, color: "#555" }}>
+              ≥{OCCUPANCY_FLOOR}% = Active (rental owed) · &lt;{OCCUPANCY_FLOOR}% = Below floor (goes to pot)
+            </div>
+          </div>
+
           {/* Monthly fee */}
           <div>
             <label style={labelStyle}>Monthly Rental Fee (ZAR)</label>
@@ -605,24 +634,145 @@ function BulkActionBar({
   );
 }
 
+// ─── Occupancy Status Pill ───────────────────────────────────────────────────────────
+
+function OccupancyPill({ pct }: { pct: number | null }) {
+  const v = pct ?? 0;
+  if (v === 0) {
+    return (
+      <span style={{
+        background: "rgba(255,255,255,0.06)", color: "#666",
+        fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 20,
+      }}>Setup Phase</span>
+    );
+  }
+  if (v < OCCUPANCY_FLOOR) {
+    return (
+      <span style={{
+        background: "rgba(245,158,11,0.12)", color: "#F59E0B",
+        fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 20,
+      }}>{v}% — Below Floor</span>
+    );
+  }
+  return (
+    <span style={{
+      background: "rgba(212,255,79,0.12)", color: "#D4FF4F",
+      fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 20,
+    }}>{v}% — Active</span>
+  );
+}
+
+// ─── Inline Occupancy Editor ────────────────────────────────────────────────────────
+
+function InlineOccupancyEditor({
+  venue,
+  onSave,
+}: {
+  venue: LandlordVenue;
+  onSave: (id: string, pct: number) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(String(venue.current_occupancy_pct ?? 0));
+  const [saving, setSaving] = useState(false);
+
+  function startEdit() {
+    setValue(String(venue.current_occupancy_pct ?? 0));
+    setEditing(true);
+  }
+
+  async function save() {
+    const pct = parseFloat(value);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+      setEditing(false);
+      return;
+    }
+    setSaving(true);
+    await onSave(venue.id, pct);
+    setSaving(false);
+    setEditing(false);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") save();
+    if (e.key === "Escape") setEditing(false);
+  }
+
+  if (editing) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <input
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={save}
+          onKeyDown={onKeyDown}
+          disabled={saving}
+          type="number"
+          min={0}
+          max={100}
+          style={{
+            width: 60,
+            background: "rgba(212,255,79,0.08)",
+            border: "1px solid rgba(212,255,79,0.4)",
+            borderRadius: 6,
+            padding: "4px 8px",
+            color: "#FFFFFF",
+            fontSize: 12,
+            outline: "none",
+          }}
+        />
+        <span style={{ color: "#A3A3A3", fontSize: 12 }}>%</span>
+        <button
+          onClick={save}
+          disabled={saving}
+          style={{ color: "#D4FF4F", background: "none", border: "none", cursor: "pointer", padding: 2 }}
+        >
+          <Check size={13} strokeWidth={2.5} />
+        </button>
+        <button
+          onClick={() => setEditing(false)}
+          style={{ color: "#666", background: "none", border: "none", cursor: "pointer", padding: 2 }}
+        >
+          <X size={13} strokeWidth={2} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      onClick={startEdit}
+      style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+      title="Click to edit occupancy"
+    >
+      <OccupancyPill pct={venue.current_occupancy_pct} />
+      <Pencil size={10} color="#444" strokeWidth={2} />
+    </div>
+  );
+}
+
 // ─── Stats Row ────────────────────────────────────────────────────────────────
 
 function StatsRow({ venues }: { venues: LandlordVenue[] }) {
-  const fees = venues
-    .map((v) => v.rental_fee_monthly ?? 0)
-    .filter((f) => f > 0);
-
-  const total = fees.reduce((s, f) => s + f, 0);
-  const avg = fees.length > 0 ? total / fees.length : 0;
-  const max = fees.length > 0 ? Math.max(...fees) : 0;
-  const min = fees.length > 0 ? Math.min(...fees) : 0;
+  const totalPotential = venues.reduce((s, v) => s + (v.rental_fee_monthly ?? 0), 0);
+  const totalOwed = venues.reduce((s, v) => {
+    const occ = v.current_occupancy_pct ?? 0;
+    return s + (occ >= OCCUPANCY_FLOOR ? (v.rental_fee_monthly ?? 0) : 0);
+  }, 0);
+  const inPot = venues.reduce((s, v) => {
+    const occ = v.current_occupancy_pct ?? 0;
+    return s + (occ < OCCUPANCY_FLOOR ? (v.rental_fee_monthly ?? 0) : 0);
+  }, 0);
+  const avgOccupancy = venues.length > 0
+    ? venues.reduce((s, v) => s + (v.current_occupancy_pct ?? 0), 0) / venues.length
+    : 0;
 
   const stats = [
-    { label: "Total Monthly Bill", value: fmtZAR(total), accent: "#D4FF4F" },
-    { label: "Average Per Venue", value: fmtZAR(avg), accent: "#FFFFFF" },
-    { label: "Highest Tier", value: fmtZAR(max), accent: "#FFFFFF" },
-    { label: "Lowest Tier", value: fmtZAR(min), accent: "#FFFFFF" },
-    { label: "Venues", value: String(venues.length), accent: "#FFFFFF" },
+    { label: "Rental Potential / mo",   value: fmtZAR(totalPotential), accent: "#D4FF4F", sub: "At full occupancy floor" },
+    { label: "Rental Owed / mo",        value: fmtZAR(totalOwed),      accent: "#FFFFFF", sub: `Venues at ≥${OCCUPANCY_FLOOR}%` },
+    { label: "In Pot This Month",       value: fmtZAR(inPot),          accent: "#F59E0B", sub: "Below threshold" },
+    { label: "Avg Occupancy",           value: `${avgOccupancy.toFixed(1)}%`, accent: "#FFFFFF", sub: "Across all venues" },
+    { label: "Venues",                  value: String(venues.length),  accent: "#FFFFFF", sub: "Total" },
   ];
 
   return (
@@ -634,7 +784,7 @@ function StatsRow({ venues }: { venues: LandlordVenue[] }) {
         marginBottom: 24,
       }}
     >
-      {stats.map(({ label, value, accent }) => (
+      {stats.map(({ label, value, accent, sub }) => (
         <div
           key={label}
           style={{
@@ -646,7 +796,7 @@ function StatsRow({ venues }: { venues: LandlordVenue[] }) {
         >
           <div
             style={{
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 800,
               color: accent,
               fontFamily: "Inter Tight, sans-serif",
@@ -656,18 +806,10 @@ function StatsRow({ venues }: { venues: LandlordVenue[] }) {
           >
             {value}
           </div>
-          <div
-            style={{
-              fontSize: 11,
-              color: "#666",
-              marginTop: 5,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.07em",
-            }}
-          >
+          <div style={{ fontSize: 11, color: "#FFFFFF", marginTop: 5, fontWeight: 600 }}>
             {label}
           </div>
+          <div style={{ fontSize: 10, color: "#555", marginTop: 2 }}>{sub}</div>
         </div>
       ))}
     </div>
@@ -837,6 +979,27 @@ export default function LandlordsClient({ initialVenues }: Props) {
       prev.map((v) => (v.id === updated.id ? { ...v, ...updated } : v))
     );
     showToast("Venue rental agreement saved", "success");
+  }, [showToast]);
+
+  const handleOccupancyUpdate = useCallback(async (id: string, pct: number) => {
+    try {
+      const res = await fetch(`/api/landlords/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ current_occupancy_pct: pct }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        showToast(json.error ?? "Failed to update occupancy", "error");
+        return;
+      }
+      setVenues((prev) =>
+        prev.map((v) => (v.id === id ? { ...v, ...json } : v))
+      );
+      showToast(`Occupancy updated to ${pct}%`, "success");
+    } catch {
+      showToast("Network error", "error");
+    }
   }, [showToast]);
 
   async function handleExportCsv() {
@@ -1139,6 +1302,7 @@ export default function LandlordsClient({ initialVenues }: Props) {
                 <th style={thStyle}>Province</th>
                 <th style={{ ...thStyle, textAlign: "right" }}>Walk-Ins/mo</th>
                 <th style={{ ...thStyle, textAlign: "right" }}>Members</th>
+                <th style={thStyle}>Occupancy</th>
                 <th style={thStyle}>Rental Fee</th>
                 <th style={thStyle}>Cycle</th>
                 <th style={thStyle}>Start Date</th>
@@ -1179,6 +1343,9 @@ export default function LandlordsClient({ initialVenues }: Props) {
                     <td style={tdStyle}>{venue.province ?? "—"}</td>
                     <td style={{ ...tdStyle, textAlign: "right" }}>{fmtNum(venue.monthly_entries)}</td>
                     <td style={{ ...tdStyle, textAlign: "right" }}>{fmtNum(venue.active_members)}</td>
+                    <td style={tdStyle}>
+                      <InlineOccupancyEditor venue={venue} onSave={handleOccupancyUpdate} />
+                    </td>
                     <td style={tdStyle}>
                       <InlineFeeEditor venue={venue} onSave={handleFeeUpdate} />
                     </td>

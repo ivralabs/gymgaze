@@ -103,18 +103,28 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
-function nearestLocation(
-  venueLat: number,
-  venueLng: number,
-  locations: { lat: number; lng: number; address: string }[]
-): { lat: number; lng: number; address: string; distanceKm: number } | null {
-  let nearest: { lat: number; lng: number; address: string } | null = null;
-  let minDist = Infinity;
-  for (const loc of locations) {
-    const d = haversineKm(venueLat, venueLng, loc.lat, loc.lng);
-    if (d < minDist) { minDist = d; nearest = loc; }
+// Build a map of venueId -> assigned client locations.
+// Algorithm: for each client location, find the venue with the minimum haversine distance and assign it there.
+// Multiple clients can map to the same venue (stacked); venues with no client assigned get an empty array.
+function buildVenueClientMap(
+  venueData: { id: string; latitude?: number | null; longitude?: number | null }[],
+  clientLocations: { lat: number; lng: number; address: string }[]
+): Map<string, { address: string; distanceKm: number }[]> {
+  const map = new Map<string, { address: string; distanceKm: number }[]>();
+  for (const v of venueData) map.set(v.id, []);
+  for (const loc of clientLocations) {
+    let nearestId: string | null = null;
+    let minDist = Infinity;
+    for (const v of venueData) {
+      if (v.latitude == null || v.longitude == null) continue;
+      const d = haversineKm(v.latitude, v.longitude, loc.lat, loc.lng);
+      if (d < minDist) { minDist = d; nearestId = v.id; }
+    }
+    if (nearestId != null) {
+      map.get(nearestId)!.push({ address: loc.address, distanceKm: minDist });
+    }
   }
-  return nearest ? { ...nearest, distanceKm: minDist } : null;
+  return map;
 }
 
 // ─── Image helpers ───────────────────────────────────────────────
@@ -256,6 +266,12 @@ export default function RateCardPrint({
       return { ...v, ...m, cost, costPerUnique };
     });
   }, [venues, weeks, effectiveCpm]);
+
+  // ── Client-location → nearest-venue assignment map ──────────────────────
+  const venueClientMap = useMemo(
+    () => buildVenueClientMap(venueData, clientLocations),
+    [venueData, clientLocations]
+  );
 
   // ── City rollup ────────────────────────────────────────────────────────────
   const cityData = useMemo(() => {
@@ -804,15 +820,20 @@ export default function RateCardPrint({
                           );
                         })()}
 
-                        {/* Proximity info — white space between data grid and spec strip */}
-                        {v.latitude != null && v.longitude != null && clientLocations.length > 0 ? (() => {
-                          const near = nearestLocation(v.latitude, v.longitude, clientLocations);
-                          return near ? (
-                            <div style={{ padding: "7px 32px", borderTop: "1px solid #E5E7EB" }}>
-                              <span style={{ fontSize: 11, color: "#999" }}>📍 Nearest client location: <strong style={{ color: "#777", fontWeight: 600 }}>{near.address}</strong> — {near.distanceKm.toFixed(1)} km</span>
+                        {/* Assigned client locations — white space between data grid and spec strip */}
+                        {(() => {
+                          const assigned = venueClientMap.get(v.id) ?? [];
+                          if (assigned.length === 0) return null;
+                          return (
+                            <div style={{ padding: "14px 32px", display: "flex", flexDirection: "column", gap: 6 }}>
+                              {assigned.map((cl, i) => (
+                                <span key={i} style={{ fontSize: 11, color: "#999" }}>
+                                  📍 <strong style={{ color: "#777", fontWeight: 600 }}>{cl.address}</strong> — {cl.distanceKm.toFixed(1)} km
+                                </span>
+                              ))}
                             </div>
-                          ) : null;
-                        })() : null}
+                          );
+                        })()}
 
                         {/* Spec strip */}
                         {(() => {

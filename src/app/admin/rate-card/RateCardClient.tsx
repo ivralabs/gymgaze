@@ -48,6 +48,29 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
+// For each client location, find the nearest venue and assign that client to it.
+// Multiple clients can map to the same venue; venues with no client get an empty array.
+function buildVenueClientMap(
+  venueData: { id: string; latitude?: number | null; longitude?: number | null }[],
+  clientLocations: { lat: number; lng: number; address: string }[]
+): Map<string, { address: string; distanceKm: number }[]> {
+  const map = new Map<string, { address: string; distanceKm: number }[]>();
+  for (const v of venueData) map.set(v.id, []);
+  for (const loc of clientLocations) {
+    let nearestId: string | null = null;
+    let minDist = Infinity;
+    for (const v of venueData) {
+      if (v.latitude == null || v.longitude == null) continue;
+      const d = haversineKm(v.latitude, v.longitude, loc.lat, loc.lng);
+      if (d < minDist) { minDist = d; nearestId = v.id; }
+    }
+    if (nearestId != null) {
+      map.get(nearestId)!.push({ address: loc.address, distanceKm: minDist });
+    }
+  }
+  return map;
+}
+
 export type PricingTier = {
   id: string;
   tier_key: string;
@@ -249,7 +272,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
   const [expandedSection, setExpandedSection] = useState<"gym" | "city" | "province" | "national" | null>("gym");
   const [groupByCity, setGroupByCity] = useState(false);
   const [clientLocations, setClientLocations] = useState<{ lat: number; lng: number; address: string }[]>([]);
-  const [proximityRadius, setProximityRadius] = useState<number>(10);
 
   const effectiveCpm = customCpm ? parseFloat(customCpm) || 0 : cpm;
   const months = Math.round((weeks / 4) * 10) / 10;
@@ -316,23 +338,11 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     return { ots, reach, impact, screens, cost, freq, costPerUnique, venues: venues.length };
   }, [venueData, venues.length]);
 
-  // ── Proximity filter ────────────────────────────────────────────────────────
-  // When client locations are set, keep only venues within proximityRadius km of the nearest location.
-  const proximityFilteredVenues = useMemo(() => {
-    if (clientLocations.length === 0) return venueData;
-    return venueData.filter((v) => {
-      if (v.latitude == null || v.longitude == null) return true; // no coords → always include
-      const minDist = Math.min(
-        ...clientLocations.map((loc) => haversineKm(loc.lat, loc.lng, v.latitude!, v.longitude!))
-      );
-      return minDist <= proximityRadius;
-    });
-  }, [venueData, clientLocations, proximityRadius]);
-
   // ── Quote selection ────────────────────────────────────────────────────────
+  // Always use full venue list — proximity filtering removed (nearest location shown per venue but never hides venues)
   const quoteVenues = selectedVenues.length > 0
-    ? proximityFilteredVenues.filter((v) => selectedVenues.includes(v.id))
-    : proximityFilteredVenues;
+    ? venueData.filter((v) => selectedVenues.includes(v.id))
+    : venueData;
 
   const quoteTotals = useMemo(() => {
     const ots    = quoteVenues.reduce((s, v) => s + v.ots, 0);
@@ -344,6 +354,12 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     const costPerUnique = reach > 0 ? cost / reach : 0;
     return { ots, reach, impact, screens, cost, freq, costPerUnique };
   }, [quoteVenues]);
+
+  // ── Client-location → nearest-venue assignment map ──────────────────────
+  const venueClientMap = useMemo(
+    () => buildVenueClientMap(venueData, clientLocations),
+    [venueData, clientLocations]
+  );
 
   function toggleVenue(id: string) {
     setSelectedVenues((prev) =>
@@ -363,11 +379,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
     };
     if (clientLocations.length > 0) {
       printParams.clientLocations = encodeURIComponent(JSON.stringify(clientLocations));
-      printParams.radius = proximityRadius.toString();
-    }
-    // Pass only the filtered venue IDs so print page always receives the right set
-    if (clientLocations.length > 0 && selectedVenues.length === 0) {
-      printParams.venues = proximityFilteredVenues.map((v) => v.id).join(",");
     }
     const printUrl = `/rate-card-print?` + new URLSearchParams(printParams).toString();
     window.open(printUrl, "_blank");
@@ -389,10 +400,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
       };
       if (clientLocations.length > 0) {
         pdfParams.clientLocations = encodeURIComponent(JSON.stringify(clientLocations));
-        pdfParams.radius = proximityRadius.toString();
-      }
-      if (clientLocations.length > 0 && selectedVenues.length === 0) {
-        pdfParams.venues = proximityFilteredVenues.map((v) => v.id).join(",");
       }
       const params = new URLSearchParams(pdfParams);
 
@@ -907,32 +914,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
           )}
         </div>
 
-        {/* Proximity Radius — only shown when locations are set */}
-        {clientLocations.length > 0 && (
-          <div className="mb-5">
-            <label className="block text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>Proximity Radius</label>
-            <div className="flex flex-wrap gap-2">
-              {[5, 10, 15, 20, 30].map((km) => (
-                <button
-                  key={km}
-                  type="button"
-                  onClick={() => setProximityRadius(km)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
-                  style={{
-                    background: proximityRadius === km ? "rgba(212,255,79,0.12)" : "rgba(255,255,255,0.04)",
-                    color: proximityRadius === km ? "#D4FF4F" : "#666",
-                    border: `1px solid ${proximityRadius === km ? "rgba(212,255,79,0.3)" : "rgba(255,255,255,0.08)"}`,
-                  }}
-                >
-                  {km}km
-                </button>
-              ))}
-            </div>
-            <p className="text-xs mt-2" style={{ color: proximityFilteredVenues.length < venueData.length ? "#D4FF4F" : "#666" }}>
-              {proximityFilteredVenues.length} of {venueData.length} venue{venueData.length !== 1 ? "s" : ""} within {proximityRadius}km of client location{clientLocations.length !== 1 ? "s" : ""}
-            </p>
-          </div>
-        )}
+
 
         <p className="text-xs font-semibold mb-3" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Select Venues <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(leave blank = all)</span>
@@ -1587,23 +1569,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                           {/* Narrative line */}
                           <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
                             This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
-                            {v.latitude != null && v.longitude != null && clientLocations.length > 0 ? (() => {
-                              let nearest: { lat: number; lng: number; address: string; distanceKm: number } | null = null;
-                              let minDist = Infinity;
-                              for (const loc of clientLocations) {
-                                const d = haversineKm(loc.lat, loc.lng, v.latitude!, v.longitude!);
-                                if (d < minDist) { minDist = d; nearest = { ...loc, distanceKm: d }; }
-                              }
-                              return nearest ? (
-                                <span style={{ marginLeft: 8, color: "#555" }}>
-                                  📍 Nearest: <strong style={{ color: "#0a0a0a" }}>{nearest.address}</strong> — <strong style={{ color: "#0a0a0a" }}>{nearest.distanceKm.toFixed(1)} km</strong>
-                                </span>
-                              ) : null;
-                            })() : v.latitude != null && v.longitude != null ? (
-                              <span style={{ marginLeft: 8, color: "#888" }}>
-                                📍 {v.latitude!.toFixed(4)}, {v.longitude!.toFixed(4)}
-                              </span>
-                            ) : null}
                           </div>
 
                           {/* Data grid */}
@@ -1628,6 +1593,21 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                               </div>
                             ))}
                           </div>
+                            );
+                          })()}
+
+                          {/* Assigned client locations — white space between data grid and spec strip */}
+                          {(() => {
+                            const assigned = venueClientMap.get(v.id) ?? [];
+                            if (assigned.length === 0) return null;
+                            return (
+                              <div style={{ padding: "14px 32px", display: "flex", flexDirection: "column", gap: 6 }}>
+                                {assigned.map((cl, i) => (
+                                  <span key={i} style={{ fontSize: 11, color: "#999" }}>
+                                    📍 <strong style={{ color: "#777", fontWeight: 600 }}>{cl.address}</strong> — {cl.distanceKm.toFixed(1)} km
+                                  </span>
+                                ))}
+                              </div>
                             );
                           })()}
 

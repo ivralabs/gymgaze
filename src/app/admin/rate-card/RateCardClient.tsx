@@ -1170,14 +1170,6 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
                       <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
                         {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
                       </div>
-                      {clientLocations.length > 0 && (
-                        <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
-                          <span style={{ color: "#555" }}>Client Locations:</span>
-                          {clientLocations.map((l, i) => (
-                            <React.Fragment key={i}>{i > 0 ? " · " : ""}{l.address}</React.Fragment>
-                          ))}
-                        </div>
-                      )}
                       <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
                         <div style={{ background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.3)", borderRadius: 20, padding: "5px 16px", color: "#D4FF4F", fontSize: 13, fontWeight: 700 }}>
                           {tierLabel} · {slotLabel} slot · R{effectiveCpm} CPM

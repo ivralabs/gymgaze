@@ -43,6 +43,18 @@ export default async function RateCardPrintPage({
   const clientLat = params.clientLat ? parseFloat(params.clientLat) : null;
   const clientLng = params.clientLng ? parseFloat(params.clientLng) : null;
 
+  // New multi-location param (JSON-encoded array, URL-encoded)
+  let clientLocations: { lat: number; lng: number; address: string }[] | undefined;
+  if (params.clientLocations) {
+    try {
+      clientLocations = JSON.parse(decodeURIComponent(params.clientLocations));
+    } catch {
+      clientLocations = undefined;
+    }
+  }
+
+  const radius = params.radius ? parseFloat(params.radius) : null;
+
   return (
     <RateCardPrint
       venues={filteredVenues}
@@ -56,6 +68,8 @@ export default async function RateCardPrintPage({
       clientLat={clientLat}
       clientLng={clientLng}
       clientAddress={params.clientAddress ?? ""}
+      clientLocations={clientLocations}
+      radius={radius}
     />
   );
 }

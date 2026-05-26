@@ -44,6 +44,8 @@ interface Props {
   clientLat?: number | null;
   clientLng?: number | null;
   clientAddress?: string;
+  clientLocations?: { lat: number; lng: number; address: string }[];
+  radius?: number | null;
 }
 
 // ─── Media constants ──────────────────────────────────────────────────────────
@@ -99,6 +101,20 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   const dLng = (lng2 - lng1) * Math.PI / 180;
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+function nearestLocation(
+  venueLat: number,
+  venueLng: number,
+  locations: { lat: number; lng: number; address: string }[]
+): { lat: number; lng: number; address: string; distanceKm: number } | null {
+  let nearest: { lat: number; lng: number; address: string } | null = null;
+  let minDist = Infinity;
+  for (const loc of locations) {
+    const d = haversineKm(venueLat, venueLng, loc.lat, loc.lng);
+    if (d < minDist) { minDist = d; nearest = loc; }
+  }
+  return nearest ? { ...nearest, distanceKm: minDist } : null;
 }
 
 // ─── Image helpers ───────────────────────────────────────────────
@@ -208,7 +224,16 @@ export default function RateCardPrint({
   clientLat,
   clientLng,
   clientAddress,
+  clientLocations: clientLocationsProp,
+  radius,
 }: Props) {
+  // Resolve effective locations — new multi-location param takes priority;
+  // fall back to legacy single-location params for backward compat.
+  const clientLocations: { lat: number; lng: number; address: string }[] = (() => {
+    if (clientLocationsProp && clientLocationsProp.length > 0) return clientLocationsProp;
+    if (clientLat != null && clientLng != null) return [{ lat: clientLat, lng: clientLng, address: clientAddress ?? "" }];
+    return [];
+  })();
   const effectiveCpm = cpm;
 
   // Auto-print on mount — unless headless renderer asked us not to.
@@ -395,9 +420,15 @@ export default function RateCardPrint({
             <div style={{ marginTop: 10, fontSize: 15, color: "#666", letterSpacing: "0.04em" }}>
               {flightStart && flightEnd ? `${flightStart} — ${flightEnd}` : today}
             </div>
-            {clientAddress && (
-              <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center" }}>
-                <span style={{ color: "#555" }}>Location:</span> {clientAddress}
+            {clientLocations.length > 0 && (
+              <div style={{ marginTop: 8, fontSize: 13, color: "#888", letterSpacing: "0.01em", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", flexWrap: "wrap", maxWidth: 700, margin: "8px auto 0" }}>
+                <span style={{ color: "#555", flexShrink: 0 }}>Client Locations:</span>
+                <span>{clientLocations.map((l) => l.address).join(" · ")}</span>
+              </div>
+            )}
+            {clientLocations.length > 0 && radius != null && (
+              <div style={{ marginTop: 6, fontSize: 12, color: "#666", textAlign: "center" }}>
+                Venues within {radius}km of client locations
               </div>
             )}
             <div style={{ display: "flex", gap: 10, marginTop: 12, justifyContent: "center" }}>
@@ -758,11 +789,14 @@ export default function RateCardPrint({
                         {/* Narrative line + GPS distance */}
                         <div style={{ padding: "14px 32px 0", fontSize: 13, color: "#555" }}>
                           This gym is located in <strong style={{ color: "#0a0a0a" }}>{v.city ?? "—"}</strong>, {v.province ?? "—"}, serving <strong style={{ color: "#0a0a0a" }}>{fmtFull(v.activeMembers)}</strong> active members with an avg. session length of <strong style={{ color: "#0a0a0a" }}>55 minutes</strong>.
-                          {v.latitude != null && v.longitude != null && clientLat != null && clientLng != null ? (
-                            <span style={{ marginLeft: 8, color: "#555" }}>
-                              📍 <strong style={{ color: "#0a0a0a" }}>{clientAddress}</strong> — <strong style={{ color: "#0a0a0a" }}>{haversineKm(clientLat, clientLng, v.latitude, v.longitude).toFixed(1)} km</strong> away
-                            </span>
-                          ) : v.latitude != null && v.longitude != null ? (
+                          {v.latitude != null && v.longitude != null && clientLocations.length > 0 ? (() => {
+                            const near = nearestLocation(v.latitude, v.longitude, clientLocations);
+                            return near ? (
+                              <span style={{ marginLeft: 8, color: "#555" }}>
+                                📍 Nearest: <strong style={{ color: "#0a0a0a" }}>{near.address}</strong> — <strong style={{ color: "#0a0a0a" }}>{near.distanceKm.toFixed(1)} km</strong>
+                              </span>
+                            ) : null;
+                          })() : v.latitude != null && v.longitude != null ? (
                             <span style={{ marginLeft: 8, color: "#888" }}>
                               📍 {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
                             </span>

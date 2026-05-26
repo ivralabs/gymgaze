@@ -18,19 +18,21 @@ export const NAV_PAGES = [
   { slug: "pipeline",              label: "Pipeline" },
   { slug: "static-sites",          label: "Static Sites" },
   { slug: "static-sites-rate-card", label: "Static Sites Rate Card" },
-  { slug: "proposals", label: "Partnership Proposals" },
+  { slug: "proposals",  label: "Partnership Proposals" },
+  { slug: "landlords",  label: "Landlords & Rentals" },
 ] as const;
 
 export type NavSlug = typeof NAV_PAGES[number]["slug"];
 
-export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "custom";
+export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "finance" | "custom";
 
 // Default permissions per role preset
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
-  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit", "rate-card", "pipeline", "static-sites", "static-sites-rate-card", "proposals"],
+  admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit", "rate-card", "pipeline", "static-sites", "static-sites-rate-card", "proposals", "landlords"],
   manager: ["dashboard", "venues", "screens", "photos", "static-sites"],
   sales:   ["rate-card", "static-sites-rate-card", "insights", "media-kit", "campaigns", "venues", "photos", "pipeline", "inventory", "analytics", "static-sites", "proposals"],
   viewer:  ["dashboard", "analytics", "insights"],
+  finance: ["dashboard", "revenue", "landlords"],
   custom:  [], // filled by the custom permissions array
 };
 
@@ -39,6 +41,7 @@ export const ROLE_LABELS: Record<RolePreset, string> = {
   manager: "Manager",
   sales:   "Sales",
   viewer:  "Viewer",
+  finance: "Finance",
   custom:  "Custom",
 };
 
@@ -47,6 +50,7 @@ export const ROLE_DESCRIPTIONS: Record<RolePreset, string> = {
   manager: "Venues, photos & portal management",
   sales:   "Campaigns, revenue & insights",
   viewer:  "Read-only dashboard & analytics",
+  finance: "Revenue, landlords & rental management",
   custom:  "Hand-picked pages only",
 };
 
@@ -55,6 +59,7 @@ export const ROLE_COLORS: Record<RolePreset, { bg: string; text: string }> = {
   manager: { bg: "rgba(96,165,250,0.12)",  text: "#60A5FA" },
   sales:   { bg: "rgba(251,146,60,0.12)",  text: "#FB923C" },
   viewer:  { bg: "rgba(167,139,250,0.12)", text: "#A78BFA" },
+  finance: { bg: "rgba(52,211,153,0.12)",  text: "#34D399" },
   custom:  { bg: "rgba(244,114,182,0.12)", text: "#F472B6" },
 };
 

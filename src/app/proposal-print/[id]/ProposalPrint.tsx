@@ -28,6 +28,7 @@ export type ProposalVenueRow = {
     province: string | null;
     active_members: number | null;
     monthly_entries: number | null;
+    rental_fee_monthly: number | null;
   } | null;
 };
 
@@ -115,11 +116,15 @@ function todayStr() {
 }
 
 // ─── Revenue calculation per venue ───────────────────────────────────────────
-function calcMonthlyRevenue(screens: number, cpmBenchmark: number, partnerPct: number): number {
-  // 16 slots × 1487 plays/screen/week × 4.33 weeks/month
+// Gross ad revenue = screens × 16 slots × 1487 plays/screen/week × 4.33 weeks × CPM × 60% sell-through / 1000
+function calcGrossMonthlyAdRevenue(screens: number, cpmBenchmark: number): number {
   const playsPerMonth = 16 * PLAYS_PER_SCREEN_PER_WEEK * 4.33 * screens;
-  const grossRevenue = (playsPerMonth / 1000) * cpmBenchmark * SELL_THROUGH;
-  return grossRevenue * (partnerPct / 100);
+  return (playsPerMonth / 1000) * cpmBenchmark * SELL_THROUGH;
+}
+
+/** @deprecated Use calcGrossMonthlyAdRevenue */
+function calcMonthlyRevenue(screens: number, cpmBenchmark: number, partnerPct: number): number {
+  return calcGrossMonthlyAdRevenue(screens, cpmBenchmark) * (partnerPct / 100);
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -230,17 +235,34 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
     provinceMap.set(prov, (provinceMap.get(prov) ?? 0) + 1);
   });
 
-  // Per-venue revenue projections
+  // Per-venue revenue projections — Option 1: rental base + rev share upside
   const venueRevenues = proposalVenues.map((pv) => {
     const screens = pv.screens_planned || 2;
-    const monthly = pv.monthly_rental_projection ?? calcMonthlyRevenue(screens, cpm, partnerPct);
+    const grossAdRevenue = calcGrossMonthlyAdRevenue(screens, cpm);
+    const partnerAdShare = grossAdRevenue * (partnerPct / 100);
+    const gymgazeAdShare = grossAdRevenue * (gymgazePct / 100);
+    const rentalFee = pv.venues?.rental_fee_monthly ?? 0;
+    const totalToPartner = partnerAdShare + rentalFee;
+    const netToGymgaze = gymgazeAdShare - rentalFee;
     return {
       ...pv,
-      monthly,
       screens,
+      grossAdRevenue,
+      partnerAdShare,
+      gymgazeAdShare,
+      rentalFee,
+      totalToPartner,
+      netToGymgaze,
+      monthly: pv.monthly_rental_projection ?? partnerAdShare,
     };
   });
-  const totalMonthlyRevenue = venueRevenues.reduce((s, v) => s + v.monthly, 0);
+  const totalGrossAdRevenue = venueRevenues.reduce((s, v) => s + v.grossAdRevenue, 0);
+  const totalPartnerAdShare = venueRevenues.reduce((s, v) => s + v.partnerAdShare, 0);
+  const totalRentalFees = venueRevenues.reduce((s, v) => s + v.rentalFee, 0);
+  const totalToPartner = venueRevenues.reduce((s, v) => s + v.totalToPartner, 0);
+  const totalNetToGymgaze = venueRevenues.reduce((s, v) => s + v.netToGymgaze, 0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const totalMonthlyRevenue = totalPartnerAdShare;
 
   const today = todayStr();
   const flightLabel = proposal.flight_start && proposal.flight_end
@@ -687,7 +709,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             <div style={{ width: 380, flexShrink: 0, display: "flex", flexDirection: "column", gap: 20 }}>
               <div>
                 <div style={{ fontSize: 22, fontWeight: 800, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>
-                  The {partnerPct}/{gymgazePct} Revenue Split
+                  The {gymgazePct}/{partnerPct} Revenue Split
                 </div>
                 <LimeDivider />
               </div>
@@ -696,70 +718,102 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
               <div>
                 <div style={{ display: "flex", height: 60, borderRadius: 8, overflow: "hidden", border: `1px solid ${BORDER_GREY}` }}>
                   <div style={{
-                    width: `${partnerPct}%`, background: LIME, display: "flex",
+                    width: `${gymgazePct}%`, background: DARK, display: "flex",
                     alignItems: "center", justifyContent: "center",
                   }}>
-                    <span style={{ fontSize: 20, fontWeight: 900, color: DARK }}>{partnerPct}%</span>
+                    <span style={{ fontSize: 20, fontWeight: 900, color: LIME }}>{gymgazePct}%</span>
                   </div>
                   <div style={{
-                    flex: 1, background: DARK, display: "flex",
+                    flex: 1, background: LIME, display: "flex",
                     alignItems: "center", justifyContent: "center",
                   }}>
-                    <span style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>{gymgazePct}%</span>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: DARK }}>{partnerPct}%</span>
                   </div>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "#888" }}>
-                  <span>{networkName}</span>
                   <span>GymGaze</span>
+                  <span>{networkName}</span>
                 </div>
               </div>
 
               {/* Split breakdown */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {/* GymGaze block */}
                 <div style={{
-                  padding: "16px 18px", background: "rgba(212,255,79,0.08)",
-                  border: `1.5px solid ${LIME}`, borderRadius: 10,
-                }}>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{partnerPct}%</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "4px 0" }}>to {networkName}</div>
-                  <div style={{ fontSize: 11, color: "#666", lineHeight: 1.5 }}>
-                    Applies to digital screen ad revenue and static site rental income. Paid monthly, net 30 from month-end.
-                  </div>
-                </div>
-                <div style={{
-                  padding: "16px 18px", background: "#fafafa",
+                  padding: "14px 16px", background: "#fafafa",
                   border: `1.5px solid ${BORDER_GREY}`, borderRadius: 10,
                 }}>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{gymgazePct}%</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "4px 0" }}>to GymGaze</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{gymgazePct}%</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "3px 0" }}>to GymGaze</div>
                   <div style={{ fontSize: 11, color: "#666", lineHeight: 1.5 }}>
-                    Covers ad sales, hardware operations, content moderation, ad serving infrastructure, and monthly reporting.
+                    Covers ad sales, hardware, ops, content moderation, ad serving, platform, and monthly reporting.
+                  </div>
+                </div>
+                {/* Partner block */}
+                <div style={{
+                  padding: "14px 16px", background: "rgba(212,255,79,0.06)",
+                  border: `1.5px solid ${LIME}`, borderRadius: 10,
+                }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                    <div style={{ fontSize: 26, fontWeight: 900, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{partnerPct}%</div>
+                    <div style={{ fontSize: 11, color: "#888" }}>+ guaranteed rental</div>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK, margin: "3px 0" }}>to {networkName}</div>
+                  <div style={{ fontSize: 11, color: "#666", lineHeight: 1.6 }}>
+                    <strong style={{ color: DARK }}>{partnerPct}%</strong> of digital ad revenue (monthly, net 30)<br />
+                    + <strong style={{ color: DARK }}>Guaranteed monthly rental fee</strong> per venue (location lease)
+                  </div>
+                  <div style={{ marginTop: 8, padding: "6px 10px", background: "rgba(212,255,79,0.1)", borderRadius: 6, fontSize: 10, color: DARK, fontWeight: 600 }}>
+                    Total {networkName} upside = Guaranteed rental (floor) + {partnerPct}% rev share (upside)
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right: important exclusion + commercials */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
-              {/* Sponsorship exclusion callout — IMPORTANT */}
+            {/* Right: model clarity + exclusions */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+              {/* How the model works */}
               <div style={{
-                border: `2px solid ${LIME}`, borderRadius: 10, padding: "16px 18px",
+                border: `1.5px solid ${BORDER_GREY}`, borderRadius: 10, padding: "14px 16px",
+                background: "#fafafa",
+              }}>
+                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", color: "#888", marginBottom: 10 }}>
+                  How the model works
+                </div>
+                {[
+                  { icon: "🏠", title: "Guaranteed Rental (floor)", desc: `${networkName} receives a guaranteed monthly rental fee per venue — regardless of ad revenue. This is the base commitment.` },
+                  { icon: "📈", title: `${partnerPct}% Ad Revenue Share (upside)`, desc: `On top of the rental, ${networkName} earns ${partnerPct}% of all digital ad revenue at each venue. More bookings = more upside.` },
+                  { icon: "💡", title: "Total to Edge = Rental + Revenue Share", desc: "GymGaze pays both. These are additive — not either/or." },
+                ].map(({ icon, title, desc }) => (
+                  <div key={title} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: `1px solid ${BORDER_GREY}` }}>
+                    <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: DARK }}>{title}</div>
+                      <div style={{ fontSize: 10, color: GREY_TEXT, lineHeight: 1.5, marginTop: 2 }}>{desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Sponsorship exclusion */}
+              <div style={{
+                border: `2px solid ${LIME}`, borderRadius: 10, padding: "12px 14px",
                 background: "rgba(212,255,79,0.04)",
               }}>
-                <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#888", marginBottom: 8 }}>
+                <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#888", marginBottom: 6 }}>
                   ⚠️ Important Exclusion
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: DARK, marginBottom: 6 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 4 }}>
                   Widget Sponsorships Are Excluded
                 </div>
-                <p style={{ fontSize: 12, color: GREY_TEXT, lineHeight: 1.6, margin: 0 }}>
-                  <strong style={{ color: DARK }}>Widget sponsorships</strong> (News ticker, Sports scores, Weather widget) are <strong style={{ color: DARK }}>excluded from the revenue split</strong>. These premium placements remain 100% GymGaze revenue and are sold directly to national sponsors. They are separate from the standard DOOH advertising inventory.
+                <p style={{ fontSize: 11, color: GREY_TEXT, lineHeight: 1.6, margin: 0 }}>
+                  <strong style={{ color: DARK }}>Widget sponsorships</strong> (News ticker, Sports scores, Weather widget) are <strong style={{ color: DARK }}>excluded from the revenue split</strong>. These remain 100% GymGaze revenue.
                 </p>
               </div>
 
               {/* What's included */}
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 10 }}>What the split covers</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: DARK, marginBottom: 8 }}>What the split covers</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {[
                     { label: "Digital screen ads", included: proposal.digital_screens_included },
@@ -769,19 +823,20 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   ].map(({ label, included }) => (
                     <div key={label} style={{
                       display: "flex", alignItems: "center", gap: 8,
-                      padding: "8px 12px", borderRadius: 8,
+                      padding: "7px 10px", borderRadius: 8,
                       background: included ? "rgba(212,255,79,0.06)" : "#fafafa",
                       border: `1px solid ${included ? LIME : BORDER_GREY}`,
                     }}>
-                      <span style={{ fontSize: 14 }}>{included ? "✅" : "❌"}</span>
-                      <span style={{ fontSize: 12, color: included ? DARK : "#888", fontWeight: included ? 600 : 400 }}>{label}</span>
+                      <span style={{ fontSize: 13 }}>{included ? "✅" : "❌"}</span>
+                      <span style={{ fontSize: 11, color: included ? DARK : "#888", fontWeight: included ? 600 : 400 }}>{label}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={{ marginTop: "auto", fontSize: 10, color: "#bbb" }}>
-                * Revenue calculated net of agency commissions and VAT. All amounts in South African Rand (ZAR).
+              <div style={{ marginTop: "auto", fontSize: 9, color: "#bbb", lineHeight: 1.6 }}>
+                * Revenue calculated net of agency commissions and VAT. All amounts in ZAR.<br />
+                * {networkName} receives a guaranteed monthly rental fee + {partnerPct}% of digital ad revenue per venue, after agency commission and VAT.
               </div>
             </div>
           </div>
@@ -791,17 +846,27 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
 
         {/* ═══ PAGE 7 — PER-VENUE REVENUE PROJECTION ═══ */}
         <div className="page-break" data-print-page="true" style={{ ...PAGE_STYLE }}>
-          <PageHeader left="Revenue Projection" right={`${partnerPct}% Partner Share · R${cpm} CPM · 60% Sell-Through`} />
+          <PageHeader left="Per-Venue Revenue Projection" right={`R${cpm} CPM · 60% Sell-Through · Rental + ${partnerPct}% Rev Share`} />
 
-          <div style={{ flex: 1, padding: "20px 36px", display: "flex", flexDirection: "column", gap: 0, overflow: "hidden" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <div style={{ flex: 1, padding: "14px 24px", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10 }}>
               <thead>
                 <tr style={{ background: "#fafafa" }}>
-                  {["Venue", "City", "Screens", "Static Sites", "Est. Monthly Revenue (Your Share)"].map((h) => (
+                  {[
+                    { h: "Venue",                       align: "left"  as const },
+                    { h: "Walk-Ins",                    align: "right" as const },
+                    { h: "Screens",                     align: "right" as const },
+                    { h: "Gross Ad Revenue",             align: "right" as const },
+                    { h: "Rental Fee",                  align: "right" as const },
+                    { h: `${partnerPct}% Rev Share`,    align: "right" as const },
+                    { h: "Total to Edge",               align: "right" as const },
+                    { h: "GymGaze Net",                 align: "right" as const },
+                  ].map(({ h, align }) => (
                     <th key={h} style={{
-                      padding: "9px 12px", textAlign: "left", fontWeight: 700,
-                      color: "#888", fontSize: 10, textTransform: "uppercase",
-                      letterSpacing: "0.06em", borderBottom: `2px solid ${BORDER_GREY}`,
+                      padding: "6px 8px", textAlign: align, fontWeight: 700,
+                      color: "#888", fontSize: 9, textTransform: "uppercase",
+                      letterSpacing: "0.04em", borderBottom: `2px solid ${BORDER_GREY}`,
+                      whiteSpace: "nowrap",
                     }}>{h}</th>
                   ))}
                 </tr>
@@ -809,24 +874,47 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
               <tbody>
                 {venueRevenues.map((pv, idx) => (
                   <tr key={pv.id} style={{ borderBottom: `1px solid ${BORDER_GREY}`, background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
-                    <td style={{ padding: "7px 12px", fontWeight: 600, color: DARK }}>{pv.venues?.name ?? "—"}</td>
-                    <td style={{ padding: "7px 12px", color: GREY_TEXT }}>{pv.venues?.city ?? "—"}</td>
-                    <td style={{ padding: "7px 12px", color: DARK, fontWeight: 600 }}>{pv.screens}</td>
-                    <td style={{ padding: "7px 12px", color: GREY_TEXT }}>{pv.static_sites_planned}</td>
-                    <td style={{ padding: "7px 12px", fontWeight: 700, color: DARK }}>{fmtR(Math.round(pv.monthly))}</td>
+                    <td style={{ padding: "5px 8px", fontWeight: 600, color: DARK, fontSize: 10 }}>{pv.venues?.name ?? "—"}</td>
+                    <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right", fontSize: 9 }}>{pv.venues?.monthly_entries ? fmtNum(pv.venues.monthly_entries) : "—"}</td>
+                    <td style={{ padding: "5px 8px", color: DARK, fontWeight: 600, textAlign: "right" }}>{pv.screens}</td>
+                    <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(pv.grossAdRevenue))}</td>
+                    <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(pv.rentalFee)}</td>
+                    <td style={{ padding: "5px 8px", color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(pv.partnerAdShare))}</td>
+                    <td style={{ padding: "5px 8px", fontWeight: 700, color: DARK, textAlign: "right" }}>{fmtR(Math.round(pv.totalToPartner))}</td>
+                    <td style={{ padding: "5px 8px", fontWeight: 700, color: pv.netToGymgaze >= 0 ? DARK : "#ef4444", textAlign: "right" }}>{fmtR(Math.round(pv.netToGymgaze))}</td>
                   </tr>
                 ))}
                 {/* Total row */}
                 <tr style={{ background: "rgba(212,255,79,0.08)", borderTop: `2px solid ${LIME}` }}>
-                  <td colSpan={4} style={{ padding: "10px 12px", fontWeight: 800, color: DARK, fontSize: 13 }}>TOTAL (All Venues)</td>
-                  <td style={{ padding: "10px 12px", fontWeight: 900, color: DARK, fontSize: 15, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalMonthlyRevenue))}</td>
+                  <td colSpan={3} style={{ padding: "8px 8px", fontWeight: 800, color: DARK, fontSize: 11 }}>TOTAL</td>
+                  <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalGrossAdRevenue))}</td>
+                  <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalRentalFees))}</td>
+                  <td style={{ padding: "8px 8px", fontWeight: 700, color: GREY_TEXT, textAlign: "right" }}>{fmtR(Math.round(totalPartnerAdShare))}</td>
+                  <td style={{ padding: "8px 8px", fontWeight: 900, color: DARK, textAlign: "right", fontSize: 13, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalToPartner))}</td>
+                  <td style={{ padding: "8px 8px", fontWeight: 900, color: DARK, textAlign: "right", fontSize: 13, fontFamily: "Inter Tight, sans-serif" }}>{fmtR(Math.round(totalNetToGymgaze))}</td>
                 </tr>
               </tbody>
             </table>
 
-            <div style={{ marginTop: 16, fontSize: 10, color: "#bbb", lineHeight: 1.6 }}>
-              * These are projections only, not guaranteed revenue. Calculation: 16 slots × 1,487 plays/screen/week × 4.33 weeks/month × R{cpm} CPM × 60% sell-through × {partnerPct}% partner share.
-              Actual revenue depends on advertiser demand, sell-through rates, and campaign bookings. GymGaze does not guarantee minimum revenue.
+            {/* Summary strip */}
+            <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+              {[
+                { label: "Gross Ad Revenue",           value: fmtR(Math.round(totalGrossAdRevenue)), sub: "All venues / month" },
+                { label: "Total Rental (GymGaze pays)", value: fmtR(Math.round(totalRentalFees)),     sub: "Guaranteed base" },
+                { label: `Total to ${networkName}`,    value: fmtR(Math.round(totalToPartner)),       sub: `${partnerPct}% rev + rental` },
+                { label: "GymGaze Net",                value: fmtR(Math.round(totalNetToGymgaze)),   sub: `${gymgazePct}% rev – rental` },
+              ].map(({ label, value, sub }) => (
+                <div key={label} style={{ background: "#fafafa", border: `1px solid ${BORDER_GREY}`, borderRadius: 8, padding: "9px 12px" }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: DARK, fontFamily: "Inter Tight, sans-serif" }}>{value}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: DARK, marginTop: 3 }}>{label}</div>
+                  <div style={{ fontSize: 9, color: "#aaa", marginTop: 2 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 8, fontSize: 9, color: "#bbb", lineHeight: 1.6 }}>
+              * Projections only — not guaranteed. Calc: 16 slots × 1,487 plays/screen/week × 4.33 weeks × R{cpm} CPM × 60% sell-through.
+              {" "}{networkName} receives a guaranteed monthly rental fee + {partnerPct}% of digital ad revenue per venue, after agency commission and VAT.
             </div>
           </div>
 

@@ -25,6 +25,7 @@ import {
   TrendingUp,
   Users,
   Handshake,
+  Home,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resolvePermissions, type RolePreset, type NavSlug } from "@/lib/permissions";
@@ -82,7 +83,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "FINANCE",
     items: [
-      { href: "/admin/revenue",     slug: "revenue",     icon: DollarSign,      label: "Finance" },
+      { href: "/admin/revenue",    slug: "revenue",    icon: DollarSign, label: "Finance" },
+      { href: "/admin/landlords",  slug: "landlords",  icon: Home,       label: "Landlords" },
+      // future: { href: "/admin/payouts", slug: "payouts", icon: Banknote, label: "Payouts" },
+      // future: { href: "/admin/invoices", slug: "invoices", icon: FileText, label: "Invoices" },
     ],
   },
   {

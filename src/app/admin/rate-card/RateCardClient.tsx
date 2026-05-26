@@ -867,9 +867,9 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
         {/* Client Locations */}
         <div className="mb-5">
           <label className="block text-xs font-semibold mb-2" style={{ color: "#888", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-            Client Locations <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(optional) — up to 5</span>
+            Client Locations <span style={{ color: "#555", textTransform: "none", fontWeight: 400 }}>(optional) — up to 50</span>
           </label>
-          {clientLocations.length < 5 ? (
+          {clientLocations.length < 50 ? (
             <PlacesSearch
               key={clientLocations.length}
               placeholder="Search to add a client location…"
@@ -877,7 +877,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
               onSelect={(lat, lng, addr) => {
                 if (lat === 0 && lng === 0) return;
                 setClientLocations((prev) => {
-                  if (prev.length >= 5) return prev;
+                  if (prev.length >= 50) return prev;
                   if (prev.some((l) => l.address === addr)) return prev;
                   return [...prev, { lat, lng, address: addr }];
                 });
@@ -885,7 +885,7 @@ export default function RateCardClient({ venues, pricingTiers }: Props) {
             />
           ) : (
             <div className="rounded-xl px-4 py-3 text-xs" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#888" }}>
-              Maximum 5 locations reached
+              Maximum 50 locations reached
             </div>
           )}
           {clientLocations.length > 0 && (

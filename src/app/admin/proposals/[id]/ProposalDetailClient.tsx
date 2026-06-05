@@ -188,6 +188,11 @@ export default function ProposalDetailClient({ proposal, allVenues }: Props) {
     window.open(`/api/proposals/${proposal.id}/pdf?filename=${encodeURIComponent(filename)}`, "_blank");
   }
 
+  function handleDownloadScenariosPDF() {
+    const filename = `${title.replace(/\s+/g, "-")}-Occupancy-Scenarios.pdf`;
+    window.open(`/api/proposals/${proposal.id}/scenarios-pdf?filename=${encodeURIComponent(filename)}`, "_blank");
+  }
+
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "9px 12px", borderRadius: 8, fontSize: 13,
     border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)",
@@ -245,6 +250,17 @@ export default function ProposalDetailClient({ proposal, allVenues }: Props) {
             }}
           >
             <Download size={13} /> Download PDF
+          </button>
+          <button
+            onClick={handleDownloadScenariosPDF}
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "9px 14px", borderRadius: 8,
+              background: "rgba(212,255,79,0.15)", border: "1px solid rgba(212,255,79,0.35)",
+              color: "#D4FF4F", cursor: "pointer", fontSize: 12, fontWeight: 600,
+            }}
+          >
+            <FileText size={13} /> Occupancy Scenarios PDF
           </button>
           <button
             onClick={handleSave}

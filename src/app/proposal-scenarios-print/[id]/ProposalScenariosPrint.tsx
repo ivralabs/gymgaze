@@ -388,9 +388,9 @@ export default function ProposalScenariosPrint({
   const s75 = scenarios[2];
   const s100 = scenarios[3];
 
-  // Ramp: Y1 @35%, Y2 @50%, Y3 @75%
-  const rampY1 = s35.annualToEdge;
-  const rampY2 = s50.annualToEdge;
+  // Ramp: Y1 @50%, Y2 @75%, Y3 @75% (steady state) — 2-year ramp, 3-year contract
+  const rampY1 = s50.annualToEdge;
+  const rampY2 = s75.annualToEdge;
   const rampY3 = s75.annualToEdge;
   const rampTotal = rampY1 + rampY2 + rampY3;
 
@@ -696,8 +696,8 @@ export default function ProposalScenariosPrint({
                       "independent of digital occupancy — see footnote",
                     ],
                     [
-                      `3-year contract`,
-                      `36 months, ${CONTRACT_MONTHS} payment months`,
+                      `3-year contract (2-year ramp)`,
+                      `36 months — 50% target Y1, 75% target Y2, steady state Y3`,
                     ],
                   ].map(([bold, sub], i) => (
                     <div
@@ -1264,8 +1264,7 @@ export default function ProposalScenariosPrint({
               fontStyle: "italic",
             }}
           >
-            Realistic ramp assumption: 35% occupancy in Year 1 — 50% in Year 2
-            — 75% in Year 3
+            2-year ramp: 50% occupancy by end of Year 1 — 75% by end of Year 2 — Year 3 steady state at 75%
           </div>
 
           {/* 3 stat boxes */}
@@ -1278,17 +1277,17 @@ export default function ProposalScenariosPrint({
           >
             <StatBox
               value={fmtR(Math.round(rampY1))}
-              label="Year 1 Total (at 35%)"
-              sub="12 months x 35% occupancy scenario"
-            />
-            <StatBox
-              value={fmtR(Math.round(rampY2))}
-              label="Year 2 Total (at 50%)"
+              label="Year 1 (at 50%)"
               sub="12 months x 50% occupancy scenario"
             />
             <StatBox
+              value={fmtR(Math.round(rampY2))}
+              label="Year 2 (at 75%)"
+              sub="12 months x 75% occupancy scenario"
+            />
+            <StatBox
               value={fmtR(Math.round(rampY3))}
-              label="Year 3 Total (at 75%)"
+              label="Year 3 — Steady State (at 75%)"
               sub="12 months x 75% occupancy scenario"
               accent={DARK}
             />
@@ -1317,7 +1316,7 @@ export default function ProposalScenariosPrint({
                   marginBottom: 4,
                 }}
               >
-                3-Year Cumulative (ramp: 35% — 50% — 75%)
+                3-Year Cumulative (ramp: 50% — 75% — 75%)
               </div>
               <div
                 style={{
@@ -1364,7 +1363,7 @@ export default function ProposalScenariosPrint({
                 {fmtR(Math.round(s100.threeYrToEdge))}
               </div>
               <div style={{ fontSize: 10, color: CAPTION_GREY, marginTop: 2 }}>
-                3 years at 100%
+                Maximum occupancy ceiling (100%)
               </div>
             </div>
           </div>
@@ -1396,15 +1395,15 @@ export default function ProposalScenariosPrint({
                   margin: 0,
                 }}
               >
-                If {networkName} and GymGaze work together to drive advertiser
-                demand and fill the network — through programming quality,
-                footfall growth, and audience data — the ramp from 35% to 75%
-                occupancy over three years represents a{" "}
+                Our model assumes {networkName} clears the 35% occupancy floor
+                in Q1 of Year 1 and ramps to 50% steady state by month 6. By
+                the end of Year 2, we&apos;re targeting 75% occupancy — the
+                upper threshold where the network is operating at agency-grade
+                density. Year 3 is the steady state, representing a{" "}
                 <strong>
-                  {fmtR(Math.round(rampTotal))} partnership outcome
+                  {fmtR(Math.round(rampTotal))} 3-year partnership outcome
                 </strong>{" "}
-                for {networkName}. That is the trajectory of a thriving media
-                network, not a passive rental.
+                for {networkName}.
               </p>
             </div>
             <div>
@@ -1427,10 +1426,8 @@ export default function ProposalScenariosPrint({
                     margin: 0,
                   }}
                 >
-                  The right occupancy ramp target for Year 1 depends on your
-                  current footfall trends, the existing advertiser pipeline, and
-                  your goals for the partnership. What&apos;s the right ramp
-                  target for Year 1 — and what would it take to get there?
+                  Let&apos;s walk through these numbers with your team — what&apos;s
+                  the right ramp velocity for Year 1?
                 </p>
               </LimeCallout>
             </div>

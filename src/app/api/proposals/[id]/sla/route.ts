@@ -180,32 +180,41 @@ function buildSlaHtml(f: SlaFields): string {
 <meta charset="UTF-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; background: #fff; padding: 60px; line-height: 1.6; }
+  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; background: #fff; padding: 60px; line-height: 1.7; }
   .header { border-bottom: 3px solid #D4FF4F; padding-bottom: 24px; margin-bottom: 36px; display: flex; justify-content: space-between; align-items: flex-end; }
   .logo-name { font-size: 22pt; font-weight: 800; letter-spacing: -1px; color: #0F0F0F; }
-  .logo-name span { color: #D4FF4F; background: #0F0F0F; padding: 2px 6px; border-radius: 3px; }
-  .doc-meta { text-align: right; font-size: 9pt; color: #666; }
-  h1 { font-size: 16pt; font-weight: 700; margin-bottom: 6px; }
-  h2 { font-size: 12pt; font-weight: 700; margin: 28px 0 10px; color: #0F0F0F; border-left: 3px solid #D4FF4F; padding-left: 10px; }
-  p { margin-bottom: 10px; }
-  .parties-box { background: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 6px; padding: 20px 24px; margin: 20px 0; display: flex; gap: 40px; }
-  .party h3 { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
-  .party p { font-size: 11pt; font-weight: 600; margin: 0; }
-  .party .sub { font-size: 9pt; font-weight: 400; color: #666; }
-  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10pt; }
-  th { background: #0F0F0F; color: #fff; padding: 8px 12px; text-align: left; font-weight: 600; }
-  td { padding: 8px 12px; border-bottom: 1px solid #e5e5e5; }
-  tr:nth-child(even) td { background: #fafafa; }
-  .highlight { background: #D4FF4F; padding: 2px 6px; border-radius: 3px; font-weight: 700; font-size: 10pt; }
-  .signature-section { margin-top: 48px; border-top: 1px solid #e5e5e5; padding-top: 32px; display: flex; gap: 60px; }
+  .logo-name span { color: #D4FF4F; background: #0F0F0F; padding: 2px 8px; border-radius: 3px; }
+  .doc-meta { text-align: right; font-size: 9pt; color: #555; line-height: 1.8; }
+  .doc-meta strong { font-size: 10pt; display: block; margin-bottom: 4px; }
+  h1 { font-size: 17pt; font-weight: 800; margin-bottom: 4px; }
+  .subtitle { font-size: 10pt; color: #666; margin-bottom: 28px; }
+  h2 { font-size: 11.5pt; font-weight: 700; margin: 32px 0 10px; color: #0F0F0F; border-left: 4px solid #D4FF4F; padding-left: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+  p { margin-bottom: 10px; font-size: 10.5pt; }
+  .parties-box { display: flex; gap: 0; margin: 20px 0 28px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+  .party { flex: 1; padding: 18px 22px; }
+  .party:first-child { border-right: 1px solid #e0e0e0; background: #0F0F0F; color: #fff; }
+  .party:last-child { background: #fafafa; }
+  .party .party-label { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.6; margin-bottom: 6px; }
+  .party .party-name { font-size: 13pt; font-weight: 700; margin-bottom: 2px; }
+  .party .party-role { font-size: 9pt; opacity: 0.7; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: 10pt; }
+  thead tr th { background: #0F0F0F; color: #fff; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 9.5pt; }
+  tbody tr td { padding: 9px 14px; border-bottom: 1px solid #ececec; vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) td { background: #f9f9f9; }
+  .highlight { background: #D4FF4F; color: #0F0F0F; padding: 2px 8px; border-radius: 3px; font-weight: 700; font-size: 10pt; display: inline-block; }
+  .info-box { background: #f5f5f5; border-left: 4px solid #D4FF4F; padding: 14px 18px; margin: 12px 0; border-radius: 0 4px 4px 0; font-size: 10pt; }
+  ol { padding-left: 22px; margin: 8px 0; }
+  ol li { margin-bottom: 8px; font-size: 10.5pt; }
+  ol li strong { color: #0F0F0F; }
+  .signature-section { margin-top: 52px; padding-top: 28px; border-top: 2px solid #0F0F0F; display: flex; gap: 60px; }
   .sig-block { flex: 1; }
-  .sig-block h3 { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 24px; }
-  .sig-line { border-bottom: 1px solid #1a1a1a; margin-bottom: 6px; height: 32px; }
-  .sig-label { font-size: 9pt; color: #666; }
-  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e5e5; font-size: 8pt; color: #999; text-align: center; }
-  ol { padding-left: 20px; }
-  ol li { margin-bottom: 8px; }
-  .clause-num { font-weight: 700; }
+  .sig-block .sig-party { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 28px; }
+  .sig-line { border-bottom: 1.5px solid #1a1a1a; margin-bottom: 7px; height: 36px; }
+  .sig-label { font-size: 9pt; color: #666; margin-bottom: 10px; }
+  .footer { margin-top: 44px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 8pt; color: #aaa; text-align: center; line-height: 1.6; }
+  .clause-note { font-size: 9.5pt; color: #555; font-style: italic; margin-top: 6px; }
+  .page-break { page-break-before: always; }
 </style>
 </head>
 <body>
@@ -213,126 +222,249 @@ function buildSlaHtml(f: SlaFields): string {
 <div class="header">
   <div>
     <div class="logo-name">Gym<span>Gaze</span></div>
-    <div style="font-size:9pt;color:#666;margin-top:4px;">Media Network Services</div>
+    <div style="font-size:9pt;color:#777;margin-top:5px;">Media Network Services</div>
   </div>
   <div class="doc-meta">
-    <div style="font-weight:700;">SERVICE LEVEL AGREEMENT</div>
-    <div>Reference: GG-SLA-${f.proposalVersion}</div>
-    <div>Effective Date: ${f.effectiveDate}</div>
-    <div>Proposal: ${f.proposalTitle}</div>
+    <strong>SERVICE LEVEL AGREEMENT</strong>
+    <span>Reference: GG-SLA-${f.proposalVersion}</span>
+    <span>Effective Date: ${f.effectiveDate}</span>
+    <span>Proposal: ${f.proposalTitle}</span>
   </div>
 </div>
 
 <h1>Service Level Agreement</h1>
-<p style="color:#666;">This Service Level Agreement (&ldquo;Agreement&rdquo;) is entered into between GymGaze and ${f.partnerName} in respect of the GymGaze Media Network partnership.</p>
+<p class="subtitle">This Service Level Agreement (&ldquo;Agreement&rdquo;) governs the media network services provided by GymGaze to ${f.partnerName} and sets out the obligations, performance standards, and commercial terms applicable to the partnership.</p>
 
 <div class="parties-box">
   <div class="party">
-    <h3>Service Provider</h3>
-    <p>GymGaze (Pty) Ltd</p>
-    <p class="sub">Media Network Operator</p>
+    <div class="party-label">Service Provider</div>
+    <div class="party-name">GymGaze (Pty) Ltd</div>
+    <div class="party-role">Media Network Operator</div>
   </div>
   <div class="party">
-    <h3>Partner</h3>
-    <p>${f.partnerName}</p>
-    <p class="sub">Gym Network Partner</p>
+    <div class="party-label">Partner</div>
+    <div class="party-name">${f.partnerName}</div>
+    <div class="party-role">Gym Network Partner</div>
   </div>
 </div>
 
-<h2>1. Scope of Services</h2>
-<p>GymGaze agrees to provide the following media network services across <strong>${f.venueCount} venue(s)</strong> operated by ${f.partnerName}:</p>
+<h2>1. Definitions</h2>
 <ol>
-  <li>Installation, operation, and maintenance of digital advertising screens and/or static media sites at the venues listed in Schedule A.</li>
-  <li>Content scheduling, delivery, and proof of flight reporting for all advertising campaigns displayed within partner venues.</li>
-  <li>Revenue sharing based on the terms set out in Section 4 of this Agreement.</li>
-  <li>Dedicated advertising inventory of <strong>${f.dedicatedSlots} slots &times; ${f.slotDuration} seconds</strong> per loop for partner use.</li>
+  <li><strong>&ldquo;Gross Ad Revenue&rdquo;</strong> means the total invoiced advertising revenue received by GymGaze from advertisers for campaigns displayed within Partner venues, before any deductions, commissions, or expenses.</li>
+  <li><strong>&ldquo;Campaign&rdquo;</strong> means any advertising content scheduled to run on GymGaze screens or static media within Partner venues for a defined flight period.</li>
+  <li><strong>&ldquo;Proof of Flight&rdquo;</strong> means a verified report confirming that a Campaign was delivered as scheduled, including play counts, duration, and time-of-day breakdown.</li>
+  <li><strong>&ldquo;Dedicated Inventory&rdquo;</strong> means advertising slots reserved exclusively for Partner&rsquo;s own use or Partner-approved campaigns.</li>
+  <li><strong>&ldquo;Uptime&rdquo;</strong> means the percentage of scheduled operating hours during which GymGaze screens are displaying content correctly.</li>
+  <li><strong>&ldquo;Service Credit&rdquo;</strong> means a separate compensation payment issued by GymGaze to the Partner as a remedy for failure to meet agreed uptime standards. Service Credits do not alter either party&rsquo;s revenue share percentage.</li>
 </ol>
 
-<h2>2. Covered Venues (Schedule A)</h2>
-<p>This Agreement covers the following ${f.partnerName} venues:</p>
-<p><strong>${f.venuesList}</strong></p>
-<p>Additional venues may be added by written amendment signed by both parties.</p>
+<h2>2. Scope of Services</h2>
+<p>GymGaze agrees to provide the following services across the <strong>${f.venueCount} venue(s)</strong> specified in this Agreement:</p>
+<ol>
+  <li>Operation, content management, and maintenance of digital advertising screens and/or static media across Partner venues.</li>
+  <li>End-to-end campaign management including scheduling, delivery, monitoring, and post-campaign reporting.</li>
+  <li>Provision of <strong>${f.dedicatedSlots} dedicated advertising slots of ${f.slotDuration} seconds each</strong> per loop cycle, reserved for Partner&rsquo;s own promotional use or Partner-approved advertisers.</li>
+  <li>Monthly Gross Ad Revenue reporting and Partner revenue share payments in accordance with Section 5.</li>
+  <li>A 24/7 monitoring service for screen uptime with automated alerts for any offline events.</li>
+</ol>
 
-<h2>3. Service Standards</h2>
+<h2>3. Covered Venues</h2>
+<p>This Agreement covers the following venues operated by ${f.partnerName}:</p>
+<div class="info-box">
+  <strong>${f.venuesList}</strong>
+</div>
+<p>Additional venues may be added to this Agreement by written addendum signed by both parties. Each addendum shall specify the venue name, location, and any venue-specific commercial terms.</p>
+
+<h2>4. Service Standards &amp; Performance</h2>
 <table>
-  <tr><th>Service Metric</th><th>Standard</th></tr>
-  <tr><td>Screen Uptime</td><td>Minimum 95% per calendar month</td></tr>
-  <tr><td>Content Update Turnaround</td><td>Within 24 hours of approved creative receipt</td></tr>
-  <tr><td>Proof of Flight Reporting</td><td>Monthly &mdash; ${f.proofOfFlight}</td></tr>
-  <tr><td>Maintenance Response</td><td>Hardware fault reported &rarr; technician on-site within 48 hours</td></tr>
-  <tr><td>Revenue Reporting</td><td>Monthly statements within 5 business days of month-end</td></tr>
-  <tr><td>Payment Cycle</td><td>${f.paymentCycle}</td></tr>
+  <thead>
+    <tr>
+      <th>Service Metric</th>
+      <th>Committed Standard</th>
+      <th>Measurement Period</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Screen Uptime</strong></td>
+      <td>Minimum 95% of scheduled operating hours</td>
+      <td>Per calendar month, per venue</td>
+    </tr>
+    <tr>
+      <td><strong>Content Update Turnaround</strong></td>
+      <td>Within 24 hours of receipt of approved creative</td>
+      <td>Per campaign request</td>
+    </tr>
+    <tr>
+      <td><strong>Proof of Flight Reporting</strong></td>
+      <td>${f.proofOfFlight} &mdash; delivered within 5 business days of campaign end</td>
+      <td>Per campaign</td>
+    </tr>
+    <tr>
+      <td><strong>Hardware Fault Response</strong></td>
+      <td>Acknowledgement within 4 hours; on-site resolution within 48 hours</td>
+      <td>Per incident</td>
+    </tr>
+    <tr>
+      <td><strong>Revenue Statement Delivery</strong></td>
+      <td>Within 5 business days of month-end</td>
+      <td>Monthly</td>
+    </tr>
+    <tr>
+      <td><strong>Partner Revenue Payment</strong></td>
+      <td>${f.paymentCycle} following revenue statement delivery</td>
+      <td>Per payment cycle</td>
+    </tr>
+    <tr>
+      <td><strong>Data Sharing</strong></td>
+      <td>${f.dataSharing}</td>
+      <td>Monthly</td>
+    </tr>
+  </tbody>
 </table>
 
-<h2>4. Revenue Sharing</h2>
-<p>Net advertising revenue generated from campaigns running within ${f.partnerName} venues shall be split as follows:</p>
+<h2>5. Gross Ad Revenue Sharing</h2>
+<p>All revenue sharing under this Agreement is calculated on <strong>Gross Ad Revenue</strong> &mdash; the total invoiced advertising revenue received by GymGaze for campaigns running within Partner venues, prior to any deductions.</p>
 <table>
-  <tr><th>Party</th><th>Revenue Share</th></tr>
-  <tr><td>${f.partnerName}</td><td><span class="highlight">${f.revenueSplitPartner}%</span></td></tr>
-  <tr><td>GymGaze</td><td><span class="highlight">${f.revenueSplitGymgaze}%</span></td></tr>
+  <thead>
+    <tr><th>Party</th><th>Revenue Share</th><th>Basis</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>${f.partnerName}</strong></td>
+      <td><span class="highlight">${f.revenueSplitPartner}%</span></td>
+      <td>Of Gross Ad Revenue from Partner venues</td>
+    </tr>
+    <tr>
+      <td><strong>GymGaze</strong></td>
+      <td><span class="highlight">${f.revenueSplitGymgaze}%</span></td>
+      <td>Of Gross Ad Revenue from Partner venues</td>
+    </tr>
+  </tbody>
 </table>
-<p>A grace period of <strong>${f.gracePeriod} month(s)</strong> applies from the installation date, during which no revenue share is required from the Partner.</p>
-<p>Widget and sponsorship revenue is <strong>${f.sponsorshipsExcluded}</strong>.</p>
-<p>Data sharing between parties is <strong>${f.dataSharing}</strong>.</p>
 
-<h2>5. Partner Obligations</h2>
+<div class="info-box">
+  <strong>Grace Period:</strong> A grace period of <strong>${f.gracePeriod} month(s)</strong> applies from the date the first screen goes live in each venue. No revenue share is payable by GymGaze to the Partner during this period. The grace period allows for audience calibration, campaign pipeline development, and baseline data collection.
+</div>
+
+<p><strong>Widget &amp; Sponsorship Revenue</strong> is ${f.sponsorshipsExcluded}. This applies to branded widget sponsorships (news, sports, weather) which carry a fixed sponsorship fee structure separate from CPM-based ad campaigns.</p>
+
+<p><strong>Minimum Guarantee:</strong> GymGaze does not provide a minimum monthly revenue guarantee unless separately agreed in writing. Revenue is performance-based and subject to advertiser demand, campaign fill rates, and seasonal variation.</p>
+
+<h2>6. Revenue Reporting &amp; Audit Rights</h2>
 <ol>
-  <li>Provide safe, unobstructed access to agreed screen locations within venues.</li>
-  <li>Maintain adequate power supply (220V, minimum 10A) to each screen location.</li>
-  <li>Provide stable Wi-Fi or LAN connectivity for content delivery at each venue.</li>
-  <li>Notify GymGaze at least 14 days in advance of any venue renovations that may affect screens.</li>
-  <li>Not remove, obstruct, or tamper with GymGaze-installed equipment without written consent.</li>
-  <li>Provide member entry data (aggregated, anonymised) monthly if data sharing is required under this Agreement.</li>
+  <li>GymGaze shall provide the Partner with a monthly Gross Ad Revenue statement for each venue, detailing total campaigns run, total revenue generated, and the Partner&rsquo;s calculated share.</li>
+  <li>Statements shall be delivered to the Partner&rsquo;s nominated email address within 5 business days of month-end.</li>
+  <li>The Partner has the right to request a revenue audit once per calendar year, with 14 days written notice. GymGaze shall provide reasonable access to campaign booking records and invoicing data for the period under audit.</li>
+  <li>Any revenue discrepancy identified through audit must be resolved and any shortfall paid within 30 days of audit completion.</li>
+  <li>GymGaze shall maintain accurate records of all campaign bookings and revenue for a minimum of 5 years.</li>
 </ol>
 
-<h2>6. GymGaze Obligations</h2>
+<h2>7. Service Credits</h2>
+<p>If GymGaze fails to meet the committed Screen Uptime standard in any calendar month, GymGaze shall issue the Partner a separate Service Credit payment &mdash; independent of and in addition to the normal revenue share payment. The credit is calculated as a percentage of the Partner&rsquo;s Gross Ad Revenue share earned in the affected venue for that month:</p>
+<table>
+  <thead>
+    <tr><th>Uptime Achieved</th><th>Service Credit (on Partner&rsquo;s share for that venue/month)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>90% &ndash; 94.9%</td><td>Partner receives an additional 5% credit payment</td></tr>
+    <tr><td>80% &ndash; 89.9%</td><td>Partner receives an additional 10% credit payment</td></tr>
+    <tr><td>Below 80%</td><td>Partner receives an additional 15% credit payment</td></tr>
+  </tbody>
+</table>
+<p class="clause-note">Service Credits do not alter either party&rsquo;s revenue share percentage &mdash; the ${f.revenueSplitPartner}%/${f.revenueSplitGymgaze}% split remains fixed and unchanged regardless of service performance. Credits are a separate compensation payment issued by GymGaze to the Partner within 10 business days of the affected month-end statement. Credits do not apply to downtime caused by Partner actions, force majeure, or scheduled maintenance notified 24 hours in advance.</p>
+
+<h2>8. Advertiser Standards &amp; Exclusions</h2>
 <ol>
-  <li>Install and commission all screens and media equipment at no capital cost to the Partner.</li>
-  <li>Ensure all advertising content complies with applicable South African advertising standards (ASA).</li>
-  <li>Provide the Partner with a monthly proof-of-flight report confirming campaign delivery.</li>
-  <li>Pay the Partner&rsquo;s revenue share within the agreed payment cycle following month-end.</li>
-  <li>Maintain all installed equipment in good working order throughout the term.</li>
-  <li>Carry public liability insurance covering GymGaze equipment within partner venues.</li>
+  <li>GymGaze shall ensure all advertising content complies with the Advertising Regulatory Board (ARB) Code of Advertising Practice applicable in South Africa.</li>
+  <li>The following advertiser categories are permanently excluded from Partner venues: direct competitor gym and fitness brands, tobacco and vaping products, adult content, and illegal or unlicensed financial services.</li>
+  <li>The Partner may request exclusion of additional advertiser categories by written notice. GymGaze shall implement such exclusions within 5 business days and confirm in writing.</li>
+  <li>GymGaze retains the right to decline any campaign that conflicts with Partner&rsquo;s brand values, provided the Partner communicates such conflicts in writing.</li>
 </ol>
 
-<h2>7. Exclusions &amp; Advertiser Restrictions</h2>
-<p>The following advertiser categories are excluded from campaigns running in ${f.partnerName} venues by default: direct competitor gym brands, tobacco products, and adult content. Any additional exclusions agreed during the proposal process are noted in the proposal terms.</p>
-
-<h2>8. Term &amp; Termination</h2>
+<h2>9. Dedicated Inventory</h2>
 <ol>
-  <li>This Agreement commences on the Effective Date and continues for an initial term of 24 months.</li>
-  <li>Either party may terminate with 60 days written notice after the initial term.</li>
-  <li>GymGaze may terminate immediately if the Partner prevents access to screens for more than 30 consecutive days.</li>
-  <li>Upon termination, GymGaze retains the right to remove all installed equipment within 30 days.</li>
+  <li>GymGaze shall reserve <strong>${f.dedicatedSlots} slots of ${f.slotDuration} seconds each</strong> per loop cycle across Partner venues for the Partner&rsquo;s exclusive use.</li>
+  <li>Dedicated slots unused by the Partner in any given week revert to GymGaze&rsquo;s general advertising inventory for that period. Unused slots do not accumulate or carry over.</li>
+  <li>The Partner shall submit creative for dedicated slots in the correct format and dimensions specified by GymGaze&rsquo;s technical guidelines. GymGaze accepts no liability for display quality arising from incorrectly formatted creative.</li>
 </ol>
 
-<h2>9. Liability &amp; Indemnity</h2>
-<p>GymGaze&rsquo;s total liability under this Agreement shall not exceed the total revenue share paid to the Partner in the preceding 3 months. Neither party shall be liable for indirect or consequential losses. The Partner indemnifies GymGaze against claims arising from Partner&rsquo;s breach of this Agreement.</p>
+<h2>10. GymGaze Obligations</h2>
+<ol>
+  <li>Maintain all media equipment in good operational order throughout the term of this Agreement.</li>
+  <li>Carry adequate public liability insurance covering GymGaze operations within Partner venues.</li>
+  <li>Ensure the Partner&rsquo;s brand, logo, and venue information is never used in external advertising or marketing without prior written consent.</li>
+  <li>Notify the Partner of any planned maintenance that will result in screen downtime, with a minimum of 24 hours advance notice.</li>
+  <li>Keep all Partner revenue and operational data strictly confidential and not share it with third parties without written consent, except as required by law.</li>
+  <li>Provide the Partner with a dedicated account contact for operational queries, reachable during business hours (Monday&ndash;Friday, 08:00&ndash;17:00 SAST).</li>
+</ol>
 
-<h2>10. Governing Law</h2>
-<p>This Agreement is governed by the laws of the Republic of South Africa. Any disputes shall be resolved by mediation before litigation, in the jurisdiction of Johannesburg, Gauteng.</p>
+<h2>11. Partner Obligations</h2>
+<ol>
+  <li>Ensure stable power supply and internet connectivity is available and maintained at each venue for GymGaze equipment, as specified in the accompanying Lease Agreement.</li>
+  <li>Notify GymGaze at least 14 days in advance of any venue renovation, closure, or change in operating hours that may affect GymGaze equipment or audience traffic.</li>
+  <li>Not permit any third-party advertising screens or static media to be installed within 2 metres of any GymGaze screen without prior written consent.</li>
+  <li>Provide GymGaze with access to venues during business hours for maintenance and equipment checks, and outside business hours by prior arrangement for urgent repairs.</li>
+  <li>Provide aggregated member entry and foot traffic data monthly if data sharing is required under this Agreement.</li>
+  <li>Not reproduce, copy, or share GymGaze&rsquo;s campaign data, rate cards, or reporting with any third party without written consent.</li>
+</ol>
+
+<h2>12. Confidentiality</h2>
+<p>Both parties agree to keep confidential all financial terms, revenue figures, campaign data, and operational information disclosed under this Agreement. This obligation survives termination for a period of 3 years. Neither party shall make public statements about the commercial terms of this Agreement without prior written consent from the other party.</p>
+
+<h2>13. Intellectual Property</h2>
+<p>All advertising creative, campaign materials, and content displayed on GymGaze screens remains the property of the respective advertiser or agency. GymGaze retains ownership of its platform, scheduling software, and reporting systems. The Partner retains ownership of its brand assets. Neither party acquires any IP rights of the other through this Agreement.</p>
+
+<h2>14. Term &amp; Termination</h2>
+<ol>
+  <li>This Agreement commences on the Effective Date and continues for an initial term of <strong>24 months</strong>.</li>
+  <li>Following the initial term, the Agreement renews automatically on a 12-month basis unless either party gives 60 days written notice of non-renewal before the renewal date.</li>
+  <li>Either party may terminate this Agreement during the initial term with 90 days written notice if the other party commits a material breach that remains unremedied after 30 days written notice of the breach.</li>
+  <li>GymGaze may suspend services immediately and terminate with 14 days notice if the Partner&rsquo;s venues cease operations, are sold, or transferred to new ownership without prior written notification to GymGaze.</li>
+  <li>Upon termination for any reason, all outstanding revenue share payments due to the Partner shall be settled within 30 days of the effective termination date.</li>
+</ol>
+
+<h2>15. Dispute Resolution</h2>
+<ol>
+  <li>Both parties agree to attempt to resolve any dispute through good-faith negotiation within 20 business days of written notice of a dispute.</li>
+  <li>If negotiation fails, the parties shall refer the dispute to mediation before a mutually agreed mediator in Johannesburg, Gauteng, within 30 days.</li>
+  <li>If mediation fails, either party may refer the matter to the courts of the Republic of South Africa, Gauteng Division.</li>
+</ol>
+
+<h2>16. Governing Law</h2>
+<p>This Agreement is governed by the laws of the Republic of South Africa. The parties consent to the non-exclusive jurisdiction of the High Court of South Africa, Gauteng Division, Johannesburg.</p>
+
+<h2>17. General</h2>
+<ol>
+  <li><strong>Entire Agreement:</strong> This Agreement, together with the accompanying Lease Agreement, constitutes the entire agreement between the parties and supersedes all prior discussions and representations.</li>
+  <li><strong>Amendments:</strong> No amendment to this Agreement is valid unless in writing and signed by authorised representatives of both parties.</li>
+  <li><strong>Severability:</strong> If any provision is found to be unenforceable, the remaining provisions continue in full force.</li>
+  <li><strong>Force Majeure:</strong> Neither party is liable for failure to perform obligations caused by events beyond their reasonable control, including load-shedding, natural disasters, or civil unrest, provided the affected party notifies the other within 5 business days.</li>
+  <li><strong>Notices:</strong> All formal notices under this Agreement must be in writing and delivered by email with read receipt or registered post to the authorised signatories of each party.</li>
+</ol>
 
 <div class="signature-section">
   <div class="sig-block">
-    <h3>For and on behalf of GymGaze (Pty) Ltd</h3>
+    <div class="sig-party">For and on behalf of GymGaze (Pty) Ltd</div>
     <div class="sig-line"></div>
-    <div class="sig-label">Authorised Signatory</div>
-    <div class="sig-label" style="margin-top:8px;">Name: _______________________</div>
-    <div class="sig-label">Title: ________________________</div>
-    <div class="sig-label">Date: ________________________</div>
+    <div class="sig-label">Signature</div>
+    <div class="sig-label" style="margin-top:12px;">Full Name: ___________________________</div>
+    <div class="sig-label" style="margin-top:8px;">Title / Designation: __________________</div>
+    <div class="sig-label" style="margin-top:8px;">Date: ________________________________</div>
   </div>
   <div class="sig-block">
-    <h3>For and on behalf of ${f.partnerName}</h3>
+    <div class="sig-party">For and on behalf of ${f.partnerName}</div>
     <div class="sig-line"></div>
-    <div class="sig-label">Authorised Signatory</div>
-    <div class="sig-label" style="margin-top:8px;">Name: _______________________</div>
-    <div class="sig-label">Title: ________________________</div>
-    <div class="sig-label">Date: ________________________</div>
+    <div class="sig-label">Signature</div>
+    <div class="sig-label" style="margin-top:12px;">Full Name: ___________________________</div>
+    <div class="sig-label" style="margin-top:8px;">Title / Designation: __________________</div>
+    <div class="sig-label" style="margin-top:8px;">Date: ________________________________</div>
   </div>
 </div>
 
 <div class="footer">
-  GymGaze (Pty) Ltd &middot; Media Network Services &middot; gymgaze.io &middot; This document is confidential and intended solely for ${f.partnerName}
+  GymGaze (Pty) Ltd &middot; Media Network Services &middot; gymgaze.io<br>
+  This document is confidential and intended solely for ${f.partnerName}. Reference: GG-SLA-${f.proposalVersion} &middot; Effective ${f.effectiveDate}
 </div>
 
 </body>

@@ -188,26 +188,26 @@ function buildSlaHtml(f: SlaFields): string {
   .doc-meta strong { font-size: 10pt; display: block; margin-bottom: 4px; }
   h1 { font-size: 17pt; font-weight: 800; margin-bottom: 4px; }
   .subtitle { font-size: 10pt; color: #666; margin-bottom: 28px; }
-  h2 { font-size: 11.5pt; font-weight: 700; margin: 32px 0 10px; color: #0F0F0F; border-left: 4px solid #D4FF4F; padding-left: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+  h2 { font-size: 11.5pt; font-weight: 700; margin: 40px 0 10px; color: #0F0F0F; border-left: 4px solid #D4FF4F; padding-left: 10px; text-transform: uppercase; letter-spacing: 0.3px; page-break-after: avoid; }
   p { margin-bottom: 10px; font-size: 10.5pt; }
-  .parties-box { display: flex; gap: 0; margin: 20px 0 28px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+  .parties-box { display: flex; gap: 0; margin: 20px 0 28px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; page-break-inside: avoid; }
   .party { flex: 1; padding: 18px 22px; }
   .party:first-child { border-right: 1px solid #e0e0e0; background: #0F0F0F; color: #fff; }
   .party:last-child { background: #fafafa; }
   .party .party-label { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.6; margin-bottom: 6px; }
   .party .party-name { font-size: 13pt; font-weight: 700; margin-bottom: 2px; }
   .party .party-role { font-size: 9pt; opacity: 0.7; }
-  table { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: 10pt; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: 10pt; page-break-inside: avoid; }
   thead tr th { background: #0F0F0F; color: #fff; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 9.5pt; }
   tbody tr td { padding: 9px 14px; border-bottom: 1px solid #ececec; vertical-align: top; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:nth-child(even) td { background: #f9f9f9; }
   .highlight { background: #D4FF4F; color: #0F0F0F; padding: 2px 8px; border-radius: 3px; font-weight: 700; font-size: 10pt; display: inline-block; }
-  .info-box { background: #f5f5f5; border-left: 4px solid #D4FF4F; padding: 14px 18px; margin: 12px 0; border-radius: 0 4px 4px 0; font-size: 10pt; }
+  .info-box { background: #f5f5f5; border-left: 4px solid #D4FF4F; padding: 14px 18px; margin: 12px 0; border-radius: 0 4px 4px 0; font-size: 10pt; page-break-inside: avoid; }
   ol { padding-left: 22px; margin: 8px 0; }
-  ol li { margin-bottom: 8px; font-size: 10.5pt; }
+  ol li { margin-bottom: 8px; font-size: 10.5pt; page-break-inside: avoid; }
   ol li strong { color: #0F0F0F; }
-  .signature-section { margin-top: 52px; padding-top: 28px; border-top: 2px solid #0F0F0F; display: flex; gap: 60px; }
+  .signature-section { margin-top: 52px; padding-top: 28px; border-top: 2px solid #0F0F0F; display: flex; gap: 60px; page-break-inside: avoid; }
   .sig-block { flex: 1; }
   .sig-block .sig-party { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 28px; }
   .sig-line { border-bottom: 1.5px solid #1a1a1a; margin-bottom: 7px; height: 36px; }

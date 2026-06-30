@@ -388,7 +388,7 @@ function buildSlaHtml(f: SlaFields): string {
 <ol>
   <li>Ensure stable power supply and internet connectivity is available and maintained at each venue for GymGaze equipment, as specified in the accompanying Lease Agreement.</li>
   <li>Notify GymGaze at least 14 days in advance of any venue renovation, closure, or change in operating hours that may affect GymGaze equipment or audience traffic.</li>
-  <li>Not permit any third-party advertising screens or static media to be installed within 2 metres of any GymGaze screen without prior written consent.</li>
+  <li>Grant GymGaze exclusive rights to sell and manage all in-venue advertising inventory within Partner venues for the duration of this Agreement. The Partner shall not independently sell, license, or grant advertising rights within Partner venues to any third party without prior written consent from GymGaze.</li>
   <li>Provide GymGaze with access to venues during business hours for maintenance and equipment checks, and outside business hours by prior arrangement for urgent repairs.</li>
   <li>Provide aggregated member entry and foot traffic data monthly if data sharing is required under this Agreement.</li>
   <li>Not reproduce, copy, or share GymGaze&rsquo;s campaign data, rate cards, or reporting with any third party without written consent.</li>

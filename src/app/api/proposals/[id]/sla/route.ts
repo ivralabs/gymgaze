@@ -367,6 +367,24 @@ function buildSlaHtml(f: SlaFields): string {
   <li>GymGaze retains the right to decline any campaign that conflicts with Partner&rsquo;s brand values, provided the Partner communicates such conflicts in writing.</li>
 </ol>
 
+<div style="margin: 20px 0; page-break-inside: avoid;">
+  <p style="font-size:10pt; font-weight:700; margin-bottom:10px;">Partner-Specified Brand &amp; Advertiser Exclusions</p>
+  <p style="font-size:9.5pt; color:#555; margin-bottom:14px;">The Partner may list below any specific brands, advertisers, or categories to be excluded from campaigns running within their venues. GymGaze will implement these exclusions upon signing.</p>
+  <table style="width:100%; border-collapse:collapse; font-size:10pt;">
+    <thead>
+      <tr><th style="background:#0F0F0F;color:#fff;padding:8px 12px;text-align:left;font-size:9pt;">Brand / Advertiser / Category</th><th style="background:#0F0F0F;color:#fff;padding:8px 12px;text-align:left;font-size:9pt;">Reason (optional)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:8.5pt;color:#999;margin-top:8px;">Additional exclusions may be submitted in writing at any time during the term of this Agreement.</p>
+</div>
+
 <h2>8. Dedicated Inventory</h2>
 <ol>
   <li>GymGaze shall reserve <strong>${f.dedicatedSlots} slots of ${f.slotDuration} seconds each</strong> per loop cycle across Partner venues for the Partner&rsquo;s exclusive use.</li>

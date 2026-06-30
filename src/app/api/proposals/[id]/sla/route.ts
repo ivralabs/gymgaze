@@ -362,8 +362,7 @@ function buildSlaHtml(f: SlaFields): string {
 <h2>7. Advertiser Standards &amp; Exclusions</h2>
 <ol>
   <li>GymGaze shall ensure all advertising content complies with the Advertising Regulatory Board (ARB) Code of Advertising Practice applicable in South Africa.</li>
-  <li>The following advertiser categories are permanently excluded from Partner venues: direct competitor gym and fitness brands, tobacco and vaping products, adult content, and illegal or unlicensed financial services.</li>
-  <li>The Partner may request exclusion of additional advertiser categories by written notice. GymGaze shall implement such exclusions within 5 business days and confirm in writing.</li>
+  <li>The Partner shall compile and submit a list of brands, advertisers, and categories to be excluded from campaigns running within their venues. GymGaze will implement all Partner-specified exclusions upon signing and within 5 business days of any subsequent written request.</li>
   <li>GymGaze retains the right to decline any campaign that conflicts with Partner&rsquo;s brand values, provided the Partner communicates such conflicts in writing.</li>
 </ol>
 
@@ -375,11 +374,16 @@ function buildSlaHtml(f: SlaFields): string {
       <tr><th style="background:#0F0F0F;color:#fff;padding:8px 12px;text-align:left;font-size:9pt;">Brand / Advertiser / Category</th><th style="background:#0F0F0F;color:#fff;padding:8px 12px;text-align:left;font-size:9pt;">Reason (optional)</th></tr>
     </thead>
     <tbody>
-      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
-      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
-      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
-      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
-      <tr><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:14px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;">&nbsp;</td></tr>
+      <tr><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td><td style="padding:16px 12px;border-bottom:1px solid #ddd;background:#fafafa;">&nbsp;</td></tr>
     </tbody>
   </table>
   <p style="font-size:8.5pt;color:#999;margin-top:8px;">Additional exclusions may be submitted in writing at any time during the term of this Agreement.</p>
@@ -404,7 +408,7 @@ function buildSlaHtml(f: SlaFields): string {
 
 <h2>10. Partner Obligations</h2>
 <ol>
-  <li>Ensure stable power supply and internet connectivity is available and maintained at each venue for GymGaze equipment, as specified in the accompanying Lease Agreement.</li>
+  <li>Ensure stable power supply (220V, minimum 10A) is available and maintained at each venue for GymGaze equipment. GymGaze shall be responsible for providing and managing internet connectivity to its own screens.</li>
   <li>Notify GymGaze at least 14 days in advance of any venue renovation, closure, or change in operating hours that may affect GymGaze equipment or audience traffic.</li>
   <li>Grant GymGaze exclusive rights to sell and manage all in-venue advertising inventory within Partner venues for the duration of this Agreement. The Partner shall not independently sell, license, or grant advertising rights within Partner venues to any third party without prior written consent from GymGaze.</li>
   <li>Provide GymGaze with access to venues during business hours for maintenance and equipment checks, and outside business hours by prior arrangement for urgent repairs.</li>

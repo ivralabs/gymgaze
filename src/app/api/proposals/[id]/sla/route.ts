@@ -112,7 +112,7 @@ export async function GET(
         preferCSSPageSize: false,
         printBackground: true,
         format: "A4",
-        margin: { top: "0", right: "0", bottom: "0", left: "0" },
+        margin: { top: "60px", right: "60px", bottom: "60px", left: "60px" },
         displayHeaderFooter: false,
       },
     };
@@ -180,7 +180,7 @@ function buildSlaHtml(f: SlaFields): string {
 <meta charset="UTF-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; background: #fff; padding: 60px; line-height: 1.7; }
+  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; background: #fff; padding: 0; line-height: 1.7; }
   .header { border-bottom: 3px solid #D4FF4F; padding-bottom: 24px; margin-bottom: 36px; display: flex; justify-content: space-between; align-items: flex-end; }
   .logo-name { font-size: 22pt; font-weight: 800; letter-spacing: -1px; color: #0F0F0F; }
   .logo-name span { color: #D4FF4F; background: #0F0F0F; padding: 2px 8px; border-radius: 3px; }

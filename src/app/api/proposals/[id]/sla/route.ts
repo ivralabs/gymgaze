@@ -255,7 +255,6 @@ function buildSlaHtml(f: SlaFields): string {
   <li><strong>&ldquo;Proof of Flight&rdquo;</strong> means a verified report confirming that a Campaign was delivered as scheduled, including play counts, duration, and time-of-day breakdown.</li>
   <li><strong>&ldquo;Dedicated Inventory&rdquo;</strong> means advertising slots reserved exclusively for Partner&rsquo;s own use or Partner-approved campaigns.</li>
   <li><strong>&ldquo;Uptime&rdquo;</strong> means the percentage of scheduled operating hours during which GymGaze screens are displaying content correctly.</li>
-  <li><strong>&ldquo;Service Credit&rdquo;</strong> means a separate compensation payment issued by GymGaze to the Partner as a remedy for failure to meet agreed uptime standards. Service Credits do not alter either party&rsquo;s revenue share percentage.</li>
 </ol>
 
 <h2>2. Scope of Services</h2>
@@ -360,21 +359,7 @@ function buildSlaHtml(f: SlaFields): string {
   <li>GymGaze shall maintain accurate records of all campaign bookings and revenue for a minimum of 5 years.</li>
 </ol>
 
-<h2>7. Service Credits</h2>
-<p>If GymGaze fails to meet the committed Screen Uptime standard in any calendar month, GymGaze shall issue the Partner a separate Service Credit payment &mdash; independent of and in addition to the normal revenue share payment. The credit is calculated as a percentage of the Partner&rsquo;s Gross Ad Revenue share earned in the affected venue for that month:</p>
-<table>
-  <thead>
-    <tr><th>Uptime Achieved</th><th>Service Credit (on Partner&rsquo;s share for that venue/month)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>90% &ndash; 94.9%</td><td>Partner receives an additional 5% credit payment</td></tr>
-    <tr><td>80% &ndash; 89.9%</td><td>Partner receives an additional 10% credit payment</td></tr>
-    <tr><td>Below 80%</td><td>Partner receives an additional 15% credit payment</td></tr>
-  </tbody>
-</table>
-<p class="clause-note">Service Credits do not alter either party&rsquo;s revenue share percentage &mdash; the ${f.revenueSplitPartner}%/${f.revenueSplitGymgaze}% split remains fixed and unchanged regardless of service performance. Credits are a separate compensation payment issued by GymGaze to the Partner within 10 business days of the affected month-end statement. Credits do not apply to downtime caused by Partner actions, force majeure, or scheduled maintenance notified 24 hours in advance.</p>
-
-<h2>8. Advertiser Standards &amp; Exclusions</h2>
+<h2>7. Advertiser Standards &amp; Exclusions</h2>
 <ol>
   <li>GymGaze shall ensure all advertising content complies with the Advertising Regulatory Board (ARB) Code of Advertising Practice applicable in South Africa.</li>
   <li>The following advertiser categories are permanently excluded from Partner venues: direct competitor gym and fitness brands, tobacco and vaping products, adult content, and illegal or unlicensed financial services.</li>
@@ -382,14 +367,14 @@ function buildSlaHtml(f: SlaFields): string {
   <li>GymGaze retains the right to decline any campaign that conflicts with Partner&rsquo;s brand values, provided the Partner communicates such conflicts in writing.</li>
 </ol>
 
-<h2>9. Dedicated Inventory</h2>
+<h2>8. Dedicated Inventory</h2>
 <ol>
   <li>GymGaze shall reserve <strong>${f.dedicatedSlots} slots of ${f.slotDuration} seconds each</strong> per loop cycle across Partner venues for the Partner&rsquo;s exclusive use.</li>
   <li>Dedicated slots unused by the Partner in any given week revert to GymGaze&rsquo;s general advertising inventory for that period. Unused slots do not accumulate or carry over.</li>
   <li>The Partner shall submit creative for dedicated slots in the correct format and dimensions specified by GymGaze&rsquo;s technical guidelines. GymGaze accepts no liability for display quality arising from incorrectly formatted creative.</li>
 </ol>
 
-<h2>10. GymGaze Obligations</h2>
+<h2>9. GymGaze Obligations</h2>
 <ol>
   <li>Maintain all media equipment in good operational order throughout the term of this Agreement.</li>
   <li>Carry adequate public liability insurance covering GymGaze operations within Partner venues.</li>
@@ -399,7 +384,7 @@ function buildSlaHtml(f: SlaFields): string {
   <li>Provide the Partner with a dedicated account contact for operational queries, reachable during business hours (Monday&ndash;Friday, 08:00&ndash;17:00 SAST).</li>
 </ol>
 
-<h2>11. Partner Obligations</h2>
+<h2>10. Partner Obligations</h2>
 <ol>
   <li>Ensure stable power supply and internet connectivity is available and maintained at each venue for GymGaze equipment, as specified in the accompanying Lease Agreement.</li>
   <li>Notify GymGaze at least 14 days in advance of any venue renovation, closure, or change in operating hours that may affect GymGaze equipment or audience traffic.</li>
@@ -409,13 +394,13 @@ function buildSlaHtml(f: SlaFields): string {
   <li>Not reproduce, copy, or share GymGaze&rsquo;s campaign data, rate cards, or reporting with any third party without written consent.</li>
 </ol>
 
-<h2>12. Confidentiality</h2>
+<h2>11. Confidentiality</h2>
 <p>Both parties agree to keep confidential all financial terms, revenue figures, campaign data, and operational information disclosed under this Agreement. This obligation survives termination for a period of 3 years. Neither party shall make public statements about the commercial terms of this Agreement without prior written consent from the other party.</p>
 
-<h2>13. Intellectual Property</h2>
+<h2>12. Intellectual Property</h2>
 <p>All advertising creative, campaign materials, and content displayed on GymGaze screens remains the property of the respective advertiser or agency. GymGaze retains ownership of its platform, scheduling software, and reporting systems. The Partner retains ownership of its brand assets. Neither party acquires any IP rights of the other through this Agreement.</p>
 
-<h2>14. Term &amp; Termination</h2>
+<h2>13. Term &amp; Termination</h2>
 <ol>
   <li>This Agreement commences on the Effective Date and continues for an initial term of <strong>24 months</strong>.</li>
   <li>Following the initial term, the Agreement renews automatically on a 12-month basis unless either party gives 60 days written notice of non-renewal before the renewal date.</li>
@@ -424,17 +409,17 @@ function buildSlaHtml(f: SlaFields): string {
   <li>Upon termination for any reason, all outstanding revenue share payments due to the Partner shall be settled within 30 days of the effective termination date.</li>
 </ol>
 
-<h2>15. Dispute Resolution</h2>
+<h2>14. Dispute Resolution</h2>
 <ol>
   <li>Both parties agree to attempt to resolve any dispute through good-faith negotiation within 20 business days of written notice of a dispute.</li>
   <li>If negotiation fails, the parties shall refer the dispute to mediation before a mutually agreed mediator in Johannesburg, Gauteng, within 30 days.</li>
   <li>If mediation fails, either party may refer the matter to the courts of the Republic of South Africa, Gauteng Division.</li>
 </ol>
 
-<h2>16. Governing Law</h2>
+<h2>15. Governing Law</h2>
 <p>This Agreement is governed by the laws of the Republic of South Africa. The parties consent to the non-exclusive jurisdiction of the High Court of South Africa, Gauteng Division, Johannesburg.</p>
 
-<h2>17. General</h2>
+<h2>16. General</h2>
 <ol>
   <li><strong>Entire Agreement:</strong> This Agreement, together with the accompanying Lease Agreement, constitutes the entire agreement between the parties and supersedes all prior discussions and representations.</li>
   <li><strong>Amendments:</strong> No amendment to this Agreement is valid unless in writing and signed by authorised representatives of both parties.</li>

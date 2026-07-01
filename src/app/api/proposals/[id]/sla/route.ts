@@ -354,6 +354,10 @@ function buildSlaHtml(f: SlaFields): string {
 
 <p><strong>Minimum Guarantee:</strong> GymGaze does not provide a minimum monthly revenue guarantee unless separately agreed in writing. Revenue is performance-based and subject to advertiser demand, campaign fill rates, and seasonal variation.</p>
 
+<div class="info-box" style="margin-top:12px;">
+  <strong>Payment Timeline:</strong> Advertising agencies and direct clients are invoiced by GymGaze on standard <strong>45-day payment terms</strong>. As a result, Partner revenue share payments will reflect this cycle &mdash; the Partner&rsquo;s share for any given month will be paid within 10 business days of GymGaze receiving payment from the advertiser, which is typically <strong>45 days after the invoice issue date</strong>. GymGaze shall notify the Partner of any payment delays caused by late advertiser settlement.
+</div>
+
 <h2>6. Revenue Reporting &amp; Audit Rights</h2>
 <ol>
   <li>GymGaze shall provide the Partner with a monthly Gross Ad Revenue statement for each venue, detailing total campaigns run, total revenue generated, and the Partner&rsquo;s calculated share.</li>

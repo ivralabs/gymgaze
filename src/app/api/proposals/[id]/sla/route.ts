@@ -343,7 +343,7 @@ function buildSlaHtml(f: SlaFields): string {
 </table>
 
 <div class="info-box">
-  <strong>Grace Period:</strong> A grace period of <strong>${f.gracePeriod} month(s)</strong> applies from the date the first screen goes live in each venue. No revenue share is payable by GymGaze to the Partner during this period. The grace period allows for audience calibration, campaign pipeline development, and baseline data collection.
+  <strong>Grace Period:</strong> A grace period of <strong>${f.gracePeriod} month(s)</strong> applies from the date the first screen goes live in each venue. This period covers installation, setup, and initial client acquisition. <strong>If advertising campaigns run and generate revenue during the grace period, the Partner&rsquo;s ${f.revenueSplitPartner}% Gross Ad Revenue share remains payable in full.</strong> The grace period only defers the venue rental obligation &mdash; it does not affect the Partner&rsquo;s entitlement to ad revenue share.
 </div>
 
 <div class="info-box" style="margin-top:12px;">

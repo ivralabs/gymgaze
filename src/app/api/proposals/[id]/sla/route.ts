@@ -332,7 +332,7 @@ function buildSlaHtml(f: SlaFields): string {
     <tr>
       <td><strong>${f.partnerName}</strong></td>
       <td><span class="highlight">${f.revenueSplitPartner}%</span></td>
-      <td>Of Gross Ad Revenue from Partner venues</td>
+      <td>Of Gross Ad Revenue from Partner venues, paid monthly</td>
     </tr>
     <tr>
       <td><strong>GymGaze</strong></td>
@@ -344,6 +344,10 @@ function buildSlaHtml(f: SlaFields): string {
 
 <div class="info-box">
   <strong>Grace Period:</strong> A grace period of <strong>${f.gracePeriod} month(s)</strong> applies from the date the first screen goes live in each venue. No revenue share is payable by GymGaze to the Partner during this period. The grace period allows for audience calibration, campaign pipeline development, and baseline data collection.
+</div>
+
+<div class="info-box" style="margin-top:12px;">
+  <strong>Venue Rental Trigger:</strong> The Partner&rsquo;s <strong>${f.revenueSplitPartner}% Gross Ad Revenue share is payable from the first month following the grace period</strong>, regardless of occupancy level. In addition, once GymGaze reaches <strong>35% marketing slot occupancy</strong> across the Partner&rsquo;s venues, a monthly venue rental fee (as separately agreed in writing between both parties) shall become payable by GymGaze to the Partner. The venue rental is payable in addition to the ongoing ${f.revenueSplitPartner}% revenue share and does not replace it.
 </div>
 
 <p><strong>Widget &amp; Sponsorship Revenue</strong> is ${f.sponsorshipsExcluded}. This applies to branded widget sponsorships (news, sports, weather) which carry a fixed sponsorship fee structure separate from CPM-based ad campaigns.</p>
@@ -408,11 +412,10 @@ function buildSlaHtml(f: SlaFields): string {
 
 <h2>10. Partner Obligations</h2>
 <ol>
-  <li>Ensure stable power supply (220V, minimum 10A) is available and maintained at each venue for GymGaze equipment. GymGaze shall be responsible for providing and managing internet connectivity to its own screens.</li>
+  <li>Provide access to venues to allow GymGaze&rsquo;s appointed electrician to install dedicated electrical points (220V, minimum 10A) for GymGaze screens at agreed locations. GymGaze shall be responsible for all electrical installation costs and for providing and managing internet connectivity to its own screens.</li>
   <li>Notify GymGaze at least 14 days in advance of any venue renovation, closure, or change in operating hours that may affect GymGaze equipment or audience traffic.</li>
   <li>Grant GymGaze exclusive rights to sell and manage all in-venue advertising inventory within Partner venues for the duration of this Agreement. The Partner shall not independently sell, license, or grant advertising rights within Partner venues to any third party without prior written consent from GymGaze.</li>
   <li>Provide GymGaze with access to venues during business hours for maintenance and equipment checks, and outside business hours by prior arrangement for urgent repairs.</li>
-  <li>Provide aggregated member entry and foot traffic data monthly if data sharing is required under this Agreement.</li>
   <li>Not reproduce, copy, or share GymGaze&rsquo;s campaign data, rate cards, or reporting with any third party without written consent.</li>
 </ol>
 

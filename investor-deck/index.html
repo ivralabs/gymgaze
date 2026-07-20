@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymGaze — Investor Pitch Deck 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0F0F0F;
+  --surface: #1A1A1A;
+  --orange: #FF6B35;
+  --lime: #D4FF4F;
+  --white: #FFFFFF;
+  --muted: #999999;
+  --border: #2A2A2A;
+  --amber: #F59E0B;
+}
+
+html, body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* =======================
+   SLIDE BASE — A4 Landscape
+   ======================= */
+.slide {
+  width: 297mm;
+  height: 210mm;
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+  page-break-after: always;
+  display: flex;
+  flex-direction: column;
+  padding: 20mm 22mm 18mm 22mm;
+}
+
+/* Footer — every slide except slide-12 */
+.footer {
+  position: absolute;
+  bottom: 10mm;
+  left: 22mm;
+  right: 22mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 4px;
+}
+
+/* Section label */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 10px;
+}
+
+/* =======================
+   SLIDE 1 — COVER
+   ======================= */
+#slide-1 {
+  background: #0F0F0F;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#slide-1 .confidential {
+  position: absolute;
+  top: 10mm;
+  right: 22mm;
+  font-size: 9px;
+  font-variant: small-caps;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+#slide-1 .logo {
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+#slide-1 .logo-line {
+  width: 120px;
+  height: 4px;
+  background: var(--orange);
+  margin: 12px auto 16px;
+  border-radius: 2px;
+}
+
+#slide-1 .tagline {
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--orange);
+  margin-bottom: 0;
+}
+
+#slide-1 .founder-block {
+  position: absolute;
+  bottom: 14mm;
+  right: 22mm;
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* =======================
+   SLIDE 2 — THE PROBLEM
+   ======================= */
+#slide-2 .content-grid {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+
+#slide-2 .left-col {
+  flex: 0 0 60%;
+}
+
+#slide-2 .heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+#slide-2 .bullets {
+  list-style: none;
+  margin-bottom: 14px;
+}
+
+#slide-2 .bullets li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--white);
+}
+
+#slide-2 .bullets li::before {
+  content: "▶";
+  color: var(--orange);
+  font-size: 9px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.pull-quote {
+  background: #2A1500;
+  border-left: 4px solid var(--orange);
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--white);
+  line-height: 1.5;
+}
+
+#slide-2 .right-col {
+  flex: 0 0 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 20px;
+  text-align: center;
+  height: 100%;
+}
+
+#slide-2 .display-stat {
+  font-size: 60px;
+  font-weight: 900;
+  color: var(--orange);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+#slide-2 .display-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* =======================
+   SLIDE 3 — THE SOLUTION
+   ======================= */
+#slide-3 .heading {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+#slide-3 .steps-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+#slide-3 .step {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+#slide-3 .step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+}
+
+#slide-3 .step-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+#slide-3 .step-desc {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+#slide-3 .bottom-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+#slide-3 .stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  min-width: 110px;
+}
+
+#slide-3 .stat-num {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--orange);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+#slide-3 .stat-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* =======================
+   SLIDE 4 — THE OPPORTUNITY
+   ======================= */
+#slide-4 .hero-number {
+  font-size: 88px;
+  font-weight: 900;
+  color: var(--orange);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+#slide-4 .hero-label {
+  font-size: 14px;
+  color: var(--white);
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+#slide-4 .stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+#slide-4 .stat-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--orange);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+#slide-4 .stat-card .num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+#slide-4 .stat-card .lbl {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+#slide-4 .first-mover {
+  position: absolute;
+  bottom: 20mm;
+  right: 22mm;
+  background: #1A2A00;
+  border: 1px solid var(--lime);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--lime);
+  font-style: italic;
+  font-weight: 600;
+  max-width: 180px;
+  text-align: center;
+}
+
+/* =======================
+   SLIDE 5 — THE PRODUCT
+   ======================= */
+#slide-5 .subheading {
+  font-size: 18px;
+  font-style: italic;
+  color: var(--orange);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+#slide-5 .content-grid {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+#slide-5 .left-col {
+  flex: 0 0 58%;
+}
+
+#slide-5 .bullets {
+  list-style: none;
+}
+
+#slide-5 .bullets li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--white);
+}
+
+#slide-5 .bullets li::before {
+  content: "▶";
+  color: var(--orange);
+  font-size: 9px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+#slide-5 .right-col {
+  flex: 0 0 40%;
+}
+
+#slide-5 .product-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+}
+
+#slide-5 .product-card-header {
+  background: var(--orange);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  text-align: center;
+}
+
+#slide-5 .metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+#slide-5 .metric-row:last-child {
+  border-bottom: none;
+}
+
+#slide-5 .metric-label {
+  color: var(--muted);
+}
+
+#slide-5 .metric-value {
+  color: var(--white);
+  font-weight: 700;
+}
+
+#slide-5 .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* =======================
+   SLIDE 6 — BUSINESS MODEL
+   ======================= */
+#slide-6 .flow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: nowrap;
+}
+
+#slide-6 .flow-node {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+#slide-6 .flow-node .node-label {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+#slide-6 .flow-node .node-value {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--white);
+}
+
+#slide-6 .flow-arrow {
+  font-size: 18px;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+#slide-6 .cpm-box {
+  background: var(--orange);
+  color: var(--white);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  display: inline-block;
+}
+
+#slide-6 .bonus-card {
+  background: #1A1200;
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+#slide-6 .bonus-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--amber);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+#slide-6 .bonus-text {
+  font-size: 11px;
+  color: var(--white);
+}
+
+#slide-6 .bottom-row {
+  display: flex;
+  gap: 12px;
+}
+
+#slide-6 .model-stat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+#slide-6 .model-stat .ms-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--orange);
+}
+
+#slide-6 .model-stat .ms-lbl {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* =======================
+   SLIDE 7 — REVENUE PROJECTIONS
+   ======================= */
+#slide-7 .rev-grid {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+#slide-7 .left-col {
+  flex: 0 0 55%;
+}
+
+#slide-7 .rev-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+#slide-7 .rev-table th {
+  text-align: left;
+  padding: 7px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+
+#slide-7 .rev-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #1E1E1E;
+  vertical-align: middle;
+}
+
+.row-conservative { background: rgba(245, 158, 11, 0.1); }
+.row-base { background: rgba(255, 107, 53, 0.1); }
+.row-optimistic { background: rgba(212, 255, 79, 0.1); }
+
+.row-conservative td:first-child { color: var(--amber); font-weight: 700; }
+.row-base td:first-child { color: var(--orange); font-weight: 700; }
+.row-optimistic td:first-child { color: var(--lime); font-weight: 700; }
+
+#slide-7 .rev-table td .bold-num {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+#slide-7 .notes {
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+#slide-7 .right-col {
+  flex: 0 0 43%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#slide-7 .chart-title {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+#slide-7 .bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+#slide-7 .bar-label {
+  width: 85px;
+  font-size: 10px;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+#slide-7 .bar-track {
+  flex: 1;
+  height: 22px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+#slide-7 .bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+#slide-7 .bar-value {
+  width: 80px;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* =======================
+   SLIDE 8 — TRACTION
+   ======================= */
+#slide-8 .stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  margin-top: 4px;
+}
+
+#slide-8 .traction-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#slide-8 .traction-num {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+#slide-8 .traction-label {
+  font-size: 12px;
+  color: var(--white);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+#slide-8 .closing-line {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--orange);
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* =======================
+   SLIDE 9 — THE TEAM
+   ======================= */
+#slide-9 .team-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 8px;
+  flex: 1;
+}
+
+#slide-9 .avatar-col {
+  flex: 0 0 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+
+#slide-9 .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #2A2A2A;
+  border: 2px solid var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--orange);
+}
+
+#slide-9 .info-col {
+  flex: 1;
+}
+
+#slide-9 .founder-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+#slide-9 .founder-title {
+  font-size: 14px;
+  color: var(--orange);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+#slide-9 .founder-bio {
+  font-size: 12px;
+  color: var(--white);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+#slide-9 .ivra-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+#slide-9 .ivra-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+#slide-9 .ivra-desc {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+#slide-9 .team-closing {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--orange);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* =======================
+   SLIDE 10 — USE OF FUNDS
+   ======================= */
+#slide-10 .funds-grid {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  margin-top: 8px;
+}
+
+#slide-10 .funds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  margin-bottom: 10px;
+}
+
+#slide-10 .funds-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+#slide-10 .funds-table td:last-child {
+  text-align: right;
+  font-weight: 700;
+  color: var(--white);
+}
+
+#slide-10 .funds-table tr:last-child td {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--orange);
+  border-bottom: none;
+}
+
+#slide-10 .left-col {
+  flex: 0 0 48%;
+}
+
+#slide-10 .right-col {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#slide-10 .stacked-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+#slide-10 .stacked-bar-container {
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 14px;
+}
+
+#slide-10 .bar-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--bg);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#slide-10 .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#slide-10 .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--white);
+}
+
+#slide-10 .legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+#slide-10 .callout {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* =======================
+   SLIDE 11 — THE DEAL
+   ======================= */
+#slide-11 .deal-grid {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  margin-top: 4px;
+}
+
+#slide-11 .hero-nums {
+  flex: 0 0 38%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#slide-11 .hero-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+
+#slide-11 .hero-num {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--orange);
+  letter-spacing: -0.02em;
+}
+
+#slide-11 .hero-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+#slide-11 .deal-table-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#slide-11 .deal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+#slide-11 .deal-table td {
+  padding: 7px 10px;
+  vertical-align: top;
+}
+
+#slide-11 .deal-table tr:nth-child(odd) td {
+  background: rgba(255,255,255,0.03);
+}
+
+#slide-11 .deal-table tr:nth-child(even) td {
+  background: rgba(255,255,255,0.015);
+}
+
+#slide-11 .deal-table td:first-child {
+  color: var(--muted);
+  font-size: 10px;
+  width: 45%;
+}
+
+#slide-11 .deal-table td:last-child {
+  color: var(--white);
+  font-weight: 600;
+}
+
+#slide-11 .buyback-callout {
+  background: #0A1F0A;
+  border: 2px solid var(--lime);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--lime);
+  line-height: 1.5;
+}
+
+/* =======================
+   SLIDE 12 — THE ASK
+   ======================= */
+#slide-12 {
+  background: #0A0A0A;
+  padding: 20mm 22mm 14mm 22mm;
+}
+
+#slide-12 .ask-heading {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+#slide-12 .ask-heading span {
+  color: var(--orange);
+}
+
+#slide-12 .timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+#slide-12 .timeline::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+#slide-12 .tl-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+#slide-12 .tl-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+#slide-12 .tl-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+#slide-12 .tl-weeks {
+  font-size: 9px;
+  color: var(--muted);
+  text-align: center;
+}
+
+#slide-12 .contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+#slide-12 .contact-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+#slide-12 .contact-title {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+#slide-12 .contact-email {
+  font-size: 12px;
+  color: var(--orange);
+}
+
+#slide-12 .closing-promise {
+  font-size: 20px;
+  font-style: italic;
+  color: var(--orange);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+}
+
+/* =======================
+   PRINT STYLES
+   ======================= */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .slide {
+    page-break-after: always;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SLIDE 1 — COVER ===== -->
+<div class="slide" id="slide-1">
+  <div class="confidential">CONFIDENTIAL</div>
+  <div class="logo">GymGaze</div>
+  <div class="logo-line"></div>
+  <div class="tagline">"Turning gym floors into advertising real estate"</div>
+  <div class="founder-block">
+    <strong>Mlungisi Busakwe</strong><br>
+    Founder &amp; CEO<br>
+    July 2026
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>1 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 2 — THE PROBLEM ===== -->
+<div class="slide" id="slide-2">
+  <div class="section-label">02 / The Problem</div>
+  <div class="content-grid">
+    <div class="left-col">
+      <div class="heading">Gyms are packed with people.<br>Nobody is monetising that.</div>
+      <ul class="bullets">
+        <li>South Africa has <strong>1 000+ gyms</strong> and <strong>3 million+ members</strong> — all captive, all spending time</li>
+        <li>Members visit <strong>3–5× per week</strong>, staying <strong>45–90 minutes</strong> per session — a dwell time no billboard can match</li>
+        <li>Brands want to reach <strong>health-conscious, LSM 6–10 consumers</strong> — but no direct advertising channel exists inside gyms</li>
+        <li>Traditional OOH (billboards, transit) catches people in passing. <strong>Gym screens catch people standing still.</strong></li>
+      </ul>
+      <div class="pull-quote">
+        "The audience is already there. The screens aren't."
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="display-stat">45–90<br>min</div>
+      <div class="display-label">avg. dwell time per visit</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>2 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 3 — THE SOLUTION ===== -->
+<div class="slide" id="slide-3">
+  <div class="section-label">03 / The Solution</div>
+  <div class="heading">GymGaze puts digital advertising screens inside gyms — and handles everything.</div>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-circle">1</div>
+      <div class="step-label">Install</div>
+      <div class="step-desc">Digital screens in high-traffic gym zones: entrance, cardio floor, free weights</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">2</div>
+      <div class="step-label">Sell</div>
+      <div class="step-desc">Ad slots to brands &amp; agencies at CPM pricing — R65–R85 per 1 000 impressions</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">3</div>
+      <div class="step-label">Manage</div>
+      <div class="step-desc">Content, scheduling and campaign reporting via the Cuecast platform</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">4</div>
+      <div class="step-label">Earn</div>
+      <div class="step-desc">Gym partner earns 30% of revenue — passive income, zero effort, no capital outlay</div>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div style="flex:1">
+      <div class="pull-quote">
+        "Gyms get a new income stream. Brands get a new channel. GymGaze runs it all."
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">30%</div>
+      <div class="stat-lbl">revenue share<br>for gym partner</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>3 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 4 — THE OPPORTUNITY ===== -->
+<div class="slide" id="slide-4">
+  <div class="section-label">04 / The Opportunity</div>
+  <div class="hero-number">R4.5B</div>
+  <div class="hero-label">SA DOOH market annually — gym venues are an untapped vertical</div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num">1 000+ gyms</div>
+      <div class="lbl">across South Africa</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">3M+ members</div>
+      <div class="lbl">addressable audience</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">12% YoY</div>
+      <div class="lbl">health &amp; wellness ad spend growth</div>
+    </div>
+  </div>
+  <div class="pull-quote" style="max-width: 65%;">
+    "No direct competitor operates a gym DOOH network at scale in South Africa. GymGaze is first. That matters."
+  </div>
+  <div class="first-mover">
+    First Mover<br>
+    <span style="font-size:10px; font-style:normal;">No gym DOOH operator<br>at scale in SA</span>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>4 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 5 — THE PRODUCT ===== -->
+<div class="slide" id="slide-5">
+  <div class="section-label">05 / The Product</div>
+  <div class="subheading">Built. Running. Ready to deploy.</div>
+  <div class="content-grid">
+    <div class="left-col">
+      <ul class="bullets">
+        <li><strong>Cuecast</strong> — our proprietary screen management platform. Built, operational, no additional cost.</li>
+        <li>Manages content scheduling, proof of play, and real-time campaign reporting</li>
+        <li>Phase 1 network: <strong>94 screens across 14 Edge Fitness venues</strong></li>
+        <li>Audience data per venue: member counts, peak hours, dwell time</li>
+        <li>Advertiser dashboard: live campaign performance, impressions delivered, spend tracking</li>
+        <li>The platform is done. <strong>This round is for the hardware.</strong></li>
+      </ul>
+    </div>
+    <div class="right-col">
+      <div class="product-card">
+        <div class="product-card-header">CUECAST</div>
+        <div class="metric-row">
+          <span class="metric-label">Screens Active</span>
+          <span class="metric-value">94</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Venues</span>
+          <span class="metric-value">14</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Network Members</span>
+          <span class="metric-value">53 587</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Status</span>
+          <span class="metric-value">
+            <span class="status-dot"></span>READY
+          </span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Contract Term</span>
+          <span class="metric-value">3 Years</span>
+        </div>
+        <div class="metric-row" style="border-bottom:none; padding-top:14px; justify-content:center;">
+          <span style="font-size:10px; color:var(--muted); font-style:italic; text-align:center;">Platform operational — capital deploys hardware</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>5 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 6 — BUSINESS MODEL ===== -->
+<div class="slide" id="slide-6">
+  <div class="section-label">06 / The Business Model</div>
+  <div style="font-size:18px;font-weight:800;color:var(--white);margin-bottom:14px;letter-spacing:-0.02em;">CPM ad sales. Simple. Scalable.</div>
+  <div class="flow-row">
+    <div class="flow-node">
+      <div class="node-label">Step 1</div>
+      <div class="node-value">Screen</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;">94 deployed screens</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="node-label">Step 2</div>
+      <div class="node-value">Impressions</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;">16 slots per loop</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="node-label">Step 3 — CPM Rate</div>
+      <div class="node-value">
+        <span class="cpm-box">R65</span>&nbsp;<span style="font-size:10px;color:var(--muted)">std</span>
+        &nbsp;
+        <span class="cpm-box">R85</span>&nbsp;<span style="font-size:10px;color:var(--muted)">prem</span>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="node-label">Step 4 — Revenue</div>
+      <div class="node-value">Gross CPM<br>Income</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="border-top:3px solid var(--orange);">
+      <div class="node-label">Step 5 — Split</div>
+      <div class="node-value" style="color:var(--orange);">70% GymGaze</div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;">30% venue partner</div>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div style="flex:2">
+      <div class="bonus-card">
+        <div class="bonus-title">Bonus Revenue Stream — Widget Sponsorships</div>
+        <div class="bonus-text">Brands sponsor the news, sports, and weather widgets displayed on-screen between ads. Additional revenue on top of CPM sales.</div>
+      </div>
+      <div class="pull-quote" style="font-size:11px;">"The inventory is our screens. The product is eyeballs. The math works."</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div class="model-stat">
+        <div class="ms-val">8×7s + 8×15s</div>
+        <div class="ms-lbl">ad slots per loop, per screen</div>
+      </div>
+      <div class="model-stat">
+        <div class="ms-val" style="color:var(--lime);">R52 920</div>
+        <div class="ms-lbl">GymGaze net/mo at base case</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>6 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 7 — REVENUE PROJECTIONS ===== -->
+<div class="slide" id="slide-7">
+  <div class="section-label">07 / Revenue Projections</div>
+  <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:10px;letter-spacing:-0.02em;">Phase 1 — 94 screens, 14 Edge Fitness venues</div>
+  <div class="rev-grid">
+    <div class="left-col">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>Occupancy</th>
+            <th>Gross/mo</th>
+            <th>Net/mo</th>
+            <th>Net/year</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-conservative">
+            <td>Conservative</td>
+            <td>35%</td>
+            <td>R37 800</td>
+            <td>R26 460</td>
+            <td><span class="bold-num">R317 520</span></td>
+          </tr>
+          <tr class="row-base">
+            <td>Base Case</td>
+            <td>70%</td>
+            <td>R75 600</td>
+            <td>R52 920</td>
+            <td><span class="bold-num">R635 040</span></td>
+          </tr>
+          <tr class="row-optimistic">
+            <td>Optimistic</td>
+            <td>100%</td>
+            <td>R108 000</td>
+            <td>R75 600</td>
+            <td><span class="bold-num">R907 200</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="notes">
+        Net figures after 30% Edge Fitness revenue share. Venue rental fees (R28 700/mo total) activate above the 35% occupancy floor.<br>
+        <strong style="color:var(--white);">Buyback trigger:</strong> R1M ARR target = ~75% occupancy — expected within 12–18 months of deployment.<br>
+        Phase 2 expansion adds additional gym networks and scales these numbers significantly.
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="chart-title">Annual Net Revenue — Visual</div>
+      <div class="bar-item">
+        <div class="bar-label" style="color:var(--amber)">Conservative</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:35%;background:var(--amber);"></div>
+        </div>
+        <div class="bar-value" style="color:var(--amber)">R317 520</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label" style="color:var(--orange)">Base Case</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:70%;background:var(--orange);"></div>
+        </div>
+        <div class="bar-value" style="color:var(--orange)">R635 040</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label" style="color:var(--lime)">Optimistic</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:100%;background:var(--lime);"></div>
+        </div>
+        <div class="bar-value" style="color:var(--lime)">R907 200</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>7 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 8 — TRACTION ===== -->
+<div class="slide" id="slide-8">
+  <div class="section-label">08 / Traction</div>
+  <div style="font-size:18px;font-weight:800;color:var(--white);margin-bottom:8px;letter-spacing:-0.02em;">Signed. Built. Ready.</div>
+  <div class="stats-grid">
+    <div class="traction-card">
+      <div class="traction-num" style="color:var(--orange)">14</div>
+      <div class="traction-label">Venues Signed</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num" style="color:var(--lime)">94</div>
+      <div class="traction-label">Screens to Deploy</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num" style="color:var(--orange);font-size:48px;">53 587</div>
+      <div class="traction-label">Network Members</div>
+    </div>
+    <div class="traction-card">
+      <div class="traction-num" style="color:var(--lime)">3 YR</div>
+      <div class="traction-label">Contract Term</div>
+    </div>
+  </div>
+  <div class="closing-line">"The hard work is done."</div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>8 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 9 — THE TEAM ===== -->
+<div class="slide" id="slide-9">
+  <div class="section-label">09 / The Team</div>
+  <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px;">The founder built this from scratch.</div>
+  <div class="team-row">
+    <div class="avatar-col">
+      <div class="avatar">MB</div>
+    </div>
+    <div class="info-col">
+      <div class="founder-name">Mlungisi Busakwe</div>
+      <div class="founder-title">Founder &amp; CEO</div>
+      <div class="founder-bio">
+        10+ years in marketing and media. Founded <strong>Box Board Advertising</strong> — a township OOH network with 10+ active sites across the Eastern Cape, built from the ground up into a solid local player. Founded <strong>Busakwe Advertising</strong> — static and digital billboards in high-LSM areas, with active clients including Pineapple Insurance and Cadbury. 3 years focused specifically in the media space, with a track record of identifying underserved advertising audiences and building networks to reach them.<br><br>
+        GymGaze is the next evolution — same instinct, bigger canvas.
+      </div>
+      <div class="ivra-block">
+        <div class="ivra-name">Technology: Ivra Labs</div>
+        <div class="ivra-desc">AI-powered development studio. Built and maintains all GymGaze platform technology, including Cuecast.</div>
+      </div>
+      <div class="team-closing">"The platform is live. The partnership is signed. The founder is all-in."</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>9 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 10 — USE OF FUNDS ===== -->
+<div class="slide" id="slide-10">
+  <div class="section-label">10 / Use of Funds</div>
+  <div style="font-size:20px;font-weight:800;color:var(--white);margin-bottom:10px;letter-spacing:-0.02em;">R 410 000 — fully allocated.</div>
+  <div class="funds-grid">
+    <div class="left-col">
+      <table class="funds-table">
+        <tr>
+          <td style="color:var(--muted)">Screen hardware (94 units + mounts)</td>
+          <td>R300 000</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">Installation labour (14 venues)</td>
+          <td>R56 000</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">Internet setup (LTE routers × 14)</td>
+          <td>R28 000</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">Content creation + onboarding</td>
+          <td>R14 000</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">Contingency</td>
+          <td>R12 000</td>
+        </tr>
+        <tr>
+          <td style="font-weight:800;color:var(--white);border-top:1px solid var(--border);border-bottom:none;">Total</td>
+          <td style="font-weight:800;color:var(--orange);border-top:1px solid var(--border);">R410 000</td>
+        </tr>
+      </table>
+      <div class="callout">
+        Capital deployment round — every rand goes toward deploying the network.<br>No salaries, no overheads.
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="stacked-title">Fund Allocation</div>
+      <div class="stacked-bar-container">
+        <div class="bar-seg" style="width:73%;background:var(--orange);">Hardware 73%</div>
+        <div class="bar-seg" style="width:14%;background:var(--amber);">Install 14%</div>
+        <div class="bar-seg" style="width:7%;background:var(--lime);">Net 7%</div>
+        <div class="bar-seg" style="width:3%;background:var(--muted);">3%</div>
+        <div class="bar-seg" style="width:3%;background:#333;">3%</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Hardware (R300k, 73%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Installation (R56k, 14%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--lime)"></div>Internet (R28k, 7%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Content (R14k, 3%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#333;border:1px solid var(--border)"></div>Contingency (R12k, 3%)</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>10 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 11 — THE DEAL ===== -->
+<div class="slide" id="slide-11">
+  <div class="section-label">11 / The Deal</div>
+  <div style="font-size:18px;font-weight:800;color:var(--white);margin-bottom:10px;letter-spacing:-0.02em;">Here's exactly what you get.</div>
+  <div class="deal-grid">
+    <div class="hero-nums">
+      <div class="hero-item">
+        <div class="hero-num">R410 000</div>
+        <div class="hero-lbl">Investment</div>
+      </div>
+      <div class="hero-item">
+        <div class="hero-num" style="color:var(--lime)">25%</div>
+        <div class="hero-lbl">Equity in GymGaze</div>
+      </div>
+      <div class="hero-item">
+        <div class="hero-num">R820 000</div>
+        <div class="hero-lbl">Buyback price (2× capital)</div>
+      </div>
+    </div>
+    <div class="deal-table-col">
+      <table class="deal-table">
+        <tr><td>Investment</td><td>R410 000</td></tr>
+        <tr><td>Equity</td><td>25% of GymGaze</td></tr>
+        <tr><td>Implied pre-money valuation</td><td>R1 640 000</td></tr>
+        <tr><td>Dividends</td><td>20% of net profit, paid bi-annually</td></tr>
+        <tr><td>Buyback right</td><td>Mlu may repurchase 25% at <strong>R820 000</strong></td></tr>
+        <tr><td>Buyback trigger</td><td>GymGaze reaches <strong>R1 000 000 annual revenue</strong></td></tr>
+        <tr><td>Buyback window</td><td>24 months from trigger date</td></tr>
+        <tr><td>Until buyback</td><td>You hold equity and receive dividends</td></tr>
+      </table>
+      <div class="buyback-callout">
+        "Double your money in cash — or hold equity in a growing network."
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>GymGaze</span>
+    <span>11 / 12</span>
+  </div>
+</div>
+
+<!-- ===== SLIDE 12 — THE ASK ===== -->
+<div class="slide" id="slide-12">
+  <div class="section-label">12 / The Ask</div>
+  <div class="ask-heading">R 410 000 to deploy <span>94 screens</span> and go live.</div>
+  <div class="timeline">
+    <div class="tl-step">
+      <div class="tl-circle">1</div>
+      <div class="tl-label">Commit</div>
+      <div class="tl-weeks">Now</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">2</div>
+      <div class="tl-label">Sign</div>
+      <div class="tl-weeks">2 weeks</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">3</div>
+      <div class="tl-label">Order</div>
+      <div class="tl-weeks">4–6 weeks</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">4</div>
+      <div class="tl-label">Install</div>
+      <div class="tl-weeks">3–4 weeks</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle" style="background:var(--lime);color:var(--bg)">5</div>
+      <div class="tl-label" style="color:var(--lime)">Live</div>
+      <div class="tl-weeks" style="color:var(--lime)">Day 90</div>
+    </div>
+  </div>
+  <div class="contact-card">
+    <div class="contact-name">Mlungisi Busakwe</div>
+    <div class="contact-title">Founder &amp; CEO, GymGaze</div>
+    <div class="contact-email">mlungisibusakwe@gmail.com</div>
+  </div>
+  <div class="closing-promise">"Within 90 days of investment, the first ad plays."</div>
+</div>
+
+</body>
+</html>

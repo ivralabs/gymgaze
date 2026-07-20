@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymGaze — Licence to Occupy Agreement</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 60px;
+    line-height: 1.8;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 36px;
+  }
+  .company-name {
+    font-size: 20pt;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+  }
+  .doc-meta {
+    text-align: right;
+    font-size: 9pt;
+    color: #444;
+    line-height: 1.9;
+  }
+  .doc-meta strong {
+    font-size: 10pt;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .doc-title {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #ddd;
+  }
+  .doc-title h1 {
+    font-size: 16pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .doc-title .subtitle {
+    font-size: 10pt;
+    color: #555;
+  }
+  .parties-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+  }
+  .parties-table td {
+    padding: 16px 20px;
+    vertical-align: top;
+    border: 1px solid #ccc;
+    width: 50%;
+    font-size: 10pt;
+  }
+  .parties-table .party-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .parties-table .party-name {
+    font-size: 12pt;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .parties-table .party-detail {
+    font-size: 9.5pt;
+    color: #444;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+  .recitals {
+    background: #f9f9f9;
+    border-left: 3px solid #1a1a1a;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    font-size: 10pt;
+  }
+  .recitals p {
+    margin-bottom: 8px;
+  }
+  .recitals p:last-child {
+    margin-bottom: 0;
+  }
+  h2 {
+    font-size: 11pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin: 36px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid #1a1a1a;
+    color: #1a1a1a;
+  }
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    margin: 20px 0 8px;
+    color: #1a1a1a;
+  }
+  p {
+    margin-bottom: 10px;
+    font-size: 10.5pt;
+  }
+  ol.clauses {
+    padding-left: 0;
+    list-style: none;
+    counter-reset: clause-counter;
+    margin: 8px 0 16px;
+  }
+  ol.clauses > li {
+    counter-increment: clause-counter;
+    padding: 6px 0 6px 40px;
+    position: relative;
+    font-size: 10.5pt;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  ol.clauses > li:last-child {
+    border-bottom: none;
+  }
+  ol.clauses > li::before {
+    content: attr(data-num);
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 10pt;
+    width: 34px;
+  }
+  ol.alpha {
+    list-style: lower-alpha;
+    padding-left: 24px;
+    margin: 8px 0;
+  }
+  ol.alpha li {
+    padding: 3px 0;
+    font-size: 10pt;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 10px;
+    font-size: 10pt;
+  }
+  table.data-table thead tr th {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 9.5pt;
+  }
+  table.data-table tbody tr td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #e8e8e8;
+    vertical-align: top;
+  }
+  table.data-table tbody tr:nth-child(even) td {
+    background: #f8f8f8;
+  }
+  table.data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .callout {
+    background: #f5f5f5;
+    border-left: 3px solid #1a1a1a;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 10pt;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .important {
+    background: #fff;
+    border: 1.5px solid #1a1a1a;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 10pt;
+  }
+  .page-break {
+    page-break-before: always;
+    padding-top: 40px;
+  }
+  .annexure-header {
+    text-align: center;
+    padding: 20px 0 24px;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 28px;
+  }
+  .annexure-header h2 {
+    font-size: 14pt;
+    border: none;
+    padding-left: 0;
+    text-align: center;
+  }
+  .signature-section {
+    margin-top: 56px;
+    padding-top: 30px;
+    border-top: 2px solid #1a1a1a;
+  }
+  .signature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 24px;
+  }
+  .sig-block .sig-party {
+    font-size: 9pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #444;
+    margin-bottom: 24px;
+  }
+  .sig-line {
+    border-bottom: 1.5px solid #1a1a1a;
+    height: 40px;
+    margin-bottom: 6px;
+  }
+  .sig-label {
+    font-size: 9pt;
+    color: #666;
+    margin-bottom: 14px;
+  }
+  .sig-field {
+    border-bottom: 1px solid #aaa;
+    height: 28px;
+    margin-bottom: 5px;
+  }
+  .sig-field-label {
+    font-size: 8.5pt;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .doc-footer {
+    margin-top: 50px;
+    padding-top: 14px;
+    border-top: 1px solid #ddd;
+    font-size: 8pt;
+    color: #999;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .definition-term {
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  @media print {
+    body { padding: 40px; }
+    .page-break { page-break-before: always; }
+    h2 { page-break-after: avoid; }
+    .signature-section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- DOCUMENT HEADER -->
+<div class="doc-header">
+  <div>
+    <div class="company-name">GymGaze</div>
+    <div style="font-size:9pt;color:#777;margin-top:3px;">Media Network Services</div>
+  </div>
+  <div class="doc-meta">
+    <strong>LICENCE TO OCCUPY AGREEMENT</strong>
+    <span>Reference: GG-LTO-[VERSION]</span>
+    <span>Effective Date: [DATE]</span>
+    <span>Associated SLA: GG-SLA-[VERSION]</span>
+  </div>
+</div>
+
+<!-- DOCUMENT TITLE -->
+<div class="doc-title">
+  <h1>Licence to Occupy Agreement</h1>
+  <p class="subtitle">This Agreement governs the physical space, installation rights, equipment ownership, and property obligations applicable to the GymGaze media network installation within Partner venues. This Agreement is to be read together with the GymGaze Service Level Agreement (Reference: GG-SLA-[VERSION]).</p>
+</div>
+
+<!-- PARTIES -->
+<table class="parties-table">
+  <tr>
+    <td>
+      <div class="party-label">Licensor ("GymGaze")</div>
+      <div class="party-name">GymGaze (Pty) Ltd</div>
+      <div class="party-detail">
+        Registration No: [TO BE INSERTED]<br>
+        Address: [TO BE INSERTED]<br>
+        Email: [TO BE INSERTED]<br>
+        Authorised Representative: Mlungisi Busakwe
+      </div>
+    </td>
+    <td>
+      <div class="party-label">Licencee ("Partner")</div>
+      <div class="party-name">[PARTNER LEGAL NAME]</div>
+      <div class="party-detail">
+        Registration No: [TO BE INSERTED]<br>
+        Address: [TO BE INSERTED]<br>
+        Email: [TO BE INSERTED]<br>
+        Authorised Representative: [TO BE INSERTED]
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- RECITALS -->
+<div class="recitals">
+  <p><strong>WHEREAS:</strong></p>
+  <p>A. GymGaze operates a digital out-of-home (DOOH) media network, installing and managing digital advertising screens and associated media equipment within gym and fitness venues across South Africa.</p>
+  <p>B. The Partner owns or operates the gym venues described in Annexure A to this Agreement and wishes to permit GymGaze to install and operate its media equipment within those venues.</p>
+  <p>C. The parties have agreed to enter into this Licence to Occupy Agreement to set out the terms governing GymGaze's physical occupation of defined spaces within Partner venues for the purpose of operating its media network.</p>
+  <p>D. This Agreement must be read together with the GymGaze Service Level Agreement (Reference: GG-SLA-[VERSION]) which governs the commercial and service delivery terms of the parties' relationship. In the event of any conflict between this Agreement and the SLA, this Agreement shall prevail in respect of all property, installation, and equipment matters.</p>
+  <p><strong>NOW THEREFORE</strong> the parties agree as follows:</p>
+</div>
+
+<!-- SECTION 1 — DEFINITIONS -->
+<h2>1. Definitions</h2>
+<p>In this Agreement, unless the context indicates otherwise:</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th style="width:30%">Term</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>"Agreement"</strong></td>
+      <td>This Licence to Occupy Agreement together with Annexure A and any written amendments.</td>
+    </tr>
+    <tr>
+      <td><strong>"Annexure A"</strong></td>
+      <td>The Licensed Space Schedule attached to this Agreement, documenting every approved installation location, screen dimensions, power point positions, and exclusion zones.</td>
+    </tr>
+    <tr>
+      <td><strong>"Equipment"</strong></td>
+      <td>All hardware installed by GymGaze within Partner venues including but not limited to digital screens, mounting brackets, cabling, surge protectors, LTE routers, WiFi repeaters, media players, and any associated peripherals.</td>
+    </tr>
+    <tr>
+      <td><strong>"Exclusion Zone"</strong></td>
+      <td>The area of 2 (two) metres radius around each GymGaze screen face as demarcated in Annexure A, within which no competing media may be installed.</td>
+    </tr>
+    <tr>
+      <td><strong>"Fit-Out Works"</strong></td>
+      <td>The installation activities undertaken by GymGaze including mounting, drilling, cable routing, and connectivity hardware installation.</td>
+    </tr>
+    <tr>
+      <td><strong>"Installation Date"</strong></td>
+      <td>The date on which GymGaze completes installation at a specific venue, as confirmed in writing by both parties.</td>
+    </tr>
+    <tr>
+      <td><strong>"Licence Fee"</strong></td>
+      <td>The consideration payable by GymGaze to the Partner for the rights granted under this Agreement, being nil (zero rand), with the revenue sharing arrangement under the SLA constituting full consideration.</td>
+    </tr>
+    <tr>
+      <td><strong>"Licensed Space"</strong></td>
+      <td>Each specific area within a Partner venue designated for GymGaze Equipment, as described in Annexure A.</td>
+    </tr>
+    <tr>
+      <td><strong>"Make Good"</strong></td>
+      <td>The obligation upon GymGaze to restore affected surfaces to their pre-installation condition following removal of Equipment.</td>
+    </tr>
+    <tr>
+      <td><strong>"Operating Hours"</strong></td>
+      <td>The hours during which each Partner venue is open to members and the public, as notified to GymGaze in writing from time to time.</td>
+    </tr>
+    <tr>
+      <td><strong>"Structural Works"</strong></td>
+      <td>Any works affecting load-bearing walls, structural columns, ceiling structures, floor slabs, or any element forming part of the building's structural integrity.</td>
+    </tr>
+    <tr>
+      <td><strong>"Term"</strong></td>
+      <td>The duration of this Agreement as set out in Section 17.</td>
+    </tr>
+    <tr>
+      <td><strong>"Venue"</strong></td>
+      <td>Each gym or fitness facility operated by the Partner in which GymGaze has installed or intends to install Equipment, as listed in Annexure A.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SECTION 2 — GRANT OF LICENCE -->
+<h2>2. Grant of Licence</h2>
+<ol class="clauses">
+  <li data-num="2.1">GymGaze is hereby granted a non-exclusive licence to occupy the Licensed Spaces described in Annexure A for the sole purpose of installing, operating, maintaining, repairing, and ultimately removing its Equipment.</li>
+  <li data-num="2.2">The licence granted herein is personal to GymGaze. GymGaze may not assign, sublicence, or otherwise transfer the rights conferred by this Agreement without the prior written consent of the Partner.</li>
+  <li data-num="2.3">The Partner retains full right of use and occupation of all areas of the Venue outside the Licensed Spaces and the Exclusion Zones, subject to the access rights set out in Section 9.</li>
+  <li data-num="2.4">This Agreement does not constitute a lease of immovable property under the Rental Housing Act or any analogous legislation. It is a commercial licence to use specified spaces for a defined commercial purpose.</li>
+  <li data-num="2.5">The rights granted under this Agreement attach to GymGaze's operations at the specific Venues listed in Annexure A. They do not create any interest in the property beyond those specifically described herein.</li>
+</ol>
+
+<!-- SECTION 3 — LICENSED SPACES -->
+<h2>3. Licensed Spaces</h2>
+<ol class="clauses">
+  <li data-num="3.1">The Licensed Spaces are described in detail in Annexure A. Annexure A must be reviewed, agreed upon, and signed by both parties before any Fit-Out Works commence at each Venue.</li>
+  <li data-num="3.2">GymGaze may propose changes to Licensed Space locations at any time during the Term by giving the Partner 30 (thirty) days written notice. The Partner may accept or decline the proposed change within 14 (fourteen) days of receiving notice. Acceptance shall not be unreasonably withheld.</li>
+  <li data-num="3.3">Agreed changes to Licensed Spaces shall be documented in a written amendment to Annexure A, signed by both parties, before any physical relocation of Equipment takes place.</li>
+  <li data-num="3.4">If the Partner requires GymGaze to relocate Equipment due to venue renovation, refurbishment, or structural works, GymGaze shall identify an alternative Licensed Space and GymGaze shall bear the cost of such relocation, provided the Partner gives not less than 30 (thirty) days written notice of the required relocation.</li>
+  <li data-num="3.5">The total number of Licensed Spaces at the commencement of this Agreement is as set out in Annexure A. New Venues may be added by written addendum signed by both parties.</li>
+</ol>
+
+<!-- SECTION 4 — EQUIPMENT OWNERSHIP -->
+<h2>4. Equipment Ownership</h2>
+<ol class="clauses">
+  <li data-num="4.1">All Equipment installed by GymGaze within Partner venues remains the sole and exclusive property of GymGaze at all times, regardless of the manner or degree of its annexation to the Partner's property.</li>
+  <li data-num="4.2">The Partner shall not at any time acquire any right, title, or interest (including any lien, hypothec, or encumbrance) over any Equipment, whether by operation of law, accession, or otherwise.</li>
+  <li data-num="4.3">The Partner shall not tamper with, disconnect, move, cover, obstruct, or remove any Equipment without the prior written consent of GymGaze.</li>
+  <li data-num="4.4">The Partner shall immediately notify GymGaze in writing of any damage, theft, vandalism, or interference with Equipment, providing full details of the incident within 24 (twenty-four) hours of discovery.</li>
+  <li data-num="4.5">GymGaze is solely responsible for the maintenance, repair, and replacement of all Equipment. The Partner shall not engage any third party to work on GymGaze Equipment without prior written consent.</li>
+  <li data-num="4.6">In the event of the Partner's insolvency, liquidation, business rescue, or any analogous proceeding, the Equipment shall at all times remain identifiable as GymGaze's property and shall not form part of the Partner's insolvent estate. GymGaze shall be entitled to remove its Equipment without requirement for leave of court or consent of any insolvency practitioner, upon provision of reasonable notice.</li>
+</ol>
+
+<!-- SECTION 5 — FIT-OUT WORKS & INSTALLATION -->
+<h2>5. Fit-Out Works and Installation</h2>
+<ol class="clauses">
+  <li data-num="5.1">GymGaze shall procure, supply, and install all Equipment at its own cost. The Partner shall not be required to contribute any capital towards the procurement or installation of Equipment.</li>
+  <li data-num="5.2">Prior to commencing Fit-Out Works at any Venue, GymGaze shall submit an installation plan to the venue manager specifying the intended works, timeline, Equipment dimensions, and cable routing paths. Installation may not commence until the venue manager has confirmed in writing.</li>
+  <li data-num="5.3">GymGaze shall use suitably qualified, experienced, and insured contractors for all Fit-Out Works. All electrical work shall be performed by a registered electrician and shall comply with SANS 10142 (Wiring of Premises) and all applicable South African Standards.</li>
+  <li data-num="5.4">Fit-Out Works shall be scheduled to minimise disruption to venue operations. Where works must occur during Operating Hours, GymGaze shall give the venue manager not less than 48 (forty-eight) hours advance notice.</li>
+  <li data-num="5.5">GymGaze is permitted to perform the following within the agreed Licensed Spaces: surface drilling and mounting for screen brackets; surface-run cable installation; wall-mounted or ceiling-mounted cable trunking; installation of power strips on existing circuits; installation of LTE routers and WiFi repeaters at agreed locations.</li>
+  <li data-num="5.6">GymGaze shall not carry out any Structural Works without the prior written consent of the Partner and, where required by law, the prior approval of the relevant local authority.</li>
+  <li data-num="5.7">GymGaze shall ensure that all Fit-Out Works meet applicable building regulations, municipal bylaws, and occupational health and safety requirements.</li>
+  <li data-num="5.8">Upon completion of installation at each Venue, GymGaze shall provide the venue manager with an installation certificate confirming equipment installed, circuit details, and confirmation of electrical compliance.</li>
+</ol>
+
+<!-- SECTION 6 — POWER SUPPLY -->
+<h2>6. Power Supply</h2>
+<ol class="clauses">
+  <li data-num="6.1">The Partner shall provide and maintain a stable 220V (alternating current) power supply at each Licensed Space, at the Partner's own cost. The specific power point locations are documented in Annexure A.</li>
+  <li data-num="6.2">The Partner shall ensure that the power supply at each Licensed Space is continuous and available during all Operating Hours. Planned interruptions to power supply affecting GymGaze Equipment shall be communicated to GymGaze with a minimum of 24 (twenty-four) hours notice.</li>
+  <li data-num="6.3">GymGaze shall install surge-protected power strips at each Licensed Space at its own cost. The Partner shall not remove, unplug, or tamper with these surge protectors.</li>
+  <li data-num="6.4">The estimated power consumption of GymGaze Equipment at each Licensed Space is specified in Annexure A. The Partner warrants that its electrical infrastructure at each Venue is capable of safely supplying the estimated load without risk of circuit overload.</li>
+  <li data-num="6.5">If Equipment is damaged as a direct result of inadequate or unstable power supply attributable to the Partner's infrastructure (and not caused by load-shedding or external grid failure), the Partner shall be liable for the reasonable cost of repair or replacement of the affected Equipment.</li>
+  <li data-num="6.6">Power outages resulting from national or municipal grid load-shedding programmes shall not constitute a breach by either party and shall be treated as force majeure events as described in the SLA.</li>
+</ol>
+
+<!-- SECTION 7 — INTERNET CONNECTIVITY -->
+<h2>7. Internet Connectivity</h2>
+<ol class="clauses">
+  <li data-num="7.1">GymGaze shall procure, install, and pay for all internet connectivity required to operate its Equipment at each Venue. This shall include LTE routers, SIM cards, data subscriptions, WiFi repeaters, or any other connectivity infrastructure GymGaze deems appropriate.</li>
+  <li data-num="7.2">The Partner grants GymGaze permission to install connectivity hardware (routers, WiFi access points, cable conduits) within Venues at locations agreed in Annexure A.</li>
+  <li data-num="7.3">The Partner shall not interfere with, block, disconnect, or restrict GymGaze's connectivity infrastructure or signals. This includes not deliberately obstructing LTE signals or restricting radio frequency transmission.</li>
+  <li data-num="7.4">GymGaze's connectivity infrastructure is separate from and independent of the Partner's own network. GymGaze's Equipment shall not be connected to the Partner's internal network without a separate written agreement specifying data usage limits, network security requirements, and any associated costs.</li>
+  <li data-num="7.5">If GymGaze's LTE or WiFi connectivity fails and the Partner has a suitable alternative internet connection, GymGaze may request temporary access as a contingency. The Partner may grant or decline such access at its discretion.</li>
+</ol>
+
+<!-- SECTION 8 — EXCLUSION ZONES -->
+<h2>8. Exclusion Zones</h2>
+<ol class="clauses">
+  <li data-num="8.1">An Exclusion Zone of 2 (two) metres applies around each GymGaze screen face as demarcated in Annexure A. The dimensions and boundaries of each Exclusion Zone are agreed at the time of installation and documented in Annexure A.</li>
+  <li data-num="8.2">Within each Exclusion Zone, the Partner shall not:
+    <ol class="alpha">
+      <li>install any competing advertising or promotional media including digital screens, LED displays, projectors, banner stands, or poster frames;</li>
+      <li>place shelving, product displays, reception counters, or permanent fixtures that obstruct the screen face or reduce its forward-facing visibility;</li>
+      <li>install any signage (other than regulatory or safety signage) at a height or position that materially competes for the same audience sightlines as the GymGaze screen.</li>
+    </ol>
+  </li>
+  <li data-num="8.3">The Partner may install non-competing operational signage within an Exclusion Zone (including safety notices, fire assembly points, directional signage, and statutory compliance notices) provided such signage does not obstruct direct sightlines to the screen face.</li>
+  <li data-num="8.4">If the Partner wishes to install any fixture or display within an Exclusion Zone that may affect GymGaze screen visibility, the Partner shall notify GymGaze in writing and GymGaze shall respond within 7 (seven) business days. Consent shall not be unreasonably withheld.</li>
+</ol>
+
+<!-- SECTION 9 — ACCESS RIGHTS -->
+<h2>9. Access Rights</h2>
+<ol class="clauses">
+  <li data-num="9.1">GymGaze and its authorised personnel are granted the right to access the Licensed Spaces at all times during Operating Hours without prior notice for the purpose of routine inspection, minor maintenance, and equipment checks. Access outside Operating Hours requires prior arrangement with the venue manager, except in the case of emergencies.</li>
+  <li data-num="9.2">For maintenance or repair work requiring the isolation of Equipment from power, the temporary occupation of a wider area, or activities likely to cause disruption lasting more than 30 (thirty) minutes, GymGaze shall give the venue manager not less than 24 (twenty-four) hours advance notice.</li>
+  <li data-num="9.3">In emergency situations (screen failure posing a safety risk, vandalism, fire, flood, or theft), GymGaze shall be entitled to immediate access to the affected Licensed Space. GymGaze shall notify the venue manager or security of its presence as soon as is practicable after accessing the venue.</li>
+  <li data-num="9.4">The Partner shall ensure that all venue management staff, security personnel, and cleaners are informed of and respect GymGaze's access rights. The Partner shall maintain an up-to-date list of GymGaze-authorised personnel and provide this to venue reception.</li>
+  <li data-num="9.5">All GymGaze personnel visiting Venues shall:
+    <ol class="alpha">
+      <li>sign in at venue reception upon arrival and sign out upon departure;</li>
+      <li>carry and display GymGaze identification at all times;</li>
+      <li>comply with all venue health and safety rules, dress code requirements, and security procedures;</li>
+      <li>not access any area of the venue beyond the Licensed Spaces and access routes without the express permission of the venue manager.</li>
+    </ol>
+  </li>
+</ol>
+
+<!-- SECTION 10 — PARTNER'S PROPERTY OBLIGATIONS -->
+<h2>10. Partner's Property Obligations</h2>
+<ol class="clauses">
+  <li data-num="10.1">The Partner shall maintain each Venue in good structural repair and condition throughout the Term of this Agreement, ensuring that the physical condition of Licensed Spaces does not deteriorate in a manner that affects GymGaze Equipment or operations.</li>
+  <li data-num="10.2">The Partner shall notify GymGaze in writing at least 14 (fourteen) days before commencing any renovation, refurbishment, construction, or other works within a Venue that may directly affect any Licensed Space, Exclusion Zone, power supply, or GymGaze Equipment.</li>
+  <li data-num="10.3">The Partner shall not permit any activity in the vicinity of Licensed Spaces that poses a risk of physical damage to GymGaze Equipment, including (without limitation) high-impact fitness activities directed at walls where screens are mounted, pressure washing, or uncontrolled movement of heavy equipment.</li>
+  <li data-num="10.4">The Partner shall ensure that each Venue complies with all applicable building, fire safety, and occupational health and safety regulations throughout the Term, and that GymGaze Equipment is included in the venue's fire risk assessment and emergency evacuation procedures.</li>
+  <li data-num="10.5">GymGaze screens shall not at any time obstruct emergency exit routes, fire doors, fire extinguisher access points, or first aid stations. If any Licensed Space is found to cause such obstruction, the Partner shall notify GymGaze immediately and GymGaze shall relocate the Equipment within 14 (fourteen) days.</li>
+  <li data-num="10.6">The Partner shall promptly repair any damage to the Venue (including walls, floors, and ceilings in the vicinity of Licensed Spaces) that may expose GymGaze Equipment to moisture, pests, or structural risk.</li>
+</ol>
+
+<!-- SECTION 11 — LICENCE FEE AND CONSIDERATION -->
+<h2>11. Licence Fee and Consideration</h2>
+<ol class="clauses">
+  <li data-num="11.1">The Licence Fee payable by GymGaze to the Partner in respect of the rights granted under this Agreement is nil (zero rand).</li>
+  <li data-num="11.2">The parties acknowledge and agree that the revenue sharing arrangement set out in the Service Level Agreement constitutes full, adequate, and sufficient consideration for the licence and all rights granted to GymGaze under this Agreement.</li>
+  <li data-num="11.3">No separate rental, licence fee, or occupation charge is payable by GymGaze to the Partner during the Term, except as may be separately agreed in writing and incorporated into a written addendum signed by both parties.</li>
+</ol>
+
+<!-- SECTION 12 — MAKE GOOD ON TERMINATION -->
+<h2>12. Make Good Obligations on Termination</h2>
+<ol class="clauses">
+  <li data-num="12.1">Upon the expiry or termination of this Agreement for any reason, GymGaze shall, within 30 (thirty) days of the effective termination date:
+    <ol class="alpha">
+      <li>remove all Equipment from each Venue, including all screens, mounting brackets, cable runs, surge protectors, routers, and connectivity hardware;</li>
+      <li>fill all drill holes and mounting anchor points in walls, ceilings, or floors with appropriate filler material, sanded flush to the surrounding surface;</li>
+      <li>repaint or retouch affected wall surfaces where the original paintwork or finish has been materially marked or discoloured by installation, using colour-matched paint supplied at GymGaze's request by the Partner at reasonable cost;</li>
+      <li>remove all surface-run cable trunking and restore Wall surfaces to their pre-installation condition; concealed in-wall cabling may be cut flush at each termination point and sealed;</li>
+      <li>leave each Licensed Space in a condition reasonably comparable to its condition immediately prior to installation, fair wear and tear excepted.</li>
+    </ol>
+  </li>
+  <li data-num="12.2">If GymGaze fails to complete Equipment removal within the 30-day period, the Partner shall give GymGaze a further written notice of 14 (fourteen) days. If Equipment remains after expiry of this further notice, the Partner may arrange removal of the Equipment at GymGaze's reasonable cost, provided the Partner uses qualified contractors and takes reasonable care of the Equipment during removal.</li>
+  <li data-num="12.3">The Partner shall not dispose of, sell, damage, or otherwise deal with GymGaze Equipment during the 30-day removal period or the subsequent 14-day notice period.</li>
+  <li data-num="12.4">Any dispute regarding the standard of Make Good work shall be referred to an independent building contractor agreed upon by both parties within 14 days of the dispute arising. The cost of such assessment shall be borne equally by the parties unless the assessment finds either party substantially at fault, in which case the at-fault party bears the full cost.</li>
+</ol>
+
+<!-- SECTION 13 — INSURANCE -->
+<h2>13. Insurance</h2>
+<ol class="clauses">
+  <li data-num="13.1">GymGaze shall, at its own cost, maintain throughout the Term:
+    <ol class="alpha">
+      <li>public liability insurance with a limit of indemnity of not less than R 5,000,000 (five million rand) per occurrence, covering GymGaze's operations and Equipment within Partner venues;</li>
+      <li>all-risks property insurance covering the replacement value of all Equipment installed within Partner venues.</li>
+    </ol>
+  </li>
+  <li data-num="13.2">GymGaze shall provide the Partner with a valid certificate of insurance upon request and shall notify the Partner within 5 (five) business days if any relevant insurance policy is cancelled, materially modified, or lapses.</li>
+  <li data-num="13.3">The Partner shall maintain adequate building and property insurance covering the Venue structure and the Partner's own property and assets. The Partner shall not be required to insure GymGaze's Equipment.</li>
+  <li data-num="13.4">Each party is responsible for insuring its own property and neither party shall have any claim against the other for damage to its own property unless such damage was caused by the negligent or intentional act of the other party.</li>
+</ol>
+
+<!-- SECTION 14 — DAMAGE AND LIABILITY -->
+<h2>14. Damage and Liability</h2>
+<ol class="clauses">
+  <li data-num="14.1">GymGaze shall be liable for any physical damage to the Venue or its fixtures caused directly by GymGaze's Fit-Out Works, maintenance activities, or Equipment removal, except for damage constituting fair wear and tear.</li>
+  <li data-num="14.2">The Partner shall be liable for damage to GymGaze Equipment caused by the negligence or intentional act of the Partner, its employees, cleaning staff, agents, or contractors acting under the Partner's authority.</li>
+  <li data-num="14.3">The Partner shall not be liable for damage to GymGaze Equipment caused by third parties (including gym members) acting independently, provided the Partner has taken reasonable steps to secure the Venue and protect GymGaze's Equipment.</li>
+  <li data-num="14.4">Neither party shall be liable to the other for indirect, consequential, special, or punitive loss or damage arising from a breach of this Agreement, including but not limited to loss of revenue, loss of profit, or loss of business opportunity.</li>
+  <li data-num="14.5">GymGaze's total aggregate liability under this Agreement in respect of any single Venue shall not exceed the replacement value of the Equipment installed at that Venue, as specified in Annexure A.</li>
+</ol>
+
+<!-- SECTION 15 — HEALTH, SAFETY AND COMPLIANCE -->
+<h2>15. Health, Safety and Compliance</h2>
+<ol class="clauses">
+  <li data-num="15.1">GymGaze shall ensure that all Equipment complies with applicable South African electrical safety standards, including SANS 10142 (The Wiring of Premises), and that all electrical installations are certified by a registered electrician.</li>
+  <li data-num="15.2">GymGaze shall ensure that the weight, dimensions, and mounting of all screens comply with the load-bearing specifications of the walls or structures to which they are affixed, as confirmed by a structural assessment where required.</li>
+  <li data-num="15.3">All GymGaze personnel operating within Partner venues shall comply with the Occupational Health and Safety Act 85 of 1993 (as amended) and all regulations thereunder, as well as any venue-specific health and safety rules communicated to GymGaze in writing.</li>
+  <li data-num="15.4">GymGaze shall provide a copy of its current health and safety policy and risk assessment for installation activities to the Partner upon request.</li>
+  <li data-num="15.5">The Partner shall incorporate GymGaze Equipment into its Venue emergency evacuation plan, fire risk assessment, and emergency response procedures, ensuring that Equipment locations do not impede emergency egress.</li>
+</ol>
+
+<!-- SECTION 16 — ALTERATIONS AND MODIFICATIONS -->
+<h2>16. Alterations and Modifications to Equipment</h2>
+<ol class="clauses">
+  <li data-num="16.1">GymGaze may upgrade, replace, or modify Equipment at any Licensed Space at any time during the Term, provided that:
+    <ol class="alpha">
+      <li>the replacement Equipment is of equal or smaller physical dimensions than the Equipment being replaced; and</li>
+      <li>the venue manager is notified in writing at least 48 (forty-eight) hours before any replacement works.</li>
+    </ol>
+  </li>
+  <li data-num="16.2">Any upgrade involving Equipment of larger physical dimensions, new cable routing paths, additional power points, or changes to Exclusion Zone boundaries requires the Partner's written consent, which shall not be unreasonably withheld, and an updated Annexure A signed by both parties.</li>
+  <li data-num="16.3">The Partner may not make any alteration, addition, or modification to the Licensed Spaces, cable routing, power circuits, or connectivity infrastructure serving GymGaze Equipment without the prior written consent of GymGaze.</li>
+</ol>
+
+<!-- SECTION 17 — TERM -->
+<h2>17. Term</h2>
+<ol class="clauses">
+  <li data-num="17.1">This Agreement commences on the Effective Date and continues for an initial term of 36 (thirty-six) months ("Initial Term").</li>
+  <li data-num="17.2">Following the Initial Term, this Agreement shall automatically renew for successive periods of 12 (twelve) months each ("Renewal Terms"), unless either party gives the other not less than 60 (sixty) days written notice of its intention not to renew, prior to the expiry of the then-current term.</li>
+  <li data-num="17.3">This Agreement is intended to be co-terminus with the Service Level Agreement (Reference: GG-SLA-[VERSION]). Termination of the SLA by either party shall trigger termination of this Agreement on the same effective date, subject to GymGaze's Make Good obligations under Section 12.</li>
+  <li data-num="17.4">The addition of new Venues during the Term shall not affect the Initial Term or Renewal Terms of this Agreement. New Venues added by addendum shall be subject to the remaining Term of this Agreement unless otherwise agreed in writing.</li>
+</ol>
+
+<!-- SECTION 18 — TERMINATION -->
+<h2>18. Termination</h2>
+<ol class="clauses">
+  <li data-num="18.1">Either party may terminate this Agreement by giving the other not less than 60 (sixty) days written notice at the end of the Initial Term or any Renewal Term.</li>
+  <li data-num="18.2">Either party may terminate this Agreement during the Initial Term or any Renewal Term in the event of a material breach by the other party, provided:
+    <ol class="alpha">
+      <li>the terminating party gives the breaching party written notice specifying the nature of the breach in reasonable detail;</li>
+      <li>the breaching party fails to remedy the breach within 30 (thirty) days of the date of the written notice; and</li>
+      <li>the terminating party notifies the breaching party in writing of the termination within 14 (fourteen) days of the expiry of the remedy period.</li>
+    </ol>
+  </li>
+  <li data-num="18.3">GymGaze may terminate this Agreement with immediate effect upon written notice to the Partner in the event that:
+    <ol class="alpha">
+      <li>a Venue is permanently closed, sold, transferred, or its use materially changes without 30 (thirty) days prior written notice to GymGaze;</li>
+      <li>the Partner is placed in provisional or final liquidation, business rescue, or sequestration; or</li>
+      <li>the Partner's conduct poses an immediate risk to GymGaze's Equipment or GymGaze personnel.</li>
+    </ol>
+  </li>
+  <li data-num="18.4">The Partner may terminate this Agreement in respect of a specific Venue (without terminating in respect of other Venues) with 60 (sixty) days written notice if GymGaze Equipment at that Venue remains non-operational for more than 60 (sixty) consecutive days and GymGaze has failed to remedy the fault within 30 (thirty) days of written notice from the Partner.</li>
+  <li data-num="18.5">Termination of this Agreement shall not affect any accrued rights or obligations of either party up to the effective termination date.</li>
+</ol>
+
+<!-- SECTION 19 — CONFIDENTIALITY -->
+<h2>19. Confidentiality</h2>
+<ol class="clauses">
+  <li data-num="19.1">The terms, conditions, and commercial arrangements set out in this Agreement are strictly confidential between the parties. Neither party shall disclose the terms of this Agreement to any third party without the prior written consent of the other party, except as required by law or court order.</li>
+  <li data-num="19.2">Without limiting clause 19.1, the Partner shall not disclose to any third party the location details, installation configurations, Equipment specifications, or revenue arrangements of GymGaze's operations within Partner venues.</li>
+  <li data-num="19.3">This confidentiality obligation shall survive the expiry or termination of this Agreement for a period of 3 (three) years from the effective termination date.</li>
+</ol>
+
+<!-- SECTION 20 — GENERAL -->
+<h2>20. General Provisions</h2>
+<ol class="clauses">
+  <li data-num="20.1"><strong>Entire Agreement:</strong> This Agreement, together with Annexure A and the associated Service Level Agreement (GG-SLA-[VERSION]), constitutes the entire agreement between the parties relating to GymGaze's physical presence within Partner venues and supersedes all prior negotiations, representations, warranties, and understandings.</li>
+  <li data-num="20.2"><strong>Amendments:</strong> No amendment, variation, or modification of this Agreement shall be valid or binding unless it is in writing and signed by duly authorised representatives of both parties.</li>
+  <li data-num="20.3"><strong>Severability:</strong> If any provision of this Agreement is found to be invalid, unlawful, or unenforceable, that provision shall be severed from the Agreement and the remaining provisions shall continue in full force and effect.</li>
+  <li data-num="20.4"><strong>No Waiver:</strong> No failure or delay by either party in exercising any right under this Agreement shall constitute a waiver of that right, nor shall any single or partial exercise of any right preclude any further exercise of that right.</li>
+  <li data-num="20.5"><strong>Relationship of Parties:</strong> Nothing in this Agreement creates a partnership, joint venture, agency, or employment relationship between the parties. Each party acts as an independent contractor.</li>
+  <li data-num="20.6"><strong>Notices:</strong> All formal notices required under this Agreement shall be in writing and delivered by:
+    <ol class="alpha">
+      <li>email to the authorised representative's email address listed in the Parties section above, with electronic delivery acknowledgement; or</li>
+      <li>registered post to the registered address of the respective party.</li>
+    </ol>
+    Notices delivered by email shall be deemed received on the business day following confirmed delivery. Notices by registered post shall be deemed received 5 (five) business days after posting.
+  </li>
+  <li data-num="20.7"><strong>Governing Law:</strong> This Agreement is governed by and shall be construed in accordance with the laws of the Republic of South Africa.</li>
+  <li data-num="20.8"><strong>Jurisdiction:</strong> The parties consent to the non-exclusive jurisdiction of the High Court of South Africa, Gauteng Division, Johannesburg, for the resolution of any dispute arising under this Agreement that cannot be resolved by the dispute resolution process described in the associated SLA.</li>
+  <li data-num="20.9"><strong>Counterparts:</strong> This Agreement may be executed in counterparts, each of which shall be deemed an original and all of which together shall constitute one and the same instrument. Electronically signed copies shall be treated as originals.</li>
+</ol>
+
+<!-- SIGNATURE BLOCKS — MAIN AGREEMENT -->
+<div class="signature-section">
+  <h3 style="margin-bottom:20px;">SIGNED AND AGREED</h3>
+  <p style="margin-bottom:24px;font-size:10pt;">The parties confirm that they have read, understood, and agree to be bound by the terms of this Agreement.</p>
+
+  <div class="signature-grid">
+    <div class="sig-block">
+      <div class="sig-party">For and on behalf of GymGaze (Pty) Ltd</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Full Name</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Title / Designation</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Date (DD / MM / YYYY)</div>
+      <div style="margin-top:20px;border-top:1px solid #ccc;padding-top:16px;">
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Witness: Full Name</div>
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Witness: Signature &amp; Date</div>
+      </div>
+    </div>
+
+    <div class="sig-block">
+      <div class="sig-party">For and on behalf of [PARTNER LEGAL NAME]</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Full Name</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Title / Designation</div>
+      <div class="sig-field"></div>
+      <div class="sig-field-label">Date (DD / MM / YYYY)</div>
+      <div style="margin-top:20px;border-top:1px solid #ccc;padding-top:16px;">
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Witness: Full Name</div>
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Witness: Signature &amp; Date</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANNEXURE A -->
+<div class="page-break">
+  <div class="annexure-header">
+    <div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:6px;">Annexure A</div>
+    <h2>Licensed Space Schedule</h2>
+    <p style="font-size:10pt;color:#555;margin-top:8px;">This Annexure forms part of the Licence to Occupy Agreement between GymGaze (Pty) Ltd and [PARTNER LEGAL NAME]. It must be signed by both parties before installation commences at each Venue. Changes to this Schedule require a written amendment signed by both parties.</p>
+  </div>
+
+  <div class="callout" style="margin-bottom:24px;">
+    <strong>Instructions for completion:</strong>
+    Complete one row per screen. All fields are mandatory. "Location Description" must be specific enough to identify the exact position without a site visit (e.g. "Main entrance, north-facing wall, left of reception desk, 2.1m from floor to screen bottom"). Attach floor plan sketches where possible.
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Screen ID</th>
+        <th>Venue Name</th>
+        <th>Location Description</th>
+        <th>Screen Size</th>
+        <th>Mount Height (floor to screen bottom)</th>
+        <th>Power Point Position</th>
+        <th>Router / Connectivity Position</th>
+        <th>Exclusion Zone Radius</th>
+        <th>Est. Wattage (W)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GG-001</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>2m</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>GG-002</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>2m</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>GG-003</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>2m</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>GG-004</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>2m</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>GG-005</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>2m</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="9" style="color:#999;font-style:italic;font-size:9pt;">Add additional rows as required. Each row represents one screen location.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:10pt;margin-top:20px;"><strong>Total Screens:</strong> __________ &nbsp;&nbsp;&nbsp; <strong>Total Venues:</strong> __________ &nbsp;&nbsp;&nbsp; <strong>Total Estimated Load (W):</strong> __________</p>
+
+  <p style="font-size:10pt;margin-top:8px;"><strong>Floor plans / site diagrams attached:</strong> &nbsp; ☐ Yes &nbsp;&nbsp; ☐ No</p>
+
+  <div class="signature-section" style="margin-top:48px;">
+    <h3 style="margin-bottom:16px;">ANNEXURE A — SIGNATURES</h3>
+    <p style="margin-bottom:24px;font-size:10pt;">By signing below, both parties confirm that the Licensed Spaces described in this Annexure are agreed and that installation at the above locations is authorised to proceed.</p>
+    <div class="signature-grid">
+      <div class="sig-block">
+        <div class="sig-party">GymGaze (Pty) Ltd</div>
+        <div class="sig-line"></div>
+        <div class="sig-label">Signature</div>
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Full Name &amp; Date</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-party">[PARTNER LEGAL NAME]</div>
+        <div class="sig-line"></div>
+        <div class="sig-label">Signature</div>
+        <div class="sig-field"></div>
+        <div class="sig-field-label">Full Name &amp; Date</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="doc-footer">
+  GymGaze (Pty) Ltd · Media Network Services<br>
+  Licence to Occupy Agreement · Reference: GG-LTO-[VERSION] · Effective Date: [DATE]<br>
+  This document is confidential. Unauthorised disclosure is prohibited.
+</div>
+
+</body>
+</html>

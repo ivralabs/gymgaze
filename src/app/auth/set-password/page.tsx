@@ -1,8 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Zap } from "lucide-react";
+
+// Invite links use implicit-grant hash tokens (#access_token=...&type=invite)
+// @supabase/ssr PKCE client silently ignores hash tokens — must use implicit flow client here
+function createImplicitClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true } }
+  );
+}
 
 type PageState = "checking" | "ready" | "expired" | "success" | "error";
 
@@ -14,22 +24,35 @@ export default function SetPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const supabase = createClient();
+  // Use implicit-flow client — created once, stable across renders
+  const [supabase] = useState(() => createImplicitClient());
 
   useEffect(() => {
-    // Supabase auto-processes the #access_token hash on load.
-    // Give the SDK a moment, then check if we have a valid session.
-    const timer = setTimeout(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+    // The implicit client auto-detects and exchanges the hash token on mount.
+    // Listen for the session event rather than polling getSession().
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
         setPageState("ready");
-      } else {
-        setPageState("expired");
+      } else if (event === "TOKEN_REFRESHED" && session) {
+        setPageState("ready");
       }
-    }, 500);
+    });
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Fallback: if already signed in (e.g. page refresh), check immediately
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setPageState("ready");
+    });
+
+    // Show expired after 4s if nothing fired
+    const timer = setTimeout(() => {
+      setPageState((prev) => prev === "checking" ? "expired" : prev);
+    }, 4000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
+  }, [supabase]);
 
   function validate(): boolean {
     if (password.length < 8) {

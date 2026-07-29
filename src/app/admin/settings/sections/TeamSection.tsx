@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import {
-  Users, UserPlus, X, ChevronDown, Shield, Check, Lock,
+  Users, UserPlus, X, ChevronDown, Shield, Check, Lock, Trash2,
   LayoutDashboard, Building2, MapPin, Megaphone, Layers,
   DollarSign, BarChart3, Image, Lightbulb, Settings, Calculator,
   Monitor, Sparkles, FileText,
@@ -457,6 +457,86 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
   );
 }
 
+// ── Remove Confirm Modal ─────────────────────────────────────────────────────
+function RemoveConfirmModal({
+  member,
+  onClose,
+  onRemoved,
+}: {
+  member: Profile;
+  onClose: () => void;
+  onRemoved: () => void;
+}) {
+  const [removing, setRemoving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleRemove() {
+    setRemoving(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/settings/team/member?id=${member.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Failed to remove member"); return; }
+      onRemoved();
+    } finally {
+      setRemoving(false);
+    }
+  }
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{ ...GLASS_CARD, padding: 32, width: 440, maxWidth: "90vw", position: "relative" }}>
+        <button onClick={onClose} aria-label="Close" style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#666", cursor: "pointer" }}>
+          <X size={20} />
+        </button>
+
+        <div className="flex items-center gap-3 mb-6">
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Trash2 size={20} color="#f87171" />
+          </div>
+          <div>
+            <p style={{ ...SECTION_LABEL, color: "#f87171" }}>Danger Zone</p>
+            <h3 style={{ color: "#fff", fontWeight: 700, fontSize: 18, marginTop: 2 }}>Remove Team Member</h3>
+          </div>
+        </div>
+
+        {error && (
+          <p className="text-sm px-3 py-2 rounded-xl mb-4" style={{ color: "#f87171", background: "rgba(239,68,68,0.1)" }}>{error}</p>
+        )}
+
+        <p style={{ color: "#C8C8C8", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+          Are you sure you want to remove <strong style={{ color: "#fff" }}>{member.full_name ?? member.email}</strong>? They will lose access immediately.
+        </p>
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold"
+            style={{ background: "rgba(255,255,255,0.05)", color: "#999", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleRemove}
+            disabled={removing}
+            className="flex-1 px-4 py-3 rounded-xl text-sm font-bold"
+            style={{ background: "#ef4444", color: "#fff", opacity: removing ? 0.6 : 1, border: "none", cursor: removing ? "not-allowed" : "pointer" }}
+          >
+            {removing ? "Removing…" : "Remove Access"}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function TeamSection() {
   const supabase = createClient();
@@ -465,6 +545,7 @@ export default function TeamSection() {
   const [loading, setLoading] = useState(true);
   const [showInvite, setShowInvite] = useState(false);
   const [editingMember, setEditingMember] = useState<Profile | null>(null);
+  const [removingMember, setRemovingMember] = useState<Profile | null>(null);
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => { loadTeam(); }, []);
@@ -577,16 +658,29 @@ export default function TeamSection() {
                         {isSelf ? (
                           <span style={{ fontSize: 12, color: "#555" }}>—</span>
                         ) : (
-                          <button
-                            onClick={() => setEditingMember(member)}
-                            style={{
-                              fontSize: 12, padding: "6px 14px", borderRadius: 8,
-                              background: "rgba(212,255,79,0.08)", color: "#D4FF4F",
-                              border: "1px solid rgba(212,255,79,0.2)", cursor: "pointer", fontWeight: 600,
-                            }}
-                          >
-                            Edit Role
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setEditingMember(member)}
+                              style={{
+                                fontSize: 12, padding: "6px 14px", borderRadius: 8,
+                                background: "rgba(212,255,79,0.08)", color: "#D4FF4F",
+                                border: "1px solid rgba(212,255,79,0.2)", cursor: "pointer", fontWeight: 600,
+                              }}
+                            >
+                              Edit Role
+                            </button>
+                            <button
+                              onClick={() => setRemovingMember(member)}
+                              style={{
+                                fontSize: 12, padding: "6px 10px", borderRadius: 8,
+                                background: "rgba(239,68,68,0.08)", color: "#f87171",
+                                border: "1px solid rgba(239,68,68,0.2)", cursor: "pointer", display: "flex", alignItems: "center",
+                              }}
+                              aria-label="Remove member"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -610,6 +704,13 @@ export default function TeamSection() {
           member={editingMember}
           onClose={() => setEditingMember(null)}
           onSaved={() => { setEditingMember(null); showToast("Permissions updated", "success"); loadTeam(); }}
+        />
+      )}
+      {removingMember && (
+        <RemoveConfirmModal
+          member={removingMember}
+          onClose={() => setRemovingMember(null)}
+          onRemoved={() => { setRemovingMember(null); showToast("Member removed", "success"); loadTeam(); }}
         />
       )}
 

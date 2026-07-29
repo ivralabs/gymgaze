@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You've been invited to GymGaze</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #0A0A0A;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      color: #E0E0E0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Logo bar */
+    .logo-bar {
+      text-align: center;
+      padding-bottom: 32px;
+    }
+    .logo-wordmark {
+      display: inline-block;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+    }
+    .logo-dot {
+      color: #FF6B35;
+    }
+
+    /* Card */
+    .card {
+      background: #141414;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    /* Hero strip */
+    .hero {
+      background: linear-gradient(135deg, #1A1A1A 0%, #0F0F0F 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 40px 40px 36px;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.25);
+      color: #FF6B35;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      margin-bottom: 12px;
+    }
+    .hero-title span {
+      color: #FF6B35;
+    }
+    .hero-subtitle {
+      font-size: 15px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* Body */
+    .body {
+      padding: 36px 40px;
+    }
+
+    /* What is GymGaze */
+    .intro-text {
+      font-size: 15px;
+      color: #AAAAAA;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .intro-text strong {
+      color: #E0E0E0;
+    }
+
+    /* What you get access to */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #555;
+      margin-bottom: 14px;
+    }
+    .access-grid {
+      margin-bottom: 32px;
+    }
+    .access-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .access-item:last-child {
+      border-bottom: none;
+    }
+    .access-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(212,255,79,0.07);
+      border: 1px solid rgba(212,255,79,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .access-icon.orange {
+      background: rgba(255,107,53,0.08);
+      border-color: rgba(255,107,53,0.15);
+    }
+    .access-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #E0E0E0;
+      margin-bottom: 2px;
+    }
+    .access-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* Steps */
+    .steps {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .steps-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #CCCCCC;
+      margin-bottom: 18px;
+    }
+    .step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .step:last-child {
+      margin-bottom: 0;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #FF6B35;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-content {}
+    .step-heading {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E0E0E0;
+      margin-bottom: 2px;
+    }
+    .step-body {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* CTA Button */
+    .cta-wrap {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: #FF6B35;
+      color: #FFFFFF !important;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 12px;
+      letter-spacing: 0.01em;
+    }
+    .cta-note {
+      text-align: center;
+      font-size: 12px;
+      color: #444;
+      margin-top: 10px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 28px 0;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 24px 40px 36px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-text {
+      font-size: 12px;
+      color: #444;
+      line-height: 1.7;
+      text-align: center;
+    }
+    .footer-text a {
+      color: #555;
+      text-decoration: underline;
+    }
+    .footer-link-row {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .footer-link {
+      font-size: 12px;
+      color: #555;
+      text-decoration: none;
+    }
+
+    /* Outer footer */
+    .outer-footer {
+      text-align: center;
+      padding: 28px 0 0;
+    }
+    .outer-footer p {
+      font-size: 11px;
+      color: #333;
+      line-height: 1.8;
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .hero { padding: 28px 24px; }
+      .body { padding: 28px 24px; }
+      .footer { padding: 20px 24px 28px; }
+      .hero-title { font-size: 22px; }
+      .steps { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Logo -->
+    <div class="logo-bar">
+      <span class="logo-wordmark">GymGaze<span class="logo-dot">.</span></span>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-badge">Team Invitation</div>
+        <h1 class="hero-title">You've been invited to<br /><span>GymGaze</span></h1>
+        <p class="hero-subtitle">{{ .InviterName }} has given you access to the GymGaze platform.</p>
+      </div>
+
+      <!-- Body -->
+      <div class="body">
+
+        <p class="intro-text">
+          <strong>GymGaze</strong> is a digital out-of-home (DOOH) advertising platform built for gym venues across South Africa.
+          It gives your team visibility into screen performance, campaign delivery, audience insights, and more — all in one place.
+        </p>
+
+        <!-- What you get access to -->
+        <p class="section-label">What you get access to</p>
+        <div class="access-grid">
+          <div class="access-item">
+            <div class="access-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <div>
+              <p class="access-title">Dashboard &amp; Analytics</p>
+              <p class="access-desc">Live overview of screen health, campaign performance, and venue activity.</p>
+            </div>
+          </div>
+          <div class="access-item">
+            <div class="access-icon orange">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.9L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+            </div>
+            <div>
+              <p class="access-title">Campaigns &amp; Screens</p>
+              <p class="access-desc">View active campaigns, screen inventory, and proof-of-play reports.</p>
+            </div>
+          </div>
+          <div class="access-item">
+            <div class="access-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+            </div>
+            <div>
+              <p class="access-title">Insights &amp; Rate Cards</p>
+              <p class="access-desc">Audience data, venue metrics, and pricing tools to support sales conversations.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- What happens next -->
+        <div class="steps">
+          <p class="steps-title">What happens after you click the button</p>
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p class="step-heading">Set your password</p>
+              <p class="step-body">You'll land on a secure page to create your GymGaze password. Choose something strong — you'll use it every time you log in.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <p class="step-heading">Access your dashboard</p>
+              <p class="step-body">Once your password is set, you're taken straight into the GymGaze admin dashboard. No further setup needed.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <p class="step-heading">Explore your access</p>
+              <p class="step-body">Your account has been set up with specific permissions by {{ .InviterName }}. You'll see only the sections relevant to your role.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-wrap">
+          <a href="{{ .ConfirmationURL }}" class="cta-btn">Accept Invitation</a>
+          <p class="cta-note">This invitation link expires in 24 hours.</p>
+        </div>
+
+        <hr class="divider" />
+
+        <p style="font-size: 13px; color: #555; line-height: 1.7; text-align: center;">
+          If you weren't expecting this invitation, you can safely ignore this email.<br />
+          Your account will not be created unless you click the button above.
+        </p>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p class="footer-text">
+          Having trouble with the button? Copy and paste this link into your browser:<br />
+          <a href="{{ .ConfirmationURL }}" style="color: #FF6B35; word-break: break-all;">{{ .ConfirmationURL }}</a>
+        </p>
+        <div class="footer-link-row">
+          <a href="https://gymgaze.io" class="footer-link">gymgaze.io</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Outer footer -->
+    <div class="outer-footer">
+      <p>
+        GymGaze · Digital Out-of-Home Advertising Platform · South Africa<br />
+        This email was sent to {{ .Email }}
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

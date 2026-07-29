@@ -30,7 +30,7 @@ export type RolePreset = "admin" | "manager" | "sales" | "viewer" | "finance" | 
 export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
   admin:   ["dashboard", "networks", "venues", "screens", "campaigns", "inventory", "revenue", "analytics", "photos", "insights", "settings", "media-kit", "rate-card", "pipeline", "static-sites", "static-sites-rate-card", "proposals", "landlords"],
   manager: ["dashboard", "venues", "screens", "photos", "static-sites"],
-  sales:   ["rate-card", "static-sites-rate-card", "insights", "media-kit", "campaigns", "venues", "photos", "pipeline", "inventory", "analytics", "static-sites", "proposals"],
+  sales:   ["rate-card", "static-sites-rate-card", "insights", "media-kit", "campaigns", "venues", "photos", "pipeline", "inventory", "analytics", "static-sites"],
   viewer:  ["dashboard", "analytics", "insights"],
   finance: ["dashboard", "revenue", "landlords"],
   custom:  [], // filled by the custom permissions array

@@ -37,7 +37,7 @@ export const ROLE_DEFAULTS: Record<RolePreset, NavSlug[]> = {
 };
 
 export const ROLE_LABELS: Record<RolePreset, string> = {
-  admin:   "Super Admin",
+  admin:   "Admin",
   manager: "Manager",
   sales:   "Sales",
   viewer:  "Viewer",

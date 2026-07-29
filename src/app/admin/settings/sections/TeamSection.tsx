@@ -349,6 +349,7 @@ function EditRoleModal({
 // ── Invite Modal ──────────────────────────────────────────────────────────────
 function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => void }) {
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<RolePreset>("manager");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -362,7 +363,7 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
       const res = await fetch("/api/settings/team/invite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify({ email, role, fullName }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Failed to send invite"); return; }
@@ -398,6 +399,20 @@ function InviteModal({ onClose, onSent }: { onClose: () => void; onSent: () => v
         )}
 
         <form onSubmit={handleSend} className="flex flex-col gap-4">
+          <label className="flex flex-col gap-1.5">
+            <span style={{ ...SECTION_LABEL }}>Full Name</span>
+            <input
+              type="text"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="e.g. Awande Dlamini"
+              style={INPUT_STYLE}
+              onFocus={(e) => (e.target.style.borderColor = "rgba(212,255,79,0.5)")}
+              onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.10)")}
+            />
+          </label>
+
           <label className="flex flex-col gap-1.5">
             <span style={{ ...SECTION_LABEL }}>Email Address</span>
             <input

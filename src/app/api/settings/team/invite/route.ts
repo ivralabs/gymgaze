@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { email, role } = body;
+  const { email, role, fullName } = body;
 
   if (!email || !role) {
     return NextResponse.json({ error: "email and role are required" }, { status: 400 });
@@ -35,8 +35,8 @@ export async function POST(request: Request) {
 
   // auth.admin.inviteUserByEmail requires service role key
   const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
-    data: { role },
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://gymgaze.vercel.app"}/admin`,
+    data: { role, full_name: fullName ?? null },
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://gymgaze.io"}/auth/set-password`,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   // Create a profile row immediately so the team table reflects the invite
   if (data?.user?.id) {
     await service.from("profiles").upsert(
-      { id: data.user.id, full_name: null, role, suspended: false },
+      { id: data.user.id, full_name: fullName ?? null, role, suspended: false },
       { onConflict: "id" }
     );
   }

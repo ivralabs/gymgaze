@@ -256,15 +256,15 @@ export default function AdminSidebar() {
     window.location.href = "/auth/login";
   }
 
-  const ROLE_COLORS_MAP: Record<string, { bg: string; text: string }> = {
-    admin:   { bg: "rgba(212,255,79,0.15)",  text: "#D4FF4F" },
-    sales:   { bg: "rgba(251,146,60,0.15)",  text: "#FB923C" },
-    manager: { bg: "rgba(96,165,250,0.15)",  text: "#60A5FA" },
-    viewer:  { bg: "rgba(167,139,250,0.15)", text: "#A78BFA" },
-    finance: { bg: "rgba(52,211,153,0.15)",  text: "#34D399" },
-    custom:  { bg: "rgba(244,114,182,0.15)", text: "#F472B6" },
+  const ROLE_TEXT_COLORS: Record<string, string> = {
+    admin:   "#D4FF4F",
+    sales:   "#FB923C",
+    manager: "#60A5FA",
+    viewer:  "#A78BFA",
+    finance: "#34D399",
+    custom:  "#F472B6",
   };
-  const roleColor = userRole ? ROLE_COLORS_MAP[userRole] : null;
+  const roleTextColor = userRole ? ROLE_TEXT_COLORS[userRole] : null;
   const roleLabel = userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : null;
 
   const logoArea = (
@@ -278,26 +278,22 @@ export default function AdminSidebar() {
       >
         <span style={{ fontSize: 16, fontWeight: 900, color: "#0A0A0A", fontFamily: "Inter Tight, sans-serif", lineHeight: 1 }}>G</span>
       </div>
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col" style={{ gap: 1 }}>
         <span
-          className="text-base font-bold text-white"
-          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.01em", lineHeight: 1.2 }}
+          className="font-bold text-white"
+          style={{ fontFamily: "Inter Tight, sans-serif", letterSpacing: "-0.01em", fontSize: 15, lineHeight: 1.2 }}
         >
           GymGaze
         </span>
-        {roleLabel && roleColor && (
+        {roleLabel && roleTextColor && (
           <span
             style={{
               fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.06em",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: roleColor.text,
-              backgroundColor: roleColor.bg,
-              borderRadius: 4,
-              padding: "1px 6px",
-              display: "inline-block",
-              lineHeight: 1.6,
+              color: roleTextColor,
+              lineHeight: 1.4,
             }}
           >
             {roleLabel}

@@ -14,7 +14,7 @@ import {
   BarChart3,
   Image,
   Settings,
-  Zap,
+
   LogOut,
   Menu,
   X,
@@ -265,7 +265,7 @@ export default function AdminSidebar() {
         className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
         style={{ backgroundColor: "#D4FF4F" }}
       >
-        <Zap size={16} color="#0A0A0A" strokeWidth={2.5} />
+        <span style={{ fontSize: 16, fontWeight: 900, color: "#0A0A0A", fontFamily: "Inter Tight, sans-serif", lineHeight: 1 }}>G</span>
       </div>
       <span
         className="text-base font-bold text-white"
@@ -303,7 +303,7 @@ export default function AdminSidebar() {
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: "#D4FF4F" }}
           >
-            <Zap size={14} color="#0A0A0A" strokeWidth={2.5} />
+            <span style={{ fontSize: 14, fontWeight: 900, color: "#0A0A0A", fontFamily: "Inter Tight, sans-serif", lineHeight: 1 }}>G</span>
           </div>
           <span
             className="text-sm font-bold text-white"
@@ -350,7 +350,7 @@ export default function AdminSidebar() {
               className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ backgroundColor: "#D4FF4F" }}
             >
-              <Zap size={14} color="#0A0A0A" strokeWidth={2.5} />
+              <span style={{ fontSize: 14, fontWeight: 900, color: "#0A0A0A", fontFamily: "Inter Tight, sans-serif", lineHeight: 1 }}>G</span>
             </div>
             <span
               className="text-sm font-bold text-white"

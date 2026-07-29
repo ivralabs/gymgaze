@@ -1,4 +1,3 @@
-import { Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import PortalNav from "./portal-nav";
@@ -69,7 +68,7 @@ export default async function PortalLayout({
                 className="w-9 h-9 rounded-lg flex items-center justify-center"
                 style={{ backgroundColor: "#D4FF4F" }}
               >
-                <Zap size={18} color="#0A0A0A" strokeWidth={2.5} />
+                <span style={{ fontSize: 18, fontWeight: 900, color: "#0A0A0A", fontFamily: "Inter Tight, sans-serif", lineHeight: 1 }}>G</span>
               </div>
             )}
             <span

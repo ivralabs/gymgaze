@@ -612,15 +612,15 @@ export default function AdvertiseClient({ stats, settings }: Props) {
                 {settings.contact_phone && <p>{settings.contact_phone}</p>}
               </div>
             ) : (
-              <p>Contact us at <a href="https://gymgaze.vercel.app" style={{ color: "#FF6B35" }}>gymgaze.vercel.app</a></p>
+              <p>Contact us at <a href="https://gymgaze.io" style={{ color: "#FF6B35" }}>gymgaze.io</a></p>
             )}
           </div>
         </div>
         <div className="max-w-6xl mx-auto mt-8 pt-6" style={{ borderTop: "1px solid #e8e8e8" }}>
           <p className="text-xs text-center" style={{ color: "#aaa" }}>
             © {new Date().getFullYear()} GymGaze. All rights reserved.{" "}
-            <a href="https://gymgaze.vercel.app" className="hover:underline" style={{ color: "#FF6B35" }}>
-              gymgaze.vercel.app
+            <a href="https://gymgaze.io" className="hover:underline" style={{ color: "#FF6B35" }}>
+              gymgaze.io
             </a>
           </p>
         </div>

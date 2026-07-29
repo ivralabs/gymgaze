@@ -4,6 +4,12 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "GymGaze — Gym Advertising Platform",
   description: "Manage gym advertising screens, campaigns, and partner portals",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.svg",
+  },
 };
 
 export default function RootLayout({

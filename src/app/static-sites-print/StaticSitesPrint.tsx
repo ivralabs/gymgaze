@@ -649,7 +649,7 @@ export default function StaticSitesPrint({
           {/* Footer bar */}
           <div style={{ background: "#0a0a0a", padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
             <LogoLockup />
-            <span style={{ fontSize: 11, color: "#666" }}>gymgaze.vercel.app · Generated {today}</span>
+            <span style={{ fontSize: 11, color: "#666" }}>gymgaze.io · Generated {today}</span>
           </div>
         </div>
 

@@ -146,7 +146,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 
 const STATIC_AD_FORMATS_FALLBACK = AD_FORMATS;
 
-const PUBLIC_URL = "https://gymgaze.vercel.app/advertise";
+const PUBLIC_URL = "https://gymgaze.io/advertise";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 

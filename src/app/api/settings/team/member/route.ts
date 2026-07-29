@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 // PATCH /api/settings/team/member — update role + permissions for a team member
 export async function PATCH(request: Request) {
@@ -55,34 +55,36 @@ export async function PATCH(request: Request) {
   return NextResponse.json(data);
 }
 
-// DELETE /api/settings/team/member?id=<profile_id> — suspend a member
+// DELETE /api/settings/team/member?id=<profile_id> — hard delete a member
 export async function DELETE(request: Request) {
   const supabase = await createClient();
+  const service = await createServiceClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: callerProfile } = await supabase
+  const { data: callerProfile } = await service
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
   if (callerProfile?.role !== "admin") {
-    return NextResponse.json({ error: "Only admins can suspend members" }, { status: 403 });
+    return NextResponse.json({ error: "Only admins can remove members" }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
-  if (id === user.id) return NextResponse.json({ error: "Cannot suspend yourself" }, { status: 400 });
+  if (id === user.id) return NextResponse.json({ error: "Cannot remove yourself" }, { status: 400 });
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({ suspended: true, updated_at: new Date().toISOString() })
-    .eq("id", id);
+  // Delete profile row first
+  await service.from("profiles").delete().eq("id", id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  // Hard delete from Supabase Auth so the email can be re-invited
+  const { error: authError } = await service.auth.admin.deleteUser(id);
+  if (authError) return NextResponse.json({ error: authError.message }, { status: 400 });
+
   return NextResponse.json({ success: true });
 }

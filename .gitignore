@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Puppeteer/build deps
+investor-deck-v2/node_modules/
+investor-deck-v2/gen-pub-rep.cjs

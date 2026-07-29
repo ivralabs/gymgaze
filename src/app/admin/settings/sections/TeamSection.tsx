@@ -558,6 +558,7 @@ export default function TeamSection() {
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, full_name, role, permissions, suspended, last_login_at, sales_target")
+      .not("suspended", "eq", true)
       .order("full_name");
 
     const withEmails: Profile[] = (profiles ?? []).map((p) => ({

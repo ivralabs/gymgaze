@@ -16,6 +16,8 @@ export async function GET(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { data, error } = await supabase
     .from("venues")
     .select("*, gym_brands(name, primary_color), screens(*), contracts(*)")
@@ -33,6 +35,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+
+  const authCheck = await createClient();
+  const { data: { user } } = await authCheck.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // Use service client for writes to bypass RLS
   const supabase = serviceClient();

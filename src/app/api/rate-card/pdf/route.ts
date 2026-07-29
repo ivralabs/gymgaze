@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -14,6 +15,10 @@ export const dynamic = "force-dynamic";
  * 4. Stream the PDF back to the browser as a download
  */
 export async function GET(req: NextRequest) {
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const token = process.env.BROWSERLESS_TOKEN;
   if (!token) {
     return NextResponse.json(

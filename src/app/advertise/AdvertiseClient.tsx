@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { Newspaper, Trophy, Cloud, Target, CheckCircle, BarChart2, Handshake } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,9 +61,14 @@ const AD_FORMATS = [
   },
 ];
 
+const WIDGET_ICONS = [
+  <Newspaper key="news" className="w-8 h-8" style={{ color: "#FF6B35" }} />,
+  <Trophy key="sports" className="w-8 h-8" style={{ color: "#FF6B35" }} />,
+  <Cloud key="weather" className="w-8 h-8" style={{ color: "#FF6B35" }} />,
+];
+
 const WIDGETS = [
   {
-    emoji: "📰",
     name: "News",
     duration: "30s",
     monthly: "R12,000",
@@ -70,7 +76,6 @@ const WIDGETS = [
     desc: "Your brand next to breaking headlines. Exclusive top-of-screen news widget sponsorship.",
   },
   {
-    emoji: "⚽",
     name: "Sports",
     duration: "30s",
     monthly: "R15,000",
@@ -78,7 +83,6 @@ const WIDGETS = [
     desc: "Live scores, match previews — your brand on every sports update.",
   },
   {
-    emoji: "🌤️",
     name: "Weather",
     duration: "15s",
     monthly: "R8,500",
@@ -87,11 +91,18 @@ const WIDGETS = [
   },
 ];
 
+const BENEFIT_ICONS = [
+  <Target key="target" className="w-6 h-6 flex-shrink-0 mt-0.5" style={{ color: "#FF6B35" }} />,
+  <CheckCircle key="check" className="w-6 h-6 flex-shrink-0 mt-0.5" style={{ color: "#FF6B35" }} />,
+  <BarChart2 key="bar" className="w-6 h-6 flex-shrink-0 mt-0.5" style={{ color: "#FF6B35" }} />,
+  <Handshake key="handshake" className="w-6 h-6 flex-shrink-0 mt-0.5" style={{ color: "#FF6B35" }} />,
+];
+
 const BENEFITS = [
-  { emoji: "🎯", title: "Captive audience", desc: "Gym-goers are focused, motivated, and in a positive mindset — the ideal ad environment." },
-  { emoji: "✅", title: "Verified proof of play", desc: "Every ad play is logged and timestamped. You see exactly when and where your brand ran." },
-  { emoji: "📊", title: "CPM-based pricing", desc: "Transparent, performance-linked pricing. No guessing — you pay for real impressions." },
-  { emoji: "🤝", title: "Sales-led onboarding", desc: "Our team guides you through campaign setup, creatives, and optimisation. Full service." },
+  { title: "Captive audience", desc: "Gym-goers are focused, motivated, and in a positive mindset — the ideal ad environment." },
+  { title: "Verified proof of play", desc: "Every ad play is logged and timestamped. You see exactly when and where your brand ran." },
+  { title: "CPM-based pricing", desc: "Transparent, performance-linked pricing. No guessing — you pay for real impressions." },
+  { title: "Sales-led onboarding", desc: "Our team guides you through campaign setup, creatives, and optimisation. Full service." },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -244,7 +255,7 @@ export default function AdvertiseClient({ stats, settings }: Props) {
                 className="flex gap-4 p-5 rounded-2xl"
                 style={{ background: "#fff", border: "1px solid #ebebeb" }}
               >
-                <span className="text-2xl flex-shrink-0 mt-0.5">{b.emoji}</span>
+                {BENEFIT_ICONS[BENEFITS.indexOf(b)]}
                 <div>
                   <p className="font-bold mb-1">{b.title}</p>
                   <p className="text-sm" style={{ color: "#666", lineHeight: 1.6 }}>{b.desc}</p>
@@ -345,7 +356,7 @@ export default function AdvertiseClient({ stats, settings }: Props) {
                 >
                   Exclusive
                 </span>
-                <div className="text-3xl mb-3">{w.emoji}</div>
+                <div className="mb-3">{WIDGET_ICONS[WIDGETS.indexOf(w)]}</div>
                 <h3 className="text-xl font-extrabold mb-1" style={{ letterSpacing: "-0.02em" }}>{w.name}</h3>
                 <p className="text-xs mb-3" style={{ color: "#999" }}>{w.duration} per appearance</p>
                 <p className="text-sm mb-5" style={{ color: "#666", lineHeight: 1.6 }}>{w.desc}</p>
@@ -368,7 +379,7 @@ export default function AdvertiseClient({ stats, settings }: Props) {
             style={{ background: "linear-gradient(135deg, #FF6B35 0%, #e55a2a 100%)", color: "#fff" }}
           >
             <div>
-              <p className="font-extrabold text-xl mb-1">🎯 All 3 Bundle</p>
+              <p className="font-extrabold text-xl mb-1">All 3 Bundle</p>
               <p className="text-sm opacity-90">Own all three widgets. Maximum brand presence across every content type.</p>
             </div>
             <div className="text-right">

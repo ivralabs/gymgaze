@@ -1,4 +1,5 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { Clock } from "lucide-react";
 import { notFound } from "next/navigation";
 import PublicInsightsClient from "./PublicInsightsClient";
 
@@ -30,7 +31,7 @@ export default async function PublicInsightsPage({ params }: Props) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "#0A0A0A" }}>
         <div className="text-center px-6">
-          <div className="text-5xl mb-4">⏰</div>
+          <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "Inter Tight, sans-serif" }}>Link Expired</h1>
           <p style={{ color: "#8A8A8A" }}>This insights link is no longer active. Contact your GymGaze representative for a new link.</p>
         </div>

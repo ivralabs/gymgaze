@@ -310,7 +310,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
         padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <span style={{ color: LIME, fontWeight: 700, fontSize: 14 }}>
-          ⚡ Partnership Proposal — {networkName} × GymGaze
+          Partnership Proposal — {networkName} × GymGaze
         </span>
         <button
           onClick={() => window.print()}
@@ -548,9 +548,9 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             {/* Why it matters */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
               {[
-                { icon: "🎯", title: "Captive Audience", desc: "Members cannot skip or scroll — ads play in the environment they chose to be in." },
-                { icon: "⏱️", title: "55-Min Avg Session", desc: "Unmatched dwell time vs 5-second roadside glances or 2-second social scroll." },
-                { icon: "💎", title: "Premium Demographic", desc: "LSM 7–10, health-conscious, above-average income — exactly who brands pay premium for." },
+                { icon: ">", title: "Captive Audience", desc: "Members cannot skip or scroll — ads play in the environment they chose to be in." },
+                { icon: ">", title: "55-Min Avg Session", desc: "Unmatched dwell time vs 5-second roadside glances or 2-second social scroll." },
+                { icon: ">", title: "Premium Demographic", desc: "LSM 7–10, health-conscious, above-average income — exactly who brands pay premium for." },
               ].map(({ icon, title, desc }) => (
                 <div key={title} style={{ padding: "12px 0", borderTop: `1px solid ${BORDER_GREY}` }}>
                   <span style={{ fontSize: 20 }}>{icon}</span>
@@ -691,9 +691,9 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
             <div style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16, paddingTop: 8 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: DARK }}>Revenue Flow</div>
               {[
-                { icon: "🏢", label: "Advertiser pays", sub: `R${cpm} per 1,000 plays` },
-                { icon: "📺", label: "Impressions delivered", sub: "On your screens, to your members" },
-                { icon: "💰", label: "Revenue split", sub: `${partnerPct}% to you · ${gymgazePct}% to GymGaze` },
+                { icon: "1.", label: "Advertiser pays", sub: `R${cpm} per 1,000 plays` },
+                { icon: "2.", label: "Impressions delivered", sub: "On your screens, to your members" },
+                { icon: "3.", label: "Revenue split", sub: `${partnerPct}% to you · ${gymgazePct}% to GymGaze` },
               ].map(({ icon, label, sub }, idx) => (
                 <div key={label}>
                   <div style={{
@@ -809,9 +809,9 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   How the model works
                 </div>
                 {[
-                  { icon: "🏠", title: "Guaranteed Rental (floor)", desc: `${networkName} receives a guaranteed monthly rental fee per venue — regardless of ad revenue. This is the base commitment.` },
-                  { icon: "📈", title: `${partnerPct}% Ad Revenue Share (upside)`, desc: `On top of the rental, ${networkName} earns ${partnerPct}% of all digital ad revenue at each venue. More bookings = more upside.` },
-                  { icon: "💡", title: "Total to Edge = Rental + Revenue Share", desc: "GymGaze pays both. These are additive — not either/or." },
+                  { icon: "1.", title: "Guaranteed Rental (floor)", desc: `${networkName} receives a guaranteed monthly rental fee per venue — regardless of ad revenue. This is the base commitment.` },
+                  { icon: "2.", title: `${partnerPct}% Ad Revenue Share (upside)`, desc: `On top of the rental, ${networkName} earns ${partnerPct}% of all digital ad revenue at each venue. More bookings = more upside.` },
+                  { icon: "3.", title: "Total to Edge = Rental + Revenue Share", desc: "GymGaze pays both. These are additive — not either/or." },
                 ].map(({ icon, title, desc }) => (
                   <div key={title} style={{ display: "flex", gap: 10, padding: "8px 0", borderBottom: `1px solid ${BORDER_GREY}` }}>
                     <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
@@ -829,7 +829,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 background: "rgba(212,255,79,0.04)",
               }}>
                 <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: LABEL_GREY, marginBottom: 6 }}>
-                  ⚠️ Important Exclusion
+                  Important Exclusion
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: DARK, marginBottom: 4 }}>
                   Widget Sponsorships Are Excluded
@@ -855,7 +855,7 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                       background: included ? "rgba(212,255,79,0.06)" : "#fafafa",
                       border: `1px solid ${included ? LIME : BORDER_GREY}`,
                     }}>
-                      <span style={{ fontSize: 13 }}>{included ? "✅" : "❌"}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700 }}>{included ? "Yes" : "No"}</span>
                       <span style={{ fontSize: 11, color: included ? DARK : "#888", fontWeight: included ? 600 : 400 }}>{label}</span>
                     </div>
                   ))}
@@ -1130,10 +1130,10 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                   Activation Mechanics
                 </div>
                 {[
-                  { icon: "✅", text: `Occupancy ≥${occupancyFloor}%: Full rental fee owed that month` },
-                  { icon: "❌", text: `Occupancy <${occupancyFloor}%: R0 rental owed that month` },
-                  { icon: "📊", text: "Measured per venue — each gym is independent" },
-                  { icon: "📅", text: "Calculated monthly — resets each billing period" },
+                  { icon: "✓", text: `Occupancy ≥${occupancyFloor}%: Full rental fee owed that month` },
+                  { icon: "×", text: `Occupancy <${occupancyFloor}%: R0 rental owed that month` },
+                  { icon: "-", text: "Measured per venue — each gym is independent" },
+                  { icon: "-", text: "Calculated monthly — resets each billing period" },
                 ].map(({ icon, text }) => (
                   <div key={text} style={{ display: "flex", gap: 8, padding: "5px 0", fontSize: 11, color: GREY_TEXT }}>
                     <span style={{ flexShrink: 0 }}>{icon}</span>
@@ -1620,9 +1620,9 @@ export default function ProposalPrint({ proposal, allVenues }: Props) {
                 <div style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {[
-                    { icon: "✉️", value: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@gymgaze.co.za" },
-                    { icon: "📱", value: process.env.NEXT_PUBLIC_CONTACT_PHONE ?? "+27 __ ___ ____" },
-                    { icon: "🌐", value: "gymgaze.co.za" },
+                    { icon: "Email", value: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@gymgaze.co.za" },
+                    { icon: "Phone", value: process.env.NEXT_PUBLIC_CONTACT_PHONE ?? "+27 __ ___ ____" },
+                    { icon: "Web", value: "gymgaze.co.za" },
                   ].map(({ icon, value }) => (
                     <div key={value} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12, color: "#aaa" }}>
                       <span>{icon}</span>

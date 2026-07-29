@@ -1,5 +1,6 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 function getService() {
   return createServiceClient(
@@ -31,6 +32,10 @@ async function nextInvoiceNumber(supabase: ReturnType<typeof getService>): Promi
 
 // ─── GET /api/invoices ─────────────────────────────────────────────────────────
 export async function GET() {
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = getService();
 
   const { data, error } = await supabase
@@ -62,6 +67,10 @@ export async function GET() {
 
 // ─── POST /api/invoices ────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = getService();
 
   const body = await req.json();

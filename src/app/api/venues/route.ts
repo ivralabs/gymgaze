@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { data, error } = await supabase
     .from("venues")
     .select("id, name, city, region, status, active_members, gym_brand_id, gym_brands(name, primary_color)")
@@ -16,6 +19,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const body = await request.json();
 
   const payload: Record<string, unknown> = {};

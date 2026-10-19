@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymGaze Investor Deck 2026 — v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Inter+Tight:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #e8e8e8; }
+
+/* ── BRAND TOKENS ───────────────────────────── */
+:root {
+  --lime:    #D4FF4F;
+  --orange:  #FF6B35;
+  --black:   #0a0a0a;
+  --white:   #FFFFFF;
+  --grey1:   #111111;
+  --grey2:   #333333;
+  --grey3:   #555555;
+  --grey4:   #888888;
+  --grey5:   #AAAAAA;
+  --bg:      #F8F8F8;
+  --border:  #E5E7EB;
+}
+
+/* ── SLIDE BASE ─────────────────────────────── */
+.slide {
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  page-break-after: always;
+  background: var(--white);
+}
+
+.slide-header {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18mm;
+  border-bottom: 2px solid var(--lime);
+  flex-shrink: 0;
+}
+.slide-header .slide-brand { font-size: 13px; font-weight: 800; color: var(--black); letter-spacing: -0.02em; }
+.slide-header .slide-section { font-size: 10px; font-weight: 600; color: var(--grey3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.slide-content {
+  flex: 1;
+  padding: 10mm 18mm 6mm 18mm;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-footer {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18mm;
+  border-top: 2px solid var(--lime);
+  flex-shrink: 0;
+  font-size: 9px;
+  color: var(--grey4);
+}
+
+/* ── LOGO ───────────────────────────────────── */
+.logo { display: flex; align-items: center; gap: 7px; }
+.logo-mark {
+  width: 26px; height: 26px;
+  background: var(--lime);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: var(--black);
+  flex-shrink: 0;
+}
+.logo-text { font-weight: 800; font-size: 14px; color: var(--black); letter-spacing: -0.02em; }
+.logo-text-white { font-weight: 800; font-size: 14px; color: var(--white); letter-spacing: -0.02em; }
+
+/* ── TYPOGRAPHY ─────────────────────────────── */
+.section-label {
+  font-size: 9px; font-weight: 700; color: var(--orange);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
+}
+.slide-heading {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-size: 24px; font-weight: 900; color: var(--black);
+  letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 6px;
+}
+.slide-heading-lg {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-size: 32px; font-weight: 900; color: var(--black);
+  letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px;
+}
+.lime-bar { width: 36px; height: 3px; background: var(--lime); margin-bottom: 12px; }
+.body-text { font-size: 11.5px; color: var(--grey2); line-height: 1.6; margin-bottom: 8px; }
+.body-sm { font-size: 10px; color: var(--grey3); line-height: 1.5; }
+.label-upper { font-size: 9px; font-weight: 700; color: var(--grey3); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── LAYOUT ─────────────────────────────────── */
+.two-col { display: flex; gap: 14px; flex: 1; }
+.col-60 { flex: 0 0 60%; }
+.col-40 { flex: 0 0 calc(40% - 14px); }
+.col-55 { flex: 0 0 55%; }
+.col-45 { flex: 0 0 calc(45% - 14px); }
+.col-50 { flex: 1; }
+.fill { flex: 1; display: flex; flex-direction: column; }
+
+/* ── CARDS ──────────────────────────────────── */
+.stat-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 10px; }
+.stat-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 10px; }
+.stat-grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 10px; }
+
+.stat-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 12px; text-align: center;
+}
+.stat-card.lime { background: var(--lime); border-color: var(--lime); }
+.stat-card.dark { background: var(--black); border-color: var(--black); }
+.stat-num {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 26px; font-weight: 900; color: var(--black);
+  letter-spacing: -0.03em; line-height: 1;
+}
+.stat-card.lime .stat-num { color: var(--black); }
+.stat-card.dark .stat-num { color: var(--lime); }
+.stat-label {
+  font-size: 9px; font-weight: 700; color: var(--grey2);
+  margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.stat-card.dark .stat-label { color: var(--grey5); }
+.stat-sub { font-size: 9px; color: var(--grey4); margin-top: 2px; }
+.stat-card.lime .stat-sub { color: #555; }
+
+.callout-lime { background: var(--lime); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+.callout-lime .callout-title { font-size: 9px; font-weight: 800; color: var(--black); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.callout-lime p { font-size: 11px; color: var(--black); line-height: 1.5; font-weight: 600; }
+
+.callout-dark { background: var(--black); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+.callout-dark .callout-title { font-size: 9px; font-weight: 800; color: var(--lime); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.callout-dark p { font-size: 11px; color: var(--white); line-height: 1.5; }
+
+.callout-border { border: 1.5px solid var(--lime); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+.callout-border .callout-title { font-size: 9px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.callout-border p { font-size: 11px; color: var(--grey2); line-height: 1.5; }
+
+/* ── STEP CARDS ─────────────────────────────── */
+.step-card { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; background: var(--bg); border-radius: 6px; margin-bottom: 7px; }
+.step-num { width: 28px; height: 28px; background: var(--lime); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: var(--black); flex-shrink: 0; }
+.step-title { font-size: 11px; font-weight: 700; color: var(--black); letter-spacing: 0.04em; text-transform: uppercase; }
+.step-desc { font-size: 10px; color: var(--grey3); line-height: 1.5; margin-top: 2px; }
+
+/* ── TABLE ──────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.data-table thead th { background: var(--black); color: var(--white); padding: 7px 10px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.data-table thead th:first-child { border-radius: 4px 0 0 0; }
+.data-table thead th:last-child { border-radius: 0 4px 0 0; }
+.data-table tbody tr:nth-child(even) { background: var(--bg); }
+.data-table tbody td { padding: 6px 10px; color: var(--grey2); border-bottom: 1px solid var(--border); }
+.data-table tbody td:first-child { font-weight: 600; color: var(--black); }
+.data-table tfoot td { padding: 7px 10px; font-weight: 700; color: var(--black); background: #f0f0f0; font-size: 11px; border-top: 2px solid var(--lime); }
+
+/* ── CHARTS ─────────────────────────────────── */
+.chart-wrap { position: relative; width: 100%; }
+.bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-bottom: 20px; position: relative; }
+.bar-chart::after { content: ''; position: absolute; bottom: 20px; left: 0; right: 0; height: 1px; background: var(--border); }
+.bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 0; }
+.bar { border-radius: 3px 3px 0 0; width: 100%; position: relative; }
+.bar-val { font-size: 8px; font-weight: 700; color: var(--black); position: absolute; top: -14px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+.bar-label { font-size: 8px; color: var(--grey3); margin-top: 4px; text-align: center; font-weight: 600; letter-spacing: 0.03em; }
+.bar-sublabel { font-size: 7px; color: var(--grey4); text-align: center; }
+
+.donut-wrap { position: relative; display: inline-block; }
+.donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.donut-center .dc-num { font-family: 'Inter Tight', sans-serif; font-size: 18px; font-weight: 900; color: var(--black); line-height: 1; }
+.donut-center .dc-label { font-size: 8px; font-weight: 600; color: var(--grey3); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* ── COVER DARK SLIDE ───────────────────────── */
+.slide-dark { background: var(--black); }
+.slide-dark .slide-header { background: var(--black); border-bottom: 2px solid var(--lime); }
+.slide-dark .slide-header .slide-brand { color: var(--white); }
+.slide-dark .slide-footer { background: var(--black); border-top: 2px solid var(--lime); color: var(--grey4); }
+
+/* ── PILL ───────────────────────────────────── */
+.pill { display: inline-block; background: var(--lime); color: var(--black); font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; }
+.pill-orange { background: var(--orange); color: var(--white); }
+.pill-dark { background: var(--grey2); color: var(--white); }
+
+/* ── DIVIDER ────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+/* ── VENUE ROW ──────────────────────────────── */
+.venue-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.venue-dot { width: 8px; height: 8px; background: var(--lime); border-radius: 50%; flex-shrink: 0; }
+.venue-name { font-size: 10.5px; font-weight: 600; color: var(--black); flex: 1; }
+.venue-screens { font-size: 10px; color: var(--grey3); }
+.venue-metro { font-size: 9px; color: var(--grey4); background: var(--bg); padding: 2px 6px; border-radius: 3px; }
+
+/* ── SCENARIO TABLE ─────────────────────────── */
+.scenario-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 0; border-bottom: 1px solid var(--border); }
+.scenario-row.header { background: var(--black); border-radius: 4px 4px 0 0; }
+.scenario-cell { padding: 6px 8px; font-size: 10px; color: var(--grey2); }
+.scenario-cell.bold { font-weight: 600; color: #0a0a0a; }
+.scenario-row.header .scenario-cell { font-size: 8.5px; font-weight: 700; color: var(--white); letter-spacing: 0.06em; text-transform: uppercase; }
+.scenario-row:nth-child(even) { background: var(--bg); }
+.scenario-row.highlight { background: #f0ffe0; }
+.scenario-row.total-row { background: #f0f0f0; border-top: 2px solid var(--lime); }
+.scenario-row.total-row .scenario-cell { font-weight: 700; color: var(--black); font-size: 11px; }
+
+/* ── BOM ROW ────────────────────────────────── */
+.bom-section { font-size: 8.5px; font-weight: 800; color: var(--orange); letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 0 2px 0; }
+.bom-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; border-radius: 3px; }
+.bom-row:nth-child(even) { background: var(--bg); }
+.bom-label { font-size: 10px; color: var(--grey2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.bom-amount { font-size: 10px; font-weight: 700; color: var(--black); white-space: nowrap; margin-left: 6px; }
+.bom-total { display: flex; justify-content: space-between; padding: 7px 8px; border-top: 2px solid var(--lime); margin-top: 6px; }
+.bom-total .bom-label { font-weight: 800; color: var(--black); font-size: 12px; }
+.bom-total .bom-amount { font-size: 13px; color: var(--black); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 1 — COVER
+══════════════════════════════════════════════════════════════ -->
+<div class="slide slide-dark">
+  <div class="slide-header">
+    <div class="logo">
+      <div class="logo-mark">G</div>
+      <div class="logo-text-white">GymGaze</div>
+    </div>
+    <div style="font-size:10px;color:#888;letter-spacing:0.08em;text-transform:uppercase;">Confidential — Investor Presentation</div>
+  </div>
+  <div class="slide-content" style="justify-content:center;padding:16mm 18mm;">
+    <div style="margin-bottom:8px;">
+      <span class="pill">Series Seed — 2026</span>
+    </div>
+    <div style="font-family:'Inter Tight',sans-serif;font-size:52px;font-weight:900;color:#FFFFFF;letter-spacing:-0.04em;line-height:0.95;margin-bottom:10px;">
+      South Africa's<br><span style="color:#D4FF4F;">Gym Media</span><br>Network
+    </div>
+    <div class="lime-bar" style="margin:14px 0;"></div>
+    <div style="font-size:14px;color:#AAAAAA;line-height:1.6;max-width:140mm;margin-bottom:28px;">
+      Turning idle gym screens into a high-performance digital out-of-home advertising network — powered by proprietary software.
+    </div>
+    <div style="display:flex;gap:24px;margin-bottom:28px;">
+      <div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:28px;font-weight:900;color:#D4FF4F;letter-spacing:-0.03em;">102</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Screens</div>
+      </div>
+      <div style="width:1px;background:#333;"></div>
+      <div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:28px;font-weight:900;color:#D4FF4F;letter-spacing:-0.03em;">14</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Venues</div>
+      </div>
+      <div style="width:1px;background:#333;"></div>
+      <div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:28px;font-weight:900;color:#D4FF4F;letter-spacing:-0.03em;">4</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Provinces</div>
+      </div>
+      <div style="width:1px;background:#333;"></div>
+      <div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:28px;font-weight:900;color:#D4FF4F;letter-spacing:-0.03em;">53k+</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Members Reached</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="background:#D4FF4F;color:#0a0a0a;font-size:13px;font-weight:800;padding:8px 20px;border-radius:4px;letter-spacing:-0.01em;">Raising R1,450,000</div>
+      <div style="color:#888;font-size:12px;">for <span style="color:#FFFFFF;font-weight:700;">20% equity</span></div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <div>GymGaze (Pty) Ltd — Confidential</div>
+    <div>October 2026</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 2 — THE OPPORTUNITY
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">The Opportunity</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Market Context</div>
+    <div class="slide-heading">DOOH is booming.<br>Gyms are being ignored.</div>
+    <div class="lime-bar"></div>
+    <div class="stat-grid-3" style="margin-bottom:12px;">
+      <div class="stat-card lime">
+        <div class="stat-num">R4.2B</div>
+        <div class="stat-label">SA DOOH Market 2026</div>
+        <div class="stat-sub">Growing 18% YoY</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">45min</div>
+        <div class="stat-label">Avg Gym Dwell Time</div>
+        <div class="stat-sub">vs 8s roadside billboard</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0%</div>
+        <div class="stat-label">Gym DOOH Penetration</div>
+        <div class="stat-sub">SA gyms — largely untapped</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="col-60 fill">
+        <div class="body-text">Digital Out-of-Home advertising is one of the fastest-growing media channels in South Africa. Yet gyms — venues with captive, affluent, health-conscious audiences — remain almost entirely unmonetised from an advertising perspective.</div>
+        <div class="body-text">Gym members are a premium demographic. LSM 7–10. High disposable income. Brands pay a premium to reach them — but currently have no scalable, measurable way to do it inside gym environments.</div>
+        <div class="callout-lime">
+          <div class="callout-title">The Gap</div>
+          <p>Gyms have screens. Advertisers want audiences. Nobody has built the network to connect them — until now.</p>
+        </div>
+      </div>
+      <div class="col-40 fill">
+        <div style="background:var(--bg);border-radius:6px;padding:12px;height:100%;">
+          <div class="label-upper" style="margin-bottom:10px;">Why Gyms Win</div>
+          <div class="step-card" style="margin-bottom:6px;">
+            <div class="step-num" style="font-size:11px;">01</div>
+            <div><div class="step-title">Captive Audience</div><div class="step-desc">Members stay 45–90 min. Eyes on screen repeatedly during workout.</div></div>
+          </div>
+          <div class="step-card" style="margin-bottom:6px;">
+            <div class="step-num" style="font-size:11px;">02</div>
+            <div><div class="step-title">Premium LSM</div><div class="step-desc">LSM 7–10 demographic. High-value target for brands.</div></div>
+          </div>
+          <div class="step-card" style="margin-bottom:6px;">
+            <div class="step-num" style="font-size:11px;">03</div>
+            <div><div class="step-title">Mindset Alignment</div><div class="step-desc">Health, fitness, lifestyle products — perfect context.</div></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num" style="font-size:11px;">04</div>
+            <div><div class="step-title">Measurable</div><div class="step-desc">Proof of Flight reports. CPM-based billing. Fully trackable.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>2 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 3 — THE SOLUTION
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">The Solution</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">What We Built</div>
+    <div class="slide-heading">A complete gym media<br>operating system.</div>
+    <div class="lime-bar"></div>
+    <div class="body-text" style="margin-bottom:12px;">GymGaze installs digital screens across gym venues and manages them as a unified advertising network — from content scheduling to campaign reporting — through proprietary software.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Install Screens</div><div class="step-desc">GymGaze supplies and installs 102 screens across 14 Edge Fitness venues in 4 provinces.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div><div class="step-title">Run Cuecast</div><div class="step-desc">Proprietary CMS (Cuecast) schedules ad slots, widget content and brand campaigns remotely.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div><div class="step-title">Sell Ad Slots</div><div class="step-desc">Sales team sells CPM-based campaigns to local, regional and national advertisers and agencies.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div><div class="step-title">Report & Pay</div><div class="step-desc">Automated Proof of Flight reports. Agencies pay in 45 days. GymGaze shares revenue with venue.</div></div>
+      </div>
+    </div>
+    <div class="callout-dark">
+      <div class="callout-title">The Competitive Moat</div>
+      <p>GymGaze owns its own technology stack — the GymGaze platform + Cuecast CMS. Most DOOH operators rent third-party software. We built ours. That means lower operating costs, full control, and a proprietary asset that grows in value with every venue added.</p>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>3 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 4 — HOW IT WORKS (LOOP MODEL)
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">How It Works</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">The Loop Model</div>
+    <div class="slide-heading">251 seconds. 16 ad slots.<br>1,487 plays per slot per week.</div>
+    <div class="lime-bar"></div>
+    <div class="two-col">
+      <div class="col-55 fill">
+        <div class="body-text">Every screen runs a continuous 251-second content loop. Each loop contains 16 paid advertising slots and a widget block — creating a structured, premium inventory that advertisers can buy by CPM.</div>
+        <div style="background:var(--black);border-radius:6px;padding:12px;margin-bottom:10px;">
+          <div style="font-size:9px;font-weight:700;color:var(--lime);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Content Loop — 251 Seconds</div>
+          <div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:8px;">
+            <div style="background:#D4FF4F;height:28px;flex:8;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#0a0a0a;">8 × 7s AD SLOTS</div>
+            <div style="background:#FF6B35;height:28px;flex:8;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;">8 × 15s AD SLOTS</div>
+            <div style="background:#333;height:28px;flex:5;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#aaa;">WIDGET BLOCK</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <div style="font-size:9px;color:#888;">56s total</div>
+            <div style="font-size:9px;color:#888;">120s total</div>
+            <div style="font-size:9px;color:#888;">75s total</div>
+          </div>
+        </div>
+        <div class="stat-grid-2">
+          <div class="stat-card">
+            <div class="stat-num" style="font-size:20px;">1,487</div>
+            <div class="stat-label">Plays/slot/screen/week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" style="font-size:20px;">139,778</div>
+            <div class="stat-label">Total plays/week (network)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-45 fill">
+        <div style="background:var(--bg);border-radius:6px;padding:12px;height:100%;">
+          <div class="label-upper" style="margin-bottom:10px;">Ad Slot Pricing</div>
+          <table class="data-table" style="font-size:10px;">
+            <thead>
+              <tr><th>Tier</th><th>Duration</th><th>CPM</th><th>Min</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Starter 7s</td><td>7s</td><td>R35</td><td>R1,500</td></tr>
+              <tr><td>Standard 7s</td><td>7s</td><td>R65</td><td>R2,500</td></tr>
+              <tr><td>Premium 15s</td><td>15s</td><td>R85</td><td>R2,500</td></tr>
+              <tr><td>Prime 15s</td><td>15s</td><td>R120</td><td>R5,000</td></tr>
+              <tr><td>Spotlight 30s</td><td>30s</td><td>R160</td><td>R5,000</td></tr>
+            </tbody>
+          </table>
+          <div class="divider"></div>
+          <div class="label-upper" style="margin-bottom:8px;">Widget Sponsorships</div>
+          <div class="bom-row"><div class="bom-label">News Widget</div><div class="bom-amount">R12,000/mo</div></div>
+          <div class="bom-row"><div class="bom-label">Sports Widget</div><div class="bom-amount">R15,000/mo</div></div>
+          <div class="bom-row"><div class="bom-label">Weather Widget</div><div class="bom-amount">R8,500/mo</div></div>
+          <div class="bom-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px;"><div class="bom-label" style="font-weight:700;">Bundle (all 3)</div><div class="bom-amount">R30,000/mo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>4 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 5 — THE NETWORK
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">The Network</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Phase 1 — Edge Fitness</div>
+    <div class="slide-heading" style="font-size:21px;">14 venues. 102 screens.<br>4 provinces. Contracted.</div>
+    <div class="lime-bar"></div>
+    <div class="stat-grid-4" style="margin-bottom:10px;">
+      <div class="stat-card lime"><div class="stat-num">102</div><div class="stat-label">Total Screens</div></div>
+      <div class="stat-card"><div class="stat-num">71</div><div class="stat-label">Portrait</div><div class="stat-sub">Reception / Lobby</div></div>
+      <div class="stat-card"><div class="stat-num">31</div><div class="stat-label">Landscape</div><div class="stat-sub">Gym Floor / Cardio</div></div>
+      <div class="stat-card dark"><div class="stat-num" style="font-size:20px;">53k+</div><div class="stat-label">Members</div></div>
+    </div>
+    <div class="two-col">
+      <div class="col-55">
+        <div class="label-upper" style="margin-bottom:8px;">Venue Breakdown</div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Sunnyside</div><div class="venue-screens">13 screens</div><div class="venue-metro">PTA</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Rivonia</div><div class="venue-screens">11 screens</div><div class="venue-metro">JHB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Beacon Bay</div><div class="venue-screens">11 screens</div><div class="venue-metro">BCM</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Linton Grange</div><div class="venue-screens">10 screens</div><div class="venue-metro">NMB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Jeffreys Bay</div><div class="venue-screens">10 screens</div><div class="venue-metro">SAR</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Walmer</div><div class="venue-screens">9 screens</div><div class="venue-metro">NMB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Kloof</div><div class="venue-screens">7 screens</div><div class="venue-metro">CPT</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Walker Drive</div><div class="venue-screens">6 screens</div><div class="venue-metro">NMB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Strand</div><div class="venue-screens">5 screens</div><div class="venue-metro">CPT</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Greenacres</div><div class="venue-screens">5 screens</div><div class="venue-metro">NMB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Grabouw + Spruitview</div><div class="venue-screens">7 screens</div><div class="venue-metro">CPT/JHB</div></div>
+        <div class="venue-row"><div class="venue-dot"></div><div class="venue-name">Quigney + Gonubie</div><div class="venue-screens">8 screens*</div><div class="venue-metro">BCM</div></div>
+      </div>
+      <div class="col-45">
+        <div style="background:var(--bg);border-radius:6px;padding:12px;">
+          <div class="label-upper" style="margin-bottom:10px;">Provincial Coverage</div>
+          <!-- Simple bar chart -->
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;">Eastern Cape (BCM+NMB+SAR)</span><span style="font-size:10px;font-weight:700;">44</span></div>
+            <div style="background:#e0e0e0;border-radius:3px;height:10px;"><div style="background:#D4FF4F;height:10px;border-radius:3px;width:43%;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;">Gauteng (JHB + PTA)</span><span style="font-size:10px;font-weight:700;">27</span></div>
+            <div style="background:#e0e0e0;border-radius:3px;height:10px;"><div style="background:#FF6B35;height:10px;border-radius:3px;width:26%;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;">Western Cape (CPT)</span><span style="font-size:10px;font-weight:700;">22</span></div>
+            <div style="background:#e0e0e0;border-radius:3px;height:10px;"><div style="background:#0a0a0a;height:10px;border-radius:3px;width:22%;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;">Overberg (Grabouw)</span><span style="font-size:10px;font-weight:700;">4+</span></div>
+            <div style="background:#e0e0e0;border-radius:3px;height:10px;"><div style="background:#888;height:10px;border-radius:3px;width:4%;"></div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="callout-lime" style="margin-bottom:0;">
+            <div class="callout-title">Revenue Split</div>
+            <p style="font-size:10px;">Edge Fitness 30% / Sales commission 7% (capped) / Broker fee 7% (capped) / GymGaze net 56% of gross<br><span style="font-size:9px;opacity:0.8;">Rental: R28,700/mo total across all venues</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>5 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 6 — FINANCIAL PROJECTIONS (OCCUPANCY SCENARIOS)
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">Financial Projections</div>
+  </div>
+  <div class="slide-content" style="padding-top:7mm;">
+    <div class="section-label">Revenue Scenarios — Full Network</div>
+    <div class="slide-heading" style="font-size:21px;">Three occupancy scenarios.<br>All show positive returns.</div>
+    <div class="lime-bar"></div>
+
+    <!-- Scenario comparison table -->
+    <div style="border-radius:6px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
+      <div class="scenario-row header">
+        <div class="scenario-cell">Metric</div>
+        <div class="scenario-cell">Conservative</div>
+        <div class="scenario-cell">Base</div>
+        <div class="scenario-cell">Optimistic</div>
+      </div>
+      <div class="scenario-row">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Slot sell-through</div>
+        <div class="scenario-cell">30%</div>
+        <div class="scenario-cell">55%</div>
+        <div class="scenario-cell">80%</div>
+      </div>
+      <div class="scenario-row">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Blended CPM</div>
+        <div class="scenario-cell">R65</div>
+        <div class="scenario-cell">R75</div>
+        <div class="scenario-cell">R95</div>
+      </div>
+      <div class="scenario-row">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Gross Ad Revenue/yr</div>
+        <div class="scenario-cell">R7.0M</div>
+        <div class="scenario-cell">R23.8M</div>
+        <div class="scenario-cell">R65.9M</div>
+      </div>
+      <div class="scenario-row" style="background:#fff8f0;">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Edge Fitness share (30%)</div>
+        <div class="scenario-cell" style="color:#c04000;">−R2.1M</div>
+        <div class="scenario-cell" style="color:#c04000;">−R7.1M</div>
+        <div class="scenario-cell" style="color:#c04000;">−R19.8M</div>
+      </div>
+      <div class="scenario-row">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">GymGaze Gross (70%)</div>
+        <div class="scenario-cell">R4.9M</div>
+        <div class="scenario-cell">R16.7M</div>
+        <div class="scenario-cell">R46.1M</div>
+      </div>
+      <div class="scenario-row" style="background:#fff8f0;">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Sales Rep 7% (capped)</div>
+        <div class="scenario-cell" style="color:#c04000;">−R343k</div>
+        <div class="scenario-cell" style="color:#c04000;">−R1.2M</div>
+        <div class="scenario-cell" style="color:#c04000;">−R3.2M</div>
+      </div>
+      <div class="scenario-row" style="background:#fff8f0;">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Broker fee 7% (capped)</div>
+        <div class="scenario-cell" style="color:#c04000;">−R343k</div>
+        <div class="scenario-cell" style="color:#c04000;">−R1.2M</div>
+        <div class="scenario-cell" style="color:#c04000;">−R3.2M</div>
+      </div>
+      <div class="scenario-row" style="background:#f0ffe0;">
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">GymGaze Net Revenue (56%)</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R3.9M</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R13.4M</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R36.9M</div>
+      </div>
+      <div class="scenario-row">
+        <div class="scenario-cell" style="font-weight:600;color:#0a0a0a;">Operating costs/yr</div>
+        <div class="scenario-cell">R1.3M</div>
+        <div class="scenario-cell">R1.4M</div>
+        <div class="scenario-cell">R1.3M</div>
+      </div>
+      <div class="scenario-row highlight">
+        <div class="scenario-cell" style="font-weight:800;color:#0a0a0a;">Net profit/yr</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R2.6M</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R12.0M</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R35.6M</div>
+      </div>
+      <div class="scenario-row highlight">
+        <div class="scenario-cell" style="font-weight:800;color:#0a0a0a;">Net profit/mo</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R217k</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R1.0M</div>
+        <div class="scenario-cell" style="font-weight:700;color:#0a0a0a;">R3.0M</div>
+      </div>
+    </div>
+
+    <!-- Revenue Waterfall callout -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin-bottom:8px;">
+      <div class="label-upper" style="margin-bottom:6px;color:var(--orange);">Revenue Waterfall</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <div style="background:#333;color:#fff;padding:5px 6px;border-radius:4px;text-align:center;flex:1.2;">
+          <div style="font-weight:800;font-size:7.5px;letter-spacing:0.03em;">GROSS REVENUE</div>
+          <div style="font-size:9px;font-weight:700;margin-top:1px;">100%</div>
+        </div>
+        <div style="font-size:9px;color:#999;padding:0 2px;">→</div>
+        <div style="background:#fff8f0;border:1px solid #ffd0a0;color:#c04000;padding:5px 6px;border-radius:4px;text-align:center;flex:1.1;">
+          <div style="font-weight:800;font-size:7.5px;letter-spacing:0.03em;">EDGE FITNESS</div>
+          <div style="font-size:9px;font-weight:700;margin-top:1px;">−30%</div>
+        </div>
+        <div style="font-size:9px;color:#999;padding:0 2px;">→</div>
+        <div style="background:#f0f0f0;color:#333;padding:5px 6px;border-radius:4px;text-align:center;flex:1.1;">
+          <div style="font-weight:800;font-size:7.5px;letter-spacing:0.03em;">GYMGAZE GROSS</div>
+          <div style="font-size:9px;font-weight:700;margin-top:1px;">70%</div>
+        </div>
+        <div style="font-size:9px;color:#999;padding:0 2px;">→</div>
+        <div style="background:#fff8f0;border:1px solid #ffd0a0;color:#c04000;padding:5px 6px;border-radius:4px;text-align:center;flex:1.1;">
+          <div style="font-weight:800;font-size:7.5px;letter-spacing:0.03em;">SALES REP</div>
+          <div style="font-size:9px;font-weight:700;margin-top:1px;">−7%</div>
+        </div>
+        <div style="font-size:9px;color:#999;padding:0 2px;">→</div>
+        <div style="background:#fff8f0;border:1px solid #ffd0a0;color:#c04000;padding:5px 6px;border-radius:4px;text-align:center;flex:1.1;">
+          <div style="font-weight:800;font-size:7.5px;letter-spacing:0.03em;">BROKER FEE</div>
+          <div style="font-size:9px;font-weight:700;margin-top:1px;">−7%</div>
+        </div>
+        <div style="font-size:9px;color:#999;padding:0 2px;">→</div>
+        <div style="background:var(--lime);color:#0a0a0a;padding:5px 6px;border-radius:4px;text-align:center;flex:1.3;">
+          <div style="font-weight:900;font-size:7.5px;letter-spacing:0.03em;">GYMGAZE NET</div>
+          <div style="font-size:9px;font-weight:900;margin-top:1px;">56% of gross</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart — Net profit visual -->
+    <div style="background:var(--bg);border-radius:6px;padding:10px 14px 6px 14px;">
+      <div class="label-upper" style="margin-bottom:8px;">Net Profit / Year — Visual Comparison</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:100px;padding-bottom:0;position:relative;">
+        <!-- Conservative -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <div style="font-size:9px;font-weight:800;color:#0a0a0a;margin-bottom:4px;white-space:nowrap;">R2.6M</div>
+          <div style="background:#D4FF4F;width:100%;height:22px;border-radius:3px 3px 0 0;"></div>
+          <div style="height:1px;background:#ccc;width:100%;"></div>
+          <div style="font-size:9px;font-weight:700;color:#333;margin-top:5px;">Conservative</div>
+          <div style="font-size:8px;color:#888;margin-top:1px;">30% sell-through</div>
+        </div>
+        <!-- Base -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <div style="font-size:9px;font-weight:800;color:#0a0a0a;margin-bottom:4px;white-space:nowrap;">R12.0M</div>
+          <div style="background:#FF6B35;width:100%;height:50px;border-radius:3px 3px 0 0;"></div>
+          <div style="height:1px;background:#ccc;width:100%;"></div>
+          <div style="font-size:9px;font-weight:700;color:#333;margin-top:5px;">Base</div>
+          <div style="font-size:8px;color:#888;margin-top:1px;">55% sell-through</div>
+        </div>
+        <!-- Optimistic -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <div style="font-size:9px;font-weight:800;color:#0a0a0a;margin-bottom:4px;white-space:nowrap;">R35.6M</div>
+          <div style="background:#0a0a0a;width:100%;height:68px;border-radius:3px 3px 0 0;"></div>
+          <div style="height:1px;background:#ccc;width:100%;"></div>
+          <div style="font-size:9px;font-weight:700;color:#333;margin-top:5px;">Optimistic</div>
+          <div style="font-size:8px;color:#888;margin-top:1px;">80% sell-through</div>
+        </div>
+        <!-- Widget add-on -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <div style="font-size:9px;font-weight:800;color:#0a0a0a;margin-bottom:4px;white-space:nowrap;">+R426k</div>
+          <div style="background:#AAAAAA;width:100%;height:7px;border-radius:3px 3px 0 0;"></div>
+          <div style="height:1px;background:#ccc;width:100%;"></div>
+          <div style="font-size:9px;font-weight:700;color:#333;margin-top:5px;">Widgets</div>
+          <div style="font-size:8px;color:#888;margin-top:1px;">All 3 sold</div>
+        </div>
+      </div>
+    </div>
+    <div class="body-sm" style="margin-top:5px;font-size:9px;line-height:1.4;">* GymGaze Net = 56% of Gross Ad Revenue after Edge Fitness 30% share, Sales Rep 7% commission (capped) and Broker fee 7% (capped). Operating costs include venue rental, connectivity, staff and misc. Widget sponsorships are additional to ad slot revenue.</div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>6 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 7 — USE OF FUNDS
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">Use of Funds</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Capital Deployment</div>
+    <div class="slide-heading" style="font-size:21px;">R1,450,000 — fully costed.<br>Zero guesswork.</div>
+    <div class="lime-bar"></div>
+    <div class="two-col">
+      <div class="col-55 fill">
+        <div class="bom-section">Screens — R488,000</div>
+        <div class="bom-row"><div class="bom-label">TV screens — 102 units</div><div class="bom-amount">R488,000</div></div>
+        <div class="bom-section">Screen Hardware — R70,550</div>
+        <div class="bom-row"><div class="bom-label">Android sticks (25 units)</div><div class="bom-amount">R20,150</div></div>
+        <div class="bom-row"><div class="bom-label">HDMI splitters (25 units)</div><div class="bom-amount">R6,540</div></div>
+        <div class="bom-row"><div class="bom-label">Cables, brackets &amp; power strips</div><div class="bom-amount">R43,860</div></div>
+        <div class="bom-section">Connectivity — R126,490</div>
+        <div class="bom-row"><div class="bom-label">LTE routers + SIM activation</div><div class="bom-amount">R19,572</div></div>
+        <div class="bom-row"><div class="bom-label">SIM data 12mo (14 venues)</div><div class="bom-amount">R100,632</div></div>
+        <div class="bom-row"><div class="bom-label">Network switches</div><div class="bom-amount">R6,286</div></div>
+        <div class="bom-section">Operations — R41,300</div>
+        <div class="bom-row"><div class="bom-label">Installation labour (14 venues)</div><div class="bom-amount">R22,400</div></div>
+        <div class="bom-row"><div class="bom-label">Uniforms + platform infra (12mo)</div><div class="bom-amount">R18,900</div></div>
+        <div class="bom-section">Insurance — R33,600</div>
+        <div class="bom-row"><div class="bom-label">Equipment + liability (12 months)</div><div class="bom-amount">R33,600</div></div>
+      </div>
+      <div class="col-45 fill">
+        <div class="bom-section">Working Capital — R450,000</div>
+        <div class="bom-row"><div class="bom-label">Sales Rep R30k × 6mo</div><div class="bom-amount">R180,000</div></div>
+        <div class="bom-row"><div class="bom-label">Network Tech R20k × 6mo</div><div class="bom-amount">R120,000</div></div>
+        <div class="bom-row"><div class="bom-label">Campaign Coord R15k × 6mo</div><div class="bom-amount">R90,000</div></div>
+        <div class="bom-row"><div class="bom-label">Travel + Misc ops × 6mo</div><div class="bom-amount">R60,000</div></div>
+        <div class="bom-section">Setup & Launch — R120,000</div>
+        <div class="bom-row"><div class="bom-label">Legal, contracts, accounting</div><div class="bom-amount">R25,000</div></div>
+        <div class="bom-row"><div class="bom-label">Launch marketing + media kits</div><div class="bom-amount">R30,000</div></div>
+        <div class="bom-row"><div class="bom-label">Sales commission buffer (mo 1–3)</div><div class="bom-amount">R15,000</div></div>
+        <div class="bom-row"><div class="bom-label">45-day cashflow bridge</div><div class="bom-amount">R50,000</div></div>
+        <div class="bom-section">Contingency — R132,994</div>
+        <div class="bom-row"><div class="bom-label">10% contingency buffer</div><div class="bom-amount">R132,994</div></div>
+        <div class="divider" style="margin-top:10px;"></div>
+        <div class="bom-total">
+          <div class="bom-label">TOTAL RAISE</div>
+          <div class="bom-amount" style="font-size:16px;color:#D4FF4F;background:#0a0a0a;padding:4px 10px;border-radius:4px;">R1,450,000</div>
+        </div>
+        <div class="body-sm" style="margin-top:8px;">6-month runway. Full team. 102 screens live. Zero shortcuts.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>7 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 8 — THE TEAM
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">The Team</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Lean. Focused. Ready.</div>
+    <div class="slide-heading">Four roles. One mission.<br>Build the network.</div>
+    <div class="lime-bar"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="background:var(--black);border-radius:8px;padding:14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;background:#D4FF4F;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#0a0a0a;flex-shrink:0;">M</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#FFFFFF;letter-spacing:-0.01em;">Mlungisi Busakwe</div>
+            <div style="font-size:10px;color:#D4FF4F;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Founder & CEO</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:#AAAAAA;line-height:1.6;">Strategy, investor relations, key account management and Edge Fitness partnership. Drives new gym network deals and overall business direction.</div>
+        <div style="margin-top:8px;"><span class="pill">Equity: 80%</span></div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;background:#FF6B35;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#FFFFFF;flex-shrink:0;">S</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#0a0a0a;letter-spacing:-0.01em;">Sales Representative</div>
+            <div style="font-size:10px;color:#FF6B35;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">To Be Appointed</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:#555;line-height:1.6;">Sells ad slots to local, regional and national advertisers and agencies. Manages pipeline and client relationships. Target: 3–5 campaigns/month.</div>
+        <div style="margin-top:8px;"><span class="pill" style="background:#FF6B35;color:#fff;">R30,000/mo + 7% commission</span></div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;background:#888;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#FFFFFF;flex-shrink:0;">T</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#0a0a0a;letter-spacing:-0.01em;">Network Technician</div>
+            <div style="font-size:10px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">To Be Appointed</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:#555;line-height:1.6;">Remote-first monitoring of all 102 screens via GymGaze dashboard. Troubleshoots connectivity and software issues. Quarterly on-site visits across all 14 venues.</div>
+        <div style="margin-top:8px;"><span class="pill" style="background:#333;color:#fff;">R20,000/mo + R5,000 travel</span></div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;background:#555;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#FFFFFF;flex-shrink:0;">C</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#0a0a0a;letter-spacing:-0.01em;">Campaign Coordinator</div>
+            <div style="font-size:10px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">To Be Appointed</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:#555;line-height:1.6;">Books campaigns into Cuecast, chases and formats creatives, sends Proof of Flight reports, handles client invoicing coordination. Operations backbone.</div>
+        <div style="margin-top:8px;"><span class="pill" style="background:#555;color:#fff;">R15,000/mo</span></div>
+      </div>
+    </div>
+    <div class="callout-lime">
+      <div class="callout-title">Total Monthly Payroll</div>
+      <p>R75,000/mo — Sales Rep + Technician + Coordinator + Travel + Misc. 6-month runway fully funded from raise.</p>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>8 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 9 — THE DEAL
+══════════════════════════════════════════════════════════════ -->
+<div class="slide slide-dark">
+  <div class="slide-header" style="background:#0a0a0a;">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text-white">GymGaze</div></div>
+    <div class="slide-section">The Deal</div>
+  </div>
+  <div class="slide-content" style="justify-content:center;">
+    <div class="section-label" style="color:#D4FF4F;">Investor Terms</div>
+    <div style="font-family:'Inter Tight',sans-serif;font-size:30px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;line-height:1.1;margin-bottom:6px;">R1,450,000<br><span style="color:#D4FF4F;">for 20% equity.</span></div>
+    <div class="lime-bar" style="margin:12px 0;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:#1a1a1a;border-radius:6px;padding:12px;border:1px solid #333;">
+        <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Raise Amount</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;">R1,450,000</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:6px;padding:12px;border:1px solid #333;">
+        <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Equity Offered</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;">20%</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:6px;padding:12px;border:1px solid #333;">
+        <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Pre-Money Valuation</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;">R5,800,000</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:6px;padding:12px;border:1px solid #333;">
+        <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Post-Money Valuation</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:#FFFFFF;letter-spacing:-0.02em;">R7,250,000</div>
+      </div>
+    </div>
+    <div style="background:#1a1a1a;border-radius:6px;padding:14px;border:1px solid #333;margin-bottom:10px;">
+      <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Investor Returns</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Inter Tight',sans-serif;font-size:22px;font-weight:900;color:#D4FF4F;">R520,000</div>
+          <div style="font-size:9px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;">Dividend/yr (20% of profit)</div>
+          <div style="font-size:9px;color:#555;">Conservative scenario</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid #333;border-right:1px solid #333;">
+          <div style="font-family:'Inter Tight',sans-serif;font-size:22px;font-weight:900;color:#D4FF4F;">R260,000</div>
+          <div style="font-size:9px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;">Bi-annual payment</div>
+          <div style="font-size:9px;color:#555;">Every 6 months</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Inter Tight',sans-serif;font-size:22px;font-weight:900;color:#D4FF4F;">~2.8 yrs</div>
+          <div style="font-size:9px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;">Payback period</div>
+          <div style="font-size:9px;color:#555;">Conservative case — strong returns</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="background:#D4FF4F;border-radius:6px;padding:10px 12px;">
+        <div style="font-size:9px;font-weight:800;color:#0a0a0a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Buyback Option</div>
+        <div style="font-size:11px;color:#0a0a0a;font-weight:600;">R2,900,000 (2×) triggered at R1M ARR — investor may exit at 2× return at any time after trigger.</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:6px;padding:10px 12px;border:1px solid #333;">
+        <div style="font-size:9px;font-weight:800;color:#D4FF4F;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Exit Path</div>
+        <div style="font-size:11px;color:#FFFFFF;">Expand to 500+ screens across multiple gym networks → Series A raise or strategic acquisition by OOH media group.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer" style="background:#0a0a0a;border-top:2px solid #D4FF4F;">
+    <div>GymGaze (Pty) Ltd — Confidential</div><div>9 / 16</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 10 — TRACTION
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">Traction</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">What We've Already Built</div>
+    <div class="slide-heading">Platform live. Partner signed.<br>Network ready to deploy.</div>
+    <div class="lime-bar"></div>
+    <div class="stat-grid-4" style="margin-bottom:14px;">
+      <div class="stat-card lime"><div class="stat-num" style="font-size:22px;">LIVE</div><div class="stat-label">GymGaze Platform</div><div class="stat-sub">gymgaze.vercel.app</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:22px;">SIGNED</div><div class="stat-label">Edge Fitness LTO</div><div class="stat-sub">14 venues contracted</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:20px;">2</div><div class="stat-label">Portals Built</div><div class="stat-sub">Admin + Partner</div></div>
+      <div class="stat-card dark"><div class="stat-num" style="font-size:16px;">LICENSED</div><div class="stat-label">Cuecast CMS</div><div class="stat-sub">Enterprise platform in place</div></div>
+    </div>
+    <div class="two-col">
+      <div class="col-55 fill">
+        <div class="label-upper" style="margin-bottom:10px;">Platform Features Built</div>
+        <div class="step-card">
+          <div class="step-num" style="font-size:10px;">✓</div>
+          <div><div class="step-title">Cuecast CMS</div><div class="step-desc">Ad slot scheduling, campaign management, programmatic-ready content delivery system.</div></div>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="font-size:10px;">✓</div>
+          <div><div class="step-title">Admin Portal</div><div class="step-desc">Full inventory management, campaign tracking, revenue dashboard, insights with agency access tokens.</div></div>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="font-size:10px;">✓</div>
+          <div><div class="step-title">Partner Portal</div><div class="step-desc">Edge Fitness manager access — Proof of Flight photos, occupancy stats, revenue visibility.</div></div>
+        </div>
+        <div class="step-card">
+          <div class="step-num" style="font-size:10px;">✓</div>
+          <div><div class="step-title">Pipeline + Rate Card</div><div class="step-desc">Sales pipeline, saved clients, auto-generated rate card proposals for agency presentations.</div></div>
+        </div>
+      </div>
+      <div class="col-45 fill">
+        <div style="background:var(--bg);border-radius:6px;padding:12px;height:100%;">
+          <div class="label-upper" style="margin-bottom:10px;">Legal & Commercial</div>
+          <div class="step-card" style="background:#fff;">
+            <div class="step-num" style="font-size:10px;background:#0a0a0a;color:#D4FF4F;">✓</div>
+            <div><div class="step-title">LTO Executed</div><div class="step-desc">Licence to Occupy Agreement signed with Edge Fitness — 36-month initial term.</div></div>
+          </div>
+          <div class="step-card" style="background:#fff;">
+            <div class="step-num" style="font-size:10px;background:#0a0a0a;color:#D4FF4F;">✓</div>
+            <div><div class="step-title">SLA in Place</div><div class="step-desc">Service Level Agreement with Edge Fitness covering uptime, maintenance and content standards.</div></div>
+          </div>
+          <div class="step-card" style="background:#fff;">
+            <div class="step-num" style="font-size:10px;background:#0a0a0a;color:#D4FF4F;">✓</div>
+            <div><div class="step-title">Revenue Split Locked</div><div class="step-desc">70/30 split confirmed. Rental tiers per venue agreed. Payment terms: 45-day agency cycle.</div></div>
+          </div>
+          <div class="callout-lime" style="margin-top:8px;margin-bottom:0;">
+            <div class="callout-title">This is not a concept.</div>
+            <p>The platform is live. The partner is signed. Capital deploys directly into hardware and operations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>10 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 11 — PHASE 2: GROWTH PIPELINE
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">Growth Pipeline</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Phase 2 — Year 2 Expansion</div>
+    <div class="slide-heading" style="font-size:20px;">14 venues today. 23 by Year 2.<br>A scalable model built for more.</div>
+    <div class="lime-bar"></div>
+    <div class="two-col" style="flex:1;">
+      <div class="col-50 fill">
+        <div style="background:var(--black);border-radius:8px;padding:14px;height:100%;">
+          <div style="font-size:9px;font-weight:800;color:var(--lime);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Edge Fitness Expansion</div>
+          <div style="font-family:'Inter Tight',sans-serif;font-size:18px;font-weight:900;color:#FFFFFF;margin-bottom:10px;">+9 gyms confirmed in pipeline</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div style="background:#1a1a1a;border-radius:4px;padding:8px;text-align:center;">
+              <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:var(--lime);">23</div>
+              <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Year 2 Venues</div>
+            </div>
+            <div style="background:#1a1a1a;border-radius:4px;padding:8px;text-align:center;">
+              <div style="font-family:'Inter Tight',sans-serif;font-size:26px;font-weight:900;color:var(--lime);">~165</div>
+              <div style="font-size:8px;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">Year 2 Screens</div>
+            </div>
+          </div>
+          <div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Year 2 Net Profit</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;background:#1e1e1e;padding:6px 10px;border-radius:4px;border-left:3px solid var(--lime);">
+              <span style="font-size:10px;color:#AAA;">Conservative</span>
+              <span style="font-size:11px;font-weight:800;color:var(--lime);">R5.7M/yr</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;background:#1e1e1e;padding:6px 10px;border-radius:4px;border-left:3px solid var(--lime);">
+              <span style="font-size:10px;color:#AAA;">Base</span>
+              <span style="font-size:11px;font-weight:800;color:var(--lime);">R21.8M/yr</span>
+            </div>
+          </div>
+          <div style="font-size:9px;color:#888;line-height:1.5;">Self-funded from Phase 1 revenue — no additional raise required.</div>
+        </div>
+      </div>
+      <div class="col-50 fill">
+        <div style="background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border);height:100%;">
+          <div style="font-size:9px;font-weight:800;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">SA Gym Market Opportunity</div>
+          <div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:900;color:#0a0a0a;margin-bottom:6px;">300+ independent gym clubs across SA</div>
+          <div style="font-size:10px;color:#555;margin-bottom:10px;">Each with 5–20 locations. Each a potential GymGaze partner.</div>
+          <div class="label-upper" style="margin-bottom:7px;">Key Targets</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:#fff;border-radius:3px;border:1px solid var(--border);">
+              <span style="font-size:10px;font-weight:600;color:#0a0a0a;">Workout Gym</span>
+              <span style="font-size:9px;color:#555;">~15 venues · KZN</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:#fff;border-radius:3px;border:1px solid var(--border);">
+              <span style="font-size:10px;font-weight:600;color:#0a0a0a;">Planet Fitness</span>
+              <span style="font-size:9px;color:#555;">20+ venues</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:#fff;border-radius:3px;border:1px solid var(--border);">
+              <span style="font-size:10px;font-weight:600;color:#0a0a0a;">Anytime Fitness SA</span>
+              <span style="font-size:9px;color:#555;">30+ venues</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:#fff;border-radius:3px;border:1px solid var(--border);">
+              <span style="font-size:10px;font-weight:600;color:#0a0a0a;">Pure Gym SA</span>
+              <span style="font-size:9px;color:#555;">10+ venues</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:5px 8px;background:#fff;border-radius:3px;border:1px solid var(--border);">
+              <span style="font-size:10px;font-weight:600;color:#0a0a0a;">Snap Fitness</span>
+              <span style="font-size:9px;color:#555;">~15 venues</span>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#333;line-height:1.5;background:#f0ffe0;border-radius:4px;padding:8px 10px;border-left:3px solid var(--lime);">
+            Each new chain partnership = immediate revenue uplift with <strong>zero additional tech cost</strong>. Same Cuecast platform, same ops team, same model.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--black);border-radius:6px;padding:10px 16px;margin-top:10px;text-align:center;">
+      <div style="font-size:12px;font-weight:800;color:var(--lime);letter-spacing:-0.01em;">&ldquo;GymGaze is the infrastructure layer. The gym chains are the distribution.&rdquo;</div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>11 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 12 — ROADMAP
+══════════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text">GymGaze</div></div>
+    <div class="slide-section">Roadmap</div>
+  </div>
+  <div class="slide-content">
+    <div class="section-label">Growth Plan</div>
+    <div class="slide-heading">Phase 1 funds Phase 2.<br>Phase 2 builds the Series A.</div>
+    <div class="lime-bar"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:var(--black);border-radius:8px;padding:14px;">
+        <div style="font-size:9px;font-weight:800;color:#D4FF4F;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Phase 1 — Now</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:900;color:#FFFFFF;margin-bottom:8px;">Deploy Edge Fitness</div>
+        <div style="font-size:10px;color:#AAA;line-height:1.6;margin-bottom:10px;">Install 102 screens across 14 venues. Onboard first advertisers. Achieve 30%+ sell-through within 6 months.</div>
+        <div style="font-size:9px;font-weight:700;color:#D4FF4F;text-transform:uppercase;letter-spacing:0.06em;">Funded by this raise</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:9px;color:#888;">✓ 102 screens installed</div>
+          <div style="font-size:9px;color:#888;">✓ 3 staff hired</div>
+          <div style="font-size:9px;color:#888;">✓ First campaigns live</div>
+          <div style="font-size:9px;color:#888;">✓ R217k+ net profit/mo</div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:14px;border:2px solid var(--lime);">
+        <div style="font-size:9px;font-weight:800;color:var(--orange);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Phase 2 — Year 2</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:900;color:#0a0a0a;margin-bottom:8px;">New Gym Networks</div>
+        <div style="font-size:10px;color:#555;line-height:1.6;margin-bottom:10px;">Onboard 2–3 additional gym chains (Planet Fitness, Virgin Active, Gym Company). Target 300+ screens. Self-funded from Phase 1 revenue.</div>
+        <div style="font-size:9px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.06em;">Self-funded from profit</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:9px;color:#555;">→ 300+ screens</div>
+          <div style="font-size:9px;color:#555;">→ 30+ venues</div>
+          <div style="font-size:9px;color:#555;">→ National footprint</div>
+          <div style="font-size:9px;color:#555;">→ R1M+ ARR trigger</div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="font-size:9px;font-weight:800;color:var(--grey3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Phase 3 — Year 3–5</div>
+        <div style="font-family:'Inter Tight',sans-serif;font-size:16px;font-weight:900;color:#0a0a0a;margin-bottom:8px;">Series A or Exit</div>
+        <div style="font-size:10px;color:#555;line-height:1.6;margin-bottom:10px;">At 500+ screens and proven unit economics, raise Series A for national scale — or accept acquisition offer from OOH media group at target R20–25M valuation.</div>
+        <div style="font-size:9px;font-weight:700;color:var(--grey3);text-transform:uppercase;letter-spacing:0.06em;">Investor exit window</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:9px;color:#888;">→ 500+ screens</div>
+          <div style="font-size:9px;color:#888;">→ Series A / M&amp;A</div>
+          <div style="font-size:9px;color:#888;">→ R20–25M target exit</div>
+          <div style="font-size:9px;color:#888;">→ Investor 10–17× return</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg);border-radius:6px;padding:12px;border:1px solid var(--border);">
+      <div class="label-upper" style="margin-bottom:8px;">12-Month Milestones</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        <div style="text-align:center;padding:8px;background:#fff;border-radius:4px;border:1px solid var(--border);">
+          <div style="font-size:9px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.06em;">Month 1–2</div>
+          <div style="font-size:10px;font-weight:600;color:#0a0a0a;margin-top:4px;">Install all 102 screens</div>
+        </div>
+        <div style="text-align:center;padding:8px;background:#fff;border-radius:4px;border:1px solid var(--border);">
+          <div style="font-size:9px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.06em;">Month 2–3</div>
+          <div style="font-size:10px;font-weight:600;color:#0a0a0a;margin-top:4px;">First campaigns live</div>
+        </div>
+        <div style="text-align:center;padding:8px;background:#fff;border-radius:4px;border:1px solid var(--border);">
+          <div style="font-size:9px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.06em;">Month 4–6</div>
+          <div style="font-size:10px;font-weight:600;color:#0a0a0a;margin-top:4px;">30% sell-through hit</div>
+        </div>
+        <div style="text-align:center;padding:8px;background:#D4FF4F;border-radius:4px;">
+          <div style="font-size:9px;font-weight:700;color:#0a0a0a;text-transform:uppercase;letter-spacing:0.06em;">Month 6+</div>
+          <div style="font-size:10px;font-weight:800;color:#0a0a0a;margin-top:4px;">R217k+ net profit/mo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><div>GymGaze (Pty) Ltd — Confidential</div><div>12 / 16</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 13 — CLOSE / CONTACT
+══════════════════════════════════════════════════════════════ -->
+<div class="slide slide-dark">
+  <div class="slide-header" style="background:#0a0a0a;">
+    <div class="logo"><div class="logo-mark">G</div><div class="logo-text-white">GymGaze</div></div>
+    <div class="slide-section">Contact</div>
+  </div>
+  <div class="slide-content" style="justify-content:center;align-items:center;text-align:center;">
+    <div style="font-size:9px;font-weight:700;color:#D4FF4F;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;">Ready to invest?</div>
+    <div style="font-family:'Inter Tight',sans-serif;font-size:38px;font-weight:900;color:#FFFFFF;letter-spacing:-0.03em;line-height:1.0;margin-bottom:6px;">Let's build<br><span style="color:#D4FF4F;">South Africa's<br>gym media network.</span></div>
+    <div class="lime-bar" style="margin:16px auto;"></div>
+    <div style="font-size:14px;color:#AAAAAA;margin-bottom:28px;">R1,450,000 · 20% equity · ~2.8-year payback · R20M+ exit target</div>
+    <div style="background:#1a1a1a;border-radius:8px;padding:20px 32px;border:1px solid #333;display:inline-block;margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:800;color:#FFFFFF;margin-bottom:6px;">Mlungisi Busakwe</div>
+      <div style="font-size:12px;color:#D4FF4F;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Founder & CEO — GymGaze</div>
+      <div style="font-size:13px;color:#AAAAAA;margin-bottom:4px;">gymgaze.vercel.app</div>
+    </div>
+    <div style="display:flex;gap:16px;justify-content:center;">
+      <div style="background:#D4FF4F;color:#0a0a0a;font-size:11px;font-weight:800;padding:8px 20px;border-radius:4px;">View Platform Live</div>
+      <div style="border:1px solid #333;color:#FFFFFF;font-size:11px;font-weight:600;padding:8px 20px;border-radius:4px;">Request Full Financials</div>
+    </div>
+  </div>
+  <div class="slide-footer" style="background:#0a0a0a;border-top:2px solid #D4FF4F;">
+    <div>GymGaze (Pty) Ltd — Confidential</div><div>13 / 16</div>
+  </div>
+</div>
+
+</body>
+</html>
